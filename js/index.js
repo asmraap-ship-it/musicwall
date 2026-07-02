@@ -32,15 +32,15 @@ async function getThumbnail(video, idx) {
     + '<svg viewBox="0 0 24 24" fill="#c8a87a"><polygon points="5,3 19,12 5,21"/></svg>'
     + '</div>'
 
-  const deleteKnop = '<button class="card-delete" onclick="event.stopPropagation();bevestigVerwijderen(' + video.id + ')">'
+  const deleteKnop = '<button class="card-delete" title="' + t('video.verwijderenTooltip') + '" onclick="event.stopPropagation();bevestigVerwijderen(' + video.id + ')">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H6L5,6"/><path d="M10,11v6M14,11v6"/><path d="M9,6V4h6v2"/></svg>'
     + '</button>'
 
-  const bewerkKnop = '<button class="card-bewerk" onclick="event.stopPropagation();bewerkVideo(' + idx + ')">✎</button>'
+  const bewerkKnop = '<button class="card-bewerk" title="' + t('video.bewerkenTooltip') + '" onclick="event.stopPropagation();bewerkVideo(' + idx + ')">✎</button>'
 
   const bronLabel = video.type === 'youtube'
-    ? '<div class="card-bron youtube">YouTube</div>'
-    : '<div class="card-bron lokaal">Lokaal</div>'
+    ? '<div class="card-bron youtube">' + t('video.bron.youtube') + '</div>'
+    : '<div class="card-bron lokaal">' + t('video.bron.lokaal') + '</div>'
 
   if (video.type === 'youtube') {
     const id = getYoutubeId(video.youtube_url)
@@ -90,7 +90,7 @@ function openJukebox() {
 
 function stuurNaarJukebox() {
   if (selectie.size === 0) {
-    alert('Selecteer eerst videos met Ctrl+klik.')
+    alert(t('jukebox.geenSelectie'))
     return
   }
 
@@ -103,12 +103,12 @@ function stuurNaarJukebox() {
   const aantalYoutube = idsArray.length - lokaleIds.length
 
   if (lokaleIds.length === 0) {
-    alert('De jukebox ondersteunt alleen lokale videos. Selecteer videos die u zelf heeft toegevoegd als bestand.')
+    alert(t('jukebox.alleenLokaal'))
     return
   }
 
   if (aantalYoutube > 0) {
-    alert(aantalYoutube + ' YouTube video(s) worden overgeslagen — de jukebox werkt alleen met lokale videos.')
+    alert(t('jukebox.youtubeOvergeslagen', { n: aantalYoutube }))
   }
 
   ipcRenderer.send('toevoegen-aan-playlist', lokaleIds)
@@ -125,9 +125,11 @@ function wisselThema(thema) {
   ipcRenderer.send('thema-gewijzigd', thema)
 }
 
-function kiesThema(thema, label) {
+const themaLabelSleutels = { '': 'thema.standaard', metaal: 'thema.metaal', jukebox: 'thema.jukebox', nacht: 'thema.nacht', jr: 'thema.raw', natuur: 'thema.natuur', licht: 'thema.licht' }
+
+function kiesThema(thema) {
   wisselThema(thema)
-  document.getElementById('thema-label').textContent = label
+  document.getElementById('thema-label').textContent = t(themaLabelSleutels[thema] || 'thema.standaard')
   document.getElementById('thema-dropdown').classList.remove('open')
   document.getElementById('thema-menu').style.display = 'none'
 }
@@ -137,7 +139,35 @@ function toggleThemaMenu(event) {
 
   const dropdown = document.getElementById('thema-dropdown')
   const menu = document.getElementById('thema-menu')
-  const knop = document.querySelector('.thema-knop')
+  const knop = dropdown.querySelector('.thema-knop')
+
+  const isOpen = menu.style.display === 'block'
+
+  if (isOpen) {
+    menu.style.display = 'none'
+    dropdown.classList.remove('open')
+  } else {
+    const rect = knop.getBoundingClientRect()
+    menu.style.display = 'block'
+    menu.style.top = (rect.bottom + 6) + 'px'
+    menu.style.left = (rect.right - menu.offsetWidth) + 'px'
+    dropdown.classList.add('open')
+  }
+}
+
+function kiesTaal(taal) {
+  wisselTaal(taal)
+  document.getElementById('taal-label').textContent = taal.toUpperCase()
+  document.getElementById('taal-dropdown').classList.remove('open')
+  document.getElementById('taal-menu').style.display = 'none'
+}
+
+function toggleTaalMenu(event) {
+  if (event) event.stopPropagation()
+
+  const dropdown = document.getElementById('taal-dropdown')
+  const menu = document.getElementById('taal-menu')
+  const knop = dropdown.querySelector('.thema-knop')
 
   const isOpen = menu.style.display === 'block'
 
@@ -160,18 +190,26 @@ document.addEventListener('click', (e) => {
     dropdown.classList.remove('open')
     if (menu) menu.style.display = 'none'
   }
-})
 
-const themaLabels = { '': 'Standaard', metaal: 'Metaal', jukebox: 'Jukebox', nacht: 'Nacht', jr: 'Raw', natuur: 'Natuur', licht: 'Licht' }
+  const taalDropdown = document.getElementById('taal-dropdown')
+  const taalMenu = document.getElementById('taal-menu')
+  if (taalDropdown && !taalDropdown.contains(e.target)) {
+    taalDropdown.classList.remove('open')
+    if (taalMenu) taalMenu.style.display = 'none'
+  }
+})
 
 function laadOpgeslagenThema() {
   const thema = localStorage.getItem('musicwall-thema')
   if (thema) {
     document.documentElement.setAttribute('data-thema', thema)
-    const label = document.getElementById('thema-label')
-    if (label) label.textContent = themaLabels[thema] || 'Standaard'
   }
+  const label = document.getElementById('thema-label')
+  if (label) label.textContent = t(themaLabelSleutels[thema || ''] || 'thema.standaard')
   ipcRenderer.send('thema-gewijzigd', thema || '')
+
+  const taalLabel = document.getElementById('taal-label')
+  if (taalLabel) taalLabel.textContent = huidigeTaalCode().toUpperCase()
 }
 
 function speelAfIdx(idx) {
@@ -238,7 +276,7 @@ function updateSelectieInfo() {
     info.classList.remove('zichtbaar')
   } else {
     info.classList.add('zichtbaar')
-    tekst.textContent = selectie.size + ' geselecteerd \u00b7 Esc om te deselecteren'
+    tekst.textContent = t('selectie.tekst', { n: selectie.size })
   }
 }
 
@@ -517,10 +555,10 @@ async function laadWalls() {
 
     const wallHtml = '<div class="wall" id="wall-' + wall.id + '">'
       + '<div class="wall-header">'
-      + '<span class="wall-naam" onclick="hernoemWallPrompt(' + wall.id + ',\'' + wall.naam.replace(/'/g, "\\'") + '\')" title="Klik om te hernoemen" style="cursor:pointer">' + wall.naam + '</span>'
+      + '<span class="wall-naam" onclick="hernoemWallPrompt(' + wall.id + ',\'' + wall.naam.replace(/'/g, "\\'") + '\')" title="' + t('wall.hernoemenTooltip') + '" style="cursor:pointer">' + wall.naam + '</span>'
       + '<div style="display:flex;align-items:center;gap:0.5rem">'
       + '<span class="wall-aantal">' + videos.length + '</span>'
-      + '<button class="wall-verwijder-btn" onclick="bevestigWallVerwijderen(' + wall.id + ',\'' + wall.naam.replace(/'/g, "\\'") + '\')" title="Wall verwijderen">'
+      + '<button class="wall-verwijder-btn" onclick="bevestigWallVerwijderen(' + wall.id + ',\'' + wall.naam.replace(/'/g, "\\'") + '\')" title="' + t('wall.verwijderenTooltip') + '">'
       + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H6L5,6"/><path d="M10,11v6M14,11v6"/><path d="M9,6V4h6v2"/></svg>'
       + '</button>'
       + '</div>'
@@ -531,14 +569,14 @@ async function laadWalls() {
       + ' ondrop="drop(event,' + wall.id + ')">'
       + kaarten + '</div>'
       + '<div class="wall-footer">'
-      + '<button class="wall-toevoegen-btn" onclick="openToevoegen(' + wall.id + ')">+ nummer toevoegen</button>'
+      + '<button class="wall-toevoegen-btn" onclick="openToevoegen(' + wall.id + ')">' + t('wall.nummerToevoegen') + '</button>'
       + '</div>'
       + '</div>'
 
     container.innerHTML += wallHtml
   }
 
-  container.innerHTML += '<button class="nieuwe-wall-btn" onclick="voegWallToe()" title="Nieuwe wall">+</button>'
+  container.innerHTML += '<button class="nieuwe-wall-btn" onclick="voegWallToe()" title="' + t('wall.nieuweWall') + '">+</button>'
 
   if (window.gsap) {
     gsap.fromTo(document.querySelectorAll('.wall'),
@@ -557,6 +595,13 @@ async function laadWalls() {
 laadWalls()
 laadOpgeslagenThema()
 
+document.addEventListener('taal-gewijzigd', () => {
+  laadWalls()
+  if (huidigeSectie === 'concerten' && typeof laadConcerten === 'function') laadConcerten()
+})
+
+window.kiesTaal = kiesTaal
+window.toggleTaalMenu = toggleTaalMenu
 window.wisselThema = wisselThema
 window.toggle = toggle
 window.speelAfIdx = speelAfIdx

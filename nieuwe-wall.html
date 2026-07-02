@@ -22,13 +22,15 @@
 <h2 id="titel">Nieuwe wall</h2>
 
 <div class="veld">
-  <label>Naam van de wall</label>
-  <input type="text" id="naam" placeholder="bijv. Live Concerten" autofocus>
+  <label data-i18n="nieuweWall.naamLabel">Naam van de wall</label>
+  <input type="text" id="naam" data-i18n-placeholder="nieuweWall.naamPlaceholder" placeholder="bijv. Live Concerten" autofocus>
 </div>
 
 <button class="opslaan-btn" id="opslaan-btn" onclick="slaOp()">Aanmaken</button>
 <div class="melding" id="melding"></div>
 
+<script src="js/vertalingen.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/nieuwe-wall.js"></script>
 </body>
 </html>

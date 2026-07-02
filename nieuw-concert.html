@@ -22,28 +22,30 @@
 <h2 id="titel">Nieuw concert</h2>
 
 <div class="veld">
-  <label>Naam van het concert</label>
-  <input type="text" id="naam" placeholder="bijv. Elements of Life Tour" autofocus>
+  <label data-i18n="nieuwConcert.naamLabel">Naam van het concert</label>
+  <input type="text" id="naam" data-i18n-placeholder="nieuwConcert.naamPlaceholder" placeholder="bijv. Elements of Life Tour" autofocus>
 </div>
 
 <div class="veld">
-  <label>Artiest</label>
-  <input type="text" id="artiest" placeholder="bijv. Tiësto">
+  <label data-i18n="nieuwConcert.artiestLabel">Artiest</label>
+  <input type="text" id="artiest" data-i18n-placeholder="nieuwConcert.artiestPlaceholder" placeholder="bijv. Tiësto">
 </div>
 
 <div class="veld">
-  <label>Datum</label>
-  <input type="text" id="datum" placeholder="bijv. 14 maart 2018">
+  <label data-i18n="nieuwConcert.datumLabel">Datum</label>
+  <input type="text" id="datum" data-i18n-placeholder="nieuwConcert.datumPlaceholder" placeholder="bijv. 14 maart 2018">
 </div>
 
 <div class="veld">
-  <label>Verhaal</label>
-  <textarea id="verhaal" rows="4" placeholder="Wat maakte deze avond bijzonder?"></textarea>
+  <label data-i18n="nieuwConcert.verhaalLabel">Verhaal</label>
+  <textarea id="verhaal" rows="4" data-i18n-placeholder="nieuwConcert.verhaalPlaceholder" placeholder="Wat maakte deze avond bijzonder?"></textarea>
 </div>
 
 <button class="opslaan-btn" id="opslaan-btn" onclick="slaOp()">Concert aanmaken</button>
 <div class="melding" id="melding"></div>
 
+<script src="js/vertalingen.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/nieuw-concert.js"></script>
 </body>
 </html>

@@ -34,7 +34,7 @@ async function laadMediaGrid() {
   const media = getMediaVoorConcert(huidigConcertId)
 
   if (media.length === 0) {
-    grid.innerHTML = '<div class="media-leeg">Nog geen foto\'s of video\'s toegevoegd.</div>'
+    grid.innerHTML = '<div class="media-leeg">' + t('concertDetail.geenMedia') + '</div>'
     return
   }
 
@@ -42,7 +42,7 @@ async function laadMediaGrid() {
     const tegel = document.createElement('div')
     tegel.className = 'media-tegel'
 
-    const verwijderKnop = '<button class="media-verwijder" onclick="event.stopPropagation();verwijderMediaItem(' + item.id + ')">&times;</button>'
+    const verwijderKnop = '<button class="media-verwijder" title="' + t('concertDetail.verwijderenTooltip') + '" onclick="event.stopPropagation();verwijderMediaItem(' + item.id + ')">&times;</button>'
     const playIcon = '<div class="media-play"><svg viewBox="0 0 24 24" fill="#c8a87a"><polygon points="5,3 19,12 5,21"/></svg></div>'
 
     if (item.type === 'foto') {
@@ -132,6 +132,10 @@ document.addEventListener('keydown', (e) => {
 })
 
 ipcRenderer.on('laad-concert', (event, concertId) => laadConcert(concertId))
+
+document.addEventListener('taal-gewijzigd', () => {
+  if (huidigConcertId) laadMediaGrid()
+})
 
 window.kiesMedia = kiesMedia
 window.voegYoutubeToe = voegYoutubeToe

@@ -43,7 +43,7 @@ async function laadConcerten() {
   const concerten = getAlleConcerten()
 
   if (concerten.length === 0) {
-    container.innerHTML = '<div class="concerten-leeg">Nog geen concertervaringen — klik op + om uw eerste concert toe te voegen.</div>'
+    container.innerHTML = '<div class="concerten-leeg">' + t('concert.leeg') + '</div>'
   } else {
     for (const concert of concerten) {
       const media = getMediaVoorConcert(concert.id)
@@ -66,11 +66,11 @@ async function laadConcerten() {
         }
       }
 
-      const verwijderKnop = '<button class="concert-verwijder-btn" onclick="event.stopPropagation();bevestigConcertVerwijderen(' + concert.id + ',\'' + concert.naam.replace(/'/g, "\\'") + '\')" title="Concert verwijderen">'
+      const verwijderKnop = '<button class="concert-verwijder-btn" onclick="event.stopPropagation();bevestigConcertVerwijderen(' + concert.id + ',\'' + concert.naam.replace(/'/g, "\\'") + '\')" title="' + t('concert.verwijderenTooltip') + '">'
         + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H6L5,6"/><path d="M10,11v6M14,11v6"/><path d="M9,6V4h6v2"/></svg>'
         + '</button>'
 
-      const bewerkKnop = '<button class="concert-bewerk-btn" onclick="event.stopPropagation();bewerkConcert(' + concert.id + ')" title="Concert bewerken">'
+      const bewerkKnop = '<button class="concert-bewerk-btn" onclick="event.stopPropagation();bewerkConcert(' + concert.id + ')" title="' + t('concert.bewerkenTooltip') + '">'
         + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>'
         + '</button>'
 
@@ -78,7 +78,7 @@ async function laadConcerten() {
       kaart.className = 'concert-kaart'
       kaart.innerHTML = '<div class="concert-cover">'
         + coverHtml
-        + (media.length > 0 ? '<div class="concert-media-aantal">' + media.length + ' items</div>' : '')
+        + (media.length > 0 ? '<div class="concert-media-aantal">' + t('concert.items', { n: media.length }) + '</div>' : '')
         + verwijderKnop
         + bewerkKnop
         + '</div>'
@@ -95,7 +95,7 @@ async function laadConcerten() {
 
   const nieuwBtn = document.createElement('button')
   nieuwBtn.className = 'concert-nieuw-btn'
-  nieuwBtn.innerHTML = '+<span class="concert-nieuw-label">Nieuw concert</span>'
+  nieuwBtn.innerHTML = '+<span class="concert-nieuw-label">' + t('concert.nieuw') + '</span>'
   nieuwBtn.onclick = () => ipcRenderer.send('open-nieuw-concert')
   container.appendChild(nieuwBtn)
 

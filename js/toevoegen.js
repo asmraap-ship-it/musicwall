@@ -24,16 +24,17 @@
 
   ipcRenderer.on('bestand-gekozen', (event, pad) => {
     gekozenPad = pad
+    document.getElementById('bestand-naam').removeAttribute('data-i18n')
     document.getElementById('bestand-naam').textContent = pad.split('\\').pop()
     document.getElementById('lokaal-pad').value = pad
   })
 
   function slaOp() {
     if (!huidigWallId) {
-      document.getElementById('melding').textContent = 'Geen wall geselecteerd.'
+      document.getElementById('melding').textContent = t('validatie.geenWall')
       return
     }
-	
+
     const wallId = huidigWallId
 	const artiest = document.getElementById('artiest').value.trim()
     const titel = document.getElementById('titel').value.trim()
@@ -41,26 +42,26 @@
     const tag = document.getElementById('tag').value.trim()
 
     if (!titel) {
-      document.getElementById('melding').textContent = 'Vul minimaal een titel in.'
+      document.getElementById('melding').textContent = t('validatie.vulTitelIn')
       return
     }
 
     if (huidigType === 'youtube') {
       const url = document.getElementById('youtube-url').value.trim()
       if (!url) {
-        document.getElementById('melding').textContent = 'Vul een YouTube URL in.'
+        document.getElementById('melding').textContent = t('validatie.vulYoutubeUrlIn')
         return
       }
       voegVideoToe({ wallId, type: 'youtube', artiest, titel, verhaal, tag, youtubeUrl: url })
     } else {
       if (!gekozenPad) {
-        document.getElementById('melding').textContent = 'Kies een videobestand.'
+        document.getElementById('melding').textContent = t('validatie.kiesVideobestand')
         return
       }
       voegVideoToe({ wallId, type: 'lokaal', artiest, titel, verhaal, tag, lokaalPad: gekozenPad })
     }
-	
-	document.getElementById('melding').textContent = '✓ Opgeslagen'
+
+	document.getElementById('melding').textContent = t('algemeen.opgeslagen')
     setTimeout(() => {
       ipcRenderer.send('nummer-toegevoegd')
     }, 800)

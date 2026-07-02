@@ -5,14 +5,21 @@ const { maakWall, hernoemWall } = require('./db/walls.js')
 let modus = 'aanmaken'
 let wallId = null
 
+function toonTitelEnKnop() {
+  document.getElementById('titel').textContent = modus === 'hernoemen' ? t('nieuweWall.hernoemenTitel') : t('nieuweWall.titel')
+  document.getElementById('opslaan-btn').textContent = modus === 'hernoemen' ? t('algemeen.opslaanBtn') : t('nieuweWall.aanmakenBtn')
+}
+
 ipcRenderer.on('stel-hernoem-in', (event, { wallId: id, huidigeNaam }) => {
   modus = 'hernoemen'
   wallId = id
-  document.getElementById('titel').textContent = 'Wall hernoemen'
-  document.getElementById('opslaan-btn').textContent = 'Opslaan'
+  toonTitelEnKnop()
   document.getElementById('naam').value = huidigeNaam
   document.getElementById('naam').select()
 })
+
+document.addEventListener('taal-gewijzigd', toonTitelEnKnop)
+toonTitelEnKnop()
 
 document.getElementById('naam').addEventListener('keyup', (e) => {
   if (e.key === 'Enter') slaOp()
@@ -21,7 +28,7 @@ document.getElementById('naam').addEventListener('keyup', (e) => {
 function slaOp() {
   const naam = document.getElementById('naam').value.trim()
   if (!naam) {
-    document.getElementById('melding').textContent = 'Vul een naam in.'
+    document.getElementById('melding').textContent = t('validatie.vulNaamIn')
     return
   }
 

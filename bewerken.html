@@ -19,31 +19,33 @@
 
 <div class="titelbalk-drag"></div>
 
-<h2>Nummer bewerken</h2>
+<h2 data-i18n="bewerken.titel">Nummer bewerken</h2>
 
 <div class="veld">
-  <label>Artiest</label>
-  <input type="text" id="artiest" placeholder="Naam van de artiest">
+  <label data-i18n="toevoegen.artiestLabel">Artiest</label>
+  <input type="text" id="artiest" data-i18n-placeholder="toevoegen.artiestPlaceholder" placeholder="Naam van de artiest">
 </div>
 
 <div class="veld">
-  <label>Titel</label>
-  <input type="text" id="titel" placeholder="Naam van het nummer">
+  <label data-i18n="toevoegen.titelLabel">Titel</label>
+  <input type="text" id="titel" data-i18n-placeholder="toevoegen.titelPlaceholder" placeholder="Naam van het nummer">
 </div>
 
 <div class="veld">
-  <label>Verhaal</label>
-  <textarea id="verhaal" placeholder="Waarom betekent dit nummer iets voor u?"></textarea>
+  <label data-i18n="toevoegen.verhaalLabel">Verhaal</label>
+  <textarea id="verhaal" data-i18n-placeholder="toevoegen.verhaalPlaceholder" placeholder="Waarom betekent dit nummer iets voor u?"></textarea>
 </div>
 
 <div class="veld">
-  <label>Tag</label>
-  <input type="text" id="tag" placeholder="bijv. Live · Concert of Omwenteling">
+  <label data-i18n="toevoegen.tagLabel">Tag</label>
+  <input type="text" id="tag" data-i18n-placeholder="toevoegen.tagPlaceholder" placeholder="bijv. Live · Concert of Omwenteling">
 </div>
 
-<button class="opslaan-btn" onclick="slaOp()">Opslaan</button>
+<button class="opslaan-btn" onclick="slaOp()" data-i18n="algemeen.opslaanBtn">Opslaan</button>
 <div class="melding" id="melding"></div>
 
+<script src="js/vertalingen.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/bewerken.js"></script>
 </body>
 </html>

@@ -5,17 +5,24 @@ const { maakConcert, updateConcert } = require('./db/concerten.js')
 let modus = 'aanmaken'
 let concertId = null
 
+function toonTitelEnKnop() {
+  document.getElementById('titel').textContent = modus === 'bewerken' ? t('nieuwConcert.bewerkenTitel') : t('nieuwConcert.titel')
+  document.getElementById('opslaan-btn').textContent = modus === 'bewerken' ? t('algemeen.opslaanBtn') : t('nieuwConcert.aanmakenBtn')
+}
+
 ipcRenderer.on('stel-bewerk-in', (event, concert) => {
   modus = 'bewerken'
   concertId = concert.id
-  document.getElementById('titel').textContent = 'Concert bewerken'
-  document.getElementById('opslaan-btn').textContent = 'Opslaan'
+  toonTitelEnKnop()
   document.getElementById('naam').value = concert.naam || ''
   document.getElementById('artiest').value = concert.artiest || ''
   document.getElementById('datum').value = concert.datum || ''
   document.getElementById('verhaal').value = concert.verhaal || ''
   document.getElementById('naam').select()
 })
+
+document.addEventListener('taal-gewijzigd', toonTitelEnKnop)
+toonTitelEnKnop()
 
 document.getElementById('naam').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') document.getElementById('artiest').focus()
@@ -32,7 +39,7 @@ function slaOp() {
   const verhaal = document.getElementById('verhaal').value.trim()
 
   if (!naam) {
-    document.getElementById('melding').textContent = 'Vul een naam in.'
+    document.getElementById('melding').textContent = t('validatie.vulNaamIn')
     return
   }
 

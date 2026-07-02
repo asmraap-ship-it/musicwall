@@ -10,7 +10,7 @@ async function laadPlaylist() {
   const lijst = document.getElementById('playlist-lijst')
 
   if (playlist.length === 0) {
-    lijst.innerHTML = '<div class="playlist-leeg">Selecteer lokale videos in een wall en klik op "Voeg toe aan de playlist".</div>'
+    lijst.innerHTML = '<div class="playlist-leeg">' + t('jukebox.leegLijst') + '</div>'
     return
   }
 
@@ -144,12 +144,12 @@ function toonKlaarMelding() {
   const scherm = document.getElementById('speel-scherm')
   const placeholder = document.getElementById('speel-placeholder')
   placeholder.innerHTML = '<div class="speel-icoon">✓</div>'
-    + '<div class="speel-tekst">Alle nummers zijn afgespeeld</div>'
+    + '<div class="speel-tekst">' + t('jukebox.alleAfgespeeld') + '</div>'
   placeholder.style.display = 'flex'
 
   setTimeout(() => {
     placeholder.innerHTML = '<div class="speel-icoon">♪</div>'
-      + '<div class="speel-tekst">Kies een nummer uit de playlist</div>'
+      + '<div class="speel-tekst">' + t('jukebox.kiesNummer') + '</div>'
   }, 4000)
 }
 

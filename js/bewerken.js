@@ -19,13 +19,13 @@ function slaOp() {
   const tag = document.getElementById('tag').value.trim()
 
   if (!titel) {
-    document.getElementById('melding').textContent = 'Vul minimaal een titel in.'
+    document.getElementById('melding').textContent = t('validatie.vulTitelIn')
     return
   }
 
   updateVideo({ id: huidigVideoId, artiest, titel, verhaal, tag })
 
-  document.getElementById('melding').textContent = '✓ Opgeslagen'
+  document.getElementById('melding').textContent = t('algemeen.opgeslagen')
   setTimeout(() => {
     ipcRenderer.send('bewerken-klaar')
   }, 800)

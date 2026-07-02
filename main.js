@@ -18,6 +18,23 @@ if (!fs.existsSync(thumbnailsPath)) {
 let mainWindow
 let videoWindow = null
 let huidigThema = ''
+let huidigeTaal = 'nl'
+
+const VERTALINGEN = require('./js/vertalingen.js')
+
+function t(sleutel, vervang) {
+  let tekst = (VERTALINGEN[huidigeTaal] && VERTALINGEN[huidigeTaal][sleutel]) || VERTALINGEN.nl[sleutel] || sleutel
+  if (vervang) {
+    Object.keys(vervang).forEach(k => {
+      tekst = tekst.split('{' + k + '}').join(vervang[k])
+    })
+  }
+  return tekst
+}
+
+ipcMain.on('taal-gewijzigd', (event, taal) => {
+  huidigeTaal = taal || 'nl'
+})
 
 const titelbalkKleuren = {
   '': { color: '#0e0c09', symbolColor: '#c8a87a' },
@@ -161,7 +178,7 @@ ipcMain.on('open-toevoegen', (event, wallId) => {
   const addWin = new BrowserWindow({
     width: 600,
     height: 700,
-    title: 'Nummer toevoegen',
+    title: t('toevoegen.titel'),
     ...titelbalkOpties,
     webPreferences: {
       nodeIntegration: true,
@@ -190,7 +207,7 @@ ipcMain.on('open-nieuwe-wall', () => {
   const wallWin = new BrowserWindow({
     width: 400,
     height: 220,
-    title: 'Nieuwe wall',
+    title: t('nieuweWall.titel'),
     ...titelbalkOpties,
     webPreferences: {
       nodeIntegration: true,
@@ -204,7 +221,7 @@ ipcMain.on('open-nieuwe-wall', () => {
 ipcMain.on('kies-bestand', async (event) => {
   const result = await dialog.showOpenDialog({
     properties: ['openFile'],
-    filters: [{ name: 'Video', extensions: ['mp4', 'mkv', 'avi', 'mov', 'webm'] }]
+    filters: [{ name: t('zoeken.videoFilterNaam'), extensions: ['mp4', 'mkv', 'avi', 'mov', 'webm'] }]
   })
   if (!result.canceled && result.filePaths.length > 0) {
     event.sender.send('bestand-gekozen', result.filePaths[0])
@@ -234,7 +251,7 @@ ipcMain.handle('maak-thumbnail', async (event, videoPad) => {
 })
 
 ipcMain.on('bevestig-verwijderen', async (event, { videoId, naam }) => {
-  const akkoord = await vraagBevestiging('Video verwijderen', naam)
+  const akkoord = await vraagBevestiging(t('video.verwijderen.titel'), naam)
   if (akkoord) {
     const { verwijderVideo } = require('./db/videos.js')
     verwijderVideo(videoId)
@@ -246,7 +263,7 @@ ipcMain.on('open-bewerken', (event, video) => {
   const bewerkWin = new BrowserWindow({
     width: 600,
     height: 580,
-    title: 'Nummer bewerken',
+    title: t('bewerken.titel'),
     ...titelbalkOpties,
     webPreferences: {
       nodeIntegration: true,
@@ -269,7 +286,7 @@ ipcMain.on('bewerken-klaar', () => {
 ipcMain.on('open-import', async (event) => {
   const result = await dialog.showOpenDialog({
     properties: ['openDirectory'],
-    title: 'Kies een map met videos'
+    title: t('importeren.mapKiezenTitel')
   })
 
   if (result.canceled || result.filePaths.length === 0) return
@@ -284,8 +301,8 @@ ipcMain.on('open-import', async (event) => {
   if (bestanden.length === 0) {
     dialog.showMessageBoxSync({
       type: 'info',
-      title: 'Geen videos gevonden',
-      message: 'Er zijn geen videobestanden gevonden in deze map.'
+      title: t('importeren.geenVideosTitel'),
+      message: t('importeren.geenVideosBericht')
     })
     return
   }
@@ -297,7 +314,7 @@ ipcMain.on('open-importeren', () => {
   const importWin = new BrowserWindow({
     width: 550,
     height: 620,
-    title: 'Videos importeren',
+    title: t('importeren.titel'),
     ...titelbalkOpties,
     webPreferences: {
       nodeIntegration: true,
@@ -314,7 +331,7 @@ ipcMain.on('import-klaar', () => {
 })
 
 ipcMain.on('bevestig-verwijderen-meerdere', async (event, { ids, namen }) => {
-  const akkoord = await vraagBevestiging(ids.length + ' videos verwijderen', namen)
+  const akkoord = await vraagBevestiging(t('video.meerdereVerwijderen.titel', { n: ids.length }), namen)
   if (akkoord) {
     const { verwijderVideo } = require('./db/videos.js')
     ids.forEach(id => verwijderVideo(id))
@@ -326,7 +343,7 @@ ipcMain.on('open-zoeken', () => {
   const zoekWin = new BrowserWindow({
     width: 600,
     height: 750,
-    title: 'YouTube zoeken',
+    title: t('zoeken.titel'),
     ...titelbalkOpties,
     webPreferences: {
       nodeIntegration: true,
@@ -365,7 +382,7 @@ ipcMain.on('open-help', () => {
   const helpWin = new BrowserWindow({
     width: 650,
     height: 750,
-    title: 'Musicwall — Help',
+    title: 'Musicwall — ' + t('help.titel'),
     ...titelbalkOpties,
     webPreferences: {
       nodeIntegration: true,
@@ -379,10 +396,10 @@ ipcMain.on('open-help', () => {
 ipcMain.on('bevestig-wall-verwijderen', async (event, { wallId, wallNaam }) => {
   const { getVideosVoorWall } = require('./db/videos.js')
   const aantal = getVideosVoorWall(wallId).length
-  const bericht = 'Weet u zeker dat u "' + wallNaam + '" wilt verwijderen?\n'
-    + (aantal > 0 ? 'Dit verwijdert ook ' + aantal + ' video(s) in deze wall.' : 'Deze wall is leeg.')
+  const bericht = t('wall.verwijderen.bevestiging', { naam: wallNaam }) + '\n'
+    + (aantal > 0 ? t('wall.verwijderen.metVideos', { n: aantal }) : t('wall.verwijderen.leeg'))
 
-  const akkoord = await vraagBevestiging('Wall verwijderen', bericht)
+  const akkoord = await vraagBevestiging(t('wall.verwijderen.titel'), bericht)
   if (akkoord) {
     const { verwijderWall } = require('./db/walls.js')
     verwijderWall(wallId)
@@ -425,7 +442,7 @@ ipcMain.on('open-hernoem-wall', (event, { wallId, huidigeNaam }) => {
   const wallWin = new BrowserWindow({
     width: 400,
     height: 220,
-    title: 'Wall hernoemen',
+    title: t('nieuweWall.hernoemenTitel'),
     ...titelbalkOpties,
     webPreferences: {
       nodeIntegration: true,
@@ -461,7 +478,7 @@ ipcMain.on('open-nieuw-concert', () => {
   const concertWin = new BrowserWindow({
     width: 550,
     height: 520,
-    title: 'Nieuw concert',
+    title: t('nieuwConcert.titel'),
     ...titelbalkOpties,
     webPreferences: {
       nodeIntegration: true,
@@ -481,7 +498,7 @@ ipcMain.on('open-bewerk-concert', (event, concert) => {
   const concertWin = new BrowserWindow({
     width: 550,
     height: 520,
-    title: 'Concert bewerken',
+    title: t('nieuwConcert.bewerkenTitel'),
     ...titelbalkOpties,
     webPreferences: {
       nodeIntegration: true,
@@ -519,7 +536,7 @@ ipcMain.on('kies-concert-media', async (event) => {
   const result = await dialog.showOpenDialog({
     properties: ['openFile', 'multiSelections'],
     filters: [
-      { name: 'Foto en video', extensions: ['jpg', 'jpeg', 'png', 'heic', 'mp4', 'mov', 'mkv', 'avi', 'webm'] }
+      { name: t('concertDetail.mediaFilterNaam'), extensions: ['jpg', 'jpeg', 'png', 'heic', 'mp4', 'mov', 'mkv', 'avi', 'webm'] }
     ]
   })
   if (!result.canceled && result.filePaths.length > 0) {
@@ -534,10 +551,10 @@ ipcMain.on('concert-media-toegevoegd', () => {
 ipcMain.on('bevestig-concert-verwijderen', async (event, { concertId, concertNaam }) => {
   const { getMediaVoorConcert, verwijderConcert } = require('./db/concerten.js')
   const aantal = getMediaVoorConcert(concertId).length
-  const bericht = 'Weet u zeker dat u "' + concertNaam + '" wilt verwijderen?\n'
-    + (aantal > 0 ? 'Dit verwijdert ook ' + aantal + ' foto/video item(s) in dit concert.' : 'Dit concert heeft nog geen media.')
+  const bericht = t('concert.verwijderen.bevestiging', { naam: concertNaam }) + '\n'
+    + (aantal > 0 ? t('concert.verwijderen.metMedia', { n: aantal }) : t('concert.verwijderen.geenMedia'))
 
-  const akkoord = await vraagBevestiging('Concert verwijderen', bericht)
+  const akkoord = await vraagBevestiging(t('concert.verwijderen.titel'), bericht)
   if (akkoord) {
     verwijderConcert(concertId)
     if (mainWindow) mainWindow.webContents.send('herlaad-concerten')

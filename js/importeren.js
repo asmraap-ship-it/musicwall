@@ -35,7 +35,7 @@ ipcRenderer.on('import-bestanden', (event, gevonden) => {
   const container = document.getElementById('bestand-lijst-container')
 
   container.style.display = 'block'
-  label.textContent = bestanden.length + ' videobestanden gevonden'
+  label.textContent = t('importeren.videobestandenGevonden', { n: bestanden.length })
   lijst.innerHTML = ''
 
   bestanden.forEach((pad, i) => {
@@ -46,7 +46,7 @@ ipcRenderer.on('import-bestanden', (event, gevonden) => {
     lijst.appendChild(item)
   })
 
-  document.getElementById('import-btn').textContent = 'Importeren'
+  document.getElementById('import-btn').textContent = t('importeren.importerenBtn')
   document.getElementById('melding').textContent = ''
 })
 
@@ -67,7 +67,7 @@ async function importeer() {
 
     const pct = Math.round((i / bestanden.length) * 100)
     document.getElementById('voortgang-vulling').style.width = pct + '%'
-    document.getElementById('voortgang-tekst').textContent = (i + 1) + ' van ' + bestanden.length + ' — ' + naam
+    document.getElementById('voortgang-tekst').textContent = t('importeren.voortgang', { i: i + 1, n: bestanden.length, naam })
 
     voegVideoToe({
       wallId,
@@ -84,8 +84,8 @@ async function importeer() {
   }
 
   document.getElementById('voortgang-vulling').style.width = '100%'
-  document.getElementById('voortgang-tekst').textContent = 'Klaar — ' + bestanden.length + ' videos geïmporteerd'
-  document.getElementById('melding').textContent = '✓ Import voltooid'
+  document.getElementById('voortgang-tekst').textContent = t('importeren.klaar', { n: bestanden.length })
+  document.getElementById('melding').textContent = t('importeren.voltooid')
 
   bezig = false
   btn.disabled = false

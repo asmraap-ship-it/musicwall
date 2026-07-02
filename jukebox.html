@@ -20,8 +20,8 @@
 <div class="jukebox">
   <div class="playlist-kolom">
     <div class="playlist-header">
-      <span>Playlist</span>
-      <button class="leeg-btn" onclick="leegMaken()">Leegmaken</button>
+      <span data-i18n="jukebox.playlist">Playlist</span>
+      <button class="leeg-btn" onclick="leegMaken()" data-i18n="jukebox.leegmaken">Leegmaken</button>
     </div>
     <div class="playlist-lijst" id="playlist-lijst"></div>
   </div>
@@ -31,22 +31,24 @@
 	  <video id="speler" controls></video>
 	  <div class="speel-placeholder" id="speel-placeholder">
 		<div class="speel-icoon">♪</div>
-		<div class="speel-tekst">Kies een nummer uit de playlist</div>
+		<div class="speel-tekst" data-i18n="jukebox.kiesNummer">Kies een nummer uit de playlist</div>
 	  </div>
-	  <button class="fullscreen-btn" id="fullscreen-btn" onclick="schermvullend()" title="Schermvullend">⛶</button>
+	  <button class="fullscreen-btn" id="fullscreen-btn" onclick="schermvullend()" data-i18n-title="jukebox.schermvullend" title="Schermvullend">⛶</button>
 	</div>
 	<div class="navigatie">
-	     <button onclick="schudPlaylist()" id="shuffle-btn" title="Shuffle">⤮</button>
-	     <button onclick="naarEerste()" title="Eerste">⏮</button>
-   	     <button onclick="vorige()" title="Vorige">◀</button>
-		 <button onclick="speelPauze()" id="play-btn" title="Afspelen">▶</button>
-		 <button onclick="stop()" title="Stoppen">⏹</button>
-		 <button onclick="volgende()" title="Volgende">▶▶</button>
-		 <button onclick="naarLaatste()" title="Laatste">⏭</button>
+	     <button onclick="schudPlaylist()" id="shuffle-btn" data-i18n-title="jukebox.shuffle" title="Shuffle">⤮</button>
+	     <button onclick="naarEerste()" data-i18n-title="jukebox.eerste" title="Eerste">⏮</button>
+   	     <button onclick="vorige()" data-i18n-title="jukebox.vorige" title="Vorige">◀</button>
+		 <button onclick="speelPauze()" id="play-btn" data-i18n-title="jukebox.afspelen" title="Afspelen">▶</button>
+		 <button onclick="stop()" data-i18n-title="jukebox.stoppen" title="Stoppen">⏹</button>
+		 <button onclick="volgende()" data-i18n-title="jukebox.volgende" title="Volgende">▶▶</button>
+		 <button onclick="naarLaatste()" data-i18n-title="jukebox.laatste" title="Laatste">⏭</button>
 	</div>
   </div>
 </div>
 
+<script src="js/vertalingen.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/jukebox.js"></script>
 </body>
 </html>

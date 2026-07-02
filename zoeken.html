@@ -19,20 +19,22 @@
 
 <div class="titelbalk-drag"></div>
 
-<h2>YouTube zoeken</h2>
+<h2 data-i18n="zoeken.titel">YouTube zoeken</h2>
 
 <div class="zoekbalk">
-  <input type="text" id="zoekterm" placeholder="Zoek een nummer of artiest..." autofocus>
-  <button onclick="zoek()">Zoeken</button>
+  <input type="text" id="zoekterm" data-i18n-placeholder="zoeken.zoektermPlaceholder" placeholder="Zoek een nummer of artiest..." autofocus>
+  <button onclick="zoek()" data-i18n="zoeken.zoekenBtn">Zoeken</button>
 </div>
 
 <div class="veld">
-  <label>Toevoegen aan wall</label>
+  <label data-i18n="zoeken.toevoegenAanWall">Toevoegen aan wall</label>
   <select id="wall-keuze"></select>
 </div>
 
 <div id="resultaten"></div>
 
+<script src="js/vertalingen.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/zoeken.js"></script>
 </body>
 </html>

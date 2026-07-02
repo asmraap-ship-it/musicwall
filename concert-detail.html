@@ -29,10 +29,10 @@
 <div class="concert-verhaal" id="detail-verhaal"></div>
 
 <div class="media-toevoegen-balk">
-  <button class="bestand-btn" onclick="kiesMedia()">📁 Foto / video toevoegen</button>
+  <button class="bestand-btn" onclick="kiesMedia()" data-i18n="concertDetail.fotoVideoToevoegen">📁 Foto / video toevoegen</button>
   <div class="youtube-toevoegen">
     <input type="url" id="youtube-url-input" placeholder="https://www.youtube.com/watch?v=...">
-    <button class="bestand-btn" onclick="voegYoutubeToe()">▶ YouTube toevoegen</button>
+    <button class="bestand-btn" onclick="voegYoutubeToe()" data-i18n="concertDetail.youtubeToevoegen">▶ YouTube toevoegen</button>
   </div>
 </div>
 
@@ -42,6 +42,8 @@
   <img id="lightbox-img" src="" alt="">
 </div>
 
+<script src="js/vertalingen.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/concert-detail.js"></script>
 </body>
 </html>

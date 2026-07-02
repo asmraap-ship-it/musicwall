@@ -22,11 +22,11 @@ async function laadApiSleutel() {
     apiKey = instellingen.youtubeApiKey
 
     if (!apiKey || apiKey.includes('VUL_HIER')) {
-      document.getElementById('resultaten').innerHTML = '<div class="fout">Open het bestand: ' + instellingenPad + '<br><br>Vul daar uw eigen YouTube API-sleutel in om te kunnen zoeken.</div>'
+      document.getElementById('resultaten').innerHTML = '<div class="fout">' + t('zoeken.apiKeyOntbreekt', { pad: instellingenPad }) + '</div>'
     }
   } catch (e) {
     console.error('Fout bij laden instellingen:', e.message)
-    document.getElementById('resultaten').innerHTML = '<div class="fout">Kon de instellingen niet laden: ' + e.message + '</div>'
+    document.getElementById('resultaten').innerHTML = '<div class="fout">' + t('zoeken.instellingenFout', { bericht: e.message }) + '</div>'
   }
 }
 
@@ -49,7 +49,7 @@ async function zoek() {
   if (!term) return
 
   const resultaten = document.getElementById('resultaten')
-  resultaten.innerHTML = '<div class="laden">Zoeken...</div>'
+  resultaten.innerHTML = '<div class="laden">' + t('zoeken.zoeken') + '</div>'
 
   try {
     const url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=25&q='
@@ -59,12 +59,12 @@ async function zoek() {
     const data = await response.json()
 
     if (data.error) {
-      resultaten.innerHTML = '<div class="fout">Fout: ' + data.error.message + '</div>'
+      resultaten.innerHTML = '<div class="fout">' + t('zoeken.fout', { bericht: data.error.message }) + '</div>'
       return
     }
 
     if (!data.items || data.items.length === 0) {
-      resultaten.innerHTML = '<div class="geen-resultaten">Geen resultaten gevonden.</div>'
+      resultaten.innerHTML = '<div class="geen-resultaten">' + t('zoeken.geenResultaten') + '</div>'
       return
     }
 
@@ -88,7 +88,7 @@ async function zoek() {
       resultaten.appendChild(el)
     })
   } catch (err) {
-    resultaten.innerHTML = '<div class="fout">Er ging iets mis: ' + err.message + '</div>'
+    resultaten.innerHTML = '<div class="fout">' + t('zoeken.misgegaan', { bericht: err.message }) + '</div>'
   }
 }
 
@@ -103,7 +103,7 @@ function voegToe(videoId, titel, kanaal, el) {
   el.style.cursor = 'default'
 
   const oudeInhoud = el.innerHTML
-  el.innerHTML = oudeInhoud + '<div class="toegevoegd-badge">✓ Toegevoegd</div>'
+  el.innerHTML = oudeInhoud + '<div class="toegevoegd-badge">' + t('zoeken.toegevoegd') + '</div>'
 
   voegVideoToe({
     wallId,

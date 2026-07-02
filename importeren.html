@@ -66,10 +66,10 @@
 
 <div class="titelbalk-drag"></div>
 
-<h2>Videos importeren</h2>
+<h2 data-i18n="importeren.titel">Videos importeren</h2>
 
 <div class="veld">
-  <label>Wall</label>
+  <label data-i18n="importeren.wallLabel">Wall</label>
   <select id="wall-keuze"></select>
 </div>
 
@@ -85,9 +85,11 @@
   </div>
 </div>
 
-<button class="opslaan-btn" id="import-btn" onclick="startImport()" style="margin-top:1.5rem">Kies map</button>
+<button class="opslaan-btn" id="import-btn" onclick="startImport()" style="margin-top:1.5rem" data-i18n="importeren.kiesMapBtn">Kies map</button>
 <div class="melding" id="melding"></div>
 
+<script src="js/vertalingen.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/importeren.js"></script>
 </body>
 </html>
