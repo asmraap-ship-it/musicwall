@@ -122,16 +122,8 @@ function vorige() {
 }
 
 function volgende() {
-  const afgespeeld = playlist[huidigeIndex]
-  if (afgespeeld) {
-    verwijderUitPlaylist(afgespeeld.playlist_id)
-  }
-
-  playlist = getPlaylist()
-
-  if (playlist.length > 0) {
-    huidigeIndex = -1
-    speelIndex(0)
+  if (huidigeIndex < playlist.length - 1) {
+    speelIndex(huidigeIndex + 1)
   } else {
     huidigeIndex = -1
     stop()
