@@ -1,0 +1,73 @@
+[data-thema="natuur"] {
+  --achtergrond: #0a0f0a;
+  --achtergrond-2: #0e140e;
+  --achtergrond-3: #131a13;
+  --oppervlak: rgba(18, 26, 18, 0.85);
+  --oppervlak-hover: rgba(26, 36, 26, 0.9);
+  --accent: #8fae6a;
+  --accent-rgb: 143, 174, 106;
+  --accent-dim: rgba(143, 174, 106, 0.2);
+  --accent-rand: rgba(143, 174, 106, 0.3);
+  --tekst: #e4ead9;
+  --tekst-dim: #8a9a7a;
+  --tekst-donker: #4a5a42;
+  --rand: #1e2a1e;
+  --rand-2: #263424;
+  --rand-3: #303f2c;
+  --schaduw: rgba(0, 0, 0, 0.6);
+  --card-rand: 2px solid var(--accent);
+  --radius: 6px;
+}
+
+[data-thema="natuur"] body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at top, rgba(80, 120, 60, 0.08) 0%, transparent 60%);
+  z-index: 5;
+}
+
+[data-thema="natuur"] .wall {
+  background: linear-gradient(165deg, rgba(24, 34, 24, 0.9), rgba(10, 15, 10, 0.88));
+  border: 1px solid #303f2c;
+  box-shadow:
+    inset 0 1px 0 rgba(180,210,150,0.08),
+    inset 0 -2px 6px rgba(0,0,0,0.4),
+    0 8px 28px rgba(20, 40, 15, 0.2);
+}
+
+[data-thema="natuur"] .wall::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(143, 174, 106, 0.6), transparent);
+}
+
+[data-thema="natuur"] .wall-header {
+  background: linear-gradient(180deg, rgba(30, 42, 28, 0.95), rgba(14, 20, 14, 0.95));
+  border-bottom: 1px solid #303f2c;
+}
+
+[data-thema="natuur"] header {
+  background: linear-gradient(180deg, rgba(12, 17, 12, 0.98), rgba(7, 10, 7, 0.98));
+  border-bottom: 1px solid #303f2c;
+  box-shadow: inset 0 1px 0 rgba(143, 174, 106, 0.1), 0 2px 16px rgba(60, 100, 40, 0.1);
+}
+
+[data-thema="natuur"] .card {
+  background: linear-gradient(165deg, rgba(26, 36, 24, 0.8), rgba(12, 17, 12, 0.8));
+  border-left: 3px solid #8fae6a;
+}
+
+[data-thema="natuur"] .card:hover {
+  background: linear-gradient(165deg, rgba(34, 46, 30, 0.9), rgba(16, 22, 16, 0.9));
+  box-shadow: inset 0 1px 0 rgba(143, 174, 106, 0.15), 0 4px 18px rgba(143, 174, 106, 0.12);
+}
+
+[data-thema="natuur"] .navigatie button,
+[data-thema="natuur"] .toevoegen-btn,
+[data-thema="natuur"] #thema-keuze,
+[data-thema="natuur"] #prullenbak,
+[data-thema="natuur"]

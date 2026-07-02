@@ -1,0 +1,121 @@
+:root {
+  --achtergrond: #17150f;
+  --achtergrond-2: #1c1911;
+  --achtergrond-3: #221e15;
+  --accent: #c8a87a;
+  --accent-rgb: 200, 168, 122;
+  --tekst: #f0ede8;
+  --tekst-dim: #999999;
+  --tekst-donker: #666666;
+  --rand: #1a1a1a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--achtergrond);
+  background-image:
+    repeating-linear-gradient(125deg, rgba(var(--accent-rgb), 0.05) 0px, rgba(var(--accent-rgb), 0.05) 1px, transparent 1px, transparent 6px),
+    radial-gradient(ellipse at 50% -10%, rgba(var(--accent-rgb), 0.14), transparent 60%);
+  background-attachment: fixed;
+  color: var(--tekst);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 0 0 3rem;
+}
+
+html::before,
+html::after {
+  content: '';
+  position: fixed;
+  bottom: 10px;
+  width: 22px;
+  height: 22px;
+  border-color: rgba(var(--accent-rgb), 0.45);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+html::before { left: 10px; border-bottom-width: 2px; border-left-width: 2px; }
+html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--achtergrond-3); }
+::-webkit-scrollbar-thumb { background: var(--rand); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+header {
+  padding: 1.5rem 2rem 1rem;
+  border-bottom: 1px solid var(--rand);
+  position: sticky;
+  top: 0;
+  background: var(--achtergrond);
+  -webkit-app-region: drag;
+}
+
+.logo {
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.5;
+  margin-bottom: 0.3rem;
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+}
+
+.inhoud {
+  padding: 1.5rem 2rem;
+  max-width: 600px;
+}
+
+section {
+  margin-bottom: 2rem;
+}
+
+h2 {
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+
+p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--tekst-dim);
+  margin-bottom: 0.5rem;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+li {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--tekst-dim);
+  padding-left: 1rem;
+  position: relative;
+  margin-bottom: 0.4rem;
+}
+
+li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  opacity: 0.5;
+}
+
+strong {
+  color: var(--tekst);
+  font-weight: 500;
+}

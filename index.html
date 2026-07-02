@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Musicwall</title>
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+  <link rel="stylesheet" href="css/themas/natuur.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+  <script>window.gsap = require('gsap').gsap</script>
+</head>
+<body>
+<canvas id="achtergrond"></canvas>
+<div class="selectie-info" id="selectie-info">
+  <span id="selectie-tekst"></span>
+  <button class="naar-jukebox-btn" id="naar-jukebox-btn" onclick="stuurNaarJukebox()">&#9835; Voeg toe aan de playlist</button>
+</div>
+<header>
+  <div class="header-links">
+    <h1>My life's <span>Musicwall</span></h1>
+  </div>
+  <div class="header-knoppen">
+    <button class="toevoegen-btn" onclick="openImporteren()">&#8593; Map importeren</button>
+    <button class="toevoegen-btn" onclick="openZoeken()">&#8981; YouTube zoeken</button>
+    <button class="toevoegen-btn" onclick="openJukebox()">&#9835; Jukebox</button>
+    <button class="toevoegen-btn" onclick="openHelp()">? Help</button>
+    <div id="prullenbak" ondragover="prullenbakOver(event)" ondragleave="prullenbakLeave(event)" ondrop="prullenbakDrop(event)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polyline points="3,6 5,6 21,6"/>
+        <path d="M19,6l-1,14H6L5,6"/>
+        <path d="M10,11v6M14,11v6"/>
+        <path d="M9,6V4h6v2"/>
+      </svg>
+      <span class="prullenbak-label">Sleep hierheen om te verwijderen</span>
+    </div>
+  </div>
+  <div class="header-rechts">
+    <div class="thema-dropdown" id="thema-dropdown">
+      <button class="thema-knop" onclick="toggleThemaMenu(event)" title="Kies een thema">
+        <span id="thema-label">Standaard</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="sectie-tabs" id="sectie-tabs">
+  <button class="tab-btn actief" id="btn-walls">
+    <span class="tab-label">Walls</span>
+  </button>
+  <button class="tab-btn" id="btn-concerten">
+    <span class="tab-label">Concerten</span>
+  </button>
+</div>
+<div class="thema-menu" id="thema-menu">
+  <div class="thema-optie" onclick="kiesThema('', 'Standaard')">Standaard</div>
+  <div class="thema-optie" onclick="kiesThema('metaal', 'Metaal')">Metaal</div>
+  <div class="thema-optie" onclick="kiesThema('jukebox', 'Jukebox')">Jukebox</div>
+  <div class="thema-optie" onclick="kiesThema('nacht', 'Nacht')">Nacht</div>
+  <div class="thema-optie" onclick="kiesThema('jr', 'Raw')">Raw</div>
+  <div class="thema-optie" onclick="kiesThema('natuur', 'Natuur')">Natuur</div>
+  <div class="thema-optie" onclick="kiesThema('licht', 'Licht')">Licht</div>
+</div>
+<div class="walls-container" id="walls-container"></div>
+<div class="concerten-container" id="concerten-container" style="display:none"></div>
+<script src="js/achtergrond.js"></script>
+<script src="js/index.js"></script>
+<script src="js/concerten.js"></script>
+</body>
+</html>

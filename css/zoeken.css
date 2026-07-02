@@ -1,0 +1,209 @@
+:root {
+  --achtergrond: #17150f;
+  --achtergrond-3: #221e15;
+  --accent: #c8a87a;
+  --accent-rgb: 200, 168, 122;
+  --tekst: #f0ede8;
+  --tekst-dim: #888888;
+  --tekst-donker: #555555;
+  --rand: #1a1a1a;
+  --rand-2: #222222;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--achtergrond);
+  background-image:
+    repeating-linear-gradient(125deg, rgba(var(--accent-rgb), 0.05) 0px, rgba(var(--accent-rgb), 0.05) 1px, transparent 1px, transparent 6px),
+    radial-gradient(ellipse at 50% -10%, rgba(var(--accent-rgb), 0.14), transparent 60%);
+  color: var(--tekst);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 1.5rem;
+}
+
+html::before,
+html::after {
+  content: '';
+  position: fixed;
+  bottom: 10px;
+  width: 22px;
+  height: 22px;
+  border-color: rgba(var(--accent-rgb), 0.45);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+html::before { left: 10px; border-bottom-width: 2px; border-left-width: 2px; }
+html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
+
+.titelbalk-drag {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 32px;
+  -webkit-app-region: drag;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  margin-bottom: 1.25rem;
+}
+
+.zoekbalk {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.zoekbalk input {
+  flex: 1;
+  background: var(--achtergrond-3);
+  border: 1px solid var(--rand-2);
+  border-radius: 3px;
+  color: var(--tekst);
+  font-size: 14px;
+  padding: 0.65rem 0.85rem;
+  outline: none;
+}
+
+.zoekbalk input:focus {
+  border-color: var(--accent);
+}
+
+.zoekbalk button {
+  background: var(--accent);
+  border: none;
+  border-radius: 3px;
+  color: var(--achtergrond);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0.65rem 1.25rem;
+  cursor: pointer;
+}
+
+.veld {
+  margin-bottom: 1.25rem;
+}
+
+label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--tekst-donker);
+  margin-bottom: 0.4rem;
+}
+
+select {
+  width: 100%;
+  background: var(--achtergrond-3);
+  border: 1px solid var(--rand-2);
+  border-radius: 3px;
+  color: var(--tekst);
+  font-size: 14px;
+  padding: 0.65rem 0.85rem;
+  outline: none;
+}
+
+#resultaten {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+#resultaten::-webkit-scrollbar {
+  width: 4px;
+}
+
+#resultaten::-webkit-scrollbar-track {
+  background: var(--achtergrond);
+}
+
+#resultaten::-webkit-scrollbar-thumb {
+  background: var(--rand-2);
+  border-radius: 2px;
+}
+
+#resultaten::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+.resultaat {
+  display: flex;
+  gap: 0.85rem;
+  background: var(--achtergrond-3);
+  border: 1px solid var(--rand);
+  border-radius: 3px;
+  padding: 0.6rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.resultaat:hover {
+  background: var(--rand-2);
+  border-color: var(--accent);
+}
+
+.resultaat img {
+  width: 100px;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.resultaat-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.resultaat-titel {
+  font-size: 13px;
+  color: var(--tekst);
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resultaat-kanaal {
+  font-size: 11px;
+  color: var(--tekst-dim);
+}
+
+.toegevoegd {
+  border-color: var(--accent) !important;
+  opacity: 0.6;
+  position: relative;
+}
+
+.toegevoegd-badge {
+  position: absolute;
+  top: 50%;
+  right: 0.85rem;
+  transform: translateY(-50%);
+  background: var(--accent);
+  color: var(--achtergrond);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+}
+
+.laden, .geen-resultaten, .fout {
+  font-size: 13px;
+  color: var(--tekst-donker);
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.fout { color: #c0392b; }

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Nummer toevoegen</title>
+  <link rel="stylesheet" href="css/toevoegen.css">
+  <script>
+  const thema = localStorage.getItem('musicwall-thema')
+  if (thema) document.documentElement.setAttribute('data-thema', thema)
+  </script>
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+  <link rel="stylesheet" href="css/themas/natuur.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+</head>
+<body>
+
+<div class="titelbalk-drag"></div>
+
+<h2>Nummer toevoegen</h2>
+
+<div class="type-keuze">
+  <div class="type-btn actief" id="btn-youtube" onclick="kiesType('youtube')">YouTube</div>
+  <div class="type-btn" id="btn-lokaal" onclick="kiesType('lokaal')">Lokaal bestand</div>
+</div>
+
+<div class="sectie zichtbaar" id="sectie-youtube">
+  <div class="veld">
+    <label>YouTube URL</label>
+    <input type="url" id="youtube-url" placeholder="https://www.youtube.com/watch?v=...">
+  </div>
+</div>
+
+<div class="sectie" id="sectie-lokaal">
+  <div class="veld">
+    <label>Videobestand</label>
+    <button class="bestand-btn" onclick="kiesBestand()">📁 Kies bestand</button>
+    <div class="bestand-naam" id="bestand-naam">Geen bestand gekozen</div>
+    <input type="text" id="lokaal-pad" style="display:none">
+  </div>
+</div>
+
+<div class="veld">
+  <label>Artiest</label>
+  <input type="text" id="artiest" placeholder="Naam van de artiest">
+</div>
+
+<div class="veld">
+  <label>Titel</label>
+  <input type="text" id="titel" placeholder="Naam van het nummer">
+</div>
+
+<div class="veld">
+  <label>Verhaal</label>
+  <textarea id="verhaal" placeholder="Waarom betekent dit nummer iets voor u?"></textarea>
+</div>
+
+<div class="veld">
+  <label>Tag</label>
+  <input type="text" id="tag" placeholder="bijv. Live · Concert of Omwenteling">
+</div>
+
+<button class="opslaan-btn" onclick="slaOp()">Opslaan</button>
+<div class="melding" id="melding"></div>
+
+<script src="js/toevoegen.js"></script>
+</body>
+</html>

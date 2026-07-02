@@ -1,0 +1,547 @@
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const ffmpegPath = require('ffmpeg-static')
+const { execFile } = require('child_process')
+const fs = require('fs')
+const path = require('path')
+const { pathToFileURL } = require('url')
+
+const userDataPath = app.getPath('userData')
+if (!fs.existsSync(userDataPath)) {
+  fs.mkdirSync(userDataPath, { recursive: true })
+}
+
+const thumbnailsPath = path.join(userDataPath, 'thumbnails')
+if (!fs.existsSync(thumbnailsPath)) {
+  fs.mkdirSync(thumbnailsPath, { recursive: true })
+}
+
+let mainWindow
+let videoWindow = null
+let huidigThema = ''
+
+const titelbalkKleuren = {
+  '': { color: '#0e0c09', symbolColor: '#c8a87a' },
+  licht: { color: '#ffffff', symbolColor: '#8a5a1f' },
+  metaal: { color: '#12141c', symbolColor: '#8eb4d4' },
+  jukebox: { color: '#1c0d0d', symbolColor: '#e8b94a' },
+  nacht: { color: '#0e0c1c', symbolColor: '#9d7ce8' },
+  jr: { color: '#0a0a0a', symbolColor: '#f5f5f5' },
+  natuur: { color: '#0e140e', symbolColor: '#8fae6a' }
+}
+
+function titelbalkOptiesVoorThema(thema) {
+  const kleuren = titelbalkKleuren[thema] || titelbalkKleuren['']
+  return {
+    titleBarStyle: 'hidden',
+    titleBarOverlay: { ...kleuren, height: 32 }
+  }
+}
+
+const titelbalkOpties = titelbalkOptiesVoorThema('')
+
+app.on('browser-window-created', (event, win) => {
+  try { win.setTitleBarOverlay(titelbalkOptiesVoorThema(huidigThema).titleBarOverlay) } catch (e) {}
+})
+
+ipcMain.on('thema-gewijzigd', (event, thema) => {
+  huidigThema = thema || ''
+  BrowserWindow.getAllWindows().forEach(win => {
+    try { win.setTitleBarOverlay(titelbalkOptiesVoorThema(huidigThema).titleBarOverlay) } catch (e) {}
+  })
+})
+
+function createWindow() {
+  mainWindow = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    icon: path.join(__dirname, 'build', 'icon.ico'),
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  mainWindow.loadFile('index.html')
+  mainWindow.maximize()
+}
+
+ipcMain.on('open-video', (event, url) => {
+  if (videoWindow && !videoWindow.isDestroyed()) {
+    videoWindow.close()
+  }
+
+  const videoId = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop()
+
+  videoWindow = new BrowserWindow({
+    width: 1280,
+    height: 720,
+    title: 'Musicwall',
+    frame: false,
+    backgroundColor: '#000000',
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true
+    }
+  })
+
+  videoWindow.loadURL('https://www.youtube.com/watch?v=' + videoId + '&autoplay=1')
+  videoWindow.setMenuBarVisibility(false)
+
+  videoWindow.webContents.on('did-finish-load', () => {
+    videoWindow.webContents.insertCSS(`
+      #masthead-container, #header, ytd-masthead, #guide-button, #chips-wrapper,
+      ytd-watch-next-secondary-results-renderer, #secondary, #comments, #related,
+      ytd-comments, .ytp-chrome-top, .ytp-show-cards-title, #info-contents, #meta,
+      #above-the-fold, ytd-watch-metadata, tp-yt-paper-dialog,
+      ytd-engagement-panel-section-list-renderer { display: none !important; }
+      body, html { background: #000 !important; overflow: hidden !important; }
+      #player, #player-container, ytd-player, #movie_player {
+        width: 100vw !important; height: 100vh !important;
+        position: fixed !important; top: 0 !important; left: 0 !important;
+      }
+      ytd-app { background: #000 !important; }
+      .ytp-ad-overlay-container, .ytp-ad-overlay-slot, .ytp-ad-overlay-image,
+      .ytp-ad-text-overlay, .ytp-ad-overlay-close-container,
+      ytd-action-companion-ad-renderer, ytd-display-ad-renderer,
+      ytd-promoted-sparkles-web-renderer, ytd-companion-slot-renderer
+      { display: none !important; }
+    `)
+  })
+
+  videoWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'Escape') videoWindow.close()
+  })
+
+  videoWindow.on('closed', () => {
+    BrowserWindow.getAllWindows().forEach(win => {
+      win.webContents.send('video-gesloten')
+    })
+    videoWindow = null
+  })
+})
+
+ipcMain.on('open-lokaal', (event, pad) => {
+  if (videoWindow && !videoWindow.isDestroyed()) {
+    videoWindow.close()
+  }
+
+  videoWindow = new BrowserWindow({
+    width: 1280,
+    height: 720,
+    title: 'Musicwall',
+    frame: false,
+    backgroundColor: '#000000'
+  })
+
+  const bestandUrl = pathToFileURL(pad).href
+  const spelerHtml = '<!DOCTYPE html><html><head><style>'
+    + 'html,body{margin:0;background:#000;height:100%;overflow:hidden}'
+    + 'video{width:100vw;height:100vh;object-fit:contain;background:#000}'
+    + '</style></head><body>'
+    + '<video src="' + bestandUrl + '" autoplay controls></video>'
+    + '</body></html>'
+  const spelerPad = path.join(userDataPath, 'video-speler.html')
+  fs.writeFileSync(spelerPad, spelerHtml)
+  videoWindow.loadFile(spelerPad)
+  videoWindow.setMenuBarVisibility(false)
+
+  videoWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'Escape') videoWindow.close()
+  })
+
+  videoWindow.on('closed', () => {
+    BrowserWindow.getAllWindows().forEach(win => {
+      win.webContents.send('video-gesloten')
+    })
+    videoWindow = null
+  })
+})
+
+ipcMain.on('open-toevoegen', (event, wallId) => {
+  const addWin = new BrowserWindow({
+    width: 600,
+    height: 700,
+    title: 'Nummer toevoegen',
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  addWin.loadFile('toevoegen.html')
+  addWin.setMenuBarVisibility(false)
+
+  addWin.webContents.on('did-finish-load', () => {
+    addWin.webContents.send('stel-wall-in', wallId)
+  })
+})
+
+ipcMain.on('nummer-toegevoegd', (event) => {
+  if (mainWindow) mainWindow.webContents.send('herlaad')
+  BrowserWindow.getFocusedWindow().close()
+})
+
+ipcMain.on('wall-toegevoegd', () => {
+  if (mainWindow) mainWindow.webContents.send('herlaad')
+  BrowserWindow.getFocusedWindow().close()
+})
+
+ipcMain.on('open-nieuwe-wall', () => {
+  const wallWin = new BrowserWindow({
+    width: 400,
+    height: 220,
+    title: 'Nieuwe wall',
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  wallWin.loadFile('nieuwe-wall.html')
+  wallWin.setMenuBarVisibility(false)
+})
+
+ipcMain.on('kies-bestand', async (event) => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [{ name: 'Video', extensions: ['mp4', 'mkv', 'avi', 'mov', 'webm'] }]
+  })
+  if (!result.canceled && result.filePaths.length > 0) {
+    event.sender.send('bestand-gekozen', result.filePaths[0])
+  }
+})
+
+ipcMain.handle('maak-thumbnail', async (event, videoPad) => {
+  const naam = path.basename(videoPad, path.extname(videoPad))
+  const uitvoer = path.join(thumbnailsPath, naam + '.jpg')
+
+  if (fs.existsSync(uitvoer)) return uitvoer
+
+  return new Promise((resolve) => {
+    execFile(
+      ffmpegPath,
+      ['-i', videoPad, '-ss', '00:00:03', '-vframes', '1', '-q:v', '2', uitvoer],
+      (error, stdout, stderr) => {
+        if (error) {
+          console.error('ffmpeg fout:', error.message)
+          resolve(null)
+        } else {
+          resolve(uitvoer)
+        }
+      }
+    )
+  })
+})
+
+ipcMain.on('bevestig-verwijderen', async (event, { videoId, naam }) => {
+  const akkoord = await vraagBevestiging('Video verwijderen', naam)
+  if (akkoord) {
+    const { verwijderVideo } = require('./db/videos.js')
+    verwijderVideo(videoId)
+    if (mainWindow) mainWindow.webContents.send('herlaad')
+  }
+})
+
+ipcMain.on('open-bewerken', (event, video) => {
+  const bewerkWin = new BrowserWindow({
+    width: 600,
+    height: 580,
+    title: 'Nummer bewerken',
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  bewerkWin.loadFile('bewerken.html')
+  bewerkWin.setMenuBarVisibility(false)
+
+  bewerkWin.webContents.on('did-finish-load', () => {
+    bewerkWin.webContents.send('stel-video-in', video)
+  })
+})
+
+ipcMain.on('bewerken-klaar', () => {
+  if (mainWindow) mainWindow.webContents.send('herlaad')
+  BrowserWindow.getFocusedWindow().close()
+})
+
+ipcMain.on('open-import', async (event) => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+    title: 'Kies een map met videos'
+  })
+
+  if (result.canceled || result.filePaths.length === 0) return
+
+  const mapPad = result.filePaths[0]
+  const extensies = ['.mp4', '.mkv', '.avi', '.mov', '.webm']
+
+  const bestanden = fs.readdirSync(mapPad)
+    .filter(f => extensies.includes(path.extname(f).toLowerCase()))
+    .map(f => path.join(mapPad, f))
+
+  if (bestanden.length === 0) {
+    dialog.showMessageBoxSync({
+      type: 'info',
+      title: 'Geen videos gevonden',
+      message: 'Er zijn geen videobestanden gevonden in deze map.'
+    })
+    return
+  }
+
+  event.sender.send('import-bestanden', bestanden)
+})
+
+ipcMain.on('open-importeren', () => {
+  const importWin = new BrowserWindow({
+    width: 550,
+    height: 620,
+    title: 'Videos importeren',
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  importWin.loadFile('importeren.html')
+  importWin.setMenuBarVisibility(false)
+})
+
+ipcMain.on('import-klaar', () => {
+  if (mainWindow) mainWindow.webContents.send('herlaad')
+  BrowserWindow.getFocusedWindow().close()
+})
+
+ipcMain.on('bevestig-verwijderen-meerdere', async (event, { ids, namen }) => {
+  const akkoord = await vraagBevestiging(ids.length + ' videos verwijderen', namen)
+  if (akkoord) {
+    const { verwijderVideo } = require('./db/videos.js')
+    ids.forEach(id => verwijderVideo(id))
+    if (mainWindow) mainWindow.webContents.send('herlaad')
+  }
+})
+
+ipcMain.on('open-zoeken', () => {
+  const zoekWin = new BrowserWindow({
+    width: 600,
+    height: 750,
+    title: 'YouTube zoeken',
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  zoekWin.loadFile('zoeken.html')
+  zoekWin.setMenuBarVisibility(false)
+
+  zoekWin.on('closed', () => {
+    if (mainWindow) mainWindow.webContents.send('herlaad')
+  })
+})
+
+ipcMain.on('open-jukebox', () => {
+  const jukeboxWin = new BrowserWindow({
+    width: 1100,
+    height: 700,
+    title: 'Musicwall Jukebox',
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  jukeboxWin.loadFile('jukebox.html')
+  jukeboxWin.setMenuBarVisibility(false)
+})
+
+ipcMain.on('toevoegen-aan-playlist', (event, videoIds) => {
+  const { voegToeAanPlaylist } = require('./db/playlist.js')
+  videoIds.forEach(id => voegToeAanPlaylist(id))
+})
+
+ipcMain.on('open-help', () => {
+  const helpWin = new BrowserWindow({
+    width: 650,
+    height: 750,
+    title: 'Musicwall — Help',
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  helpWin.loadFile('help.html')
+  helpWin.setMenuBarVisibility(false)
+})
+
+ipcMain.on('bevestig-wall-verwijderen', async (event, { wallId, wallNaam }) => {
+  const { getVideosVoorWall } = require('./db/videos.js')
+  const aantal = getVideosVoorWall(wallId).length
+  const bericht = 'Weet u zeker dat u "' + wallNaam + '" wilt verwijderen?\n'
+    + (aantal > 0 ? 'Dit verwijdert ook ' + aantal + ' video(s) in deze wall.' : 'Deze wall is leeg.')
+
+  const akkoord = await vraagBevestiging('Wall verwijderen', bericht)
+  if (akkoord) {
+    const { verwijderWall } = require('./db/walls.js')
+    verwijderWall(wallId)
+    if (mainWindow) mainWindow.webContents.send('herlaad')
+  }
+})
+
+function vraagBevestiging(titel, bericht) {
+  return new Promise((resolve) => {
+    const bevestigWin = new BrowserWindow({
+      width: 420,
+      height: 320,
+      title: titel,
+      frame: false,
+      resizable: false,
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false
+      }
+    })
+    bevestigWin.loadFile('bevestigen.html')
+    bevestigWin.setMenuBarVisibility(false)
+
+    bevestigWin.webContents.on('did-finish-load', () => {
+      bevestigWin.webContents.send('stel-bevestiging-in', { titel, bericht })
+    })
+
+    ipcMain.once('bevestiging-resultaat', (event, resultaat) => {
+      bevestigWin.close()
+      resolve(resultaat)
+    })
+
+    bevestigWin.on('closed', () => {
+      resolve(false)
+    })
+  })
+}
+
+ipcMain.on('open-hernoem-wall', (event, { wallId, huidigeNaam }) => {
+  const wallWin = new BrowserWindow({
+    width: 400,
+    height: 220,
+    title: 'Wall hernoemen',
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  wallWin.loadFile('nieuwe-wall.html')
+  wallWin.setMenuBarVisibility(false)
+
+  wallWin.webContents.on('did-finish-load', () => {
+    wallWin.webContents.send('stel-hernoem-in', { wallId, huidigeNaam })
+  })
+})
+
+ipcMain.on('herlaad-hoofdscherm', () => {
+  if (mainWindow) mainWindow.webContents.send('herlaad')
+})
+
+ipcMain.handle('get-instellingen-pad', () => {
+  return path.join(userDataPath, 'instellingen.json')
+})
+
+ipcMain.handle('get-instellingen-voorbeeld-pad', () => {
+  return path.join(__dirname, 'instellingen.voorbeeld.json')
+})
+
+ipcMain.on('sla-volgorde-op', (event, volgordeArray) => {
+  const { slaVolgordeOp } = require('./db/videos.js')
+  slaVolgordeOp(volgordeArray)
+})
+
+ipcMain.on('open-nieuw-concert', () => {
+  const concertWin = new BrowserWindow({
+    width: 550,
+    height: 520,
+    title: 'Nieuw concert',
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  concertWin.loadFile('nieuw-concert.html')
+  concertWin.setMenuBarVisibility(false)
+})
+
+ipcMain.on('concert-toegevoegd', () => {
+  if (mainWindow) mainWindow.webContents.send('herlaad-concerten')
+  BrowserWindow.getFocusedWindow().close()
+})
+
+ipcMain.on('open-bewerk-concert', (event, concert) => {
+  const concertWin = new BrowserWindow({
+    width: 550,
+    height: 520,
+    title: 'Concert bewerken',
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  concertWin.loadFile('nieuw-concert.html')
+  concertWin.setMenuBarVisibility(false)
+
+  concertWin.webContents.on('did-finish-load', () => {
+    concertWin.webContents.send('stel-bewerk-in', concert)
+  })
+})
+
+ipcMain.on('open-concert-detail', (event, concertId) => {
+  const detailWin = new BrowserWindow({
+    width: 1100,
+    height: 750,
+    title: 'Concert',
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  detailWin.loadFile('concert-detail.html')
+  detailWin.setMenuBarVisibility(false)
+
+  detailWin.webContents.on('did-finish-load', () => {
+    detailWin.webContents.send('laad-concert', concertId)
+  })
+})
+
+ipcMain.on('kies-concert-media', async (event) => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openFile', 'multiSelections'],
+    filters: [
+      { name: 'Foto en video', extensions: ['jpg', 'jpeg', 'png', 'heic', 'mp4', 'mov', 'mkv', 'avi', 'webm'] }
+    ]
+  })
+  if (!result.canceled && result.filePaths.length > 0) {
+    event.sender.send('concert-media-gekozen', result.filePaths)
+  }
+})
+
+ipcMain.on('concert-media-toegevoegd', () => {
+  if (mainWindow) mainWindow.webContents.send('herlaad-concerten')
+})
+
+ipcMain.on('bevestig-concert-verwijderen', async (event, { concertId, concertNaam }) => {
+  const { getMediaVoorConcert, verwijderConcert } = require('./db/concerten.js')
+  const aantal = getMediaVoorConcert(concertId).length
+  const bericht = 'Weet u zeker dat u "' + concertNaam + '" wilt verwijderen?\n'
+    + (aantal > 0 ? 'Dit verwijdert ook ' + aantal + ' foto/video item(s) in dit concert.' : 'Dit concert heeft nog geen media.')
+
+  const akkoord = await vraagBevestiging('Concert verwijderen', bericht)
+  if (akkoord) {
+    verwijderConcert(concertId)
+    if (mainWindow) mainWindow.webContents.send('herlaad-concerten')
+  }
+})
+
+app.whenReady().then(createWindow)

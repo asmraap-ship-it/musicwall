@@ -1,0 +1,285 @@
+[data-thema="metaal"] {
+  --achtergrond: #0c0c0e;
+  --achtergrond-2: #111318;
+  --achtergrond-3: #161820;
+  --oppervlak: rgba(20, 22, 30, 0.88);
+  --oppervlak-hover: rgba(28, 30, 40, 0.9);
+  --accent: #8eb4d4;
+  --accent-rgb: 142, 180, 212;
+  --accent-dim: rgba(142, 180, 212, 0.2);
+  --accent-rand: rgba(142, 180, 212, 0.3);
+  --tekst: #dde8f0;
+  --tekst-dim: #7a8a96;
+  --tekst-donker: #4a5560;
+  --rand: #1e2230;
+  --rand-2: #252838;
+  --rand-3: #2e3248;
+  --schaduw: rgba(0, 0, 0, 0.7);
+  --card-rand: 2px solid var(--accent);
+  --radius: 4px;
+}
+
+[data-thema="metaal"] body {
+  background:
+    repeating-linear-gradient(
+      125deg,
+      rgba(255,255,255,0.025) 0px,
+      rgba(255,255,255,0.025) 2px,
+      transparent 2px,
+      transparent 5px
+    );
+  background-color: var(--achtergrond);
+}
+
+[data-thema="metaal"] .wall {
+  background:
+    repeating-linear-gradient(
+      125deg,
+      rgba(255,255,255,0.02) 0px,
+      rgba(255,255,255,0.02) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    linear-gradient(160deg, rgba(32, 36, 50, 0.95), rgba(16, 18, 26, 0.92));
+  border: 1px solid #353c58;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -2px 6px rgba(0,0,0,0.4),
+    0 6px 28px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+[data-thema="metaal"] .wall::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(142, 180, 212, 0.6), transparent);
+}
+
+[data-thema="metaal"] .wall-header {
+  position: relative;
+  background: linear-gradient(180deg, rgba(38, 43, 62, 0.98), rgba(20, 23, 34, 0.98));
+  border-bottom: 1px solid #353c58;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 4px rgba(0,0,0,0.4);
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+[data-thema="metaal"] .wall-header::before,
+[data-thema="metaal"] .wall-header::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #6a7da0, #14161f);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.8), inset 0 0 1px rgba(255,255,255,0.4);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+[data-thema="metaal"] .wall-header::before { left: 0.75rem; }
+[data-thema="metaal"] .wall-header::after { right: 0.75rem; }
+
+[data-thema="metaal"] header {
+  background: linear-gradient(180deg, rgba(22, 25, 36, 0.98), rgba(12, 14, 20, 0.98));
+  border-bottom: 1px solid #353c58;
+  box-shadow: inset 0 1px 0 rgba(142, 180, 212, 0.12), inset 0 -2px 6px rgba(0,0,0,0.4), 0 2px 12px rgba(0,0,0,0.5);
+}
+
+[data-thema="metaal"] .card {
+  background: linear-gradient(160deg, rgba(30, 34, 48, 0.85), rgba(14, 16, 24, 0.85));
+  border-left: 3px solid #8eb4d4;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset -1px 0 0 rgba(0,0,0,0.3);
+}
+
+[data-thema="metaal"] .card:hover {
+  background: linear-gradient(160deg, rgba(40, 45, 62, 0.92), rgba(20, 23, 34, 0.92));
+  box-shadow: inset 0 1px 0 rgba(142, 180, 212, 0.15), 0 2px 12px rgba(142, 180, 212, 0.1);
+}
+
+[data-thema="metaal"] .navigatie button,
+[data-thema="metaal"] .toevoegen-btn,
+[data-thema="metaal"] #thema-keuze,
+[data-thema="metaal"] #prullenbak,
+[data-thema="metaal"] .yt-btn {
+  background: linear-gradient(180deg, rgba(50, 56, 78, 0.95), rgba(18, 20, 30, 0.95));
+  border: 1px solid #3a4160;
+  color: #c4d4e4;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -2px 3px rgba(0,0,0,0.4),
+    0 2px 5px rgba(0,0,0,0.5);
+}
+
+[data-thema="metaal"] .navigatie button:hover,
+[data-thema="metaal"] .toevoegen-btn:hover,
+[data-thema="metaal"] .yt-btn:hover {
+  background: linear-gradient(180deg, rgba(65, 73, 100, 1), rgba(26, 30, 44, 1));
+  box-shadow:
+    inset 0 1px 0 rgba(142, 180, 212, 0.25),
+    inset 0 -2px 3px rgba(0,0,0,0.4),
+    0 2px 10px rgba(142, 180, 212, 0.3);
+  border-color: #5a7090;
+}
+
+[data-thema="metaal"] .navigatie button:active {
+  background: linear-gradient(180deg, rgba(10, 11, 17, 0.95), rgba(22, 25, 36, 0.95));
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.6);
+}
+
+[data-thema="metaal"] .card-thumb-play {
+  background: radial-gradient(circle, rgba(142, 180, 212, 0.25), rgba(0,0,0,0.6));
+  border: 1px solid rgba(142, 180, 212, 0.4);
+  box-shadow: 0 0 16px rgba(142, 180, 212, 0.3);
+}
+
+[data-thema="metaal"] h1 span {
+  text-shadow: 0 0 12px rgba(142, 180, 212, 0.5);
+}
+
+[data-thema="metaal"] .logo {
+  text-shadow: 0 0 8px rgba(142, 180, 212, 0.3);
+}
+
+[data-thema="metaal"] .opslaan-btn,
+[data-thema="metaal"] .bestand-btn,
+[data-thema="metaal"] .type-btn,
+[data-thema="metaal"] .annuleer-btn,
+[data-thema="metaal"] .verwijder-btn,
+[data-thema="metaal"] .wall-toevoegen-btn,
+[data-thema="metaal"] .nieuwe-wall-btn {
+  background: linear-gradient(180deg, rgba(50, 56, 78, 0.95), rgba(18, 20, 30, 0.95));
+  border: 1px solid #3a4160;
+  color: #c4d4e4;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -2px 3px rgba(0,0,0,0.4),
+    0 2px 5px rgba(0,0,0,0.5);
+}
+
+[data-thema="metaal"] .opslaan-btn:hover,
+[data-thema="metaal"] .bestand-btn:hover,
+[data-thema="metaal"] .wall-toevoegen-btn:hover,
+[data-thema="metaal"] .nieuwe-wall-btn:hover {
+  background: linear-gradient(180deg, rgba(65, 73, 100, 1), rgba(26, 30, 44, 1));
+  border-color: #5a7090;
+  color: #fff;
+}
+
+[data-thema="metaal"] .type-btn.actief {
+  border-color: #8eb4d4;
+  color: #8eb4d4;
+  background: linear-gradient(180deg, rgba(60, 75, 100, 0.9), rgba(20, 25, 38, 0.9));
+}
+
+[data-thema="metaal"] .verwijder-btn {
+  background: linear-gradient(180deg, #c0392b, #8e2419);
+  border: 1px solid #5a1610;
+  color: #fff;
+}
+
+[data-thema="metaal"] .verwijder-btn:hover {
+  background: linear-gradient(180deg, #e74c3c, #a8301f);
+}
+
+[data-thema="metaal"] input[type="text"],
+[data-thema="metaal"] input[type="url"],
+[data-thema="metaal"] textarea,
+[data-thema="metaal"] select {
+  background: rgba(15, 17, 25, 0.8);
+  border: 1px solid #2e3450;
+  color: #dde8f0;
+}
+
+[data-thema="metaal"] input:focus,
+[data-thema="metaal"] textarea:focus {
+  border-color: #8eb4d4;
+}
+
+[data-thema="metaal"] .zoekbalk button {
+  background: linear-gradient(180deg, rgba(50, 56, 78, 0.95), rgba(18, 20, 30, 0.95));
+  border: 1px solid #3a4160;
+  color: #c4d4e4;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -2px 3px rgba(0,0,0,0.4),
+    0 2px 5px rgba(0,0,0,0.5);
+}
+
+[data-thema="metaal"] .zoekbalk button:hover {
+  background: linear-gradient(180deg, rgba(65, 73, 100, 1), rgba(26, 30, 44, 1));
+  border-color: #5a7090;
+  color: #fff;
+}
+
+[data-thema="metaal"] .zoekbalk input,
+[data-thema="metaal"] select {
+  background: rgba(15, 17, 25, 0.8);
+  border: 1px solid #2e3450;
+  color: #dde8f0;
+}
+
+[data-thema="metaal"] .resultaat {
+  background: linear-gradient(160deg, rgba(28, 32, 45, 0.85), rgba(14, 16, 24, 0.85));
+  border: 1px solid #2e3450;
+}
+
+[data-thema="metaal"] .resultaat:hover {
+  background: linear-gradient(160deg, rgba(38, 43, 60, 0.92), rgba(20, 23, 34, 0.92));
+  border-color: #8eb4d4;
+}
+
+[data-thema="metaal"] body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.5) 100%);
+  z-index: 5;
+}
+
+[data-thema="metaal"] .wall {
+  border-width: 1px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -2px 6px rgba(0,0,0,0.5),
+    inset 2px 0 4px rgba(0,0,0,0.3),
+    inset -2px 0 4px rgba(0,0,0,0.3),
+    0 8px 32px rgba(0,0,0,0.6);
+}
+
+[data-thema="metaal"] .card-thumb-wrap:hover .card-thumbnail {
+  filter: brightness(0.7) saturate(1.1);
+}
+
+[data-thema="metaal"] .card-thumb-play {
+  box-shadow:
+    0 0 20px rgba(142, 180, 212, 0.4),
+    inset 0 0 10px rgba(142, 180, 212, 0.2);
+}
+
+[data-thema="metaal"] .chevron {
+  filter: drop-shadow(0 0 2px rgba(142, 180, 212, 0.3));
+}
+
+[data-thema="metaal"] .card.geselecteerd {
+  outline: 2px solid #8eb4d4;
+  box-shadow: 0 0 16px rgba(142, 180, 212, 0.3);
+}
+
+[data-thema="metaal"] .card.geselecteerd .card-thumb-wrap::after {
+  background: #8eb4d4;
+  color: #0c0c0e;
+}
+
+[data-thema="metaal"] #prullenbak.hover {
+  box-shadow: 0 0 16px rgba(231, 76, 60, 0.4);
+}
+
+[data-thema="metaal"] .selectie-info {
+  background: linear-gradient(180deg, rgba(28, 32, 45, 0.95), rgba(14, 16, 24, 0.95));
+  border: 1px solid #8eb4d4;
+  box-shadow: 0 0 20px rgba(142, 180, 212, 0.2), inset 0 1px 0 rgba(255,255,255,0.08);
+}

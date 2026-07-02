@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# App data (database, thumbnails, settings) — normally lives in %APPDATA%\Musicwall,
+# ignored here too in case it ever ends up in the project directory
+musicwall.db
+*.db
+thumbnails/
+instellingen.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+
+# Secrets
+musicwall-key-yt.txt
+
+# Local Claude Code settings (machine-specific)
+.claude/settings.local.json

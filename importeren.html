@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Videos importeren</title>
+  <link rel="stylesheet" href="css/toevoegen.css">
+  <script>
+  const thema = localStorage.getItem('musicwall-thema')
+  if (thema) document.documentElement.setAttribute('data-thema', thema)
+  </script>
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+
+  <style>
+    .voortgang {
+      margin-top: 1rem;
+      font-size: 12px;
+      color: var(--tekst-dim);
+      letter-spacing: 0.05em;
+    }
+
+    .voortgang-balk {
+      width: 100%;
+      height: 2px;
+      background: var(--rand-2);
+      border-radius: 1px;
+      margin-top: 0.5rem;
+      overflow: hidden;
+    }
+
+    .voortgang-vulling {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 1px;
+      width: 0%;
+      transition: width 0.2s;
+    }
+
+    .bestand-lijst {
+      margin-top: 1rem;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--rand-2);
+      border-radius: 3px;
+      padding: 0.5rem;
+    }
+
+    .bestand-item {
+      font-size: 12px;
+      color: var(--tekst-dim);
+      padding: 0.25rem 0;
+      border-bottom: 1px solid var(--rand);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bestand-item.klaar { color: var(--accent); }
+    .bestand-item.actief { color: var(--tekst); }
+  </style>
+</head>
+<body>
+
+<div class="titelbalk-drag"></div>
+
+<h2>Videos importeren</h2>
+
+<div class="veld">
+  <label>Wall</label>
+  <select id="wall-keuze"></select>
+</div>
+
+<div id="bestand-lijst-container" style="display:none">
+  <div class="veld">
+    <label id="bestand-label">0 videobestanden gevonden</label>
+    <div class="bestand-lijst" id="bestand-lijst"></div>
+  </div>
+
+  <div class="voortgang" id="voortgang-tekst"></div>
+  <div class="voortgang-balk">
+    <div class="voortgang-vulling" id="voortgang-vulling"></div>
+  </div>
+</div>
+
+<button class="opslaan-btn" id="import-btn" onclick="startImport()" style="margin-top:1.5rem">Kies map</button>
+<div class="melding" id="melding"></div>
+
+<script src="js/importeren.js"></script>
+</body>
+</html>

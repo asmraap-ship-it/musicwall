@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Bevestigen</title>
+  <link rel="stylesheet" href="css/bevestigen.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+
+  <script>
+    const thema = localStorage.getItem('musicwall-thema')
+    if (thema) document.documentElement.setAttribute('data-thema', thema)
+  </script>
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+</head>
+<body>
+
+<div class="dialoog">
+  <div class="dialoog-icoon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <polyline points="3,6 5,6 21,6"/>
+      <path d="M19,6l-1,14H6L5,6"/>
+      <path d="M10,11v6M14,11v6"/>
+      <path d="M9,6V4h6v2"/>
+    </svg>
+  </div>
+  <h2 id="titel">Verwijderen</h2>
+  <p id="bericht"></p>
+  <div class="knoppen">
+    <button class="annuleer-btn" onclick="annuleer()">Annuleren</button>
+    <button class="verwijder-btn" onclick="bevestig()">Verwijderen</button>
+  </div>
+</div>
+
+<script src="js/bevestigen.js"></script>
+</body>
+</html>

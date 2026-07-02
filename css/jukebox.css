@@ -1,0 +1,334 @@
+:root {
+  --achtergrond: #17150f;
+  --achtergrond-2: #1c1911;
+  --achtergrond-3: #221e15;
+  --accent: #c8a87a;
+  --accent-rgb: 200, 168, 122;
+  --tekst: #f0ede8;
+  --tekst-dim: #888888;
+  --tekst-donker: #555555;
+  --rand: #1a1a1a;
+  --rand-2: #222222;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--achtergrond);
+  background-image:
+    repeating-linear-gradient(125deg, rgba(var(--accent-rgb), 0.05) 0px, rgba(var(--accent-rgb), 0.05) 1px, transparent 1px, transparent 6px),
+    radial-gradient(ellipse at 50% -10%, rgba(var(--accent-rgb), 0.14), transparent 60%);
+  color: var(--tekst);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+html::before,
+html::after {
+  content: '';
+  position: fixed;
+  bottom: 10px;
+  width: 22px;
+  height: 22px;
+  border-color: rgba(var(--accent-rgb), 0.45);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+html::before { left: 10px; border-bottom-width: 2px; border-left-width: 2px; }
+html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
+
+.jukebox {
+  display: flex;
+  height: 100vh;
+}
+
+.playlist-kolom {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--rand);
+  background: var(--achtergrond-2);
+  flex-shrink: 0;
+}
+
+.playlist-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--rand);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  -webkit-app-region: drag;
+}
+
+.leeg-btn {
+  background: transparent;
+  border: 1px solid var(--rand-2);
+  -webkit-app-region: no-drag;
+  border-radius: 3px;
+  color: var(--tekst-donker);
+  font-size: 10px;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: none;
+}
+
+.leeg-btn:hover {
+  border-color: #c0392b;
+  color: #c0392b;
+}
+
+.playlist-lijst {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.playlist-lijst::-webkit-scrollbar {
+  width: 4px;
+}
+
+.playlist-lijst::-webkit-scrollbar-track {
+  background: var(--achtergrond-2);
+}
+
+.playlist-lijst::-webkit-scrollbar-thumb {
+  background: var(--rand-2);
+  border-radius: 2px;
+}
+
+.playlist-lijst::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+.playlist-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-bottom: 6px;
+  transition: background 0.15s;
+  position: relative;
+}
+
+.playlist-item:hover {
+  background: var(--achtergrond-3);
+}
+
+.playlist-item.actief {
+  background: rgba(200, 168, 122, 0.1);
+  border-left: 2px solid var(--accent);
+}
+
+.playlist-item img {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.playlist-info {
+  width: 100%;
+  min-width: 0;
+}
+
+.playlist-artiest {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tekst-donker);
+  margin-bottom: 2px;
+}
+
+.playlist-titel {
+  font-size: 12px;
+  color: var(--tekst);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.playlist-verwijder {
+  background: transparent;
+  border: none;
+  color: var(--tekst-donker);
+  cursor: pointer;
+  padding: 0.25rem;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(0,0,0,0.6);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+}
+
+.playlist-verwijder svg {
+  width: 16px;
+  height: 16px;
+}
+
+.playlist-item:hover .playlist-verwijder {
+  opacity: 1;
+}
+
+.playlist-verwijder:hover {
+  color: #e74c3c;
+}
+
+.playlist-leeg {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--tekst-donker);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.speel-kolom {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.speel-scherm {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--achtergrond-2);
+  position: relative;
+}
+
+.speel-placeholder {
+  text-align: center;
+  color: var(--tekst-donker);
+}
+
+.speel-icoon {
+  font-size: 48px;
+  color: var(--accent);
+  opacity: 0.3;
+  margin-bottom: 1rem;
+}
+
+.speel-tekst {
+  font-size: 13px;
+  letter-spacing: 0.1em;
+}
+
+.speel-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.speel-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.3);
+}
+
+.speel-overlay-icoon {
+  width: 80px;
+  height: 80px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: var(--accent);
+}
+
+.navigatie {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border-top: 1px solid var(--rand);
+  background: var(--achtergrond-2);
+}
+
+.navigatie button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--achtergrond-3);
+  border: 1px solid var(--rand-2);
+  color: var(--accent);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.navigatie button:hover {
+  border-color: var(--accent);
+  background: rgba(200, 168, 122, 0.1);
+}
+
+#play-btn {
+  width: 56px;
+  height: 56px;
+  font-size: 18px;
+}
+
+#speler {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+  display: none;
+}
+
+#speler.zichtbaar {
+  display: block;
+}
+
+.fullscreen-btn {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid var(--rand-2);
+  color: var(--accent);
+  font-size: 16px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.fullscreen-btn.zichtbaar {
+  display: flex;
+}
+
+#shuffle-btn {
+  font-size: 16px;
+}

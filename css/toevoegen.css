@@ -1,0 +1,195 @@
+:root {
+  --achtergrond: #17150f;
+  --achtergrond-3: #221e15;
+  --accent: #c8a87a;
+  --accent-rgb: 200, 168, 122;
+  --tekst: #f0ede8;
+  --tekst-dim: #888888;
+  --tekst-donker: #555555;
+  --rand: #1a1a1a;
+  --rand-2: #222222;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--achtergrond);
+  background-image:
+    repeating-linear-gradient(125deg, rgba(var(--accent-rgb), 0.05) 0px, rgba(var(--accent-rgb), 0.05) 1px, transparent 1px, transparent 6px),
+    radial-gradient(ellipse at 50% -10%, rgba(var(--accent-rgb), 0.14), transparent 60%);
+  color: var(--tekst);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 2rem;
+}
+
+html::before,
+html::after {
+  content: '';
+  position: fixed;
+  bottom: 10px;
+  width: 22px;
+  height: 22px;
+  border-color: rgba(var(--accent-rgb), 0.45);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+html::before { left: 10px; border-bottom-width: 2px; border-left-width: 2px; }
+html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
+
+.titelbalk-drag {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 32px;
+  -webkit-app-region: drag;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--achtergrond-3); }
+::-webkit-scrollbar-thumb { background: var(--rand-2); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+h2 {
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--rand);
+  padding-bottom: 1rem;
+}
+
+.veld {
+  margin-bottom: 1.25rem;
+}
+
+label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--tekst-donker);
+  margin-bottom: 0.4rem;
+}
+
+input[type="text"],
+input[type="url"],
+textarea,
+select {
+  width: 100%;
+  background: var(--achtergrond-3);
+  border: 1px solid var(--rand-2);
+  border-radius: 3px;
+  color: var(--tekst);
+  font-size: 14px;
+  padding: 0.65rem 0.85rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--accent);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.6;
+}
+
+.type-keuze {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.type-btn {
+  flex: 1;
+  padding: 0.65rem;
+  background: var(--achtergrond-3);
+  border: 1px solid var(--rand-2);
+  border-radius: 3px;
+  color: var(--tekst-dim);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  letter-spacing: 0.05em;
+}
+
+.type-btn.actief {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(200, 168, 122, 0.08);
+}
+
+.sectie { display: none; }
+.sectie.zichtbaar { display: block; }
+
+.bestand-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  background: var(--achtergrond-3);
+  border: 1px solid var(--rand-2);
+  border-radius: 3px;
+  color: var(--accent);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.bestand-btn:hover { background: var(--rand-2); }
+
+.bestand-naam {
+  margin-top: 0.5rem;
+  font-size: 12px;
+  color: var(--tekst-donker);
+  font-style: italic;
+}
+
+.opslaan-btn {
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--accent);
+  border: none;
+  border-radius: 3px;
+  color: var(--achtergrond);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  margin-top: 0.5rem;
+  transition: opacity 0.15s;
+}
+
+.opslaan-btn:hover { opacity: 0.85; }
+
+.melding {
+  margin-top: 1rem;
+  font-size: 13px;
+  color: var(--accent);
+  text-align: center;
+  min-height: 20px;
+}
+
+.bestand-lijst::-webkit-scrollbar {
+  width: 4px;
+}
+
+.bestand-lijst::-webkit-scrollbar-track {
+  background: var(--achtergrond-3);
+}
+
+.bestand-lijst::-webkit-scrollbar-thumb {
+  background: var(--rand-2);
+  border-radius: 2px;
+}
+
+.bestand-lijst::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}

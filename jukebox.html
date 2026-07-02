@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Musicwall Jukebox</title>
+  <link rel="stylesheet" href="css/jukebox.css">
+  <script>
+    const thema = localStorage.getItem('musicwall-thema')
+    if (thema) document.documentElement.setAttribute('data-thema', thema)
+  </script>
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+
+</head>
+<body>
+
+<div class="jukebox">
+  <div class="playlist-kolom">
+    <div class="playlist-header">
+      <span>Playlist</span>
+      <button class="leeg-btn" onclick="leegMaken()">Leegmaken</button>
+    </div>
+    <div class="playlist-lijst" id="playlist-lijst"></div>
+  </div>
+
+  <div class="speel-kolom">
+	<div class="speel-scherm" id="speel-scherm">
+	  <video id="speler" controls></video>
+	  <div class="speel-placeholder" id="speel-placeholder">
+		<div class="speel-icoon">♪</div>
+		<div class="speel-tekst">Kies een nummer uit de playlist</div>
+	  </div>
+	  <button class="fullscreen-btn" id="fullscreen-btn" onclick="schermvullend()" title="Schermvullend">⛶</button>
+	</div>
+	<div class="navigatie">
+	     <button onclick="schudPlaylist()" id="shuffle-btn" title="Shuffle">⤮</button>
+	     <button onclick="naarEerste()" title="Eerste">⏮</button>
+   	     <button onclick="vorige()" title="Vorige">◀</button>
+		 <button onclick="speelPauze()" id="play-btn" title="Afspelen">▶</button>
+		 <button onclick="stop()" title="Stoppen">⏹</button>
+		 <button onclick="volgende()" title="Volgende">▶▶</button>
+		 <button onclick="naarLaatste()" title="Laatste">⏭</button>
+	</div>
+  </div>
+</div>
+
+<script src="js/jukebox.js"></script>
+</body>
+</html>

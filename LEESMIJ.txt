@@ -1,0 +1,59 @@
+MUSICWALL — LEES MIJ
+=====================
+
+Welkom bij Musicwall, een persoonlijk instrument om muziek te
+verbinden aan de momenten die ertoe doen in je leven.
+
+
+EERSTE KEER OPSTARTEN
+----------------------
+Musicwall start met één lege wall. Klik op "+ nummer toevoegen"
+om je eerste video toe te voegen — via een YouTube link of een
+lokaal bestand op je computer.
+
+
+YOUTUBE ZOEKEN INSTELLEN (optioneel)
+--------------------------------------
+Om direct binnen Musicwall naar YouTube video's te kunnen zoeken,
+heb je een gratis Google API-sleutel nodig:
+
+1. Ga naar console.cloud.google.com
+2. Maak een nieuw project aan
+3. Activeer de "YouTube Data API v3" via APIs & Services > Library
+4. Maak een API-sleutel aan via APIs & Services > Credentials
+
+Kopieer dan het bestand "instellingen.voorbeeld.json" en hernoem
+de kopie naar "instellingen.json". Open dat bestand en vul je
+eigen sleutel in:
+
+{
+  "youtubeApiKey": "JOUW_SLEUTEL_HIER"
+}
+
+Zonder dit bestand werkt de rest van Musicwall gewoon — alleen
+de YouTube-zoekfunctie blijft dan uitgeschakeld. Je kunt nog
+steeds video's toevoegen via een directe YouTube-link.
+
+
+DE JUKEBOX
+-----------
+De jukebox speelt een playlist van lokale video's automatisch
+achter elkaar af — vergelijkbaar met een echte jukebox. Selecteer
+lokale video's met Ctrl+klik in een wall, en klik op
+"Voeg toe aan de playlist". YouTube-video's worden in de jukebox
+niet ondersteund.
+
+
+THEMA'S
+--------
+Rechtsboven kun je wisselen tussen vijf thema's: Standaard, Metaal,
+Jukebox, Nacht en Raw. Je keuze wordt onthouden.
+
+
+MEER WETEN
+-----------
+Klik op "? Help" in de app voor een volledig overzicht van alle
+functies.
+
+
+Veel plezier met het bouwen van je eigen muzikale hartlijnen.

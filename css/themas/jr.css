@@ -1,0 +1,131 @@
+[data-thema="jr"] {
+  --achtergrond: #050505;
+  --achtergrond-2: #0a0a0a;
+  --achtergrond-3: #0f0f0f;
+  --oppervlak: rgba(15, 15, 15, 0.9);
+  --oppervlak-hover: rgba(25, 25, 25, 0.92);
+  --accent: #f5f5f5;
+  --accent-rgb: 245, 245, 245;
+  --accent-dim: rgba(245, 245, 245, 0.15);
+  --accent-rand: rgba(245, 245, 245, 0.25);
+  --tekst: #e8e8e8;
+  --tekst-dim: #888888;
+  --tekst-donker: #4a4a4a;
+  --rand: #1f1f1f;
+  --rand-2: #2a2a2a;
+  --rand-3: #3a3a3a;
+  --schaduw: rgba(0, 0, 0, 0.9);
+  --card-rand: 2px solid var(--accent);
+  --radius: 0px;
+}
+
+[data-thema="jr"] body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%);
+  z-index: 5;
+}
+
+[data-thema="jr"] .wall {
+  background: linear-gradient(165deg, rgba(20, 20, 20, 0.92), rgba(5, 5, 5, 0.92));
+  border: 1px solid #2a2a2a;
+  border-radius: 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 8px 32px rgba(0,0,0,0.7);
+}
+
+[data-thema="jr"] .wall::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(245, 245, 245, 0.5), transparent);
+}
+
+[data-thema="jr"] .wall-header {
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.95), rgba(10, 10, 10, 0.95));
+  border-bottom: 1px solid #2a2a2a;
+}
+
+[data-thema="jr"] header {
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.98), rgba(4, 4, 4, 0.98));
+  border-bottom: 1px solid #2a2a2a;
+}
+
+[data-thema="jr"] .card {
+  background: linear-gradient(165deg, rgba(22, 22, 22, 0.85), rgba(8, 8, 8, 0.85));
+  border-left: 3px solid #f5f5f5;
+  border-radius: 0;
+}
+
+[data-thema="jr"] .card:hover {
+  background: linear-gradient(165deg, rgba(32, 32, 32, 0.92), rgba(14, 14, 14, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+[data-thema="jr"] .card-thumbnail,
+[data-thema="jr"] .card-thumb-wrap img {
+  filter: grayscale(1) contrast(1.15);
+}
+
+[data-thema="jr"] .navigatie button,
+[data-thema="jr"] .toevoegen-btn,
+[data-thema="jr"] #thema-keuze,
+[data-thema="jr"] #prullenbak,
+[data-thema="jr"] .yt-btn,
+[data-thema="jr"] .opslaan-btn,
+[data-thema="jr"] .bestand-btn,
+[data-thema="jr"] .wall-toevoegen-btn,
+[data-thema="jr"] .nieuwe-wall-btn,
+[data-thema="jr"] .zoekbalk button {
+  background: linear-gradient(180deg, rgba(35, 35, 35, 0.9), rgba(10, 10, 10, 0.9));
+  border: 1px solid #3a3a3a;
+  border-radius: 0;
+  color: #e8e8e8;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+[data-thema="jr"] .navigatie button:hover,
+[data-thema="jr"] .toevoegen-btn:hover,
+[data-thema="jr"] .opslaan-btn:hover {
+  background: linear-gradient(180deg, rgba(50, 50, 50, 1), rgba(15, 15, 15, 1));
+  border-color: #f5f5f5;
+  color: #fff;
+}
+
+[data-thema="jr"] input[type="text"],
+[data-thema="jr"] input[type="url"],
+[data-thema="jr"] textarea,
+[data-thema="jr"] select {
+  background: rgba(10, 10, 10, 0.8);
+  border: 1px solid #2a2a2a;
+  border-radius: 0;
+  color: #e8e8e8;
+}
+
+[data-thema="jr"] input:focus,
+[data-thema="jr"] textarea:focus {
+  border-color: #f5f5f5;
+}
+
+[data-thema="jr"] .card-thumb-play {
+  background: rgba(0,0,0,0.7);
+  border: 1px solid rgba(245, 245, 245, 0.5);
+}
+
+[data-thema="jr"] h1 span {
+  color: #f5f5f5;
+  text-shadow: none;
+}
+
+[data-thema="jr"] .card.geselecteerd {
+  outline: 2px solid #f5f5f5;
+}
+
+[data-thema="jr"] .card.geselecteerd .card-thumb-wrap::after {
+  background: #f5f5f5;
+  color: #050505;
+}

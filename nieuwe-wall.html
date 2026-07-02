@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Wall</title>
+  <link rel="stylesheet" href="css/toevoegen.css">
+  <script>
+    const thema = localStorage.getItem('musicwall-thema')
+    if (thema) document.documentElement.setAttribute('data-thema', thema)
+  </script>
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+  <link rel="stylesheet" href="css/themas/natuur.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+</head>
+<body>
+
+<div class="titelbalk-drag"></div>
+
+<h2 id="titel">Nieuwe wall</h2>
+
+<div class="veld">
+  <label>Naam van de wall</label>
+  <input type="text" id="naam" placeholder="bijv. Live Concerten" autofocus>
+</div>
+
+<button class="opslaan-btn" id="opslaan-btn" onclick="slaOp()">Aanmaken</button>
+<div class="melding" id="melding"></div>
+
+<script src="js/nieuwe-wall.js"></script>
+</body>
+</html>

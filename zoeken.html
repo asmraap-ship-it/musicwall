@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube zoeken</title>
+  <link rel="stylesheet" href="css/zoeken.css">
+  <script>
+    const thema = localStorage.getItem('musicwall-thema')
+    if (thema) document.documentElement.setAttribute('data-thema', thema)
+  </script>
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+  <link rel="stylesheet" href="css/themas/natuur.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+</head>
+<body>
+
+<div class="titelbalk-drag"></div>
+
+<h2>YouTube zoeken</h2>
+
+<div class="zoekbalk">
+  <input type="text" id="zoekterm" placeholder="Zoek een nummer of artiest..." autofocus>
+  <button onclick="zoek()">Zoeken</button>
+</div>
+
+<div class="veld">
+  <label>Toevoegen aan wall</label>
+  <select id="wall-keuze"></select>
+</div>
+
+<div id="resultaten"></div>
+
+<script src="js/zoeken.js"></script>
+</body>
+</html>

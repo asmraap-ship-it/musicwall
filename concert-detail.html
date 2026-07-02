@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Concert</title>
+  <link rel="stylesheet" href="css/concert-detail.css">
+  <script>
+    const thema = localStorage.getItem('musicwall-thema')
+    if (thema) document.documentElement.setAttribute('data-thema', thema)
+  </script>
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+  <link rel="stylesheet" href="css/themas/natuur.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+  <script>window.gsap = require('gsap').gsap</script>
+</head>
+<body>
+
+<div class="titelbalk-drag"></div>
+
+<div class="concert-header">
+  <div class="concert-header-artiest" id="detail-artiest"></div>
+  <h1 class="concert-header-naam" id="detail-naam"></h1>
+  <div class="concert-header-datum" id="detail-datum"></div>
+</div>
+
+<div class="concert-verhaal" id="detail-verhaal"></div>
+
+<div class="media-toevoegen-balk">
+  <button class="bestand-btn" onclick="kiesMedia()">📁 Foto / video toevoegen</button>
+  <div class="youtube-toevoegen">
+    <input type="url" id="youtube-url-input" placeholder="https://www.youtube.com/watch?v=...">
+    <button class="bestand-btn" onclick="voegYoutubeToe()">▶ YouTube toevoegen</button>
+  </div>
+</div>
+
+<div class="concert-media-grid" id="media-grid"></div>
+
+<div class="lightbox" id="lightbox" onclick="sluitLightbox()">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script src="js/concert-detail.js"></script>
+</body>
+</html>
