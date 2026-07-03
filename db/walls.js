@@ -4,10 +4,10 @@ function getAlleWalls() {
   return db.prepare('SELECT * FROM walls ORDER BY volgorde').all()
 }
 
-function maakWall(naam) {
+function maakWall(naam, groepId) {
   const aantal = db.prepare('SELECT COUNT(*) as n FROM walls').get()
-  return db.prepare('INSERT INTO walls (naam, volgorde) VALUES (?, ?)')
-    .run(naam, aantal.n + 1)
+  return db.prepare('INSERT INTO walls (naam, volgorde, groep_id) VALUES (?, ?, ?)')
+    .run(naam, aantal.n + 1, groepId || null)
 }
 
 function verwijderWall(id) {

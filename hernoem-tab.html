@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Tab hernoemen</title>
+  <link rel="stylesheet" href="css/toevoegen.css">
+  <script>
+    const thema = localStorage.getItem('musicwall-thema')
+    if (thema) document.documentElement.setAttribute('data-thema', thema)
+  </script>
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+  <link rel="stylesheet" href="css/themas/natuur.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+</head>
+<body>
+
+<div class="titelbalk-drag"></div>
+
+<h2 data-i18n="hernoemTab.titel">Tab hernoemen</h2>
+
+<div class="veld">
+  <label data-i18n="hernoemTab.naamLabel">Naam van de tab</label>
+  <input type="text" id="naam" autofocus>
+</div>
+
+<button class="opslaan-btn" onclick="slaOp()" data-i18n="algemeen.opslaanBtn">Opslaan</button>
+<div class="melding" id="melding"></div>
+
+<script src="js/vertalingen.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/hernoem-tab.js"></script>
+</body>
+</html>

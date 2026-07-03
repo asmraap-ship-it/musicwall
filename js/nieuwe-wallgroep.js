@@ -1,23 +1,18 @@
 const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
-const { maakWall, hernoemWall } = require('./db/walls.js')
+const { maakWallGroep, hernoemWallGroep } = require('./db/wallgroepen.js')
 
 let modus = 'aanmaken'
-let wallId = null
 let groepId = null
 
-ipcRenderer.on('stel-groep-in', (event, id) => {
-  groepId = id
-})
-
 function toonTitelEnKnop() {
-  document.getElementById('titel').textContent = modus === 'hernoemen' ? t('nieuweWall.hernoemenTitel') : t('nieuweWall.titel')
-  document.getElementById('opslaan-btn').textContent = modus === 'hernoemen' ? t('algemeen.opslaanBtn') : t('nieuweWall.aanmakenBtn')
+  document.getElementById('titel').textContent = modus === 'hernoemen' ? t('nieuweWallGroep.hernoemenTitel') : t('nieuweWallGroep.titel')
+  document.getElementById('opslaan-btn').textContent = modus === 'hernoemen' ? t('algemeen.opslaanBtn') : t('nieuweWallGroep.aanmakenBtn')
 }
 
-ipcRenderer.on('stel-hernoem-in', (event, { wallId: id, huidigeNaam }) => {
+ipcRenderer.on('stel-hernoem-in', (event, { groepId: id, huidigeNaam }) => {
   modus = 'hernoemen'
-  wallId = id
+  groepId = id
   toonTitelEnKnop()
   document.getElementById('naam').value = huidigeNaam
   document.getElementById('naam').select()
@@ -38,12 +33,12 @@ function slaOp() {
   }
 
   if (modus === 'hernoemen') {
-    hernoemWall(wallId, naam)
+    hernoemWallGroep(groepId, naam)
   } else {
-    maakWall(naam, groepId)
+    maakWallGroep(naam)
   }
 
-  ipcRenderer.send('wall-toegevoegd')
+  ipcRenderer.send('wallgroep-toegevoegd')
 }
 
 window.slaOp = slaOp

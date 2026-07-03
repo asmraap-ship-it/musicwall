@@ -957,6 +957,9 @@ h1 {
 .tab-btn {
   position: relative;
   top: 1px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
    padding: 0.5rem 1.3rem;
   background: linear-gradient(135deg, #151208 0%, #0a0805 100%);
   border: 1px solid #3a2e18;
@@ -970,6 +973,37 @@ h1 {
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.25s, text-shadow 0.25s;
   z-index: 1;
+}
+
+.tab-btn.drag-over {
+  border-color: var(--accent);
+  box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.5), inset 0 1px 0 rgba(var(--accent-rgb), 0.2);
+}
+
+.tab-verwijder {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--tekst-donker);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+}
+
+.tab-btn:hover .tab-verwijder {
+  display: inline;
+}
+
+.tab-verwijder:hover {
+  color: var(--accent);
+}
+
+.tab-nieuw {
+  padding: 0.5rem 0.9rem;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .tab-btn:hover {

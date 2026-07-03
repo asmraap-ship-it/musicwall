@@ -5,6 +5,7 @@ Een persoonlijke Electron desktop-applicatie waarmee je YouTube-video's en lokal
 ## Functionaliteit
 
 - **Walls** — groepeer video's (YouTube of lokaal) rond een thema, met een titel, artiest en persoonlijk verhaal per nummer
+- **Wall-groepen** — verdeel walls over eigen tabs (bijv. per thema of gelegenheid), aan te maken en te herordenen naast de vaste "Mijn walls"/"Mijn concerten"-tabs; alle tabs zijn te hernoemen
 - **Concertervaringen** — leg concerten vast met foto's, video's en YouTube-clips in een collage, inclusief verhaal, naam en datum
 - **Jukebox** — speel je eigen playlist van lokale video's af, met shuffle, vorige/volgende en schermvullende weergave
 - **YouTube zoeken & map importeren** — voeg eenvoudig nieuwe content toe aan je walls
@@ -48,7 +49,7 @@ js/index.js               Walls logica, drag-and-drop, GSAP animaties
 js/concerten.js         Concertervaringen logica
 js/jukebox.js            Jukebox-speler
 js/i18n.js + js/vertalingen.js   Meertaligheid (NL/EN)
-db/                          CRUD-modules per tabel (walls, videos, concerten, playlist)
+db/                          CRUD-modules per tabel (walls, wallgroepen, videos, concerten, playlist)
 build/icon.ico           App-icoon
 ```
 

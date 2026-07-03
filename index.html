@@ -53,12 +53,13 @@
   </div>
 </header>
 <div class="sectie-tabs" id="sectie-tabs">
-  <button class="tab-btn actief" id="btn-walls">
-    <span class="tab-label" data-i18n="tabs.walls">Walls</span>
+  <button class="tab-btn" id="btn-concerten" data-i18n-title="wallGroep.hernoemenTooltip" title="Dubbelklik om te hernoemen">
+    <span class="tab-label" data-i18n="tabs.concerten">Mijn concerten</span>
   </button>
-  <button class="tab-btn" id="btn-concerten">
-    <span class="tab-label" data-i18n="tabs.concerten">Concerten</span>
+  <button class="tab-btn actief" id="btn-walls" data-i18n-title="wallGroep.hernoemenTooltip" title="Dubbelklik om te hernoemen">
+    <span class="tab-label" data-i18n="tabs.walls">Mijn walls</span>
   </button>
+  <button class="tab-btn tab-nieuw" id="btn-nieuwe-groep" onclick="voegWallGroepToe()" data-i18n-title="wallGroep.nieuweGroepTooltip" title="Nieuwe groep">+</button>
 </div>
 <div class="thema-menu" id="thema-menu">
   <div class="thema-optie" onclick="kiesThema('')" data-i18n="thema.standaard">Standaard</div>

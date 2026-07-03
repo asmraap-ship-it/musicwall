@@ -57,7 +57,17 @@ db.exec(`
     volgorde INTEGER DEFAULT 0,
     FOREIGN KEY (concert_id) REFERENCES concerten(id) ON DELETE CASCADE
   );
+  CREATE TABLE IF NOT EXISTS wall_groepen (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    naam TEXT NOT NULL,
+    volgorde INTEGER DEFAULT 0
+  );
 `)
+
+const wallKolommen = db.prepare("PRAGMA table_info(walls)").all().map(k => k.name)
+if (!wallKolommen.includes('groep_id')) {
+  db.exec('ALTER TABLE walls ADD COLUMN groep_id INTEGER')
+}
 
 const aantalWalls = db.prepare('SELECT COUNT(*) as n FROM walls').get()
 if (aantalWalls.n === 0) {

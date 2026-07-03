@@ -227,7 +227,8 @@ ipcRenderer.on('herlaad', () => {
 })
 
 function voegWallToe() {
-  ipcRenderer.send('open-nieuwe-wall')
+  const groepId = typeof huidigeGroepId !== 'undefined' ? huidigeGroepId : null
+  ipcRenderer.send('open-nieuwe-wall', groepId)
 }
 
 function bevestigWallVerwijderen(wallId, wallNaam) {
@@ -565,7 +566,10 @@ async function laadWalls() {
   const container = document.getElementById('walls-container')
   container.innerHTML = ''
 
-  const walls = getAlleWalls()
+  const alleWalls = getAlleWalls()
+  const walls = typeof huidigeGroepId !== 'undefined' && huidigeGroepId
+    ? alleWalls.filter(w => w.groep_id === huidigeGroepId)
+    : alleWalls.filter(w => !w.groep_id)
   videoData = []
 
   for (const wall of walls) {

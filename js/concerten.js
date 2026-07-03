@@ -1,6 +1,8 @@
 const { getAlleConcerten, verwijderConcert, getMediaVoorConcert } = require('./db/concerten.js')
+const { getAlleWallGroepen, verplaatsWallNaarGroep } = require('./db/wallgroepen.js')
 
 let huidigeSectie = 'walls'
+let huidigeGroepId = null
 
 function getYoutubeId(url) {
   if (!url) return null
@@ -8,8 +10,9 @@ function getYoutubeId(url) {
   return match ? match[1] : null
 }
 
-function schakelSectie(sectie) {
+function schakelSectie(sectie, groepId) {
   huidigeSectie = sectie
+  huidigeGroepId = sectie === 'groep' ? groepId : null
 
   const wallsContainer = document.getElementById('walls-container')
   const concertenContainer = document.getElementById('concerten-container')
@@ -18,13 +21,24 @@ function schakelSectie(sectie) {
   const selectieInfo = document.getElementById('selectie-info')
   const prullenbak = document.getElementById('prullenbak')
 
-  if (sectie === 'walls') {
+  document.querySelectorAll('.tab-btn[data-groep-id]').forEach(el => el.classList.remove('actief'))
+
+  if (sectie === 'walls' || sectie === 'groep') {
     wallsContainer.style.display = 'flex'
     concertenContainer.style.display = 'none'
-    btnWalls.classList.add('actief')
     btnConcerten.classList.remove('actief')
     if (selectieInfo) selectieInfo.style.display = ''
     if (prullenbak) prullenbak.style.display = ''
+
+    if (sectie === 'groep') {
+      btnWalls.classList.remove('actief')
+      const tabEl = document.querySelector('.tab-btn[data-groep-id="' + groepId + '"]')
+      if (tabEl) tabEl.classList.add('actief')
+    } else {
+      btnWalls.classList.add('actief')
+    }
+
+    laadWalls()
   } else {
     wallsContainer.style.display = 'none'
     concertenContainer.style.display = 'flex'
@@ -33,6 +47,129 @@ function schakelSectie(sectie) {
     if (selectieInfo) selectieInfo.style.display = 'none'
     if (prullenbak) prullenbak.style.display = 'none'
     laadConcerten()
+  }
+}
+
+async function laadWallGroepenTabs() {
+  const tabs = document.getElementById('sectie-tabs')
+  const nieuweGroepBtn = document.getElementById('btn-nieuwe-groep')
+
+  tabs.querySelectorAll('.tab-btn[data-groep-id]').forEach(el => el.remove())
+
+  const groepen = getAlleWallGroepen()
+
+  groepen.forEach(groep => {
+    const btn = document.createElement('button')
+    btn.className = 'tab-btn' + (huidigeSectie === 'groep' && huidigeGroepId === groep.id ? ' actief' : '')
+    btn.dataset.groepId = groep.id
+
+    const verwijderKnop = document.createElement('button')
+    verwijderKnop.className = 'tab-verwijder'
+    verwijderKnop.title = t('wallGroep.verwijderenTooltip')
+    verwijderKnop.innerHTML = '&times;'
+    verwijderKnop.onclick = (event) => {
+      event.stopPropagation()
+      bevestigWallGroepVerwijderen(groep.id, groep.naam)
+    }
+
+    const label = document.createElement('span')
+    label.className = 'tab-label'
+    label.textContent = groep.naam
+
+    btn.appendChild(label)
+    btn.appendChild(verwijderKnop)
+
+    btn.title = t('wallGroep.hernoemenTooltip')
+    btn.onclick = () => schakelSectie('groep', groep.id)
+    btn.ondblclick = (event) => {
+      event.stopPropagation()
+      hernoemWallGroepPrompt(groep.id, groep.naam)
+    }
+
+    btn.draggable = true
+    btn.ondragstart = (event) => {
+      event.dataTransfer.setData('groepTabId', groep.id.toString())
+      btn.style.opacity = '0.4'
+    }
+    btn.ondragend = () => {
+      document.querySelectorAll('.tab-btn[data-groep-id]').forEach(t => t.style.opacity = '1')
+    }
+    btn.ondragover = (event) => { event.preventDefault(); btn.classList.add('drag-over') }
+    btn.ondragleave = () => btn.classList.remove('drag-over')
+    btn.ondrop = (event) => {
+      event.preventDefault()
+      btn.classList.remove('drag-over')
+
+      const wallId = parseInt(event.dataTransfer.getData('wallId'))
+      if (wallId) {
+        verplaatsWallNaarGroep(wallId, groep.id)
+        laadWalls()
+        return
+      }
+
+      const bronGroepId = parseInt(event.dataTransfer.getData('groepTabId'))
+      if (bronGroepId && bronGroepId !== groep.id) {
+        herschikGroepTabs(bronGroepId, groep.id)
+      }
+    }
+
+    tabs.insertBefore(btn, nieuweGroepBtn)
+  })
+}
+
+function herschikGroepTabs(bronGroepId, doelGroepId) {
+  const tabs = document.getElementById('sectie-tabs')
+  const bronTab = tabs.querySelector('.tab-btn[data-groep-id="' + bronGroepId + '"]')
+  const doelTab = tabs.querySelector('.tab-btn[data-groep-id="' + doelGroepId + '"]')
+  if (!bronTab || !doelTab) return
+
+  const groepTabs = Array.from(tabs.querySelectorAll('.tab-btn[data-groep-id]'))
+  const bronIdx = groepTabs.indexOf(bronTab)
+  const doelIdx = groepTabs.indexOf(doelTab)
+
+  if (bronIdx < doelIdx) {
+    tabs.insertBefore(bronTab, doelTab.nextSibling)
+  } else {
+    tabs.insertBefore(bronTab, doelTab)
+  }
+
+  const nieuweVolgorde = Array.from(tabs.querySelectorAll('.tab-btn[data-groep-id]'))
+    .map(t => parseInt(t.dataset.groepId))
+    .filter(id => !isNaN(id))
+
+  ipcRenderer.send('sla-wallgroep-volgorde-op', nieuweVolgorde)
+}
+
+function voegWallGroepToe() {
+  ipcRenderer.send('open-nieuwe-wallgroep')
+}
+
+function bevestigWallGroepVerwijderen(groepId, groepNaam) {
+  ipcRenderer.send('bevestig-wallgroep-verwijderen', { groepId, groepNaam })
+}
+
+function hernoemWallGroepPrompt(groepId, huidigeNaam) {
+  ipcRenderer.send('open-hernoem-wallgroep', { groepId, huidigeNaam })
+}
+
+function hernoemTabPrompt(type, huidigeNaam) {
+  ipcRenderer.send('open-hernoem-tab', { type, huidigeNaam })
+}
+
+function pasTabNamenToe() {
+  const wallsNaam = localStorage.getItem('musicwall-tab-walls-naam')
+  const concertenNaam = localStorage.getItem('musicwall-tab-concerten-naam')
+
+  if (wallsNaam) {
+    const label = document.querySelector('#btn-walls .tab-label')
+    label.textContent = wallsNaam
+    label.removeAttribute('data-i18n')
+  }
+
+  if (concertenNaam) {
+    const label = document.querySelector('#btn-concerten .tab-label')
+    label.textContent = concertenNaam
+    label.removeAttribute('data-i18n')
   }
 }
 
@@ -187,10 +324,48 @@ ipcRenderer.on('herlaad-concerten', () => {
   if (huidigeSectie === 'concerten') laadConcerten()
 })
 
+ipcRenderer.on('herlaad', () => {
+  laadWallGroepenTabs()
+})
+
+ipcRenderer.on('tab-naam-gewijzigd', (event, { type, naam }) => {
+  localStorage.setItem('musicwall-tab-' + type + '-naam', naam)
+  pasTabNamenToe()
+})
+
+document.addEventListener('taal-gewijzigd', pasTabNamenToe)
+
 window.schakelSectie = schakelSectie
 window.openConcert = openConcert
 window.bevestigConcertVerwijderen = bevestigConcertVerwijderen
 window.bewerkConcert = bewerkConcert
+window.voegWallGroepToe = voegWallGroepToe
+window.bevestigWallGroepVerwijderen = bevestigWallGroepVerwijderen
 
 document.getElementById('btn-walls').addEventListener('click', () => schakelSectie('walls'))
 document.getElementById('btn-concerten').addEventListener('click', () => schakelSectie('concerten'))
+
+document.getElementById('btn-walls').addEventListener('dblclick', (event) => {
+  event.stopPropagation()
+  hernoemTabPrompt('walls', document.querySelector('#btn-walls .tab-label').textContent)
+})
+document.getElementById('btn-concerten').addEventListener('dblclick', (event) => {
+  event.stopPropagation()
+  hernoemTabPrompt('concerten', document.querySelector('#btn-concerten .tab-label').textContent)
+})
+
+const btnWallsTab = document.getElementById('btn-walls')
+btnWallsTab.addEventListener('dragover', (event) => { event.preventDefault(); btnWallsTab.classList.add('drag-over') })
+btnWallsTab.addEventListener('dragleave', () => btnWallsTab.classList.remove('drag-over'))
+btnWallsTab.addEventListener('drop', (event) => {
+  event.preventDefault()
+  btnWallsTab.classList.remove('drag-over')
+  const wallId = parseInt(event.dataTransfer.getData('wallId'))
+  if (wallId) {
+    verplaatsWallNaarGroep(wallId, null)
+    laadWalls()
+  }
+})
+
+pasTabNamenToe()
+laadWallGroepenTabs()

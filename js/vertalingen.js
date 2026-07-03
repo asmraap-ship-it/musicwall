@@ -10,8 +10,8 @@ const VERTALINGEN = {
     'header.taalKiezen': 'Kies een taal',
 
     // Tabs
-    'tabs.walls': 'Walls',
-    'tabs.concerten': 'Concerten',
+    'tabs.walls': 'Mijn walls',
+    'tabs.concerten': 'Mijn concerten',
 
     // Thema's
     'thema.standaard': 'Standaard',
@@ -38,6 +38,11 @@ const VERTALINGEN = {
     'wall.verwijderen.bevestiging': 'Weet u zeker dat u "{naam}" wilt verwijderen?',
     'wall.verwijderen.metVideos': 'Dit verwijdert ook {n} video(s) in deze wall.',
     'wall.verwijderen.leeg': 'Deze wall is leeg.',
+    'wallGroep.nieuweGroepTooltip': 'Nieuwe groep',
+    'wallGroep.verwijderenTooltip': 'Groep verwijderen',
+    'wallGroep.hernoemenTooltip': 'Dubbelklik om te hernoemen',
+    'wallGroep.verwijderen.titel': 'Groep verwijderen',
+    'wallGroep.verwijderen.bevestiging': 'Weet u zeker dat u de groep "{naam}" wilt verwijderen? De walls erin blijven bestaan, maar worden niet meer gegroepeerd.',
 
     // Video's
     'video.bron.youtube': 'YouTube',
@@ -106,6 +111,13 @@ const VERTALINGEN = {
     'nieuweWall.naamLabel': 'Naam van de wall',
     'nieuweWall.naamPlaceholder': 'bijv. Live Concerten',
     'nieuweWall.aanmakenBtn': 'Aanmaken',
+    'nieuweWallGroep.titel': 'Nieuwe groep',
+    'nieuweWallGroep.hernoemenTitel': 'Groep hernoemen',
+    'nieuweWallGroep.naamLabel': 'Naam van de groep',
+    'nieuweWallGroep.naamPlaceholder': 'bijv. Feestjes',
+    'nieuweWallGroep.aanmakenBtn': 'Aanmaken',
+    'hernoemTab.titel': 'Tab hernoemen',
+    'hernoemTab.naamLabel': 'Naam van de tab',
 
     // Videos importeren
     'importeren.titel': 'Videos importeren',
@@ -175,6 +187,14 @@ const VERTALINGEN = {
     'help.walls.li5': 'Sleep een video omhoog of omlaag binnen dezelfde wall om de volgorde aan te passen — de nieuwe volgorde wordt automatisch opgeslagen',
     'help.walls.li6': 'Houd <strong>Ctrl</strong> ingedrukt en klik op meerdere video\'s om ze samen te selecteren en te verslepen',
     'help.walls.li7': 'Sleep een wall aan de kop naar een andere positie om de volgorde van de walls te wijzigen — de nieuwe volgorde wordt automatisch opgeslagen',
+    'help.tabs.titel': 'Tabs & wall-groepen',
+    'help.tabs.intro': 'Naast de vaste tabs "Mijn walls" en "Mijn concerten" kunt u eigen groepstabs aanmaken om walls in te verdelen, bijvoorbeeld per thema of gelegenheid.',
+    'help.tabs.li1': 'Klik op de <strong>+</strong>-tab helemaal rechts om een nieuwe groep aan te maken',
+    'help.tabs.li2': 'Sleep een wall aan de kop naar een groepstab om hem aan die groep toe te wijzen; sleep hem naar "Mijn walls" om de groepering weer op te heffen',
+    'help.tabs.li3': 'Een nieuwe wall die u aanmaakt terwijl een groepstab actief is, komt automatisch in die groep terecht',
+    'help.tabs.li4': 'Dubbelklik op een tab (ook "Mijn walls" en "Mijn concerten") om hem te hernoemen',
+    'help.tabs.li5': 'Beweeg over een groepstab en klik op &times; om de groep te verwijderen; de walls erin blijven bestaan, maar worden ongegroepeerd',
+    'help.tabs.li6': 'Sleep groepstabs onderling om hun volgorde te wijzigen',
     'help.concerten.titel': 'Concertervaringen',
     'help.concerten.intro': 'Een concertervaring bundelt foto\'s en video\'s van één concert, met een verhaal en datum erbij.',
     'help.concerten.li1': 'Klik op <strong>+ Nieuw concert</strong> om een concertervaring aan te maken',
@@ -236,8 +256,8 @@ const VERTALINGEN = {
     'header.themaKiezen': 'Choose a theme',
     'header.taalKiezen': 'Choose a language',
 
-    'tabs.walls': 'Walls',
-    'tabs.concerten': 'Concerts',
+    'tabs.walls': 'My walls',
+    'tabs.concerten': 'My concerts',
 
     'thema.standaard': 'Default',
     'thema.metaal': 'Metal',
@@ -261,6 +281,11 @@ const VERTALINGEN = {
     'wall.verwijderen.bevestiging': 'Are you sure you want to delete "{naam}"?',
     'wall.verwijderen.metVideos': 'This will also delete {n} video(s) in this wall.',
     'wall.verwijderen.leeg': 'This wall is empty.',
+    'wallGroep.nieuweGroepTooltip': 'New group',
+    'wallGroep.verwijderenTooltip': 'Delete group',
+    'wallGroep.hernoemenTooltip': 'Double-click to rename',
+    'wallGroep.verwijderen.titel': 'Delete group',
+    'wallGroep.verwijderen.bevestiging': 'Are you sure you want to delete the group "{naam}"? The walls in it will remain, just ungrouped.',
 
     'video.bron.youtube': 'YouTube',
     'video.bron.lokaal': 'Local',
@@ -322,6 +347,13 @@ const VERTALINGEN = {
     'nieuweWall.naamLabel': 'Wall name',
     'nieuweWall.naamPlaceholder': 'e.g. Live Concerts',
     'nieuweWall.aanmakenBtn': 'Create',
+    'nieuweWallGroep.titel': 'New group',
+    'nieuweWallGroep.hernoemenTitel': 'Rename group',
+    'nieuweWallGroep.naamLabel': 'Group name',
+    'nieuweWallGroep.naamPlaceholder': 'e.g. Parties',
+    'nieuweWallGroep.aanmakenBtn': 'Create',
+    'hernoemTab.titel': 'Rename tab',
+    'hernoemTab.naamLabel': 'Tab name',
 
     'importeren.titel': 'Import videos',
     'importeren.wallLabel': 'Wall',
@@ -385,6 +417,14 @@ const VERTALINGEN = {
     'help.walls.li5': 'Drag a video up or down within the same wall to reorder it — the new order is saved automatically',
     'help.walls.li6': 'Hold <strong>Ctrl</strong> and click multiple videos to select and drag them together',
     'help.walls.li7': 'Drag a wall by its header to another position to change the order of the walls — the new order is saved automatically',
+    'help.tabs.titel': 'Tabs & wall groups',
+    'help.tabs.intro': 'Besides the fixed "My walls" and "My concerts" tabs, you can create your own group tabs to organize walls, for example by theme or occasion.',
+    'help.tabs.li1': 'Click the <strong>+</strong> tab at the far right to create a new group',
+    'help.tabs.li2': 'Drag a wall by its header onto a group tab to assign it to that group; drag it onto "My walls" to remove it from the group again',
+    'help.tabs.li3': 'A new wall you create while a group tab is active is automatically added to that group',
+    'help.tabs.li4': 'Double-click a tab (including "My walls" and "My concerts") to rename it',
+    'help.tabs.li5': 'Hover over a group tab and click &times; to delete the group; the walls in it remain, just ungrouped',
+    'help.tabs.li6': 'Drag group tabs among themselves to change their order',
     'help.concerten.titel': 'Concert experiences',
     'help.concerten.intro': 'A concert experience bundles photos and videos from one concert, together with a story and date.',
     'help.concerten.li1': 'Click <strong>+ New concert</strong> to create a concert experience',

@@ -203,7 +203,7 @@ ipcMain.on('wall-toegevoegd', () => {
   BrowserWindow.getFocusedWindow().close()
 })
 
-ipcMain.on('open-nieuwe-wall', () => {
+ipcMain.on('open-nieuwe-wall', (event, groepId) => {
   const wallWin = new BrowserWindow({
     width: 400,
     height: 220,
@@ -216,6 +216,86 @@ ipcMain.on('open-nieuwe-wall', () => {
   })
   wallWin.loadFile('nieuwe-wall.html')
   wallWin.setMenuBarVisibility(false)
+
+  if (groepId) {
+    wallWin.webContents.on('did-finish-load', () => {
+      wallWin.webContents.send('stel-groep-in', groepId)
+    })
+  }
+})
+
+ipcMain.on('wallgroep-toegevoegd', () => {
+  if (mainWindow) mainWindow.webContents.send('herlaad')
+  BrowserWindow.getFocusedWindow().close()
+})
+
+ipcMain.on('open-nieuwe-wallgroep', () => {
+  const groepWin = new BrowserWindow({
+    width: 400,
+    height: 220,
+    title: t('nieuweWallGroep.titel'),
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  groepWin.loadFile('nieuwe-wallgroep.html')
+  groepWin.setMenuBarVisibility(false)
+})
+
+ipcMain.on('open-hernoem-wallgroep', (event, { groepId, huidigeNaam }) => {
+  const groepWin = new BrowserWindow({
+    width: 400,
+    height: 220,
+    title: t('nieuweWallGroep.hernoemenTitel'),
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  groepWin.loadFile('nieuwe-wallgroep.html')
+  groepWin.setMenuBarVisibility(false)
+
+  groepWin.webContents.on('did-finish-load', () => {
+    groepWin.webContents.send('stel-hernoem-in', { groepId, huidigeNaam })
+  })
+})
+
+ipcMain.on('open-hernoem-tab', (event, { type, huidigeNaam }) => {
+  const tabWin = new BrowserWindow({
+    width: 400,
+    height: 220,
+    title: t('hernoemTab.titel'),
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  tabWin.loadFile('hernoem-tab.html')
+  tabWin.setMenuBarVisibility(false)
+
+  tabWin.webContents.on('did-finish-load', () => {
+    tabWin.webContents.send('stel-tab-in', { type, huidigeNaam })
+  })
+})
+
+ipcMain.on('tab-hernoemd', (event, { type, naam }) => {
+  if (mainWindow) mainWindow.webContents.send('tab-naam-gewijzigd', { type, naam })
+  BrowserWindow.getFocusedWindow().close()
+})
+
+ipcMain.on('bevestig-wallgroep-verwijderen', async (event, { groepId, groepNaam }) => {
+  const bericht = t('wallGroep.verwijderen.bevestiging', { naam: groepNaam })
+
+  const akkoord = await vraagBevestiging(t('wallGroep.verwijderen.titel'), bericht)
+  if (akkoord) {
+    const { verwijderWallGroep } = require('./db/wallgroepen.js')
+    verwijderWallGroep(groepId)
+    if (mainWindow) mainWindow.webContents.send('herlaad')
+  }
 })
 
 ipcMain.on('kies-bestand', async (event) => {
@@ -490,6 +570,11 @@ ipcMain.on('sla-volgorde-op', (event, volgordeArray) => {
 ipcMain.on('sla-wall-volgorde-op', (event, volgordeArray) => {
   const { herschikWalls } = require('./db/walls.js')
   herschikWalls(volgordeArray)
+})
+
+ipcMain.on('sla-wallgroep-volgorde-op', (event, volgordeArray) => {
+  const { herschikWallGroepen } = require('./db/wallgroepen.js')
+  herschikWallGroepen(volgordeArray)
 })
 
 ipcMain.on('sla-concert-volgorde-op', (event, volgordeArray) => {
