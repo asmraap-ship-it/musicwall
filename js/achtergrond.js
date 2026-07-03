@@ -51,7 +51,7 @@ let diagonaalPatroon = null
 function leesThemaKleuren() {
   const stijl = getComputedStyle(document.documentElement)
   const accentRgb = stijl.getPropertyValue('--accent-rgb').trim() || '200, 168, 122'
-  const achtergrond = stijl.getPropertyValue('--achtergrond').trim() || '#17150f'
+  const achtergrond = stijl.getPropertyValue('--achtergrond').trim() || '#2b2620'
   themaKleuren = { accentRgb, achtergrond }
   diagonaalPatroon = null
 }

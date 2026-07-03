@@ -1,19 +1,19 @@
 :root {
-  --achtergrond: #17150f;
-  --achtergrond-2: #1c1911;
-  --achtergrond-3: #221e15;
-  --oppervlak: rgba(13, 13, 13, 0.82);
-  --oppervlak-hover: rgba(22, 22, 22, 0.7);
+  --achtergrond: #2b2620;
+  --achtergrond-2: #322c23;
+  --achtergrond-3: #3a3226;
+  --oppervlak: rgba(34, 30, 24, 0.85);
+  --oppervlak-hover: rgba(46, 40, 32, 0.75);
   --accent: #c8a87a;
   --accent-rgb: 200, 168, 122;
   --accent-dim: rgba(200, 168, 122, 0.25);
   --accent-rand: rgba(200, 168, 122, 0.3);
   --tekst: #f0ede8;
-  --tekst-dim: #888888;
-  --tekst-donker: #555555;
-  --rand: #1a1a1a;
-  --rand-2: #222222;
-  --rand-3: #2a2a2a;
+  --tekst-dim: #9a9a9a;
+  --tekst-donker: #6f6f6f;
+  --rand: #3a3a3a;
+  --rand-2: #454545;
+  --rand-3: #525252;
   --schaduw: rgba(0, 0, 0, 0.5);
   --blur: blur(6px);
   --card-rand: 2px solid var(--accent);
@@ -186,7 +186,7 @@ h1 {
   display: flex;
   flex-direction: column;
   background: var(--oppervlak);
-  border: 1px solid #1e1e1e;
+  border: 1px solid #3a3a3a;
   border-radius: 4px;
   overflow: visible;
   backdrop-filter: blur(6px);
@@ -213,7 +213,7 @@ h1 {
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #252018 0%, #0e0c09 100%);
+  background: linear-gradient(135deg, #3a3428 0%, #1f1a12 100%);
   clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
 }
 
@@ -321,7 +321,7 @@ h1 {
   align-items: center;
   gap: 0.4rem;
   padding: 0.5rem 0.85rem;
-  background: #161616;
+  background: #2c2c2c;
   border: 1px solid var(--rand-2);
   border-radius: 3px;
   color: var(--accent);
@@ -330,7 +330,7 @@ h1 {
   transition: background 0.15s;
 }
 
-.yt-btn:hover { background: #1e1e1e; }
+.yt-btn:hover { background: #363636; }
 .yt-icon { width: 14px; height: 14px; }
 
 .wall-footer {
@@ -409,7 +409,7 @@ h1 {
 }
 
 .wall-videos.drag-over {
-  background: #161410;
+  background: #2c2822;
   border: 1px dashed var(--accent);
   border-radius: 3px;
 }
@@ -961,8 +961,8 @@ h1 {
   align-items: center;
   gap: 0.4rem;
    padding: 0.5rem 1.3rem;
-  background: linear-gradient(135deg, #151208 0%, #0a0805 100%);
-  border: 1px solid #3a2e18;
+  background: linear-gradient(135deg, #2b2718 0%, #1a150e 100%);
+  border: 1px solid #584933;
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   color: var(--tekst-donker);
@@ -1008,16 +1008,16 @@ h1 {
 
 .tab-btn:hover {
   color: var(--tekst-dim);
-  background: linear-gradient(135deg, #1e1810 0%, #0e0b07 100%);
+  background: linear-gradient(135deg, #362e20 0%, #201a11 100%);
   box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.35), inset 0 1px 0 rgba(var(--accent-rgb), 0.12);
   text-shadow: 0 0 10px rgba(var(--accent-rgb), 0.6), 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 .tab-btn.actief {
-  background: linear-gradient(135deg, #252018 0%, #0e0c09 100%);
+  background: linear-gradient(135deg, #3a3428 0%, #1f1a12 100%);
   border-color: var(--accent);
   border-right-color: rgba(200, 168, 122, 0.5);
-  border-bottom: 2px solid #0e0c09;
+  border-bottom: 2px solid #1f1a12;
   color: var(--accent);
   z-index: 2;
   box-shadow: inset 0 1px 0 rgba(200, 168, 122, 0.15);

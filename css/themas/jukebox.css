@@ -1,19 +1,19 @@
 [data-thema="jukebox"] {
-  --achtergrond: #150a0a;
-  --achtergrond-2: #1c0d0d;
-  --achtergrond-3: #241010;
-  --oppervlak: rgba(28, 13, 13, 0.88);
-  --oppervlak-hover: rgba(36, 16, 16, 0.92);
+  --achtergrond: #2b1616;
+  --achtergrond-2: #331a1a;
+  --achtergrond-3: #3d2020;
+  --oppervlak: rgba(50, 26, 26, 0.88);
+  --oppervlak-hover: rgba(62, 32, 32, 0.9);
   --accent: #e8b94a;
   --accent-rgb: 232, 185, 74;
   --accent-dim: rgba(232, 185, 74, 0.2);
   --accent-rand: rgba(232, 185, 74, 0.35);
   --tekst: #f5e6d3;
-  --tekst-dim: #b08a6a;
-  --tekst-donker: #6b4a3a;
-  --rand: #3a1818;
-  --rand-2: #4a1f1f;
-  --rand-3: #5a2828;
+  --tekst-dim: #c4a284;
+  --tekst-donker: #8a6555;
+  --rand: #5a2828;
+  --rand-2: #6a3232;
+  --rand-3: #7a3c3c;
   --schaduw: rgba(0, 0, 0, 0.7);
   --card-rand: 2px solid var(--accent);
   --radius: 6px;
@@ -24,13 +24,13 @@
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.6) 100%);
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.4) 100%);
   z-index: 5;
 }
 
 [data-thema="jukebox"] .wall {
-  background: linear-gradient(160deg, rgba(40, 16, 16, 0.92), rgba(18, 8, 8, 0.92));
-  border: 1px solid #5a2828;
+  background: linear-gradient(160deg, rgba(66, 34, 34, 0.9), rgba(38, 20, 20, 0.88));
+  border: 1px solid #7a3c3c;
   box-shadow:
     inset 0 1px 0 rgba(255,200,150,0.1),
     inset 0 -2px 6px rgba(0,0,0,0.5),
@@ -46,8 +46,8 @@
 }
 
 [data-thema="jukebox"] .wall-header {
-  background: linear-gradient(180deg, rgba(58, 24, 24, 0.95), rgba(28, 12, 12, 0.95));
-  border-bottom: 1px solid #5a2828;
+  background: linear-gradient(180deg, rgba(84, 40, 40, 0.95), rgba(46, 22, 22, 0.95));
+  border-bottom: 1px solid #7a3c3c;
   box-shadow: inset 0 1px 0 rgba(255,200,150,0.12), inset 0 -1px 4px rgba(0,0,0,0.5);
 }
 
@@ -68,10 +68,105 @@
 [data-thema="jukebox"] .wall-header::after { right: 0.75rem; }
 
 [data-thema="jukebox"] header {
-  background: linear-gradient(180deg, rgba(24, 11, 11, 0.98), rgba(14, 7, 7, 0.98));
-  border-bottom: 1px solid #5a2828;
+  background: linear-gradient(180deg, rgba(46, 22, 22, 0.98), rgba(28, 14, 14, 0.98));
+  border-bottom: 1px solid #7a3c3c;
   box-shadow: inset 0 1px 0 rgba(232, 185, 74, 0.15), 0 2px 16px rgba(180, 40, 20, 0.15);
 }
 
 [data-thema="jukebox"] .card {
-  background: linear-gradient(160deg, rgba(36, 16, 16, 0.85), rgba(16, 7, 7,
+  background: linear-gradient(160deg, rgba(62, 32, 32, 0.85), rgba(34, 18, 18, 0.85));
+  border-left: 3px solid #e8b94a;
+}
+
+[data-thema="jukebox"] .card:hover {
+  background: linear-gradient(160deg, rgba(76, 40, 40, 0.92), rgba(44, 24, 24, 0.92));
+  box-shadow: inset 0 1px 0 rgba(232, 185, 74, 0.15), 0 4px 18px rgba(232, 185, 74, 0.15);
+}
+
+[data-thema="jukebox"] .navigatie button,
+[data-thema="jukebox"] .toevoegen-btn,
+[data-thema="jukebox"] #thema-keuze,
+[data-thema="jukebox"] #prullenbak,
+[data-thema="jukebox"] .yt-btn,
+[data-thema="jukebox"] .opslaan-btn,
+[data-thema="jukebox"] .bestand-btn,
+[data-thema="jukebox"] .wall-toevoegen-btn,
+[data-thema="jukebox"] .nieuwe-wall-btn,
+[data-thema="jukebox"] .zoekbalk button {
+  background: linear-gradient(180deg, rgba(76, 40, 40, 0.9), rgba(40, 20, 20, 0.9));
+  border: 1px solid #6a3232;
+  color: #f0d8bc;
+  box-shadow: inset 0 1px 0 rgba(255,200,150,0.12), 0 2px 8px rgba(0,0,0,0.4);
+}
+
+[data-thema="jukebox"] .navigatie button:hover,
+[data-thema="jukebox"] .toevoegen-btn:hover,
+[data-thema="jukebox"] .opslaan-btn:hover,
+[data-thema="jukebox"] .bestand-btn:hover,
+[data-thema="jukebox"] .wall-toevoegen-btn:hover,
+[data-thema="jukebox"] .nieuwe-wall-btn:hover,
+[data-thema="jukebox"] .zoekbalk button:hover {
+  background: linear-gradient(180deg, rgba(96, 52, 52, 1), rgba(50, 26, 26, 1));
+  border-color: #e8b94a;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(232, 185, 74, 0.3);
+}
+
+[data-thema="jukebox"] input[type="text"],
+[data-thema="jukebox"] input[type="url"],
+[data-thema="jukebox"] textarea,
+[data-thema="jukebox"] select,
+[data-thema="jukebox"] .zoekbalk input {
+  background: rgba(38, 20, 20, 0.85);
+  border: 1px solid #4a2222;
+  color: #f5e6d3;
+}
+
+[data-thema="jukebox"] input:focus,
+[data-thema="jukebox"] textarea:focus {
+  border-color: #e8b94a;
+}
+
+[data-thema="jukebox"] .card-thumb-play {
+  background: radial-gradient(circle, rgba(232, 185, 74, 0.3), rgba(0,0,0,0.55));
+  border: 1px solid rgba(232, 185, 74, 0.4);
+  box-shadow: 0 0 20px rgba(232, 185, 74, 0.4);
+}
+
+[data-thema="jukebox"] h1 span {
+  text-shadow: 0 0 16px rgba(232, 185, 74, 0.6);
+}
+
+[data-thema="jukebox"] .logo {
+  text-shadow: 0 0 8px rgba(232, 185, 74, 0.3);
+}
+
+[data-thema="jukebox"] .resultaat {
+  background: linear-gradient(160deg, rgba(56, 28, 28, 0.85), rgba(32, 16, 16, 0.85));
+  border: 1px solid #4a2222;
+}
+
+[data-thema="jukebox"] .resultaat:hover {
+  background: linear-gradient(160deg, rgba(76, 40, 40, 0.92), rgba(44, 24, 24, 0.92));
+  border-color: #e8b94a;
+}
+
+[data-thema="jukebox"] .card.geselecteerd {
+  outline: 2px solid #e8b94a;
+  box-shadow: 0 0 20px rgba(232, 185, 74, 0.4);
+}
+
+[data-thema="jukebox"] .card.geselecteerd .card-thumb-wrap::after {
+  background: #e8b94a;
+  color: #2b1616;
+}
+
+[data-thema="jukebox"] #prullenbak.hover {
+  box-shadow: 0 0 16px rgba(231, 76, 60, 0.4);
+}
+
+[data-thema="jukebox"] .selectie-info {
+  background: linear-gradient(180deg, rgba(56, 28, 28, 0.95), rgba(32, 16, 16, 0.95));
+  border: 1px solid #e8b94a;
+  box-shadow: 0 0 20px rgba(232, 185, 74, 0.2), inset 0 1px 0 rgba(255,200,150,0.1);
+}

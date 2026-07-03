@@ -1,19 +1,19 @@
 [data-thema="jr"] {
-  --achtergrond: #050505;
-  --achtergrond-2: #0a0a0a;
-  --achtergrond-3: #0f0f0f;
-  --oppervlak: rgba(15, 15, 15, 0.9);
-  --oppervlak-hover: rgba(25, 25, 25, 0.92);
+  --achtergrond: #1c1c1c;
+  --achtergrond-2: #232323;
+  --achtergrond-3: #2b2b2b;
+  --oppervlak: rgba(38, 38, 38, 0.9);
+  --oppervlak-hover: rgba(48, 48, 48, 0.9);
   --accent: #f5f5f5;
   --accent-rgb: 245, 245, 245;
   --accent-dim: rgba(245, 245, 245, 0.15);
   --accent-rand: rgba(245, 245, 245, 0.25);
   --tekst: #e8e8e8;
-  --tekst-dim: #888888;
-  --tekst-donker: #4a4a4a;
-  --rand: #1f1f1f;
-  --rand-2: #2a2a2a;
-  --rand-3: #3a3a3a;
+  --tekst-dim: #a0a0a0;
+  --tekst-donker: #707070;
+  --rand: #3a3a3a;
+  --rand-2: #454545;
+  --rand-3: #545454;
   --schaduw: rgba(0, 0, 0, 0.9);
   --card-rand: 2px solid var(--accent);
   --radius: 0px;
@@ -24,17 +24,17 @@
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%);
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.5) 100%);
   z-index: 5;
 }
 
 [data-thema="jr"] .wall {
-  background: linear-gradient(165deg, rgba(20, 20, 20, 0.92), rgba(5, 5, 5, 0.92));
-  border: 1px solid #2a2a2a;
+  background: linear-gradient(165deg, rgba(44, 44, 44, 0.9), rgba(28, 28, 28, 0.88));
+  border: 1px solid #454545;
   border-radius: 0;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.06),
-    0 8px 32px rgba(0,0,0,0.7);
+    0 8px 32px rgba(0,0,0,0.6);
 }
 
 [data-thema="jr"] .wall::before {
@@ -46,23 +46,23 @@
 }
 
 [data-thema="jr"] .wall-header {
-  background: linear-gradient(180deg, rgba(25, 25, 25, 0.95), rgba(10, 10, 10, 0.95));
-  border-bottom: 1px solid #2a2a2a;
+  background: linear-gradient(180deg, rgba(50, 50, 50, 0.95), rgba(32, 32, 32, 0.92));
+  border-bottom: 1px solid #454545;
 }
 
 [data-thema="jr"] header {
-  background: linear-gradient(180deg, rgba(10, 10, 10, 0.98), rgba(4, 4, 4, 0.98));
-  border-bottom: 1px solid #2a2a2a;
+  background: linear-gradient(180deg, rgba(34, 34, 34, 0.98), rgba(22, 22, 22, 0.95));
+  border-bottom: 1px solid #454545;
 }
 
 [data-thema="jr"] .card {
-  background: linear-gradient(165deg, rgba(22, 22, 22, 0.85), rgba(8, 8, 8, 0.85));
+  background: linear-gradient(165deg, rgba(46, 46, 46, 0.85), rgba(30, 30, 30, 0.82));
   border-left: 3px solid #f5f5f5;
   border-radius: 0;
 }
 
 [data-thema="jr"] .card:hover {
-  background: linear-gradient(165deg, rgba(32, 32, 32, 0.92), rgba(14, 14, 14, 0.92));
+  background: linear-gradient(165deg, rgba(58, 58, 58, 0.9), rgba(38, 38, 38, 0.88));
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
@@ -81,8 +81,8 @@
 [data-thema="jr"] .wall-toevoegen-btn,
 [data-thema="jr"] .nieuwe-wall-btn,
 [data-thema="jr"] .zoekbalk button {
-  background: linear-gradient(180deg, rgba(35, 35, 35, 0.9), rgba(10, 10, 10, 0.9));
-  border: 1px solid #3a3a3a;
+  background: linear-gradient(180deg, rgba(60, 60, 60, 0.9), rgba(36, 36, 36, 0.85));
+  border: 1px solid #545454;
   border-radius: 0;
   color: #e8e8e8;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
@@ -91,7 +91,7 @@
 [data-thema="jr"] .navigatie button:hover,
 [data-thema="jr"] .toevoegen-btn:hover,
 [data-thema="jr"] .opslaan-btn:hover {
-  background: linear-gradient(180deg, rgba(50, 50, 50, 1), rgba(15, 15, 15, 1));
+  background: linear-gradient(180deg, rgba(78, 78, 78, 1), rgba(44, 44, 44, 1));
   border-color: #f5f5f5;
   color: #fff;
 }
@@ -100,8 +100,8 @@
 [data-thema="jr"] input[type="url"],
 [data-thema="jr"] textarea,
 [data-thema="jr"] select {
-  background: rgba(10, 10, 10, 0.8);
-  border: 1px solid #2a2a2a;
+  background: rgba(30, 30, 30, 0.85);
+  border: 1px solid #454545;
   border-radius: 0;
   color: #e8e8e8;
 }
@@ -112,7 +112,7 @@
 }
 
 [data-thema="jr"] .card-thumb-play {
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.5);
   border: 1px solid rgba(245, 245, 245, 0.5);
 }
 
@@ -127,5 +127,5 @@
 
 [data-thema="jr"] .card.geselecteerd .card-thumb-wrap::after {
   background: #f5f5f5;
-  color: #050505;
+  color: #1c1c1c;
 }

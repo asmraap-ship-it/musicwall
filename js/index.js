@@ -200,7 +200,11 @@ document.addEventListener('click', (e) => {
 })
 
 function laadOpgeslagenThema() {
-  const thema = localStorage.getItem('musicwall-thema')
+  let thema = localStorage.getItem('musicwall-thema')
+  if (thema === null) {
+    thema = ''
+    localStorage.setItem('musicwall-thema', thema)
+  }
   if (thema) {
     document.documentElement.setAttribute('data-thema', thema)
   }

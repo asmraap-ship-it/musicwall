@@ -62,7 +62,9 @@ De `playlist`-tabel (jukebox) staat los van `videos`/`concert_media` — bij toe
 - Drag-and-drop: `kaartDrop` stopt propagatie alleen bij dezelfde wall; andere wall laat event doorgaan naar `drop()`
 
 ## Thema's
-Zes thema's via `data-thema` attribuut op `<html>`: standaard, metaal, jukebox, nacht, jr (Raw), natuur. Opgeslagen in localStorage.
+Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard): standaard, metaal, jukebox, nacht, jr (Raw), natuur, licht. Opgeslagen in `localStorage` (`musicwall-thema`).
+- `laadOpgeslagenThema()` in `js/index.js` schrijft bij de allereerste opstart (wanneer de localStorage-key nog niet bestaat, `=== null`) expliciet de standaardwaarde (`''`) terug naar `localStorage`, zodat het gekozen thema vanaf dat moment een bewuste, opgeslagen keuze is in plaats van een impliciete fallback
+- Alle donkere thema's (dus alle behalve Licht) zijn gebaseerd op een gematigd-donker palet (achtergronden rond L≈16-20%, niet bijna-zwart) voor beter contrast en leesbaarheid, met behoud van elk thema's eigen kleurkarakter (goud/metaal-blauw/jukebox-rood-goud/nacht-paars/raw-mono/natuur-groen)
 
 ## Volgorde wijzigen via slepen
 - **Walls**: sleep aan de `wall-header` (niet de hele wall, om conflict met het bestaande video-drag-and-drop in `.wall-videos` te vermijden) → `wallDragStart`/`wallDragOver`/`wallDragLeave`/`wallDrop`/`wallDragEnd` in `js/index.js`, IPC `sla-wall-volgorde-op` → `herschikWalls()` in `db/walls.js`
@@ -114,8 +116,8 @@ Zes thema's via `data-thema` attribuut op `<html>`: standaard, metaal, jukebox, 
 
 ## Stijlprincipes
 - Donker goudkleurig palet: `--accent: #c8a87a`
-- Achtergrond: bijna zwart `#0a0a0a`
-- Wall-headers: `linear-gradient(135deg, #252018 0%, #0e0c09 100%)` met clip-path
+- Achtergrond: gematigd donker `#2b2620` (niet bijna-zwart, zie `## Thema's`)
+- Wall-headers: `linear-gradient(135deg, #3a3428 0%, #1f1a12 100%)` met clip-path
 - Tabs: zelfde gradient als wall-headers, actieve tab met gouden rand
 - GSAP voor alle animaties (intro, walls, cards, toggle open/dicht)
 - Parallax op walls via mousemove (diepte factor 1)
