@@ -78,6 +78,10 @@ Zes thema's via `data-thema` attribuut op `<html>`: standaard, metaal, jukebox, 
 - **Groep verwijderen**: hover + `×` op de tab → bevestiging via `bevestig-wallgroep-verwijderen` (dezelfde `vraagBevestiging()`-popup als walls/concerten) → `verwijderWallGroep()` zet alleen `groep_id = NULL` op de walls erin, verwijdert de walls zelf niet
 - **Tabs hernoemen**: dubbelklik op een tab. Voor groepstabs gaat dit via `open-hernoem-wallgroep` → `nieuwe-wallgroep.html` in hernoem-modus (database, `hernoemWallGroep()`). Voor de vaste tabs "Mijn walls"/"Mijn concerten" (geen database-rij) gaat dit via een apart `hernoem-tab.html`/`js/hernoem-tab.js` venster dat de naam terugstuurt via `tab-hernoemd` → `tab-naam-gewijzigd`, opgeslagen in `localStorage` (`musicwall-tab-walls-naam` / `musicwall-tab-concerten-naam`) en toegepast via `pasTabNamenToe()` — verwijdert dan het `data-i18n`-attribuut van het label zodat een taalwissel de aangepaste naam niet overschrijft
 
+## Wall kiezen bij importeren/zoeken
+- `importeren.html` en `zoeken.html` tonen eerst een groepskeuze (`#groep-keuze`, gevuld via `getAlleWallGroepen()` + een vaste "ongegroepeerd"-optie met het label van `tabs.walls`), pas daarna een wall-dropdown (`#wall-keuze`) die alleen walls uit de gekozen groep toont (`laadWallsVoorGroep()`) — voorkomt dat alle walls van alle groepen plat in één lijst staan
+- Een groep zonder walls toont een disabled placeholder-optie (`wallGroep.geenWalls`); importeren/toevoegen valideert op een geldige `wallId` voordat het doorgaat (`validatie.geenWall`)
+
 ## YouTube zoeken
 - Klikken op een zoekresultaat selecteert het (net als Ctrl+klik bij walls/concert-detail), niet direct toevoegen
 - Onderin verschijnt een selectiebalk met aantal + knop **"Voeg geselecteerde toe"**; pas dan worden de geselecteerde video's toegevoegd aan de gekozen wall

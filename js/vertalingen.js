@@ -41,6 +41,8 @@ const VERTALINGEN = {
     'wallGroep.nieuweGroepTooltip': 'Nieuwe groep',
     'wallGroep.verwijderenTooltip': 'Groep verwijderen',
     'wallGroep.hernoemenTooltip': 'Dubbelklik om te hernoemen',
+    'wallGroep.selectLabel': 'Groep',
+    'wallGroep.geenWalls': 'Geen walls in deze groep',
     'wallGroep.verwijderen.titel': 'Groep verwijderen',
     'wallGroep.verwijderen.bevestiging': 'Weet u zeker dat u de groep "{naam}" wilt verwijderen? De walls erin blijven bestaan, maar worden niet meer gegroepeerd.',
 
@@ -284,6 +286,8 @@ const VERTALINGEN = {
     'wallGroep.nieuweGroepTooltip': 'New group',
     'wallGroep.verwijderenTooltip': 'Delete group',
     'wallGroep.hernoemenTooltip': 'Double-click to rename',
+    'wallGroep.selectLabel': 'Group',
+    'wallGroep.geenWalls': 'No walls in this group',
     'wallGroep.verwijderen.titel': 'Delete group',
     'wallGroep.verwijderen.bevestiging': 'Are you sure you want to delete the group "{naam}"? The walls in it will remain, just ungrouped.',
 

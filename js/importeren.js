@@ -1,16 +1,49 @@
 const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
 const { getAlleWalls } = require('./db/walls.js')
+const { getAlleWallGroepen } = require('./db/wallgroepen.js')
 const { voegVideoToe } = require('./db/videos.js')
 const path = require('path')
 
 let bestanden = []
 let bezig = false
 
-function laadWalls() {
-  const walls = getAlleWalls()
+function laadGroepen() {
+  const groepen = getAlleWallGroepen()
+  const select = document.getElementById('groep-keuze')
+  select.innerHTML = ''
+
+  const ongegroepeerdOpt = document.createElement('option')
+  ongegroepeerdOpt.value = ''
+  ongegroepeerdOpt.textContent = t('tabs.walls')
+  select.appendChild(ongegroepeerdOpt)
+
+  groepen.forEach(groep => {
+    const opt = document.createElement('option')
+    opt.value = groep.id
+    opt.textContent = groep.naam
+    select.appendChild(opt)
+  })
+
+  select.onchange = laadWallsVoorGroep
+  laadWallsVoorGroep()
+}
+
+function laadWallsVoorGroep() {
+  const groepId = parseInt(document.getElementById('groep-keuze').value) || null
+  const walls = getAlleWalls().filter(w => groepId ? w.groep_id === groepId : !w.groep_id)
   const select = document.getElementById('wall-keuze')
   select.innerHTML = ''
+
+  if (walls.length === 0) {
+    const opt = document.createElement('option')
+    opt.value = ''
+    opt.textContent = t('wallGroep.geenWalls')
+    opt.disabled = true
+    select.appendChild(opt)
+    return
+  }
+
   walls.forEach(wall => {
     const opt = document.createElement('option')
     opt.value = wall.id
@@ -52,9 +85,14 @@ ipcRenderer.on('import-bestanden', (event, gevonden) => {
 
 async function importeer() {
   if (bestanden.length === 0) return
-  bezig = true
 
   const wallId = parseInt(document.getElementById('wall-keuze').value)
+  if (!wallId) {
+    document.getElementById('melding').textContent = t('validatie.geenWall')
+    return
+  }
+
+  bezig = true
   const btn = document.getElementById('import-btn')
   btn.disabled = true
 
@@ -95,4 +133,4 @@ async function importeer() {
   }, 1200)
 }
 
-laadWalls()
+laadGroepen()

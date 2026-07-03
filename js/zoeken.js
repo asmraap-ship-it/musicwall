@@ -3,6 +3,7 @@ const ipcRenderer = electron.ipcRenderer
 const fs = require('fs')
 const path = require('path')
 const { getAlleWalls } = require('./db/walls.js')
+const { getAlleWallGroepen } = require('./db/wallgroepen.js')
 const { voegVideoToe } = require('./db/videos.js')
 
 let apiKey = ''
@@ -34,10 +35,42 @@ async function laadApiSleutel() {
 
 laadApiSleutel()
 
-function laadWalls() {
-  const walls = getAlleWalls()
+function laadGroepen() {
+  const groepen = getAlleWallGroepen()
+  const select = document.getElementById('groep-keuze')
+  select.innerHTML = ''
+
+  const ongegroepeerdOpt = document.createElement('option')
+  ongegroepeerdOpt.value = ''
+  ongegroepeerdOpt.textContent = t('tabs.walls')
+  select.appendChild(ongegroepeerdOpt)
+
+  groepen.forEach(groep => {
+    const opt = document.createElement('option')
+    opt.value = groep.id
+    opt.textContent = groep.naam
+    select.appendChild(opt)
+  })
+
+  select.onchange = laadWallsVoorGroep
+  laadWallsVoorGroep()
+}
+
+function laadWallsVoorGroep() {
+  const groepId = parseInt(document.getElementById('groep-keuze').value) || null
+  const walls = getAlleWalls().filter(w => groepId ? w.groep_id === groepId : !w.groep_id)
   const select = document.getElementById('wall-keuze')
   select.innerHTML = ''
+
+  if (walls.length === 0) {
+    const opt = document.createElement('option')
+    opt.value = ''
+    opt.textContent = t('wallGroep.geenWalls')
+    opt.disabled = true
+    select.appendChild(opt)
+    return
+  }
+
   walls.forEach(wall => {
     const opt = document.createElement('option')
     opt.value = wall.id
@@ -169,4 +202,4 @@ document.addEventListener('keydown', (e) => {
 
 window.voegGeselecteerdeToe = voegGeselecteerdeToe
 
-laadWalls()
+laadGroepen()

@@ -8,7 +8,7 @@ Een persoonlijke Electron desktop-applicatie waarmee je YouTube-video's en lokal
 - **Wall-groepen** — verdeel walls over eigen tabs (bijv. per thema of gelegenheid), aan te maken en te herordenen naast de vaste "Mijn walls"/"Mijn concerten"-tabs; alle tabs zijn te hernoemen
 - **Concertervaringen** — leg concerten vast met foto's, video's en YouTube-clips in een collage, inclusief verhaal, naam en datum
 - **Jukebox** — speel je eigen playlist van lokale video's af, met shuffle, vorige/volgende en schermvullende weergave
-- **YouTube zoeken & map importeren** — voeg eenvoudig nieuwe content toe aan je walls
+- **YouTube zoeken & map importeren** — voeg eenvoudig nieuwe content toe aan je walls, met eerst een groepskeuze zodat je meteen de juiste wall uit de juiste groep kiest
 - **Zes thema's** — Standaard, Metaal, Jukebox, Nacht, Raw en Licht, elk met een eigen kleurpalet en achtergrondstijl
 - **Meertalig** — Nederlands/Engels, automatisch op basis van je systeemtaal, met handmatige wisselknop
 
