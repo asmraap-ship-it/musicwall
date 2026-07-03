@@ -16,8 +16,12 @@ async function laadPlaylist() {
 
   lijst.innerHTML = ''
 
-  for (let i = 0; i < playlist.length; i++) {
-    const item = playlist[i]
+  const weergaveVolgorde = playlist.map((item, i) => ({ item, i }))
+  if (huidigeIndex >= 0) {
+    weergaveVolgorde.sort((a, b) => (a.i === huidigeIndex ? -1 : b.i === huidigeIndex ? 1 : 0))
+  }
+
+  for (const { item, i } of weergaveVolgorde) {
     let thumb = ''
 
     if (item.lokaal_pad) {
