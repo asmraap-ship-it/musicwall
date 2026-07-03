@@ -56,6 +56,10 @@ De `playlist`-tabel (jukebox) staat los van `videos`/`concert_media` — bij toe
 ## Thema's
 Zes thema's via `data-thema` attribuut op `<html>`: standaard, metaal, jukebox, nacht, jr (Raw), natuur. Opgeslagen in localStorage.
 
+## YouTube zoeken
+- Klikken op een zoekresultaat selecteert het (net als Ctrl+klik bij walls/concert-detail), niet direct toevoegen
+- Onderin verschijnt een selectiebalk met aantal + knop **"Voeg geselecteerde toe"**; pas dan worden de geselecteerde video's toegevoegd aan de gekozen wall
+
 ## Jukebox-gedrag
 - Selecteren met **Ctrl+klik** op lokale video's, zowel in een wall-kaart als op een lokale-video-tegel in concert-detail
 - Handmatig bladeren (vorige/volgende/eerste/laatste) verwijdert nooit iets uit de playlist

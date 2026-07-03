@@ -6,6 +6,8 @@ const { getAlleWalls } = require('./db/walls.js')
 const { voegVideoToe } = require('./db/videos.js')
 
 let apiKey = ''
+let resultatenData = {}
+let selectie = new Set()
 
 async function laadApiSleutel() {
   try {
@@ -50,6 +52,8 @@ async function zoek() {
 
   const resultaten = document.getElementById('resultaten')
   resultaten.innerHTML = '<div class="laden">' + t('zoeken.zoeken') + '</div>'
+  resultatenData = {}
+  deselecteerAlles()
 
   try {
     const url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=25&q='
@@ -75,6 +79,8 @@ async function zoek() {
       const kanaal = item.snippet.channelTitle
       const thumb = item.snippet.thumbnails.medium.url
 
+      resultatenData[videoId] = { titel, kanaal }
+
       const el = document.createElement('div')
       el.className = 'resultaat'
       el.id = 'res-' + videoId
@@ -84,7 +90,7 @@ async function zoek() {
         + '<div class="resultaat-kanaal">' + kanaal + '</div>'
         + '</div>'
 
-      el.onclick = () => voegToe(videoId, titel, kanaal, el)
+      el.onclick = () => toggleSelectie(videoId, el)
       resultaten.appendChild(el)
     })
   } catch (err) {
@@ -92,30 +98,75 @@ async function zoek() {
   }
 }
 
-function voegToe(videoId, titel, kanaal, el) {
+function toggleSelectie(videoId, el) {
   if (el.classList.contains('toegevoegd')) return
 
+  if (selectie.has(videoId)) {
+    selectie.delete(videoId)
+    el.classList.remove('geselecteerd')
+  } else {
+    selectie.add(videoId)
+    el.classList.add('geselecteerd')
+  }
+
+  updateSelectieInfo()
+}
+
+function updateSelectieInfo() {
+  const info = document.getElementById('selectie-info')
+  const tekst = document.getElementById('selectie-tekst')
+
+  if (selectie.size === 0) {
+    info.classList.remove('zichtbaar')
+  } else {
+    info.classList.add('zichtbaar')
+    tekst.textContent = t('selectie.tekst', { n: selectie.size })
+  }
+}
+
+function deselecteerAlles() {
+  document.querySelectorAll('.resultaat.geselecteerd').forEach(el => el.classList.remove('geselecteerd'))
+  selectie.clear()
+  updateSelectieInfo()
+}
+
+function voegGeselecteerdeToe() {
   const wallId = parseInt(document.getElementById('wall-keuze').value)
-  if (!wallId) return
+  if (!wallId || selectie.size === 0) return
 
-  el.classList.add('toegevoegd')
-  el.onclick = null
-  el.style.cursor = 'default'
+  selectie.forEach(videoId => {
+    const data = resultatenData[videoId]
+    if (!data) return
 
-  const oudeInhoud = el.innerHTML
-  el.innerHTML = oudeInhoud + '<div class="toegevoegd-badge">' + t('zoeken.toegevoegd') + '</div>'
+    voegVideoToe({
+      wallId,
+      type: 'youtube',
+      artiest: data.kanaal,
+      titel: data.titel,
+      verhaal: '',
+      tag: '',
+      youtubeUrl: 'https://www.youtube.com/watch?v=' + videoId
+    })
 
-  voegVideoToe({
-    wallId,
-    type: 'youtube',
-    artiest: kanaal,
-    titel: titel,
-    verhaal: '',
-    tag: '',
-    youtubeUrl: 'https://www.youtube.com/watch?v=' + videoId
+    const el = document.getElementById('res-' + videoId)
+    if (el) {
+      el.classList.remove('geselecteerd')
+      el.classList.add('toegevoegd')
+      el.onclick = null
+      el.style.cursor = 'default'
+      el.innerHTML += '<div class="toegevoegd-badge">' + t('zoeken.toegevoegd') + '</div>'
+    }
   })
 
+  selectie.clear()
+  updateSelectieInfo()
   ipcRenderer.send('herlaad-hoofdscherm')
 }
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') deselecteerAlles()
+})
+
+window.voegGeselecteerdeToe = voegGeselecteerdeToe
 
 laadWalls()
