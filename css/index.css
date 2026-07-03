@@ -133,6 +133,12 @@ h1 span {
   font-weight: 300;
 }
 
+h1 .h1-icoon {
+  font-size: 28px;
+  opacity: 0.75;
+  letter-spacing: 0;
+}
+
 .toevoegen-btn,
 .thema-dropdown,
 .logo,
