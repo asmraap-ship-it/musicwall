@@ -45,7 +45,16 @@ async function laadPlaylist() {
 }
 
 function verwijderItem(playlistId) {
+  const verwijderdIndex = playlist.findIndex(p => p.playlist_id === playlistId)
   verwijderUitPlaylist(playlistId)
+
+  if (verwijderdIndex === huidigeIndex) {
+    huidigeIndex = -1
+    stop()
+  } else if (verwijderdIndex >= 0 && verwijderdIndex < huidigeIndex) {
+    huidigeIndex -= 1
+  }
+
   laadPlaylist()
 }
 
