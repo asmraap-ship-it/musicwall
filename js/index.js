@@ -345,6 +345,59 @@ function dragLeave(event) {
 
 let sleepBronId = null
 let sleepBronWallId = null
+let sleepWallBronId = null
+
+function wallDragStart(event, wallId) {
+  sleepWallBronId = wallId
+  event.dataTransfer.setData('wallId', wallId.toString())
+  event.currentTarget.closest('.wall').style.opacity = '0.4'
+}
+
+function wallDragEnd(event) {
+  document.querySelectorAll('.wall').forEach(w => w.style.opacity = '1')
+  sleepWallBronId = null
+}
+
+function wallDragOver(event, el) {
+  if (sleepWallBronId === null) return
+  event.preventDefault()
+  el.classList.add('drag-over-kaart')
+}
+
+function wallDragLeave(el) {
+  el.classList.remove('drag-over-kaart')
+}
+
+function wallDrop(event, doelWallId) {
+  const bronWallId = parseInt(event.dataTransfer.getData('wallId'))
+  if (!bronWallId) return
+
+  event.preventDefault()
+  event.currentTarget.classList.remove('drag-over-kaart')
+
+  if (bronWallId === doelWallId) return
+
+  const container = document.getElementById('walls-container')
+  const bronWall = document.getElementById('wall-' + bronWallId)
+  const doelWall = document.getElementById('wall-' + doelWallId)
+  if (!bronWall || !doelWall) return
+
+  const walls = Array.from(container.querySelectorAll('.wall'))
+  const bronIdx = walls.indexOf(bronWall)
+  const doelIdx = walls.indexOf(doelWall)
+
+  if (bronIdx < doelIdx) {
+    container.insertBefore(bronWall, doelWall.nextSibling)
+  } else {
+    container.insertBefore(bronWall, doelWall)
+  }
+
+  const nieuweVolgorde = Array.from(container.querySelectorAll('.wall'))
+    .map(w => parseInt(w.id.replace('wall-', '')))
+    .filter(id => !isNaN(id))
+
+  ipcRenderer.send('sla-wall-volgorde-op', nieuweVolgorde)
+}
 
 function kaartDragStart(event, videoId, wallId) {
   sleepBronId = videoId
@@ -554,7 +607,13 @@ async function laadWalls() {
     }
 
     const wallHtml = '<div class="wall" id="wall-' + wall.id + '">'
-      + '<div class="wall-header">'
+      + '<div class="wall-header"'
+      + ' draggable="true"'
+      + ' ondragstart="wallDragStart(event,' + wall.id + ')"'
+      + ' ondragend="wallDragEnd(event)"'
+      + ' ondragover="wallDragOver(event, this)"'
+      + ' ondragleave="wallDragLeave(this)"'
+      + ' ondrop="wallDrop(event,' + wall.id + ')">'
       + '<span class="wall-naam" onclick="hernoemWallPrompt(' + wall.id + ',\'' + wall.naam.replace(/'/g, "\\'") + '\')" title="' + t('wall.hernoemenTooltip') + '" style="cursor:pointer">' + wall.naam + '</span>'
       + '<div style="display:flex;align-items:center;gap:0.5rem">'
       + '<span class="wall-aantal">' + videos.length + '</span>'
@@ -633,6 +692,11 @@ window.kaartDragStart = kaartDragStart
 window.kaartDragOver = kaartDragOver
 window.kaartDragLeave = kaartDragLeave
 window.kaartDrop = kaartDrop
+window.wallDragStart = wallDragStart
+window.wallDragEnd = wallDragEnd
+window.wallDragOver = wallDragOver
+window.wallDragLeave = wallDragLeave
+window.wallDrop = wallDrop
 
 if (window.gsap) {
   const introTl = gsap.timeline({ delay: 0.2 })

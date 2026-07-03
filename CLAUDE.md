@@ -56,6 +56,11 @@ De `playlist`-tabel (jukebox) staat los van `videos`/`concert_media` — bij toe
 ## Thema's
 Zes thema's via `data-thema` attribuut op `<html>`: standaard, metaal, jukebox, nacht, jr (Raw), natuur. Opgeslagen in localStorage.
 
+## Volgorde wijzigen via slepen
+- **Walls**: sleep aan de `wall-header` (niet de hele wall, om conflict met het bestaande video-drag-and-drop in `.wall-videos` te vermijden) → `wallDragStart`/`wallDragOver`/`wallDragLeave`/`wallDrop`/`wallDragEnd` in `js/index.js`, IPC `sla-wall-volgorde-op` → `herschikWalls()` in `db/walls.js`
+- **Concertervaringen**: sleep de hele `.concert-kaart` → `concertDragStart`/`concertDragOver`/`concertDragLeave`/`concertDrop`/`concertDragEnd` in `js/concerten.js`, IPC `sla-concert-volgorde-op` → `herschikConcerten()` in `db/concerten.js`
+- Beide volgen hetzelfde patroon als het bestaande video-kaart-slepen (`kaartDrop`): DOM-elementen herordenen op basis van hun index, dan de nieuwe volgorde als array van id's doorsturen
+
 ## YouTube zoeken
 - Klikken op een zoekresultaat selecteert het (net als Ctrl+klik bij walls/concert-detail), niet direct toevoegen
 - Onderin verschijnt een selectiebalk met aantal + knop **"Voeg geselecteerde toe"**; pas dan worden de geselecteerde video's toegevoegd aan de gekozen wall

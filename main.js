@@ -487,6 +487,16 @@ ipcMain.on('sla-volgorde-op', (event, volgordeArray) => {
   slaVolgordeOp(volgordeArray)
 })
 
+ipcMain.on('sla-wall-volgorde-op', (event, volgordeArray) => {
+  const { herschikWalls } = require('./db/walls.js')
+  herschikWalls(volgordeArray)
+})
+
+ipcMain.on('sla-concert-volgorde-op', (event, volgordeArray) => {
+  const { herschikConcerten } = require('./db/concerten.js')
+  herschikConcerten(volgordeArray)
+})
+
 ipcMain.on('open-nieuw-concert', () => {
   const concertWin = new BrowserWindow({
     width: 550,

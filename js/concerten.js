@@ -76,6 +76,13 @@ async function laadConcerten() {
 
       const kaart = document.createElement('div')
       kaart.className = 'concert-kaart'
+      kaart.dataset.concertId = concert.id
+      kaart.draggable = true
+      kaart.ondragstart = (event) => concertDragStart(event, concert.id, kaart)
+      kaart.ondragend = () => concertDragEnd()
+      kaart.ondragover = (event) => concertDragOver(event, kaart)
+      kaart.ondragleave = () => concertDragLeave(kaart)
+      kaart.ondrop = (event) => concertDrop(event, concert.id)
       kaart.innerHTML = '<div class="concert-cover">'
         + coverHtml
         + (media.length > 0 ? '<div class="concert-media-aantal">' + t('concert.items', { n: media.length }) + '</div>' : '')
@@ -120,6 +127,60 @@ function bewerkConcert(concertId) {
   const concert = getAlleConcerten().find(c => c.id === concertId)
   if (!concert) return
   ipcRenderer.send('open-bewerk-concert', concert)
+}
+
+let sleepConcertBronId = null
+
+function concertDragStart(event, concertId, el) {
+  sleepConcertBronId = concertId
+  event.dataTransfer.setData('concertId', concertId.toString())
+  el.style.opacity = '0.4'
+}
+
+function concertDragEnd() {
+  document.querySelectorAll('.concert-kaart').forEach(k => k.style.opacity = '1')
+  sleepConcertBronId = null
+}
+
+function concertDragOver(event, el) {
+  if (sleepConcertBronId === null) return
+  event.preventDefault()
+  el.classList.add('drag-over-kaart')
+}
+
+function concertDragLeave(el) {
+  el.classList.remove('drag-over-kaart')
+}
+
+function concertDrop(event, doelConcertId) {
+  const bronConcertId = parseInt(event.dataTransfer.getData('concertId'))
+  if (!bronConcertId) return
+
+  event.preventDefault()
+  event.currentTarget.classList.remove('drag-over-kaart')
+
+  if (bronConcertId === doelConcertId) return
+
+  const container = document.getElementById('concerten-container')
+  const bronKaart = container.querySelector('[data-concert-id="' + bronConcertId + '"]')
+  const doelKaart = container.querySelector('[data-concert-id="' + doelConcertId + '"]')
+  if (!bronKaart || !doelKaart) return
+
+  const kaarten = Array.from(container.querySelectorAll('.concert-kaart'))
+  const bronIdx = kaarten.indexOf(bronKaart)
+  const doelIdx = kaarten.indexOf(doelKaart)
+
+  if (bronIdx < doelIdx) {
+    container.insertBefore(bronKaart, doelKaart.nextSibling)
+  } else {
+    container.insertBefore(bronKaart, doelKaart)
+  }
+
+  const nieuweVolgorde = Array.from(container.querySelectorAll('.concert-kaart'))
+    .map(k => parseInt(k.dataset.concertId))
+    .filter(id => !isNaN(id))
+
+  ipcRenderer.send('sla-concert-volgorde-op', nieuweVolgorde)
 }
 
 ipcRenderer.on('herlaad-concerten', () => {

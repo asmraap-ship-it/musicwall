@@ -19,4 +19,11 @@ function hernoemWall(id, naam) {
   return db.prepare('UPDATE walls SET naam = ? WHERE id = ?').run(naam, id)
 }
 
-module.exports = { getAlleWalls, maakWall, verwijderWall, hernoemWall }
+function herschikWalls(volgordeArray) {
+  const update = db.prepare('UPDATE walls SET volgorde = ? WHERE id = ?')
+  volgordeArray.forEach((id, index) => {
+    update.run(index + 1, id)
+  })
+}
+
+module.exports = { getAlleWalls, maakWall, verwijderWall, hernoemWall, herschikWalls }

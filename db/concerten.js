@@ -26,6 +26,13 @@ function verwijderConcert(id) {
   return db.prepare('DELETE FROM concerten WHERE id = ?').run(id)
 }
 
+function herschikConcerten(volgordeArray) {
+  const update = db.prepare('UPDATE concerten SET volgorde = ? WHERE id = ?')
+  volgordeArray.forEach((id, index) => {
+    update.run(index + 1, id)
+  })
+}
+
 function getMediaVoorConcert(concertId) {
   return db.prepare('SELECT * FROM concert_media WHERE concert_id = ? ORDER BY volgorde').all(concertId)
 }
@@ -55,6 +62,7 @@ module.exports = {
   maakConcert,
   updateConcert,
   verwijderConcert,
+  herschikConcerten,
   getMediaVoorConcert,
   voegMediaToe,
   verwijderMedia,
