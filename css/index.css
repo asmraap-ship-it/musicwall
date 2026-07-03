@@ -736,6 +736,28 @@ h1 {
   height: 14px;
 }
 
+.wall-selecteer-btn {
+  background: transparent;
+  border: none;
+  color: var(--tekst-donker);
+  cursor: pointer;
+  padding: 0.2rem;
+  opacity: 0.4;
+  transition: opacity 0.15s, color 0.15s;
+  display: flex;
+  align-items: center;
+}
+
+.wall-selecteer-btn:hover {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.wall-selecteer-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
 .drag-over-kaart {
   border-top: 2px solid var(--accent);
   opacity: 0.8;

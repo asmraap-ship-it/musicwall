@@ -291,6 +291,32 @@ function deselecteerAlles() {
   updateSelectieInfo()
 }
 
+function toggleSelecteerAlleLokaal(wallId) {
+  const wallEl = document.getElementById('wall-' + wallId)
+  if (!wallEl) return
+
+  const lokaleCards = Array.from(wallEl.querySelectorAll('.card')).filter(c => {
+    const v = videoData.find(v => v.id === parseInt(c.dataset.videoId))
+    return v && v.type === 'lokaal'
+  })
+  if (lokaleCards.length === 0) return
+
+  const alleGeselecteerd = lokaleCards.every(c => selectie.has(parseInt(c.dataset.videoId)))
+
+  lokaleCards.forEach(c => {
+    const id = parseInt(c.dataset.videoId)
+    if (alleGeselecteerd) {
+      selectie.delete(id)
+      c.classList.remove('geselecteerd')
+    } else {
+      selectie.add(id)
+      c.classList.add('geselecteerd')
+    }
+  })
+
+  updateSelectieInfo()
+}
+
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') deselecteerAlles()
 })
@@ -578,6 +604,7 @@ async function laadWalls() {
 
   for (const wall of walls) {
     const videos = getVideosVoorWall(wall.id)
+    const heeftLokaal = videos.some(v => v.type === 'lokaal')
     let kaarten = ''
 
     for (let index = 0; index < videos.length; index++) {
@@ -625,6 +652,11 @@ async function laadWalls() {
       + '<span class="wall-naam" onclick="hernoemWallPrompt(' + wall.id + ',\'' + wall.naam.replace(/'/g, "\\'") + '\')" title="' + t('wall.hernoemenTooltip') + '" style="cursor:pointer">' + wall.naam + '</span>'
       + '<div style="display:flex;align-items:center;gap:0.5rem">'
       + '<span class="wall-aantal">' + videos.length + '</span>'
+      + (heeftLokaal
+        ? '<button class="wall-selecteer-btn" onclick="toggleSelecteerAlleLokaal(' + wall.id + ')" title="' + t('wall.selecteerLokaleTooltip') + '">'
+          + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="7,12 10.5,15.5 17,8.5"/></svg>'
+          + '</button>'
+        : '')
       + '<button class="wall-verwijder-btn" onclick="bevestigWallVerwijderen(' + wall.id + ',\'' + wall.naam.replace(/'/g, "\\'") + '\')" title="' + t('wall.verwijderenTooltip') + '">'
       + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H6L5,6"/><path d="M10,11v6M14,11v6"/><path d="M9,6V4h6v2"/></svg>'
       + '</button>'
@@ -686,6 +718,7 @@ window.prullenbakOver = prullenbakOver
 window.prullenbakLeave = prullenbakLeave
 window.prullenbakDrop = prullenbakDrop
 window.toggleSelectie = toggleSelectie
+window.toggleSelecteerAlleLokaal = toggleSelecteerAlleLokaal
 window.kaartHoverIn = kaartHoverIn
 window.kaartHoverUit = kaartHoverUit
 window.openJukebox = openJukebox

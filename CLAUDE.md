@@ -90,6 +90,8 @@ Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard
 
 ## Jukebox-gedrag
 - Selecteren met **Ctrl+klik** op lokale video's, zowel in een wall-kaart als op een lokale-video-tegel in concert-detail
+- **Alles selecteren/deselecteren per wall**: een knop in de `wall-header` (naast de verwijder-knop, alleen zichtbaar als de wall lokale video's bevat) roept `toggleSelecteerAlleLokaal(wallId)` aan — selecteert alle lokale video's van die wall als nog niet alles geselecteerd is, anders deselecteert het ze allemaal. Andere walls' selectie blijft ongemoeid
+- **Concert-detail**: dezelfde toggle-knop staat in de `media-toevoegen-balk` (`#selecteer-lokale-btn`, alleen zichtbaar als het concert lokale video's heeft) en roept `toggleSelecteerAlleLokaal()` aan voor alle lokale video-tegels van het concert
 - Handmatig bladeren (vorige/volgende/eerste/laatste) verwijdert nooit iets uit de playlist
 - Een nummer dat **vanzelf** uitspeelt (`ended`-event) wordt automatisch uit de playlist verwijderd; het afspelen gaat daarna verder met het volgende nummer, of springt terug naar het eerste nummer als het laatste was
 - Melding "playlist leeg" verschijnt alleen als de lijst na het uitspelen echt leeg is; handmatig doorbladeren tot het einde toont in plaats daarvan "einde van de playlist"

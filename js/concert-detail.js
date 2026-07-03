@@ -68,6 +68,7 @@ async function laadMediaGrid() {
         + playIcon
         + '<div class="media-bron lokaal">' + t('video.bron.lokaal') + '</div>'
         + verwijderKnop
+      tegel.dataset.mediaId = item.id
       if (selectie.has(item.id)) tegel.classList.add('geselecteerd')
       tegel.onclick = (event) => {
         if (event.ctrlKey) {
@@ -80,6 +81,9 @@ async function laadMediaGrid() {
 
     grid.appendChild(tegel)
   }
+
+  const selecteerBtn = document.getElementById('selecteer-lokale-btn')
+  if (selecteerBtn) selecteerBtn.style.display = media.some(m => m.type === 'video') ? '' : 'none'
 
   const tegels = grid.querySelectorAll('.media-tegel')
   if (window.gsap && tegels.length > 0) {
@@ -156,6 +160,26 @@ function deselecteerAlles() {
   updateSelectieInfo()
 }
 
+function toggleSelecteerAlleLokaal() {
+  const media = getMediaVoorConcert(huidigConcertId)
+  const lokaleVideos = media.filter(m => m.type === 'video')
+  if (lokaleVideos.length === 0) return
+
+  const alleGeselecteerd = lokaleVideos.every(m => selectie.has(m.id))
+
+  lokaleVideos.forEach(m => {
+    if (alleGeselecteerd) selectie.delete(m.id)
+    else selectie.add(m.id)
+  })
+
+  document.querySelectorAll('.media-tegel[data-media-id]').forEach(tegel => {
+    const id = parseInt(tegel.dataset.mediaId)
+    tegel.classList.toggle('geselecteerd', selectie.has(id))
+  })
+
+  updateSelectieInfo()
+}
+
 function stuurNaarJukebox() {
   if (selectie.size === 0) {
     alert(t('jukebox.geenSelectie'))
@@ -206,3 +230,4 @@ window.voegYoutubeToe = voegYoutubeToe
 window.verwijderMediaItem = verwijderMediaItem
 window.sluitLightbox = sluitLightbox
 window.stuurNaarJukebox = stuurNaarJukebox
+window.toggleSelecteerAlleLokaal = toggleSelecteerAlleLokaal

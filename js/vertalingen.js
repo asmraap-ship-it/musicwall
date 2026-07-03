@@ -34,6 +34,7 @@ const VERTALINGEN = {
     'wall.nieuweWall': 'Nieuwe wall',
     'wall.hernoemenTooltip': 'Klik om te hernoemen',
     'wall.verwijderenTooltip': 'Wall verwijderen',
+    'wall.selecteerLokaleTooltip': 'Selecteer/deselecteer alle lokale video\'s in deze wall',
     'wall.verwijderen.titel': 'Wall verwijderen',
     'wall.verwijderen.bevestiging': 'Weet u zeker dat u "{naam}" wilt verwijderen?',
     'wall.verwijderen.metVideos': 'Dit verwijdert ook {n} video(s) in deze wall.',
@@ -73,6 +74,7 @@ const VERTALINGEN = {
     'concertDetail.geenMedia': 'Nog geen foto\'s of video\'s toegevoegd.',
     'concertDetail.verwijderenTooltip': 'Item verwijderen',
     'concertDetail.mediaFilterNaam': 'Foto en video',
+    'concertDetail.selecteerLokaleBtn': '☑ Selecteer alle lokale video\'s',
 
     // Nieuw concert / concert bewerken
     'nieuwConcert.titel': 'Nieuw concert',
@@ -280,6 +282,7 @@ const VERTALINGEN = {
     'wall.nieuweWall': 'New wall',
     'wall.hernoemenTooltip': 'Click to rename',
     'wall.verwijderenTooltip': 'Delete wall',
+    'wall.selecteerLokaleTooltip': 'Select/deselect all local videos in this wall',
     'wall.verwijderen.titel': 'Delete wall',
     'wall.verwijderen.bevestiging': 'Are you sure you want to delete "{naam}"?',
     'wall.verwijderen.metVideos': 'This will also delete {n} video(s) in this wall.',
@@ -316,6 +319,7 @@ const VERTALINGEN = {
     'concertDetail.geenMedia': 'No photos or videos added yet.',
     'concertDetail.verwijderenTooltip': 'Delete item',
     'concertDetail.mediaFilterNaam': 'Photo and video',
+    'concertDetail.selecteerLokaleBtn': '☑ Select all local videos',
 
     'nieuwConcert.titel': 'New concert',
     'nieuwConcert.bewerkenTitel': 'Edit concert',
