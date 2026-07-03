@@ -3,6 +3,8 @@ const ipcRenderer = electron.ipcRenderer
 const { getConcert, getMediaVoorConcert, voegMediaToe, verwijderMedia } = require('./db/concerten.js')
 
 let huidigConcertId = null
+let huidigConcert = null
+let selectie = new Set()
 
 function getYoutubeId(url) {
   if (!url) return null
@@ -14,6 +16,7 @@ async function laadConcert(concertId) {
   huidigConcertId = concertId
   const concert = getConcert(concertId)
   if (!concert) return
+  huidigConcert = concert
 
   document.title = concert.naam
   document.getElementById('detail-artiest').textContent = concert.artiest || ''
@@ -54,7 +57,7 @@ async function laadMediaGrid() {
           ? '<img src="https://img.youtube.com/vi/' + id + '/hqdefault.jpg" alt="">'
           : '<div class="media-placeholder">&#9835;</div>')
         + playIcon
-        + '<div class="media-bron youtube">YouTube</div>'
+        + '<div class="media-bron youtube">' + t('video.bron.youtube') + '</div>'
         + verwijderKnop
       tegel.onclick = () => ipcRenderer.send('open-video', item.bestand_pad)
     } else {
@@ -63,8 +66,16 @@ async function laadMediaGrid() {
           ? '<img src="file:///' + pad.replace(/\\/g, '/') + '" alt="">'
           : '<div class="media-placeholder">&#9654;</div>')
         + playIcon
+        + '<div class="media-bron lokaal">' + t('video.bron.lokaal') + '</div>'
         + verwijderKnop
-      tegel.onclick = () => ipcRenderer.send('open-lokaal', item.bestand_pad)
+      if (selectie.has(item.id)) tegel.classList.add('geselecteerd')
+      tegel.onclick = (event) => {
+        if (event.ctrlKey) {
+          toggleSelectie(item.id, tegel)
+        } else {
+          ipcRenderer.send('open-lokaal', item.bestand_pad)
+        }
+      }
     }
 
     grid.appendChild(tegel)
@@ -110,8 +121,58 @@ function voegYoutubeToe() {
 
 function verwijderMediaItem(mediaId) {
   verwijderMedia(mediaId)
+  selectie.delete(mediaId)
+  updateSelectieInfo()
   ipcRenderer.send('concert-media-toegevoegd')
   laadMediaGrid()
+}
+
+function toggleSelectie(mediaId, tegelEl) {
+  if (selectie.has(mediaId)) {
+    selectie.delete(mediaId)
+    tegelEl.classList.remove('geselecteerd')
+  } else {
+    selectie.add(mediaId)
+    tegelEl.classList.add('geselecteerd')
+  }
+  updateSelectieInfo()
+}
+
+function updateSelectieInfo() {
+  const info = document.getElementById('selectie-info')
+  const tekst = document.getElementById('selectie-tekst')
+
+  if (selectie.size === 0) {
+    info.classList.remove('zichtbaar')
+  } else {
+    info.classList.add('zichtbaar')
+    tekst.textContent = t('selectie.tekst', { n: selectie.size })
+  }
+}
+
+function deselecteerAlles() {
+  document.querySelectorAll('.media-tegel.geselecteerd').forEach(el => el.classList.remove('geselecteerd'))
+  selectie.clear()
+  updateSelectieInfo()
+}
+
+function stuurNaarJukebox() {
+  if (selectie.size === 0) {
+    alert(t('jukebox.geenSelectie'))
+    return
+  }
+
+  const media = getMediaVoorConcert(huidigConcertId)
+  const items = Array.from(selectie)
+    .map(id => media.find(m => m.id === id))
+    .filter(m => m && m.type === 'video')
+    .map(m => ({ lokaalPad: m.bestand_pad, artiest: huidigConcert.artiest, titel: huidigConcert.naam }))
+
+  if (items.length > 0) {
+    ipcRenderer.send('concert-media-naar-playlist', items)
+  }
+
+  deselecteerAlles()
 }
 
 function openLightbox(src) {
@@ -128,7 +189,10 @@ document.getElementById('youtube-url-input').addEventListener('keydown', (e) => 
 })
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') sluitLightbox()
+  if (e.key === 'Escape') {
+    sluitLightbox()
+    deselecteerAlles()
+  }
 })
 
 ipcRenderer.on('laad-concert', (event, concertId) => laadConcert(concertId))
@@ -141,3 +205,4 @@ window.kiesMedia = kiesMedia
 window.voegYoutubeToe = voegYoutubeToe
 window.verwijderMediaItem = verwijderMediaItem
 window.sluitLightbox = sluitLightbox
+window.stuurNaarJukebox = stuurNaarJukebox

@@ -219,6 +219,69 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   color: #fff;
 }
 
+.media-bron.lokaal {
+  background: rgba(10, 8, 5, 0.75);
+  color: var(--accent);
+  border: 1px solid rgba(200, 168, 122, 0.6);
+  font-weight: 600;
+}
+
+.media-tegel.geselecteerd {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.media-tegel.geselecteerd::after {
+  content: '✓';
+  position: absolute;
+  top: 0.4rem;
+  left: 0.4rem;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--achtergrond);
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.selectie-info {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(13, 13, 13, 0.9);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 0.6rem 1.25rem;
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  z-index: 20;
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  gap: 1rem;
+}
+
+.selectie-info.zichtbaar { display: flex; }
+
+.naar-jukebox-btn {
+  background: var(--accent);
+  border: none;
+  border-radius: 3px;
+  color: var(--achtergrond);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+}
+
 .media-verwijder {
   position: absolute;
   top: 0.4rem;

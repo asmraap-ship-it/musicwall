@@ -40,7 +40,10 @@ walls        (id, naam, volgorde)
 videos       (id, wall_id, type, artiest, titel, verhaal, tag, youtube_url, lokaal_pad, volgorde)
 concerten    (id, naam, artiest, datum, verhaal, volgorde)
 concert_media (id, concert_id, type, bestand_pad, volgorde)
+playlist     (id, lokaal_pad, artiest, titel, volgorde)
 ```
+
+De `playlist`-tabel (jukebox) staat los van `videos`/`concert_media` — bij toevoegen wordt `lokaal_pad`/`artiest`/`titel` gekopieerd, zodat zowel wall-video's als lokale video's uit concertervaringen toegevoegd kunnen worden. Dedupliceert op `lokaal_pad`. Nieuwe rijen krijgen `volgorde` = hoogste bestaande `volgorde` + 1 (niet `COUNT(*)+1`, dat gaf botsingen na verwijderingen).
 
 ## Belangrijke ontwerpkeuzes
 - `js/index.js` en `js/concerten.js` worden geladen na `js/achtergrond.js` in index.html
@@ -53,22 +56,24 @@ concert_media (id, concert_id, type, bestand_pad, volgorde)
 ## Thema's
 Zes thema's via `data-thema` attribuut op `<html>`: standaard, metaal, jukebox, nacht, jr (Raw), natuur. Opgeslagen in localStorage.
 
+## Jukebox-gedrag
+- Selecteren met **Ctrl+klik** op lokale video's, zowel in een wall-kaart als op een lokale-video-tegel in concert-detail
+- Handmatig bladeren (vorige/volgende/eerste/laatste) verwijdert nooit iets uit de playlist
+- Een nummer dat **vanzelf** uitspeelt (`ended`-event) wordt automatisch uit de playlist verwijderd; het afspelen gaat daarna verder met het volgende nummer, of springt terug naar het eerste nummer als het laatste was
+- Melding "playlist leeg" verschijnt alleen als de lijst na het uitspelen echt leeg is; handmatig doorbladeren tot het einde toont in plaats daarvan "einde van de playlist"
+
 ## Wat nog gebouwd moet worden
-1. **Concertervaringen detail-scherm** — `concert-detail.html` en `js/concert-detail.js`
-   - Collage weergave van foto's en video's
-   - Foto's tonen in lightbox, video's afspelen
-   - Verhaal en naam/datum prominent tonen
-   - Media toevoegen via `kies-concert-media` handler (al aanwezig in main.js)
-2. **Tab styling verfijnen** — kleine detailwijzigingen nog gewenst
-3. **Meertaligheid** — Nederlands/Engels op basis van systeemtaal
-4. **Nieuwe distributie bouwen** na alle wijzigingen
+1. **Tab styling verfijnen** — kleine detailwijzigingen nog gewenst
+2. **Nieuwe distributie bouwen** na alle wijzigingen
 
 ## ipcMain handlers aanwezig in main.js (selectie)
 - `open-nieuw-concert` → opent nieuw-concert.html
 - `concert-toegevoegd` → herlaad concerten, sluit venster
-- `open-concert-detail` → opent concert-detail.html (nog niet gebouwd)
+- `open-concert-detail` → opent concert-detail.html
 - `kies-concert-media` → bestandsdialoog voor foto/video, stuurt paden terug
 - `concert-media-toegevoegd` → herlaad concerten
+- `concert-media-naar-playlist` → voegt geselecteerde lokale video's uit concert-detail toe aan de jukebox-playlist
+- `toevoegen-aan-playlist` → voegt geselecteerde lokale video's uit een wall toe aan de jukebox-playlist
 - `sla-volgorde-op` → slaat video volgorde op via slaVolgordeOp()
 - `maak-thumbnail` (handle) → ffmpeg thumbnail generatie
 

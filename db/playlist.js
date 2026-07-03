@@ -1,29 +1,52 @@
 const db = require('../database.js')
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS playlist (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    video_id INTEGER NOT NULL,
-    volgorde INTEGER DEFAULT 0,
-    FOREIGN KEY (video_id) REFERENCES videos(id) ON DELETE CASCADE
-  );
-`)
+const kolommen = db.prepare("PRAGMA table_info(playlist)").all().map(k => k.name)
+
+if (kolommen.length === 0) {
+  db.exec(`
+    CREATE TABLE playlist (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      lokaal_pad TEXT NOT NULL,
+      artiest TEXT,
+      titel TEXT,
+      volgorde INTEGER DEFAULT 0
+    );
+  `)
+} else if (!kolommen.includes('lokaal_pad')) {
+  db.exec(`ALTER TABLE playlist RENAME TO playlist_oud`)
+  db.exec(`
+    CREATE TABLE playlist (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      lokaal_pad TEXT NOT NULL,
+      artiest TEXT,
+      titel TEXT,
+      volgorde INTEGER DEFAULT 0
+    );
+  `)
+  db.exec(`
+    INSERT INTO playlist (lokaal_pad, artiest, titel, volgorde)
+    SELECT videos.lokaal_pad, videos.artiest, videos.titel, playlist_oud.volgorde
+    FROM playlist_oud
+    JOIN videos ON playlist_oud.video_id = videos.id
+    ORDER BY playlist_oud.volgorde
+  `)
+  db.exec(`DROP TABLE playlist_oud`)
+}
 
 function getPlaylist() {
   return db.prepare(`
-    SELECT playlist.id as playlist_id, videos.*
+    SELECT id as playlist_id, lokaal_pad, artiest, titel
     FROM playlist
-    JOIN videos ON playlist.video_id = videos.id
-    ORDER BY playlist.volgorde
+    ORDER BY volgorde
   `).all()
 }
 
-function voegToeAanPlaylist(videoId) {
-  const bestaat = db.prepare('SELECT id FROM playlist WHERE video_id = ?').get(videoId)
+function voegToeAanPlaylist({ lokaalPad, artiest, titel }) {
+  const bestaat = db.prepare('SELECT id FROM playlist WHERE lokaal_pad = ?').get(lokaalPad)
   if (bestaat) return
 
-  const aantal = db.prepare('SELECT COUNT(*) as n FROM playlist').get()
-  return db.prepare('INSERT INTO playlist (video_id, volgorde) VALUES (?, ?)').run(videoId, aantal.n + 1)
+  const hoogste = db.prepare('SELECT COALESCE(MAX(volgorde), 0) as max FROM playlist').get()
+  return db.prepare('INSERT INTO playlist (lokaal_pad, artiest, titel, volgorde) VALUES (?, ?, ?, ?)').run(lokaalPad, artiest || null, titel || null, hoogste.max + 1)
 }
 
 function verwijderUitPlaylist(playlistId) {

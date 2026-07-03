@@ -375,7 +375,20 @@ ipcMain.on('open-jukebox', () => {
 
 ipcMain.on('toevoegen-aan-playlist', (event, videoIds) => {
   const { voegToeAanPlaylist } = require('./db/playlist.js')
-  videoIds.forEach(id => voegToeAanPlaylist(id))
+  const { getVideo } = require('./db/videos.js')
+  videoIds.forEach(id => {
+    const video = getVideo(id)
+    if (video && video.lokaal_pad) {
+      voegToeAanPlaylist({ lokaalPad: video.lokaal_pad, artiest: video.artiest, titel: video.titel })
+    }
+  })
+})
+
+ipcMain.on('concert-media-naar-playlist', (event, items) => {
+  const { voegToeAanPlaylist } = require('./db/playlist.js')
+  items.forEach(item => {
+    if (item && item.lokaalPad) voegToeAanPlaylist(item)
+  })
 })
 
 ipcMain.on('open-help', () => {

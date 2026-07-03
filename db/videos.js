@@ -4,6 +4,10 @@ function getVideosVoorWall(wallId) {
   return db.prepare('SELECT * FROM videos WHERE wall_id = ? ORDER BY volgorde').all(wallId)
 }
 
+function getVideo(id) {
+  return db.prepare('SELECT * FROM videos WHERE id = ?').get(id)
+}
+
 function voegVideoToe({ wallId, type, artiest, titel, verhaal, tag, youtubeUrl, lokaalPad }) {
   const aantal = db.prepare('SELECT COUNT(*) as n FROM videos WHERE wall_id = ?').get(wallId)
   return db.prepare(`
@@ -33,4 +37,4 @@ function slaVolgordeOp(volgordeArray) {
   })
 }
 
-module.exports = { getVideosVoorWall, voegVideoToe, verwijderVideo, updateVideo, verplaatsVideo, slaVolgordeOp }
+module.exports = { getVideosVoorWall, getVideo, voegVideoToe, verwijderVideo, updateVideo, verplaatsVideo, slaVolgordeOp }

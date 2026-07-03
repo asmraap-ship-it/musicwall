@@ -128,15 +128,18 @@ function volgende() {
     huidigeIndex = -1
     stop()
     laadPlaylist()
-    toonKlaarMelding()
+    toonEindeMelding(t('jukebox.eindeLijst'))
   }
 }
 
 function toonKlaarMelding() {
-  const scherm = document.getElementById('speel-scherm')
+  toonEindeMelding(t('jukebox.alleAfgespeeld'))
+}
+
+function toonEindeMelding(tekst) {
   const placeholder = document.getElementById('speel-placeholder')
   placeholder.innerHTML = '<div class="speel-icoon">✓</div>'
-    + '<div class="speel-tekst">' + t('jukebox.alleAfgespeeld') + '</div>'
+    + '<div class="speel-tekst">' + tekst + '</div>'
   placeholder.style.display = 'flex'
 
   setTimeout(() => {
@@ -154,7 +157,24 @@ function naarLaatste() {
 }
 
 document.getElementById('speler').addEventListener('ended', () => {
-  volgende()
+  const afgespeeld = playlist[huidigeIndex]
+  if (afgespeeld) {
+    verwijderUitPlaylist(afgespeeld.playlist_id)
+  }
+
+  playlist = getPlaylist()
+
+  if (playlist.length === 0) {
+    huidigeIndex = -1
+    stop()
+    laadPlaylist()
+    toonKlaarMelding()
+    return
+  }
+
+  const volgendeIndex = huidigeIndex < playlist.length ? huidigeIndex : 0
+  huidigeIndex = -1
+  speelIndex(volgendeIndex)
 })
 
 window.leegMaken = leegMaken
