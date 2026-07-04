@@ -3,6 +3,7 @@ const ffmpegPath = require('ffmpeg-static')
 const { execFile } = require('child_process')
 const fs = require('fs')
 const path = require('path')
+const http = require('http')
 const { pathToFileURL } = require('url')
 
 const userDataPath = app.getPath('userData')
@@ -66,6 +67,47 @@ ipcMain.on('thema-gewijzigd', (event, thema) => {
     try { win.setTitleBarOverlay(titelbalkOptiesVoorThema(huidigThema).titleBarOverlay) } catch (e) {}
   })
 })
+
+const JUKEBOX_MIME_TYPES = {
+  '.html': 'text/html',
+  '.js': 'application/javascript',
+  '.css': 'text/css',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.ico': 'image/x-icon',
+  '.json': 'application/json'
+}
+
+let jukeboxServerPort = null
+
+function startJukeboxServer() {
+  const server = http.createServer((req, res) => {
+    const urlPad = decodeURIComponent(req.url.split('?')[0])
+    const bestandsPad = path.normalize(path.join(__dirname, urlPad))
+
+    if (!bestandsPad.startsWith(__dirname)) {
+      res.writeHead(403)
+      res.end('Verboden')
+      return
+    }
+
+    fs.readFile(bestandsPad, (err, data) => {
+      if (err) {
+        res.writeHead(404)
+        res.end('Niet gevonden')
+        return
+      }
+      const ext = path.extname(bestandsPad).toLowerCase()
+      res.writeHead(200, { 'Content-Type': JUKEBOX_MIME_TYPES[ext] || 'application/octet-stream' })
+      res.end(data)
+    })
+  })
+
+  server.listen(0, '127.0.0.1', () => {
+    jukeboxServerPort = server.address().port
+  })
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -438,6 +480,8 @@ ipcMain.on('open-zoeken', () => {
   })
 })
 
+ipcMain.handle('get-jukebox-server-poort', () => jukeboxServerPort)
+
 ipcMain.on('open-jukebox', () => {
   const jukeboxWin = new BrowserWindow({
     width: 1100,
@@ -458,8 +502,12 @@ ipcMain.on('toevoegen-aan-playlist', (event, videoIds) => {
   const { getVideo } = require('./db/videos.js')
   videoIds.forEach(id => {
     const video = getVideo(id)
-    if (video && video.lokaal_pad) {
-      voegToeAanPlaylist({ lokaalPad: video.lokaal_pad, artiest: video.artiest, titel: video.titel })
+    if (!video) return
+
+    if (video.type === 'youtube' && video.youtube_url) {
+      voegToeAanPlaylist({ type: 'youtube', youtubeUrl: video.youtube_url, artiest: video.artiest, titel: video.titel })
+    } else if (video.lokaal_pad) {
+      voegToeAanPlaylist({ type: 'lokaal', lokaalPad: video.lokaal_pad, artiest: video.artiest, titel: video.titel })
     }
   })
 })
@@ -467,7 +515,7 @@ ipcMain.on('toevoegen-aan-playlist', (event, videoIds) => {
 ipcMain.on('concert-media-naar-playlist', (event, items) => {
   const { voegToeAanPlaylist } = require('./db/playlist.js')
   items.forEach(item => {
-    if (item && item.lokaalPad) voegToeAanPlaylist(item)
+    if (item && (item.lokaalPad || item.youtubeUrl)) voegToeAanPlaylist(item)
   })
 })
 
@@ -669,4 +717,7 @@ ipcMain.on('bevestig-concert-verwijderen', async (event, { concertId, concertNaa
   }
 })
 
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  startJukeboxServer()
+  createWindow()
+})

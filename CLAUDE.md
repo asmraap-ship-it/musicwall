@@ -34,7 +34,7 @@ js/hernoem-tab.js     — Logica hernoemen vaste tab formulier
 help.html             — Helpscherm
 css/help.css          — Help styling
 css/toevoegen.css     — Gedeelde formulier styling
-css/themas/           — Zes thema CSS bestanden
+css/themas/           — Zeven thema CSS bestanden
 sounds/               — click.mp3, whoosh.wav, open.wav
 build/icon.ico        — App icoon
 ```
@@ -46,12 +46,12 @@ wall_groepen (id, naam, volgorde)
 videos       (id, wall_id, type, artiest, titel, verhaal, tag, youtube_url, lokaal_pad, volgorde)
 concerten    (id, naam, artiest, datum, verhaal, volgorde)
 concert_media (id, concert_id, type, bestand_pad, volgorde)
-playlist     (id, lokaal_pad, artiest, titel, volgorde)
+playlist     (id, type, lokaal_pad, youtube_url, artiest, titel, volgorde)
 ```
 
 `walls.groep_id` verwijst (los, geen enforced FK — dit project gebruikt nergens `PRAGMA foreign_keys`) naar `wall_groepen.id`. `NULL` betekent ongegroepeerd. `groep_id` is via migratie toegevoegd (`ALTER TABLE walls ADD COLUMN groep_id INTEGER` in `database.js`, alleen als de kolom nog niet bestaat).
 
-De `playlist`-tabel (jukebox) staat los van `videos`/`concert_media` — bij toevoegen wordt `lokaal_pad`/`artiest`/`titel` gekopieerd, zodat zowel wall-video's als lokale video's uit concertervaringen toegevoegd kunnen worden. Dedupliceert op `lokaal_pad`. Nieuwe rijen krijgen `volgorde` = hoogste bestaande `volgorde` + 1 (niet `COUNT(*)+1`, dat gaf botsingen na verwijderingen).
+De `playlist`-tabel (jukebox) staat los van `videos`/`concert_media` — bij toevoegen wordt `type`/`lokaal_pad`/`youtube_url`/`artiest`/`titel` gekopieerd, zodat zowel wall-video's als media uit concertervaringen toegevoegd kunnen worden, lokaal én YouTube. Dedupliceert op `lokaal_pad` (lokaal) resp. `youtube_url` (youtube). Nieuwe rijen krijgen `volgorde` = hoogste bestaande `volgorde` + 1 (niet `COUNT(*)+1`, dat gaf botsingen na verwijderingen). `type`/`youtube_url` zijn via migratie toegevoegd (`db/playlist.js`, tabel-rebuild net als de eerdere `video_id`→`lokaal_pad`-migratie, omdat SQLite een bestaande `NOT NULL`-kolom niet los kan maken via `ALTER TABLE`).
 
 ## Belangrijke ontwerpkeuzes
 - `js/index.js` en `js/concerten.js` worden geladen na `js/achtergrond.js` in index.html
@@ -93,11 +93,13 @@ Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard
 - **"Selecteer alles"** (`selecteerAlleZoekresultaten()`) staat ook bij het normale video zoeken, direct boven de resultatenlijst — toggle-gedrag net als de wall/concert-detail selecteer-alles-knoppen
 
 ## Jukebox-gedrag
-- Selecteren met **Ctrl+klik** op lokale video's, zowel in een wall-kaart als op een lokale-video-tegel in concert-detail
-- **Alles selecteren/deselecteren per wall**: een knop in de `wall-header` (naast de verwijder-knop, alleen zichtbaar als de wall lokale video's bevat) roept `toggleSelecteerAlleLokaal(wallId)` aan — selecteert alle lokale video's van die wall als nog niet alles geselecteerd is, anders deselecteert het ze allemaal. Andere walls' selectie blijft ongemoeid
-- **Concert-detail**: dezelfde toggle-knop staat in de `media-toevoegen-balk` (`#selecteer-lokale-btn`, alleen zichtbaar als het concert lokale video's heeft) en roept `toggleSelecteerAlleLokaal()` aan voor alle lokale video-tegels van het concert
+- Selecteren met **Ctrl+klik** op video's, zowel lokaal als YouTube, in een wall-kaart of op een media-tegel in concert-detail — beide typen gaan naar de playlist
+- **Alles selecteren/deselecteren per wall**: een knop in de `wall-header` (naast de verwijder-knop, zichtbaar zodra de wall video's bevat) roept `toggleSelecteerAlleInWall(wallId)` aan — selecteert alle video's (lokaal én YouTube) van die wall als nog niet alles geselecteerd is, anders deselecteert het ze allemaal. Andere walls' selectie blijft ongemoeid. Vóór de YouTube-jukebox-ondersteuning was dit beperkt tot lokale video's (vandaar de oudere naam `toggleSelecteerAlleLokaal` in eerdere versies) — nu beide typen jukebox-geschikt zijn, selecteert de knop alles
+- **Concert-detail**: dezelfde toggle-knop staat in de `media-toevoegen-balk` (`#selecteer-alles-btn`, zichtbaar zodra het concert lokale of YouTube-video's heeft) en roept `toggleSelecteerAlleInConcert()` aan voor alle afspeelbare media-tegels van het concert (foto's blijven uitgesloten)
 - Handmatig bladeren (vorige/volgende/eerste/laatste) verwijdert nooit iets uit de playlist
-- Een nummer dat **vanzelf** uitspeelt (`ended`-event) wordt automatisch uit de playlist verwijderd; het afspelen gaat daarna verder met het volgende nummer, of springt terug naar het eerste nummer als het laatste was
+- **YouTube-afspelen in de jukebox**: de YouTube IFrame Player API vereist een echte http(s)-pagina-origin om video's te mogen insluiten — `jukebox.html` laadt zelf gewoon via `file://` (nodig voor `require()`/`db/playlist.js`, dat breekt bij een generieke `http://`-load omdat Electrons module-resolutie voor `<script>`-tags aan het `file://`-protocol van het document hangt). Daarom draait de YouTube-speler in een apart, node-loos bestand `yt-embed.html`, geserveerd door een minimale lokale statische server (`startJukeboxServer()` in `main.js`, luistert op een vrije poort op `127.0.0.1`, gestart in `app.whenReady()`). `js/jukebox.js` haalt de poort op via `ipcRenderer.invoke('get-jukebox-server-poort')` en zet die als `src` van `<iframe id="youtube-speler-frame">` (in `#youtube-speler-wrap`, naast de bestaande `<video id="speler">`, zelfde `.zichtbaar`-toggle-patroon). Communicatie tussen `jukebox.js` en `yt-embed.html` gaat via `window.postMessage` (acties `laad`/`afspelen`/`pauzeren`/`stoppen` heen, types `ready`/`playing`/`paused`/`ended`/`error` terug) — geen directe `YT.Player`-referentie in `jukebox.js` zelf
+- **Nooit vastlopen op YouTube**: een `error`-bericht vanuit `yt-embed.html` (bijv. video verwijderd, of insluiten door de uploader uitgeschakeld — dat laatste kan zelfs bij een verder publiek zichtbare video) roept dezelfde `afgespeeldGaVerder()` aan als een normaal afgespeeld nummer: het nummer wordt uit de playlist verwijderd en de jukebox gaat door met de volgende
+- Een nummer dat **vanzelf** uitspeelt (lokaal: `ended`-event op de `<video>`; YouTube: `ended`-bericht vanuit `yt-embed.html`) wordt automatisch uit de playlist verwijderd via de gedeelde `afgespeeldGaVerder()`; het afspelen gaat daarna verder met het volgende nummer, of springt terug naar het eerste nummer als het laatste was
 - Melding "playlist leeg" verschijnt alleen als de lijst na het uitspelen echt leeg is; handmatig doorbladeren tot het einde toont in plaats daarvan "einde van de playlist"
 
 ## Wat nog gebouwd moet worden

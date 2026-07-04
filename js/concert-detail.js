@@ -59,7 +59,15 @@ async function laadMediaGrid() {
         + playIcon
         + '<div class="media-bron youtube">' + t('video.bron.youtube') + '</div>'
         + verwijderKnop
-      tegel.onclick = () => ipcRenderer.send('open-video', item.bestand_pad)
+      tegel.dataset.mediaId = item.id
+      if (selectie.has(item.id)) tegel.classList.add('geselecteerd')
+      tegel.onclick = (event) => {
+        if (event.ctrlKey) {
+          toggleSelectie(item.id, tegel)
+        } else {
+          ipcRenderer.send('open-video', item.bestand_pad)
+        }
+      }
     } else {
       const pad = await ipcRenderer.invoke('maak-thumbnail', item.bestand_pad)
       tegel.innerHTML = (pad
@@ -82,8 +90,8 @@ async function laadMediaGrid() {
     grid.appendChild(tegel)
   }
 
-  const selecteerBtn = document.getElementById('selecteer-lokale-btn')
-  if (selecteerBtn) selecteerBtn.style.display = media.some(m => m.type === 'video') ? '' : 'none'
+  const selecteerBtn = document.getElementById('selecteer-alles-btn')
+  if (selecteerBtn) selecteerBtn.style.display = media.some(m => m.type === 'video' || m.type === 'youtube') ? '' : 'none'
 
   const tegels = grid.querySelectorAll('.media-tegel')
   if (window.gsap && tegels.length > 0) {
@@ -160,14 +168,14 @@ function deselecteerAlles() {
   updateSelectieInfo()
 }
 
-function toggleSelecteerAlleLokaal() {
+function toggleSelecteerAlleInConcert() {
   const media = getMediaVoorConcert(huidigConcertId)
-  const lokaleVideos = media.filter(m => m.type === 'video')
-  if (lokaleVideos.length === 0) return
+  const afspeelbareMedia = media.filter(m => m.type === 'video' || m.type === 'youtube')
+  if (afspeelbareMedia.length === 0) return
 
-  const alleGeselecteerd = lokaleVideos.every(m => selectie.has(m.id))
+  const alleGeselecteerd = afspeelbareMedia.every(m => selectie.has(m.id))
 
-  lokaleVideos.forEach(m => {
+  afspeelbareMedia.forEach(m => {
     if (alleGeselecteerd) selectie.delete(m.id)
     else selectie.add(m.id)
   })
@@ -189,8 +197,10 @@ function stuurNaarJukebox() {
   const media = getMediaVoorConcert(huidigConcertId)
   const items = Array.from(selectie)
     .map(id => media.find(m => m.id === id))
-    .filter(m => m && m.type === 'video')
-    .map(m => ({ lokaalPad: m.bestand_pad, artiest: huidigConcert.artiest, titel: huidigConcert.naam }))
+    .filter(m => m && (m.type === 'video' || m.type === 'youtube'))
+    .map(m => m.type === 'youtube'
+      ? { type: 'youtube', youtubeUrl: m.bestand_pad, artiest: huidigConcert.artiest, titel: huidigConcert.naam }
+      : { type: 'lokaal', lokaalPad: m.bestand_pad, artiest: huidigConcert.artiest, titel: huidigConcert.naam })
 
   if (items.length > 0) {
     ipcRenderer.send('concert-media-naar-playlist', items)
@@ -230,4 +240,4 @@ window.voegYoutubeToe = voegYoutubeToe
 window.verwijderMediaItem = verwijderMediaItem
 window.sluitLightbox = sluitLightbox
 window.stuurNaarJukebox = stuurNaarJukebox
-window.toggleSelecteerAlleLokaal = toggleSelecteerAlleLokaal
+window.toggleSelecteerAlleInConcert = toggleSelecteerAlleInConcert

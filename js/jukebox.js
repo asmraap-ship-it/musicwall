@@ -5,6 +5,48 @@ const { getPlaylist, verwijderUitPlaylist, leegPlaylist, herschikPlaylist } = re
 let playlist = []
 let huidigeIndex = -1
 
+let ytFrameReady = false
+let ytPendingVideoId = null
+let ytIsPlaying = false
+
+function getYoutubeId(url) {
+  if (!url) return null
+  const match = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/)
+  return match ? match[1] : null
+}
+
+function stuurNaarYtFrame(bericht) {
+  const frame = document.getElementById('youtube-speler-frame')
+  if (frame && frame.contentWindow) frame.contentWindow.postMessage(bericht, '*')
+}
+
+ipcRenderer.invoke('get-jukebox-server-poort').then(poort => {
+  document.getElementById('youtube-speler-frame').src = 'http://127.0.0.1:' + poort + '/yt-embed.html'
+})
+
+window.addEventListener('message', (event) => {
+  const { type, code } = event.data || {}
+
+  if (type === 'ready') {
+    ytFrameReady = true
+    if (ytPendingVideoId) {
+      stuurNaarYtFrame({ actie: 'laad', videoId: ytPendingVideoId })
+      ytPendingVideoId = null
+    }
+  } else if (type === 'playing') {
+    ytIsPlaying = true
+    document.getElementById('play-btn').textContent = '⏸'
+  } else if (type === 'paused') {
+    ytIsPlaying = false
+    document.getElementById('play-btn').textContent = '▶'
+  } else if (type === 'ended') {
+    afgespeeldGaVerder()
+  } else if (type === 'error') {
+    console.warn('YouTube speler kon nummer niet afspelen, overgeslagen:', code)
+    afgespeeldGaVerder()
+  }
+})
+
 async function laadPlaylist() {
   playlist = getPlaylist()
   const lijst = document.getElementById('playlist-lijst')
@@ -23,15 +65,23 @@ async function laadPlaylist() {
 
   for (const { item, i } of weergaveVolgorde) {
     let thumb = ''
+    const bronLabel = '<div class="playlist-bron ' + (item.type === 'youtube' ? 'youtube' : 'lokaal') + '">'
+      + t(item.type === 'youtube' ? 'video.bron.youtube' : 'video.bron.lokaal') + '</div>'
 
-    if (item.lokaal_pad) {
+    if (item.type === 'youtube') {
+      const id = getYoutubeId(item.youtube_url)
+      if (id) thumb = 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg'
+    } else if (item.lokaal_pad) {
       const pad = await ipcRenderer.invoke('maak-thumbnail', item.lokaal_pad)
       if (pad) thumb = 'file:///' + pad.replace(/\\/g, '/')
     }
 
     const el = document.createElement('div')
     el.className = 'playlist-item' + (i === huidigeIndex ? ' actief' : '')
-    el.innerHTML = (thumb ? '<img src="' + thumb + '">' : '<div style="width:56px;aspect-ratio:16/9;background:#1a1a1a;border-radius:2px;flex-shrink:0"></div>')
+    el.innerHTML = '<div class="playlist-thumb-wrap">'
+      + (thumb ? '<img src="' + thumb + '">' : '<div style="width:100%;aspect-ratio:16/9;background:#1a1a1a;border-radius:2px;flex-shrink:0"></div>')
+      + bronLabel
+      + '</div>'
       + '<div class="playlist-info">'
       + '<div class="playlist-artiest">' + (item.artiest || '') + '</div>'
       + '<div class="playlist-titel">' + item.titel + '</div>'
@@ -85,32 +135,75 @@ function speelIndex(i) {
   const item = playlist[i]
 
   const speler = document.getElementById('speler')
+  const ytWrap = document.getElementById('youtube-speler-wrap')
   const placeholder = document.getElementById('speel-placeholder')
   const fsBtn = document.getElementById('fullscreen-btn')
 
-  speler.src = 'file:///' + item.lokaal_pad.replace(/\\/g, '/')
-  speler.classList.add('zichtbaar')
   placeholder.style.display = 'none'
   fsBtn.classList.add('zichtbaar')
-  speler.play()
+
+  if (item.type === 'youtube') {
+    speler.pause()
+    speler.removeAttribute('src')
+    speler.classList.remove('zichtbaar')
+
+    ytWrap.classList.add('zichtbaar')
+    const videoId = getYoutubeId(item.youtube_url)
+
+    if (ytFrameReady) {
+      stuurNaarYtFrame({ actie: 'laad', videoId })
+    } else {
+      ytPendingVideoId = videoId
+    }
+  } else {
+    if (ytFrameReady) {
+      stuurNaarYtFrame({ actie: 'stoppen' })
+    }
+    ytWrap.classList.remove('zichtbaar')
+
+    speler.src = 'file:///' + item.lokaal_pad.replace(/\\/g, '/')
+    speler.classList.add('zichtbaar')
+    speler.play()
+  }
 
   document.getElementById('play-btn').textContent = '⏸'
   laadPlaylist()
 }
 
 function schermvullend() {
+  const item = playlist[huidigeIndex]
+
+  if (item && item.type === 'youtube') {
+    const ytWrap = document.getElementById('youtube-speler-wrap')
+    if (ytWrap.requestFullscreen) ytWrap.requestFullscreen()
+    return
+  }
+
   const speler = document.getElementById('speler')
   if (speler.requestFullscreen) speler.requestFullscreen()
 }
 
 function speelPauze() {
-  const speler = document.getElementById('speler')
-
   if (huidigeIndex === -1 && playlist.length > 0) {
     speelIndex(0)
     return
   }
 
+  const item = playlist[huidigeIndex]
+
+  if (item && item.type === 'youtube') {
+    if (!ytFrameReady) return
+    if (ytIsPlaying) {
+      stuurNaarYtFrame({ actie: 'pauzeren' })
+      document.getElementById('play-btn').textContent = '▶'
+    } else {
+      stuurNaarYtFrame({ actie: 'afspelen' })
+      document.getElementById('play-btn').textContent = '⏸'
+    }
+    return
+  }
+
+  const speler = document.getElementById('speler')
   if (speler.paused) {
     speler.play()
     document.getElementById('play-btn').textContent = '⏸'
@@ -125,6 +218,13 @@ function stop() {
   speler.pause()
   speler.removeAttribute('src')
   speler.classList.remove('zichtbaar')
+
+  const ytWrap = document.getElementById('youtube-speler-wrap')
+  ytWrap.classList.remove('zichtbaar')
+  if (ytFrameReady) {
+    stuurNaarYtFrame({ actie: 'stoppen' })
+  }
+
   document.getElementById('speel-placeholder').style.display = 'block'
   document.getElementById('fullscreen-btn').classList.remove('zichtbaar')
   document.getElementById('play-btn').textContent = '▶'
@@ -169,7 +269,7 @@ function naarLaatste() {
   if (playlist.length > 0) speelIndex(playlist.length - 1)
 }
 
-document.getElementById('speler').addEventListener('ended', () => {
+function afgespeeldGaVerder() {
   const afgespeeld = playlist[huidigeIndex]
   if (afgespeeld) {
     verwijderUitPlaylist(afgespeeld.playlist_id)
@@ -188,7 +288,9 @@ document.getElementById('speler').addEventListener('ended', () => {
   const volgendeIndex = huidigeIndex < playlist.length ? huidigeIndex : 0
   huidigeIndex = -1
   speelIndex(volgendeIndex)
-})
+}
+
+document.getElementById('speler').addEventListener('ended', afgespeeldGaVerder)
 
 window.leegMaken = leegMaken
 window.verwijderItem = verwijderItem

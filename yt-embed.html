@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  html, body { margin: 0; padding: 0; background: #000; width: 100%; height: 100%; overflow: hidden; }
+  #speler { width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div id="speler"></div>
+<script>
+  let player = null
+  let playerReady = false
+
+  function stuur(bericht) {
+    window.parent.postMessage(bericht, '*')
+  }
+
+  window.onYouTubeIframeAPIReady = function () {
+    player = new YT.Player('speler', {
+      height: '100%',
+      width: '100%',
+      playerVars: { autoplay: 1, controls: 1, rel: 0, modestbranding: 1 },
+      events: {
+        onReady: () => {
+          playerReady = true
+          stuur({ type: 'ready' })
+        },
+        onStateChange: (event) => {
+          if (event.data === YT.PlayerState.PLAYING) stuur({ type: 'playing' })
+          else if (event.data === YT.PlayerState.PAUSED) stuur({ type: 'paused' })
+          else if (event.data === YT.PlayerState.ENDED) stuur({ type: 'ended' })
+        },
+        onError: (event) => stuur({ type: 'error', code: event.data })
+      }
+    })
+  }
+
+  const tag = document.createElement('script')
+  tag.src = 'https://www.youtube.com/iframe_api'
+  document.head.appendChild(tag)
+
+  window.addEventListener('message', (event) => {
+    if (!playerReady) return
+    const { actie, videoId } = event.data || {}
+
+    if (actie === 'laad') player.loadVideoById(videoId)
+    else if (actie === 'afspelen') player.playVideo()
+    else if (actie === 'pauzeren') player.pauseVideo()
+    else if (actie === 'stoppen') player.stopVideo()
+  })
+</script>
+</body>
+</html>

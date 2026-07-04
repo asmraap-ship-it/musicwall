@@ -138,6 +138,33 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   flex-shrink: 0;
 }
 
+.playlist-thumb-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.playlist-bron {
+  position: absolute;
+  bottom: 0.3rem;
+  left: 0.3rem;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+}
+
+.playlist-bron.youtube {
+  background: rgba(200, 0, 0, 0.7);
+  color: #fff;
+}
+
+.playlist-bron.lokaal {
+  background: rgba(200, 168, 122, 0.25);
+  color: var(--accent);
+  border: 1px solid rgba(200, 168, 122, 0.3);
+}
+
 .playlist-info {
   width: 100%;
   min-width: 0;
@@ -306,6 +333,22 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
 
 #speler.zichtbaar {
   display: block;
+}
+
+.youtube-speler-wrap {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  display: none;
+}
+
+.youtube-speler-wrap.zichtbaar {
+  display: block;
+}
+
+#youtube-speler {
+  width: 100%;
+  height: 100%;
 }
 
 .fullscreen-btn {

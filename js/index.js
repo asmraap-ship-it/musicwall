@@ -94,24 +94,7 @@ function stuurNaarJukebox() {
     return
   }
 
-  const idsArray = Array.from(selectie)
-  const lokaleIds = idsArray.filter(id => {
-    const v = videoData.find(v => v.id === id)
-    return v && v.type === 'lokaal'
-  })
-
-  const aantalYoutube = idsArray.length - lokaleIds.length
-
-  if (lokaleIds.length === 0) {
-    alert(t('jukebox.alleenLokaal'))
-    return
-  }
-
-  if (aantalYoutube > 0) {
-    alert(t('jukebox.youtubeOvergeslagen', { n: aantalYoutube }))
-  }
-
-  ipcRenderer.send('toevoegen-aan-playlist', lokaleIds)
+  ipcRenderer.send('toevoegen-aan-playlist', Array.from(selectie))
   deselecteerAlles()
 }
 
@@ -291,27 +274,25 @@ function deselecteerAlles() {
   updateSelectieInfo()
 }
 
-function toggleSelecteerAlleLokaal(wallId) {
+function toggleSelecteerAlleInWall(wallId) {
   const wallEl = document.getElementById('wall-' + wallId)
   if (!wallEl) return
 
-  const lokaleCards = Array.from(wallEl.querySelectorAll('.card')).filter(c => {
-    const v = videoData.find(v => v.id === parseInt(c.dataset.videoId))
-    return v && v.type === 'lokaal'
-  })
-  if (lokaleCards.length === 0) return
+  const alleVideos = getVideosVoorWall(wallId)
+  if (alleVideos.length === 0) return
 
-  const alleGeselecteerd = lokaleCards.every(c => selectie.has(parseInt(c.dataset.videoId)))
+  const alleGeselecteerd = alleVideos.every(v => selectie.has(v.id))
 
-  lokaleCards.forEach(c => {
-    const id = parseInt(c.dataset.videoId)
+  alleVideos.forEach(v => {
     if (alleGeselecteerd) {
-      selectie.delete(id)
-      c.classList.remove('geselecteerd')
+      selectie.delete(v.id)
     } else {
-      selectie.add(id)
-      c.classList.add('geselecteerd')
+      selectie.add(v.id)
     }
+  })
+
+  wallEl.querySelectorAll('.card').forEach(c => {
+    c.classList.toggle('geselecteerd', selectie.has(parseInt(c.dataset.videoId)))
   })
 
   updateSelectieInfo()
@@ -596,8 +577,9 @@ const KAART_RENDER_LIMIT = 150
 
 async function bouwKaartHtml(video, wallId, idx, n) {
   const thumbnail = await getThumbnail(video, idx)
+  const geselecteerdClass = selectie.has(video.id) ? ' geselecteerd' : ''
 
-  return '<div class="card" id="c' + wallId + '-' + n + '" data-video-id="' + video.id + '"'
+  return '<div class="card' + geselecteerdClass + '" id="c' + wallId + '-' + n + '" data-video-id="' + video.id + '"'
     + ' draggable="true"'
     + ' ondragstart="kaartDragStart(event,' + video.id + ',' + wallId + ')"'
     + ' ondragend="dragEnd(event)"'
@@ -660,7 +642,6 @@ async function laadWalls() {
 
   for (const wall of walls) {
     const videos = getVideosVoorWall(wall.id)
-    const heeftLokaal = videos.some(v => v.type === 'lokaal')
     const wallStartIdx = videoData.length
     videos.forEach(v => videoData.push(v))
 
@@ -687,8 +668,8 @@ async function laadWalls() {
       + '<span class="wall-naam" onclick="hernoemWallPrompt(' + wall.id + ',\'' + wall.naam.replace(/'/g, "\\'") + '\')" title="' + t('wall.hernoemenTooltip') + '" style="cursor:pointer">' + wall.naam + '</span>'
       + '<div style="display:flex;align-items:center;gap:0.5rem">'
       + '<span class="wall-aantal">' + videos.length + '</span>'
-      + (heeftLokaal
-        ? '<button class="wall-selecteer-btn" onclick="toggleSelecteerAlleLokaal(' + wall.id + ')" title="' + t('wall.selecteerLokaleTooltip') + '">'
+      + (videos.length > 0
+        ? '<button class="wall-selecteer-btn" onclick="toggleSelecteerAlleInWall(' + wall.id + ')" title="' + t('wall.selecteerAllesTooltip') + '">'
           + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="7,12 10.5,15.5 17,8.5"/></svg>'
           + '</button>'
         : '')
@@ -755,7 +736,7 @@ window.prullenbakOver = prullenbakOver
 window.prullenbakLeave = prullenbakLeave
 window.prullenbakDrop = prullenbakDrop
 window.toggleSelectie = toggleSelectie
-window.toggleSelecteerAlleLokaal = toggleSelecteerAlleLokaal
+window.toggleSelecteerAlleInWall = toggleSelecteerAlleInWall
 window.toonAlleKaarten = toonAlleKaarten
 window.kaartHoverIn = kaartHoverIn
 window.kaartHoverUit = kaartHoverUit
