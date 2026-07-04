@@ -357,6 +357,26 @@ h1 {
   color: var(--accent);
 }
 
+.wall-toon-meer-btn {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: transparent;
+  border: 1px dashed #1e1e1e;
+  border-radius: 3px;
+  color: #333;
+  font-size: 11px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.15s;
+}
+
+.wall-toon-meer-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .nieuwe-wall-btn {
   min-width: 60px;
   max-width: 60px;

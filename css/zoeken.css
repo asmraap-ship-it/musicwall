@@ -54,6 +54,29 @@ h2 {
   margin-bottom: 1.25rem;
 }
 
+.modus-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.modus-btn {
+  background: var(--achtergrond-3);
+  border: 1px solid var(--rand-2);
+  border-radius: 3px;
+  color: var(--tekst-dim);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.modus-btn.actief {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .zoekbalk {
   display: flex;
   gap: 0.5rem;
@@ -254,6 +277,34 @@ select {
   padding: 0.3rem 0.6rem;
   border-radius: 3px;
   letter-spacing: 0.05em;
+}
+
+.playlist-navigatie, .resultaten-acties {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.resultaten-acties {
+  justify-content: flex-end;
+}
+
+.terug-btn, .selecteer-alles-btn {
+  background: transparent;
+  border: 1px solid var(--rand-2);
+  border-radius: 3px;
+  color: var(--tekst-dim);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.terug-btn:hover, .selecteer-alles-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .laden, .geen-resultaten, .fout {

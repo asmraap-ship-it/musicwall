@@ -87,6 +87,10 @@ Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard
 ## YouTube zoeken
 - Klikken op een zoekresultaat selecteert het (net als Ctrl+klik bij walls/concert-detail), niet direct toevoegen
 - Onderin verschijnt een selectiebalk met aantal + knop **"Voeg geselecteerde toe"**; pas dan worden de geselecteerde video's toegevoegd aan de gekozen wall
+- Bovenaan `zoeken.html` kiest een modus-toggle (`stelModusIn('videos'|'playlists')` in `js/zoeken.js`) tussen video's zoeken en playlists zoeken; beide gebruiken `search.list` met `maxResults=50` (het maximum per YouTube-aanvraag)
+- **Playlists zoeken**: toont eerst gevonden playlists (`zoekPlaylists()` → `renderPlaylistLijst()`); klikken op één playlist (`toonPlaylistVideos()`) haalt via `playlistItems.list` (pagina's van 50, tot 100 pagina's = 5000 nummers, YouTube's maximale playlistgrootte) alle nummers op en toont ze als normale selecteerbare zoekresultaten, met een **"← Terug naar playlists"**-knop (`terugNaarPlaylists()`, gebruikt de cache in `playlistResultatenCache` — geen nieuwe API-aanroep) en een eigen **"Selecteer alles"**-knop
+- Private en verwijderde video's in een playlist (YouTube geeft deze terug met de vaste titel "Private video"/"Deleted video") worden uit de nummerlijst gefilterd, ook omdat ze vaak geen thumbnail hebben
+- **"Selecteer alles"** (`selecteerAlleZoekresultaten()`) staat ook bij het normale video zoeken, direct boven de resultatenlijst — toggle-gedrag net als de wall/concert-detail selecteer-alles-knoppen
 
 ## Jukebox-gedrag
 - Selecteren met **Ctrl+klik** op lokale video's, zowel in een wall-kaart als op een lokale-video-tegel in concert-detail
@@ -99,6 +103,15 @@ Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard
 ## Wat nog gebouwd moet worden
 1. **Tab styling verfijnen** — kleine detailwijzigingen nog gewenst
 2. **Nieuwe distributie bouwen** na alle wijzigingen
+
+## Performance bij grote walls
+- `laadWalls()` in `js/index.js` rendert per wall maximaal `KAART_RENDER_LIMIT` (150) kaarten in één keer; bij meer video's (bijv. een wall gevuld vanuit een grote YouTube-playlist) verschijnt een **"Toon nog N video's"**-knop (`toonAlleKaarten(wallId)`) die de rest pas opbouwt/toevoegt na een klik — voorkomt dat elke tabblad-/groepwissel duizenden DOM-kaarten in één keer moet opbouwen
+- `bouwKaartHtml()` is de herbruikbare kaart-HTML-builder, gebruikt door zowel `laadWalls()` als `toonAlleKaarten()`; `videoData` krijgt bij het laden altijd de volledige videolijst van elke wall (ook ongerenderde kaarten) zodat latere idx-toewijzing via `wallStartIdx` klopt
+- Thumbnail-`<img>`'s in wall-kaarten hebben `loading="lazy"` — de browser laadt alleen thumbnails die in beeld komen
+- De GSAP-introanimatie van kaarten schaalt de `stagger`-waarde af naarmate er meer kaarten zijn (`Math.min(0.03, 0.6 / aantalKaarten)`), zodat de totale animatieduur altijd rond de 0,6s blijft in plaats van lineair op te lopen bij grote walls
+
+## Dialoogvensters
+- Eenvoudige formuliervensters met alleen titel + invoerveld + knop + melding (`nieuwe-wall.html`, `nieuwe-wallgroep.html`, `hernoem-tab.html`, gedeelde `css/toevoegen.css`) hebben in `main.js` een vaste `BrowserWindow`-hoogte van 320px nodig — de inhoud (titel + veld + knop + meldingsruimte) heeft ongeveer 300px nodig; een kleinere hoogte laat de opslaan-knop wegvallen buiten beeld zonder scrollbalk-indicatie
 
 ## ipcMain handlers aanwezig in main.js (selectie)
 - `open-nieuw-concert` → opent nieuw-concert.html

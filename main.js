@@ -206,7 +206,7 @@ ipcMain.on('wall-toegevoegd', () => {
 ipcMain.on('open-nieuwe-wall', (event, groepId) => {
   const wallWin = new BrowserWindow({
     width: 400,
-    height: 220,
+    height: 320,
     title: t('nieuweWall.titel'),
     ...titelbalkOpties,
     webPreferences: {
@@ -232,7 +232,7 @@ ipcMain.on('wallgroep-toegevoegd', () => {
 ipcMain.on('open-nieuwe-wallgroep', () => {
   const groepWin = new BrowserWindow({
     width: 400,
-    height: 220,
+    height: 320,
     title: t('nieuweWallGroep.titel'),
     ...titelbalkOpties,
     webPreferences: {
@@ -247,7 +247,7 @@ ipcMain.on('open-nieuwe-wallgroep', () => {
 ipcMain.on('open-hernoem-wallgroep', (event, { groepId, huidigeNaam }) => {
   const groepWin = new BrowserWindow({
     width: 400,
-    height: 220,
+    height: 320,
     title: t('nieuweWallGroep.hernoemenTitel'),
     ...titelbalkOpties,
     webPreferences: {
@@ -266,7 +266,7 @@ ipcMain.on('open-hernoem-wallgroep', (event, { groepId, huidigeNaam }) => {
 ipcMain.on('open-hernoem-tab', (event, { type, huidigeNaam }) => {
   const tabWin = new BrowserWindow({
     width: 400,
-    height: 220,
+    height: 320,
     title: t('hernoemTab.titel'),
     ...titelbalkOpties,
     webPreferences: {
@@ -534,7 +534,7 @@ function vraagBevestiging(titel, bericht) {
 ipcMain.on('open-hernoem-wall', (event, { wallId, huidigeNaam }) => {
   const wallWin = new BrowserWindow({
     width: 400,
-    height: 220,
+    height: 320,
     title: t('nieuweWall.hernoemenTitel'),
     ...titelbalkOpties,
     webPreferences: {

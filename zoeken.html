@@ -26,6 +26,11 @@
 
 <h2 data-i18n="zoeken.titel">YouTube zoeken</h2>
 
+<div class="modus-toggle">
+  <button class="modus-btn actief" id="modus-videos-btn" onclick="stelModusIn('videos')" data-i18n="zoeken.modusVideos">Video's</button>
+  <button class="modus-btn" id="modus-playlists-btn" onclick="stelModusIn('playlists')" data-i18n="zoeken.modusPlaylists">Playlists</button>
+</div>
+
 <div class="zoekbalk">
   <input type="text" id="zoekterm" data-i18n-placeholder="zoeken.zoektermPlaceholder" placeholder="Zoek een nummer of artiest..." autofocus>
   <button onclick="zoek()" data-i18n="zoeken.zoekenBtn">Zoeken</button>

@@ -46,7 +46,7 @@ async function getThumbnail(video, idx) {
     const id = getYoutubeId(video.youtube_url)
     if (id) {
       return '<div class="card-thumb-wrap" onclick="if(!event.ctrlKey)speelAfIdx(' + idx + ')">'
-        + '<img class="card-thumbnail" src="https://img.youtube.com/vi/' + id + '/hqdefault.jpg">'
+        + '<img class="card-thumbnail" loading="lazy" src="https://img.youtube.com/vi/' + id + '/hqdefault.jpg">'
         + playIcon + deleteKnop + bewerkKnop + bronLabel
         + '</div>'
     }
@@ -56,7 +56,7 @@ async function getThumbnail(video, idx) {
     const pad = await ipcRenderer.invoke('maak-thumbnail', video.lokaal_pad)
     if (pad) {
       return '<div class="card-thumb-wrap" onclick="if(!event.ctrlKey)speelAfIdx(' + idx + ')">'
-        + '<img class="card-thumbnail" src="file:///' + pad.replace(/\\/g, '/') + '">'
+        + '<img class="card-thumbnail" loading="lazy" src="file:///' + pad.replace(/\\/g, '/') + '">'
         + playIcon + deleteKnop + bewerkKnop + bronLabel
         + '</div>'
     }
@@ -592,6 +592,62 @@ window.addEventListener('mousemove', (e) => {
   })
 })
 
+const KAART_RENDER_LIMIT = 150
+
+async function bouwKaartHtml(video, wallId, idx, n) {
+  const thumbnail = await getThumbnail(video, idx)
+
+  return '<div class="card" id="c' + wallId + '-' + n + '" data-video-id="' + video.id + '"'
+    + ' draggable="true"'
+    + ' ondragstart="kaartDragStart(event,' + video.id + ',' + wallId + ')"'
+    + ' ondragend="dragEnd(event)"'
+    + ' ondragover="kaartDragOver(event, this)"'
+    + ' ondragleave="kaartDragLeave(this)"'
+    + ' ondrop="kaartDrop(event,' + video.id + ',' + wallId + ')"'
+    + ' onclick="toggleSelectie(event, this,' + video.id + ')"'
+    + ' onmouseenter="kaartHoverIn(this)"'
+    + ' onmouseleave="kaartHoverUit(this)">'
+    + thumbnail
+    + '<div class="card-header" onclick="toggle(' + wallId + ',' + n + ')">'
+    + '<div class="card-number">0' + n + '</div>'
+    + '<div class="card-meta">'
+    + '<div class="card-artist">' + (video.artiest || '') + '</div>'
+    + '<div class="card-title">' + video.titel + '</div>'
+    + '<div class="card-tag">\u25cf ' + (video.tag || '') + '</div>'
+    + '</div>'
+    + '<div class="chevron" id="ch' + wallId + '-' + n + '">&#8964;</div>'
+    + '</div>'
+    + '<div class="card-body" id="b' + wallId + '-' + n + '">'
+    + '<div class="card-story"><p>' + (video.verhaal || '') + '</p></div>'
+    + '</div>'
+    + '</div>'
+}
+
+async function toonAlleKaarten(wallId) {
+  const wallVideosEl = document.querySelector('#wall-' + wallId + ' .wall-videos')
+  const knop = wallVideosEl && wallVideosEl.querySelector('.wall-toon-meer-btn')
+  if (!wallVideosEl || !knop) return
+
+  const videos = getVideosVoorWall(wallId)
+  const alGerenderd = wallVideosEl.querySelectorAll('.card').length
+  const startIdx = videoData.findIndex(v => v.id === videos[0].id)
+
+  let toegevoegd = ''
+  for (let index = alGerenderd; index < videos.length; index++) {
+    toegevoegd += await bouwKaartHtml(videos[index], wallId, startIdx + index, index + 1)
+  }
+
+  const tijdelijk = document.createElement('div')
+  tijdelijk.innerHTML = toegevoegd
+  const nieuweKaarten = Array.from(tijdelijk.children)
+  nieuweKaarten.forEach(kaart => wallVideosEl.insertBefore(kaart, knop))
+  knop.remove()
+
+  if (window.gsap && nieuweKaarten.length > 0) {
+    gsap.fromTo(nieuweKaarten, { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: Math.min(0.02, 0.6 / nieuweKaarten.length) })
+  }
+}
+
 async function laadWalls() {
   const container = document.getElementById('walls-container')
   container.innerHTML = ''
@@ -605,40 +661,19 @@ async function laadWalls() {
   for (const wall of walls) {
     const videos = getVideosVoorWall(wall.id)
     const heeftLokaal = videos.some(v => v.type === 'lokaal')
+    const wallStartIdx = videoData.length
+    videos.forEach(v => videoData.push(v))
+
     let kaarten = ''
+    const renderAantal = Math.min(videos.length, KAART_RENDER_LIMIT)
 
-    for (let index = 0; index < videos.length; index++) {
-      const video = videos[index]
-      const n = index + 1
-      const idx = videoData.length
-      videoData.push(video)
+    for (let index = 0; index < renderAantal; index++) {
+      kaarten += await bouwKaartHtml(videos[index], wall.id, wallStartIdx + index, index + 1)
+    }
 
-      const thumbnail = await getThumbnail(video, idx)
-
-      kaarten += '<div class="card" id="c' + wall.id + '-' + n + '" data-video-id="' + video.id + '"'
-        + ' draggable="true"'
-        + ' ondragstart="kaartDragStart(event,' + video.id + ',' + wall.id + ')"'
-        + ' ondragend="dragEnd(event)"'
-        + ' ondragover="kaartDragOver(event, this)"'
-        + ' ondragleave="kaartDragLeave(this)"'
-        + ' ondrop="kaartDrop(event,' + video.id + ',' + wall.id + ')"'
-        + ' onclick="toggleSelectie(event, this,' + video.id + ')"'
-        + ' onmouseenter="kaartHoverIn(this)"'
-        + ' onmouseleave="kaartHoverUit(this)">'
-        + thumbnail
-        + '<div class="card-header" onclick="toggle(' + wall.id + ',' + n + ')">'
-        + '<div class="card-number">0' + n + '</div>'
-        + '<div class="card-meta">'
-        + '<div class="card-artist">' + (video.artiest || '') + '</div>'
-        + '<div class="card-title">' + video.titel + '</div>'
-        + '<div class="card-tag">\u25cf ' + (video.tag || '') + '</div>'
-        + '</div>'
-        + '<div class="chevron" id="ch' + wall.id + '-' + n + '">&#8964;</div>'
-        + '</div>'
-        + '<div class="card-body" id="b' + wall.id + '-' + n + '">'
-        + '<div class="card-story"><p>' + (video.verhaal || '') + '</p></div>'
-        + '</div>'
-        + '</div>'
+    const verborgenAantal = videos.length - renderAantal
+    if (verborgenAantal > 0) {
+      kaarten += '<button class="wall-toon-meer-btn" onclick="toonAlleKaarten(' + wall.id + ')">' + t('wall.toonAlle', { n: verborgenAantal }) + '</button>'
     }
 
     const wallHtml = '<div class="wall" id="wall-' + wall.id + '">'
@@ -682,9 +717,11 @@ async function laadWalls() {
       { opacity: 0, y: 24, scale: 0.97 },
       { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'power3.out', stagger: 0.08 }
     )
-    gsap.fromTo(document.querySelectorAll('.card'),
+    const kaartElementen = document.querySelectorAll('.card')
+    const kaartStagger = kaartElementen.length > 0 ? Math.min(0.03, 0.6 / kaartElementen.length) : 0.03
+    gsap.fromTo(kaartElementen,
       { opacity: 0, x: -12 },
-      { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out', stagger: 0.03, delay: 0.2 }
+      { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out', stagger: kaartStagger, delay: 0.2 }
     )
   } else {
     document.querySelectorAll('.wall, .card').forEach(el => { el.style.opacity = '1' })
@@ -719,6 +756,7 @@ window.prullenbakLeave = prullenbakLeave
 window.prullenbakDrop = prullenbakDrop
 window.toggleSelectie = toggleSelectie
 window.toggleSelecteerAlleLokaal = toggleSelecteerAlleLokaal
+window.toonAlleKaarten = toonAlleKaarten
 window.kaartHoverIn = kaartHoverIn
 window.kaartHoverUit = kaartHoverUit
 window.openJukebox = openJukebox
