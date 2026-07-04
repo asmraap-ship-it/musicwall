@@ -351,6 +351,28 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   height: 100%;
 }
 
+.foutmelding {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(200, 168, 122, 0.4);
+  border-radius: 4px;
+  padding: 0.6rem 1.1rem;
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.03em;
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+.foutmelding.zichtbaar {
+  opacity: 1;
+}
+
 .fullscreen-btn {
   position: absolute;
   bottom: 1rem;

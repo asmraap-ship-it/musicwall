@@ -42,8 +42,8 @@ window.addEventListener('message', (event) => {
   } else if (type === 'ended') {
     afgespeeldGaVerder()
   } else if (type === 'error') {
-    console.warn('YouTube speler kon nummer niet afspelen, overgeslagen:', code)
-    afgespeeldGaVerder()
+    console.warn('YouTube speler kon nummer niet afspelen:', code)
+    foutGaVerder()
   }
 })
 
@@ -58,12 +58,8 @@ async function laadPlaylist() {
 
   lijst.innerHTML = ''
 
-  const weergaveVolgorde = playlist.map((item, i) => ({ item, i }))
-  if (huidigeIndex >= 0) {
-    weergaveVolgorde.sort((a, b) => (a.i === huidigeIndex ? -1 : b.i === huidigeIndex ? 1 : 0))
-  }
-
-  for (const { item, i } of weergaveVolgorde) {
+  for (let i = 0; i < playlist.length; i++) {
+    const item = playlist[i]
     let thumb = ''
     const bronLabel = '<div class="playlist-bron ' + (item.type === 'youtube' ? 'youtube' : 'lokaal') + '">'
       + t(item.type === 'youtube' ? 'video.bron.youtube' : 'video.bron.lokaal') + '</div>'
@@ -288,6 +284,25 @@ function afgespeeldGaVerder() {
   const volgendeIndex = huidigeIndex < playlist.length ? huidigeIndex : 0
   huidigeIndex = -1
   speelIndex(volgendeIndex)
+}
+
+function toonFoutMelding(tekst) {
+  const el = document.getElementById('foutmelding')
+  el.textContent = tekst
+  el.classList.add('zichtbaar')
+
+  clearTimeout(toonFoutMelding.timer)
+  toonFoutMelding.timer = setTimeout(() => el.classList.remove('zichtbaar'), 7000)
+}
+
+function foutGaVerder() {
+  const mislukt = playlist[huidigeIndex]
+
+  if (mislukt) {
+    toonFoutMelding(t('jukebox.nietAfspeelbaar', { titel: mislukt.titel || mislukt.artiest || '' }))
+  }
+
+  afgespeeldGaVerder()
 }
 
 document.getElementById('speler').addEventListener('ended', afgespeeldGaVerder)

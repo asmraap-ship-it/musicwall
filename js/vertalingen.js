@@ -171,6 +171,7 @@ const VERTALINGEN = {
     'jukebox.leegLijst': 'Selecteer videos in een wall en klik op "Voeg toe aan de playlist".',
     'jukebox.alleAfgespeeld': 'Alle nummers zijn afgespeeld',
     'jukebox.eindeLijst': 'Einde van de playlist',
+    'jukebox.nietAfspeelbaar': '"{titel}" niet afspeelbaar, verwijderd uit de playlist (handmatig nog wel mogelijk)',
 
     // Bevestigen dialoog
     'bevestigen.annuleren': 'Annuleren',
@@ -227,7 +228,7 @@ const VERTALINGEN = {
     'help.bewerken.li3': 'Sleep een video naar de prullenbak in de header om hem te verwijderen',
     'help.bewerken.li4': 'Selecteer meerdere video\'s met <strong>Ctrl+klik</strong> en sleep ze samen naar de prullenbak, of verwijder ze in één keer',
     'help.jukebox.titel': 'Jukebox',
-    'help.jukebox.intro': 'De jukebox speelt een playlist van lokale én YouTube-video\'s automatisch achter elkaar af. Voor YouTube-nummers is een internetverbinding nodig; een nummer dat niet afgespeeld kan worden (bijvoorbeeld omdat de uploader insluiten heeft uitgeschakeld) wordt automatisch overgeslagen.',
+    'help.jukebox.intro': 'De jukebox speelt een playlist van lokale én YouTube-video\'s automatisch achter elkaar af. Voor YouTube-nummers is een internetverbinding nodig; een nummer dat niet afgespeeld kan worden (bijvoorbeeld omdat de uploader insluiten heeft uitgeschakeld) wordt uit de playlist verwijderd — de video zelf blijft gewoon bestaan en is handmatig af te spelen, alleen niet via de jukebox.',
     'help.jukebox.li1': 'Selecteer video\'s met <strong>Ctrl+klik</strong> in een wall of concertervaring — lokale bestanden én YouTube-video\'s',
     'help.jukebox.liAlles': 'Klik op het selecteer-icoon in een wall-header (of de knop <strong>☑ Selecteer alles</strong> in een concertervaring) om in één keer alle video\'s van die wall of dat concert te selecteren; klik nogmaals om ze te deselecteren',
     'help.jukebox.li2': 'Klik op <strong>♫ Voeg toe aan de playlist</strong>',
@@ -416,6 +417,7 @@ const VERTALINGEN = {
     'jukebox.leegLijst': 'Select videos in a wall and click "Add to playlist".',
     'jukebox.alleAfgespeeld': 'All tracks have been played',
     'jukebox.eindeLijst': 'End of playlist',
+    'jukebox.nietAfspeelbaar': '"{titel}" not playable, removed from playlist (still playable manually)',
 
     'bevestigen.annuleren': 'Cancel',
     'bevestigen.verwijderen': 'Delete',
@@ -469,7 +471,7 @@ const VERTALINGEN = {
     'help.bewerken.li3': 'Drag a video to the trash icon in the header to delete it',
     'help.bewerken.li4': 'Select multiple videos with <strong>Ctrl+click</strong> and drag them together to the trash, or delete them at once',
     'help.jukebox.titel': 'Jukebox',
-    'help.jukebox.intro': 'The jukebox automatically plays a playlist of local and YouTube videos back to back. YouTube tracks need an internet connection; a track that can\'t be played (for example because the uploader disabled embedding) is automatically skipped.',
+    'help.jukebox.intro': 'The jukebox automatically plays a playlist of local and YouTube videos back to back. YouTube tracks need an internet connection; a track that can\'t be played (for example because the uploader disabled embedding) is removed from the playlist — the video itself still exists and can be played manually, just not through the jukebox.',
     'help.jukebox.li1': 'Select videos with <strong>Ctrl+click</strong> in a wall or concert experience — local files and YouTube videos alike',
     'help.jukebox.liAlles': 'Click the select icon in a wall header (or the <strong>☑ Select all</strong> button in a concert experience) to select all videos of that wall or concert at once; click again to deselect',
     'help.jukebox.li2': 'Click <strong>♫ Add to playlist</strong>',
