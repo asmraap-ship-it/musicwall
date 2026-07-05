@@ -614,6 +614,25 @@ ipcMain.on('api-sleutel-venster-sluiten', () => {
   BrowserWindow.getFocusedWindow().close()
 })
 
+function openApiSleutelWindow(modus) {
+  const apiWin = new BrowserWindow({
+    width: 480,
+    height: 700,
+    title: t(modus === 'wijzig' ? 'apiSleutelDialoog.titelWijzigen' : 'apiSleutelDialoog.titel'),
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  apiWin.loadFile('api-sleutel-instellen.html', modus ? { query: { modus } } : undefined)
+  apiWin.setMenuBarVisibility(false)
+}
+
+ipcMain.on('open-api-sleutel-instellen', () => {
+  openApiSleutelWindow('wijzig')
+})
+
 function controleerApiSleutel() {
   const instellingenPad = path.join(userDataPath, 'instellingen.json')
   const voorbeeldPad = path.join(__dirname, 'instellingen.voorbeeld.json')
@@ -631,18 +650,7 @@ function controleerApiSleutel() {
   }
 
   if (!instellingen.youtubeApiKey || instellingen.youtubeApiKey.includes('VUL_HIER')) {
-    const apiWin = new BrowserWindow({
-      width: 480,
-      height: 700,
-      title: t('apiSleutelDialoog.titel'),
-      ...titelbalkOpties,
-      webPreferences: {
-        nodeIntegration: true,
-        contextIsolation: false
-      }
-    })
-    apiWin.loadFile('api-sleutel-instellen.html')
-    apiWin.setMenuBarVisibility(false)
+    openApiSleutelWindow()
   }
 }
 

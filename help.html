@@ -18,7 +18,7 @@
 <body>
 
 <header>
-  <div class="logo">Musicwall</div>
+  <div class="logo">Musicwall <span id="help-versie" class="versie"></span></div>
   <h1 data-i18n="help.titel">Help</h1>
 </header>
 
@@ -131,6 +131,7 @@
       <li data-i18n-html="help.apikey.invoerLi3">Sla het bestand op en herstart Musicwall</li>
     </ul>
     <p data-i18n="help.apikey.quota">De gratis quota van Google staat 10.000 zoekopdrachten per dag toe — meer dan genoeg voor persoonlijk gebruik.</p>
+    <button class="wijzig-sleutel-btn" onclick="wijzigApiSleutel()" data-i18n="help.apikey.wijzigBtn">🔑 API-sleutel wijzigen</button>
   </section>
 
   <section>
@@ -150,5 +151,6 @@
 
 <script src="js/vertalingen.js"></script>
 <script src="js/i18n.js"></script>
+<script src="js/help.js"></script>
 </body>
 </html>

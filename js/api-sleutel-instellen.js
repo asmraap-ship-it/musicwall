@@ -3,9 +3,30 @@ const ipcRenderer = electron.ipcRenderer
 const shell = electron.shell
 const fs = require('fs')
 
+const modus = new URLSearchParams(window.location.search).get('modus')
+
 function openGoogleConsole() {
   shell.openExternal('https://console.cloud.google.com/apis/library/youtube.googleapis.com')
 }
+
+async function initModus() {
+  if (modus !== 'wijzig') return
+
+  document.querySelector('h2').textContent = t('apiSleutelDialoog.titelWijzigen')
+  document.querySelector('.uitleg').textContent = t('apiSleutelDialoog.introWijzigen')
+  document.getElementById('overslaan-link').textContent = t('apiSleutelDialoog.annulerenBtn')
+
+  const instellingenPad = await ipcRenderer.invoke('get-instellingen-pad')
+  if (!fs.existsSync(instellingenPad)) return
+  try {
+    const instellingen = JSON.parse(fs.readFileSync(instellingenPad, 'utf8'))
+    if (instellingen.youtubeApiKey && !instellingen.youtubeApiKey.includes('VUL_HIER')) {
+      document.getElementById('sleutel').value = instellingen.youtubeApiKey
+    }
+  } catch (e) {}
+}
+
+initModus()
 
 document.getElementById('sleutel').addEventListener('keyup', (e) => {
   if (e.key === 'Enter') slaOp()

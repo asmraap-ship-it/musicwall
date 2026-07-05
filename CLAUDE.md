@@ -129,6 +129,15 @@ Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard
 ## Dialoogvensters
 - Eenvoudige formuliervensters met alleen titel + invoerveld + knop + melding (`nieuwe-wall.html`, `nieuwe-wallgroep.html`, `hernoem-tab.html`, gedeelde `css/toevoegen.css`) hebben in `main.js` een vaste `BrowserWindow`-hoogte van 320px nodig — de inhoud (titel + veld + knop + meldingsruimte) heeft ongeveer 300px nodig; een kleinere hoogte laat de opslaan-knop wegvallen buiten beeld zonder scrollbalk-indicatie
 
+## YouTube API-sleutel instellen/wijzigen
+- `controleerApiSleutel()` in `main.js` draait bij elke opstart (`app.whenReady()`) en opent automatisch `api-sleutel-instellen.html` als `instellingen.json` ontbreekt of `youtubeApiKey` nog de placeholder (`VUL_HIER`) bevat — eenmalig, verschijnt niet meer zodra een echte sleutel is opgeslagen
+- **Sleutel later wijzigen**: knop onderaan de YouTube-zoeken-sectie van `help.html` (`js/help.js`'s `wijzigApiSleutel()` → IPC `open-api-sleutel-instellen`) opent hetzelfde scherm, maar met `?modus=wijzig` als query-param op `api-sleutel-instellen.html` — `js/api-sleutel-instellen.js` leest dat via `URLSearchParams` en past dan titel/intro-tekst en de "Later instellen"-link (wordt "Annuleren") aan, en vult het veld alvast met de huidige sleutel uit `instellingen.json` (mits die geen placeholder is)
+- Beide varianten (eerste opstart en wijzigen) delen dezelfde `openApiSleutelWindow(modus)`-functie in `main.js` en dezelfde opslaanlogica in `js/api-sleutel-instellen.js` — alleen het al dan niet meegeven van `modus` bepaalt het gedrag
+
+## Versienummer tonen
+- Een eerdere watermark rechtsonder in het hoofdscherm bleek in de praktijk bijna onzichtbaar (te laag contrast tegen de achtergrond) en is verwijderd — het versienummer staat nu in plaats daarvan in de `header` van `help.html` (`#help-versie`, naast de "Musicwall"-tekst in de `.logo`-regel, `.versie` in `css/help.css`), goed leesbaar omdat gebruikers daar bewust naartoe navigeren
+- Gevuld door `js/help.js` via `require('./package.json').version` (root-relatief, net als `js/index.js`'s `require('./db/...')`) en de vertaalsleutel `help.versieLabel` (`"Versie {versie}"`/`"Version {versie}"`) — geen aparte IPC-aanroep nodig, en altijd gelijk aan de daadwerkelijk gebouwde versie
+
 ## ipcMain handlers aanwezig in main.js (selectie)
 - `open-nieuw-concert` → opent nieuw-concert.html
 - `concert-toegevoegd` → herlaad concerten, sluit venster
@@ -144,6 +153,7 @@ Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard
 - `sla-wallgroep-volgorde-op` → herschikWallGroepen()
 - `open-hernoem-tab` / `tab-hernoemd` → hernoemen van de vaste "Mijn walls"/"Mijn concerten"-tabs (localStorage, geen database)
 - `maak-thumbnail` (handle) → ffmpeg thumbnail generatie
+- `open-api-sleutel-instellen` → opent api-sleutel-instellen.html in wijzig-modus (zie `## YouTube API-sleutel instellen/wijzigen`)
 
 ## Stijlprincipes
 - Donker goudkleurig palet: `--accent: #c8a87a`

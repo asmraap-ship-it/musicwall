@@ -69,6 +69,10 @@ h1 {
   letter-spacing: 0.05em;
 }
 
+.versie {
+  opacity: 0.7;
+}
+
 .inhoud {
   padding: 1.5rem 2rem;
   max-width: 600px;
@@ -118,4 +122,20 @@ li::before {
 strong {
   color: var(--tekst);
   font-weight: 500;
+}
+
+.wijzig-sleutel-btn {
+  margin-top: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 4px;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.wijzig-sleutel-btn:hover {
+  background: rgba(var(--accent-rgb), 0.12);
 }
