@@ -109,6 +109,12 @@ Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard
 - `.lightbox-inhoud` heeft een vaste afmeting (`70vw` × `70vh`); foto's en video-posters passen daar via `object-fit: contain` binnen, zodat het kader nooit van grootte verspringt tussen items met verschillende beeldverhoudingen
 - De bron-badge (Lokaal/YouTube) wordt ook in de viewer getoond (`.viewer-bron`), niet alleen op de grid-tegel
 
+## Releases publiceren (GitHub)
+- `package.json`'s `build.publish` wijst naar GitHub (`owner: asmraap-ship-it`, `repo: musicwall`, `releaseType: draft`) — electron-builder maakt bij publiceren een **draft**-release aan (niet meteen openbaar), zodat er nog handmatig op "Publish release" geklikt moet worden op GitHub voordat anderen hem zien
+- `.github/workflows/release.yml` draait op `windows-latest` bij het pushen van een versietag (`v*`, bijv. `v1.0.1`) of handmatig via `workflow_dispatch`; installeert dependencies, draait `npm run build -- --publish always` met `GH_TOKEN` (de standaard `secrets.GITHUB_TOKEN` van Actions, met `permissions: contents: write` op workflow-niveau zodat die release-assets mag aanmaken/uploaden)
+- Releaseproces: `version` in `package.json` ophogen → committen → `git tag vX.Y.Z` → `git push origin vX.Y.Z` → CI bouwt en zet de installer + blockmap als draft-release op GitHub
+- **Nog geen echt code-signing-certificaat**: `signtool.exe` draait wel tijdens de build, maar zonder geconfigureerd certificaat (geen `CSC_LINK`/`CSC_KEY_PASSWORD`) is de resulterende `.exe` in werkelijkheid **niet ondertekend** (`Get-AuthenticodeSignature` geeft `NotSigned`, geverifieerd op zowel `Musicwall.exe` als de NSIS-installer) — gebruikers die de installer downloaden krijgen dus een Windows SmartScreen-waarschuwing. Pas op te lossen door een echt (OV/EV) certificaat aan te schaffen en als CI-secret toe te voegen
+
 ## Wat nog gebouwd moet worden
 1. **Tab styling verfijnen** — kleine detailwijzigingen nog gewenst
 2. **Nieuwe distributie bouwen** na alle wijzigingen

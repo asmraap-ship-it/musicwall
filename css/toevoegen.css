@@ -177,6 +177,39 @@ textarea {
   min-height: 20px;
 }
 
+.uitleg {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--tekst-dim);
+  margin-bottom: 1.25rem;
+}
+
+.stappen {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--tekst-dim);
+  margin: 0 0 1.25rem 1.25rem;
+}
+
+.stappen strong {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.overslaan-link {
+  display: block;
+  text-align: center;
+  margin-top: 0.85rem;
+  font-size: 12px;
+  color: var(--tekst-donker);
+  text-decoration: none;
+  letter-spacing: 0.03em;
+}
+
+.overslaan-link:hover {
+  color: var(--accent);
+}
+
 .bestand-lijst::-webkit-scrollbar {
   width: 4px;
 }

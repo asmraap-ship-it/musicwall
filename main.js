@@ -610,6 +610,42 @@ ipcMain.handle('get-instellingen-voorbeeld-pad', () => {
   return path.join(__dirname, 'instellingen.voorbeeld.json')
 })
 
+ipcMain.on('api-sleutel-venster-sluiten', () => {
+  BrowserWindow.getFocusedWindow().close()
+})
+
+function controleerApiSleutel() {
+  const instellingenPad = path.join(userDataPath, 'instellingen.json')
+  const voorbeeldPad = path.join(__dirname, 'instellingen.voorbeeld.json')
+
+  if (!fs.existsSync(instellingenPad)) {
+    if (!fs.existsSync(voorbeeldPad)) return
+    fs.copyFileSync(voorbeeldPad, instellingenPad)
+  }
+
+  let instellingen
+  try {
+    instellingen = JSON.parse(fs.readFileSync(instellingenPad, 'utf8'))
+  } catch (e) {
+    return
+  }
+
+  if (!instellingen.youtubeApiKey || instellingen.youtubeApiKey.includes('VUL_HIER')) {
+    const apiWin = new BrowserWindow({
+      width: 480,
+      height: 700,
+      title: t('apiSleutelDialoog.titel'),
+      ...titelbalkOpties,
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false
+      }
+    })
+    apiWin.loadFile('api-sleutel-instellen.html')
+    apiWin.setMenuBarVisibility(false)
+  }
+}
+
 ipcMain.on('sla-volgorde-op', (event, volgordeArray) => {
   const { slaVolgordeOp } = require('./db/videos.js')
   slaVolgordeOp(volgordeArray)
@@ -720,4 +756,5 @@ ipcMain.on('bevestig-concert-verwijderen', async (event, { concertId, concertNaa
 app.whenReady().then(() => {
   startJukeboxServer()
   createWindow()
+  controleerApiSleutel()
 })
