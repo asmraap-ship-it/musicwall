@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "build": "electron-builder"
+    "build": "electron-builder",
+    "build:appx": "electron-builder --win appx"
   },
   "keywords": [],
   "author": "",
@@ -38,6 +39,14 @@
     "win": {
       "target": "nsis",
 	  "icon": "build/icon.ico"
+    },
+    "appx": {
+      "identityName": "AlainRaap.Musicwall",
+      "publisher": "CN=2A6343BF-F186-45B8-BDA8-80713BDE51EC",
+      "publisherDisplayName": "Alain Raap",
+      "applicationId": "Musicwall",
+      "displayName": "Musicwall",
+      "backgroundColor": "#2b2620"
     },
     "publish": {
       "provider": "github",
