@@ -45,7 +45,9 @@
 <div class="concert-media-grid" id="media-grid"></div>
 
 <div class="lightbox" id="lightbox" onclick="sluitLightbox()">
-  <img id="lightbox-img" src="" alt="">
+  <button class="lightbox-nav lightbox-vorige" id="viewer-vorige" onclick="viewerVorige(event)">&#10094;</button>
+  <div class="lightbox-inhoud" id="lightbox-inhoud" onclick="event.stopPropagation()"></div>
+  <button class="lightbox-nav lightbox-volgende" id="viewer-volgende" onclick="viewerVolgende(event)">&#10095;</button>
 </div>
 
 <script src="js/vertalingen.js"></script>

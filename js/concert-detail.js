@@ -5,6 +5,9 @@ const { getConcert, getMediaVoorConcert, voegMediaToe, verwijderMedia } = requir
 let huidigConcertId = null
 let huidigConcert = null
 let selectie = new Set()
+let huidigeMediaLijst = []
+let posterMap = {}
+let viewerIndex = -1
 
 function getYoutubeId(url) {
   if (!url) return null
@@ -35,13 +38,16 @@ async function laadMediaGrid() {
   grid.innerHTML = ''
 
   const media = getMediaVoorConcert(huidigConcertId)
+  huidigeMediaLijst = media
+  posterMap = {}
 
   if (media.length === 0) {
     grid.innerHTML = '<div class="media-leeg">' + t('concertDetail.geenMedia') + '</div>'
     return
   }
 
-  for (const item of media) {
+  for (let i = 0; i < media.length; i++) {
+    const item = media[i]
     const tegel = document.createElement('div')
     tegel.className = 'media-tegel'
 
@@ -50,11 +56,13 @@ async function laadMediaGrid() {
 
     if (item.type === 'foto') {
       tegel.innerHTML = '<img src="file:///' + item.bestand_pad.replace(/\\/g, '/') + '" alt="">' + verwijderKnop
-      tegel.onclick = () => openLightbox('file:///' + item.bestand_pad.replace(/\\/g, '/'))
+      tegel.onclick = () => openViewer(i)
     } else if (item.type === 'youtube') {
       const id = getYoutubeId(item.bestand_pad)
-      tegel.innerHTML = (id
-          ? '<img src="https://img.youtube.com/vi/' + id + '/hqdefault.jpg" alt="">'
+      const poster = id ? 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg' : ''
+      posterMap[item.id] = poster
+      tegel.innerHTML = (poster
+          ? '<img src="' + poster + '" alt="">'
           : '<div class="media-placeholder">&#9835;</div>')
         + playIcon
         + '<div class="media-bron youtube">' + t('video.bron.youtube') + '</div>'
@@ -65,13 +73,15 @@ async function laadMediaGrid() {
         if (event.ctrlKey) {
           toggleSelectie(item.id, tegel)
         } else {
-          ipcRenderer.send('open-video', item.bestand_pad)
+          openViewer(i)
         }
       }
     } else {
       const pad = await ipcRenderer.invoke('maak-thumbnail', item.bestand_pad)
-      tegel.innerHTML = (pad
-          ? '<img src="file:///' + pad.replace(/\\/g, '/') + '" alt="">'
+      const poster = pad ? 'file:///' + pad.replace(/\\/g, '/') : ''
+      posterMap[item.id] = poster
+      tegel.innerHTML = (poster
+          ? '<img src="' + poster + '" alt="">'
           : '<div class="media-placeholder">&#9654;</div>')
         + playIcon
         + '<div class="media-bron lokaal">' + t('video.bron.lokaal') + '</div>'
@@ -82,7 +92,7 @@ async function laadMediaGrid() {
         if (event.ctrlKey) {
           toggleSelectie(item.id, tegel)
         } else {
-          ipcRenderer.send('open-lokaal', item.bestand_pad)
+          openViewer(i)
         }
       }
     }
@@ -209,9 +219,58 @@ function stuurNaarJukebox() {
   deselecteerAlles()
 }
 
-function openLightbox(src) {
-  document.getElementById('lightbox-img').src = src
+function openViewer(index) {
+  if (index < 0 || index >= huidigeMediaLijst.length) return
+  viewerIndex = index
+  renderViewer()
   document.getElementById('lightbox').classList.add('zichtbaar')
+}
+
+function renderViewer() {
+  const item = huidigeMediaLijst[viewerIndex]
+  const inhoud = document.getElementById('lightbox-inhoud')
+  inhoud.innerHTML = ''
+
+  if (item.type === 'foto') {
+    inhoud.innerHTML = '<img src="file:///' + item.bestand_pad.replace(/\\/g, '/') + '" alt="">'
+  } else {
+    const poster = posterMap[item.id] || ''
+    const bronLabel = '<div class="viewer-bron ' + (item.type === 'youtube' ? 'youtube' : 'lokaal') + '">'
+      + t(item.type === 'youtube' ? 'video.bron.youtube' : 'video.bron.lokaal') + '</div>'
+    const wrap = document.createElement('div')
+    wrap.className = 'viewer-video-poster'
+    wrap.innerHTML = (poster
+        ? '<img src="' + poster + '" alt="">'
+        : '<div class="media-placeholder">' + (item.type === 'youtube' ? '&#9835;' : '&#9654;') + '</div>')
+      + '<div class="viewer-play"><svg viewBox="0 0 24 24" fill="#c8a87a"><polygon points="5,3 19,12 5,21"/></svg></div>'
+      + bronLabel
+    wrap.onclick = () => {
+      if (item.type === 'youtube') {
+        ipcRenderer.send('open-video', item.bestand_pad)
+      } else {
+        ipcRenderer.send('open-lokaal', item.bestand_pad)
+      }
+    }
+    inhoud.appendChild(wrap)
+  }
+
+  const meerdereItems = huidigeMediaLijst.length > 1
+  document.getElementById('viewer-vorige').style.visibility = meerdereItems ? 'visible' : 'hidden'
+  document.getElementById('viewer-volgende').style.visibility = meerdereItems ? 'visible' : 'hidden'
+}
+
+function viewerVorige(event) {
+  if (event) event.stopPropagation()
+  if (huidigeMediaLijst.length === 0) return
+  viewerIndex = (viewerIndex - 1 + huidigeMediaLijst.length) % huidigeMediaLijst.length
+  renderViewer()
+}
+
+function viewerVolgende(event) {
+  if (event) event.stopPropagation()
+  if (huidigeMediaLijst.length === 0) return
+  viewerIndex = (viewerIndex + 1) % huidigeMediaLijst.length
+  renderViewer()
 }
 
 function sluitLightbox() {
@@ -226,6 +285,9 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     sluitLightbox()
     deselecteerAlles()
+  } else if (document.getElementById('lightbox').classList.contains('zichtbaar')) {
+    if (e.key === 'ArrowLeft') viewerVorige()
+    else if (e.key === 'ArrowRight') viewerVolgende()
   }
 })
 
@@ -239,5 +301,7 @@ window.kiesMedia = kiesMedia
 window.voegYoutubeToe = voegYoutubeToe
 window.verwijderMediaItem = verwijderMediaItem
 window.sluitLightbox = sluitLightbox
+window.viewerVorige = viewerVorige
+window.viewerVolgende = viewerVolgende
 window.stuurNaarJukebox = stuurNaarJukebox
 window.toggleSelecteerAlleInConcert = toggleSelecteerAlleInConcert

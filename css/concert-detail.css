@@ -323,9 +323,106 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
 
 .lightbox.zichtbaar { display: flex; }
 
-.lightbox img {
-  max-width: 90vw;
-  max-height: 90vh;
+.lightbox-inhoud {
+  cursor: default;
+  width: 70vw;
+  height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.lightbox-inhoud img {
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+.viewer-video-poster {
+  position: relative;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.viewer-video-poster img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  display: block;
+}
+
+.viewer-video-poster .media-placeholder {
+  width: 100%;
+  height: 100%;
+  font-size: 48px;
+}
+
+.viewer-play {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px; height: 64px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(200, 168, 122, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.viewer-video-poster:hover .viewer-play {
+  background: rgba(0,0,0,0.8);
+}
+
+.viewer-play svg { width: 26px; height: 26px; }
+
+.viewer-bron {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: 2px;
+  z-index: 2;
+}
+
+.viewer-bron.youtube {
+  background: rgba(200, 0, 0, 0.75);
+  color: #fff;
+}
+
+.viewer-bron.lokaal {
+  background: rgba(10, 8, 5, 0.8);
+  color: var(--accent);
+  border: 1px solid rgba(200, 168, 122, 0.6);
+  font-weight: 600;
+}
+
+.lightbox-nav {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--rand-2);
+  color: var(--accent);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin: 0 1.5rem;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.lightbox-nav:hover {
+  background: rgba(0,0,0,0.75);
+  border-color: var(--accent);
 }
