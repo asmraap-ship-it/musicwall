@@ -15,15 +15,26 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
         run: npm ci
+        env:
+          # Zonder deze target-vars probeert better-sqlite3's eigen install-script
+          # een binary te bouwen voor de kale Node-runtime i.p.v. Electron, vindt
+          # daar geen prebuilt voor en valt terug op node-gyp, wat faalt op de
+          # CI-runner (Visual Studio wordt niet herkend). electron-builder's eigen
+          # rebuild-stap gebruikt dezelfde Electron-target en werkt al wel.
+          npm_config_runtime: electron
+          npm_config_target: 42.5.0
+          npm_config_target_platform: win32
+          npm_config_target_arch: x64
+          npm_config_disturl: https://electronjs.org/headers
 
       - name: Build and publish
         run: npm run build -- --publish always
