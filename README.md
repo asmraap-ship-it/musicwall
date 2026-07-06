@@ -98,3 +98,4 @@ build/icon.ico           App-icoon
 ```
 
 Zie `CLAUDE.md` voor uitgebreide projectcontext en ontwerpkeuzes.
+"# musicwall-privacy" 
