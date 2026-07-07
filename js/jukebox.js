@@ -24,6 +24,8 @@ ipcRenderer.invoke('get-jukebox-server-poort').then(poort => {
   document.getElementById('youtube-speler-frame').src = 'http://127.0.0.1:' + poort + '/yt-embed.html'
 })
 
+ipcRenderer.on('playlist-bijgewerkt', laadPlaylist)
+
 window.addEventListener('message', (event) => {
   const { type, code } = event.data || {}
 

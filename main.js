@@ -18,6 +18,7 @@ if (!fs.existsSync(thumbnailsPath)) {
 
 let mainWindow
 let videoWindow = null
+let jukeboxWin = null
 let huidigThema = ''
 let huidigeTaal = 'nl'
 
@@ -483,7 +484,12 @@ ipcMain.on('open-zoeken', () => {
 ipcMain.handle('get-jukebox-server-poort', () => jukeboxServerPort)
 
 ipcMain.on('open-jukebox', () => {
-  const jukeboxWin = new BrowserWindow({
+  if (jukeboxWin && !jukeboxWin.isDestroyed()) {
+    jukeboxWin.focus()
+    return
+  }
+
+  jukeboxWin = new BrowserWindow({
     width: 1100,
     height: 700,
     title: 'Musicwall Jukebox',
@@ -495,6 +501,10 @@ ipcMain.on('open-jukebox', () => {
   })
   jukeboxWin.loadFile('jukebox.html')
   jukeboxWin.setMenuBarVisibility(false)
+
+  jukeboxWin.on('closed', () => {
+    jukeboxWin = null
+  })
 })
 
 ipcMain.on('toevoegen-aan-playlist', (event, videoIds) => {
@@ -510,6 +520,7 @@ ipcMain.on('toevoegen-aan-playlist', (event, videoIds) => {
       voegToeAanPlaylist({ type: 'lokaal', lokaalPad: video.lokaal_pad, artiest: video.artiest, titel: video.titel })
     }
   })
+  if (jukeboxWin && !jukeboxWin.isDestroyed()) jukeboxWin.webContents.send('playlist-bijgewerkt')
 })
 
 ipcMain.on('concert-media-naar-playlist', (event, items) => {
@@ -517,6 +528,7 @@ ipcMain.on('concert-media-naar-playlist', (event, items) => {
   items.forEach(item => {
     if (item && (item.lokaalPad || item.youtubeUrl)) voegToeAanPlaylist(item)
   })
+  if (jukeboxWin && !jukeboxWin.isDestroyed()) jukeboxWin.webContents.send('playlist-bijgewerkt')
 })
 
 ipcMain.on('open-help', () => {
