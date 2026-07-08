@@ -132,7 +132,7 @@ ipcMain.on('open-video', (event, url) => {
 
   const videoId = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop()
 
-  videoWindow = new BrowserWindow({
+  const win = new BrowserWindow({
     width: 1280,
     height: 720,
     title: 'Musicwall',
@@ -143,12 +143,13 @@ ipcMain.on('open-video', (event, url) => {
       contextIsolation: true
     }
   })
+  videoWindow = win
 
-  videoWindow.loadURL('https://www.youtube.com/watch?v=' + videoId + '&autoplay=1')
-  videoWindow.setMenuBarVisibility(false)
+  win.loadURL('https://www.youtube.com/watch?v=' + videoId + '&autoplay=1')
+  win.setMenuBarVisibility(false)
 
-  videoWindow.webContents.on('did-finish-load', () => {
-    videoWindow.webContents.insertCSS(`
+  win.webContents.on('did-finish-load', () => {
+    win.webContents.insertCSS(`
       #masthead-container, #header, ytd-masthead, #guide-button, #chips-wrapper,
       ytd-watch-next-secondary-results-renderer, #secondary, #comments, #related,
       ytd-comments, .ytp-chrome-top, .ytp-show-cards-title, #info-contents, #meta,
@@ -168,15 +169,15 @@ ipcMain.on('open-video', (event, url) => {
     `)
   })
 
-  videoWindow.webContents.on('before-input-event', (event, input) => {
-    if (input.key === 'Escape') videoWindow.close()
+  win.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'Escape') win.close()
   })
 
-  videoWindow.on('closed', () => {
-    BrowserWindow.getAllWindows().forEach(win => {
-      win.webContents.send('video-gesloten')
+  win.on('closed', () => {
+    BrowserWindow.getAllWindows().forEach(w => {
+      w.webContents.send('video-gesloten')
     })
-    videoWindow = null
+    if (videoWindow === win) videoWindow = null
   })
 })
 
@@ -185,13 +186,14 @@ ipcMain.on('open-lokaal', (event, pad) => {
     videoWindow.close()
   }
 
-  videoWindow = new BrowserWindow({
+  const win = new BrowserWindow({
     width: 1280,
     height: 720,
     title: 'Musicwall',
     frame: false,
     backgroundColor: '#000000'
   })
+  videoWindow = win
 
   const bestandUrl = pathToFileURL(pad).href
   const spelerHtml = '<!DOCTYPE html><html><head><style>'
@@ -202,18 +204,18 @@ ipcMain.on('open-lokaal', (event, pad) => {
     + '</body></html>'
   const spelerPad = path.join(userDataPath, 'video-speler.html')
   fs.writeFileSync(spelerPad, spelerHtml)
-  videoWindow.loadFile(spelerPad)
-  videoWindow.setMenuBarVisibility(false)
+  win.loadFile(spelerPad)
+  win.setMenuBarVisibility(false)
 
-  videoWindow.webContents.on('before-input-event', (event, input) => {
-    if (input.key === 'Escape') videoWindow.close()
+  win.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'Escape') win.close()
   })
 
-  videoWindow.on('closed', () => {
-    BrowserWindow.getAllWindows().forEach(win => {
-      win.webContents.send('video-gesloten')
+  win.on('closed', () => {
+    BrowserWindow.getAllWindows().forEach(w => {
+      w.webContents.send('video-gesloten')
     })
-    videoWindow = null
+    if (videoWindow === win) videoWindow = null
   })
 })
 
