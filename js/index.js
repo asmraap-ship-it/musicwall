@@ -458,6 +458,8 @@ function kaartDrop(event, doelVideoId, wallId) {
   if (bronWall.isSameNode(doelWall) && bronId !== doelVideoId) {
     event.stopPropagation()
 
+    const flipState = window.Flip ? Flip.getState(doelWall.querySelectorAll('[data-flip-id]')) : null
+
     const cards = Array.from(doelWall.querySelectorAll('.card'))
     const bronIdx = cards.indexOf(bronCard)
     const doelIdx = cards.indexOf(doelCard)
@@ -467,6 +469,8 @@ function kaartDrop(event, doelVideoId, wallId) {
     } else {
       doelWall.insertBefore(bronCard, doelCard)
     }
+
+    if (flipState) Flip.from(flipState, { duration: 0.4, ease: 'power2.inOut' })
 
     const nieuweVolgorde = Array.from(doelWall.querySelectorAll('.card'))
       .map(c => parseInt(c.dataset.videoId))
@@ -479,72 +483,50 @@ function kaartDrop(event, doelVideoId, wallId) {
   sleepBronWallId = null
 }
 
-function drop(event, wallId) {
+async function drop(event, wallId) {
   event.preventDefault()
   event.currentTarget.classList.remove('drag-over')
 
   const ids = event.dataTransfer.getData('selectieIds')
   if (ids) {
+    const flipState = window.Flip ? Flip.getState(document.querySelectorAll('[data-flip-id]')) : null
+
     ids.split(',').forEach(id => {
       verplaatsVideo(parseInt(id), wallId)
     })
     deselecteerAlles()
-    laadWalls()
+    await laadWalls()
+
+    if (flipState) Flip.from(flipState, { duration: 0.5, ease: 'power2.inOut', stagger: 0.02, absolute: true })
   }
 }
 
 function toggle(wallId, n) {
-  const body = document.getElementById('b' + wallId + '-' + n)
+  const inner = document.getElementById('flip' + wallId + '-' + n)
   const ch = document.getElementById('ch' + wallId + '-' + n)
-  const isOpen = body.classList.contains('open')
+  const isOpen = inner.classList.contains('flipped')
   speelGeluid(isOpen ? 'click' : 'open')
 
   if (active[wallId] && active[wallId] !== n) {
-    const vorigeBody = document.getElementById('b' + wallId + '-' + active[wallId])
+    const vorigeInner = document.getElementById('flip' + wallId + '-' + active[wallId])
     const vorigeCh = document.getElementById('ch' + wallId + '-' + active[wallId])
+    vorigeInner.classList.remove('flipped')
     if (window.gsap) {
-      gsap.to(vorigeBody, {
-        height: 0, opacity: 0, duration: 0.25, ease: 'power2.in',
-        onComplete: () => {
-          vorigeBody.classList.remove('open')
-          vorigeBody.style.height = ''
-          vorigeBody.style.opacity = ''
-        }
-      })
-    } else {
-      vorigeBody.classList.remove('open')
+      gsap.to(vorigeInner, { rotationY: 0, duration: 0.5, ease: 'power2.inOut' })
     }
     vorigeCh.classList.remove('open')
   }
 
   if (isOpen) {
-    if (window.gsap) {
-      gsap.to(body, {
-        height: 0, opacity: 0, duration: 0.25, ease: 'power2.in',
-        onComplete: () => {
-          body.classList.remove('open')
-          body.style.height = ''
-          body.style.opacity = ''
-        }
-      })
-    } else {
-      body.classList.remove('open')
-    }
+    inner.classList.remove('flipped')
+    if (window.gsap) gsap.to(inner, { rotationY: 0, duration: 0.5, ease: 'power2.inOut' })
     ch.classList.remove('open')
     active[wallId] = null
   } else {
-    body.classList.add('open')
+    inner.classList.add('flipped')
     ch.classList.add('open')
     active[wallId] = n
-    if (window.gsap) {
-      const hoogte = body.scrollHeight
-      gsap.fromTo(body,
-        { height: 0, opacity: 0 },
-        { height: hoogte, opacity: 1, duration: 0.3, ease: 'power2.out',
-          onComplete: () => { body.style.height = 'auto' }
-        }
-      )
-    }
+    if (window.gsap) gsap.to(inner, { rotationY: 180, duration: 0.5, ease: 'power2.inOut' })
   }
 }
 
@@ -554,6 +536,24 @@ function kaartHoverIn(el) {
 
 function kaartHoverUit(el) {
   if (window.gsap) gsap.to(el, { scale: 1, duration: 0.2, ease: 'power2.out' })
+}
+
+function startKaartAdemhaling(cardEls) {
+  if (!window.gsap || cardEls.length === 0) return
+
+  cardEls.forEach(el => {
+    gsap.fromTo(el,
+      { filter: 'brightness(1)' },
+      {
+        filter: 'brightness(1.05)',
+        duration: 3 + Math.random() * 2,
+        delay: Math.random() * 3,
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true
+      }
+    )
+  })
 }
 
 window.addEventListener('mousemove', (e) => {
@@ -579,7 +579,7 @@ async function bouwKaartHtml(video, wallId, idx, n) {
   const thumbnail = await getThumbnail(video, idx)
   const geselecteerdClass = selectie.has(video.id) ? ' geselecteerd' : ''
 
-  return '<div class="card' + geselecteerdClass + '" id="c' + wallId + '-' + n + '" data-video-id="' + video.id + '"'
+  return '<div class="card' + geselecteerdClass + '" id="c' + wallId + '-' + n + '" data-video-id="' + video.id + '" data-flip-id="video-' + video.id + '"'
     + ' draggable="true"'
     + ' ondragstart="kaartDragStart(event,' + video.id + ',' + wallId + ')"'
     + ' ondragend="dragEnd(event)"'
@@ -590,7 +590,9 @@ async function bouwKaartHtml(video, wallId, idx, n) {
     + ' onmouseenter="kaartHoverIn(this)"'
     + ' onmouseleave="kaartHoverUit(this)">'
     + thumbnail
-    + '<div class="card-header" onclick="toggle(' + wallId + ',' + n + ')">'
+    + '<div class="card-flip" onclick="toggle(' + wallId + ',' + n + ')">'
+    + '<div class="card-flip-inner" id="flip' + wallId + '-' + n + '">'
+    + '<div class="card-face card-front">'
     + '<div class="card-number">0' + n + '</div>'
     + '<div class="card-meta">'
     + '<div class="card-artist">' + (video.artiest || '') + '</div>'
@@ -599,8 +601,10 @@ async function bouwKaartHtml(video, wallId, idx, n) {
     + '</div>'
     + '<div class="chevron" id="ch' + wallId + '-' + n + '">&#8964;</div>'
     + '</div>'
-    + '<div class="card-body" id="b' + wallId + '-' + n + '">'
+    + '<div class="card-face card-back">'
     + '<div class="card-story"><p>' + (video.verhaal || '') + '</p></div>'
+    + '</div>'
+    + '</div>'
     + '</div>'
     + '</div>'
 }
@@ -628,6 +632,7 @@ async function toonAlleKaarten(wallId) {
   if (window.gsap && nieuweKaarten.length > 0) {
     gsap.fromTo(nieuweKaarten, { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: Math.min(0.02, 0.6 / nieuweKaarten.length) })
   }
+  startKaartAdemhaling(nieuweKaarten)
 }
 
 async function laadWalls() {
@@ -704,6 +709,7 @@ async function laadWalls() {
       { opacity: 0, x: -12 },
       { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out', stagger: kaartStagger, delay: 0.2 }
     )
+    startKaartAdemhaling(Array.from(kaartElementen))
   } else {
     document.querySelectorAll('.wall, .card').forEach(el => { el.style.opacity = '1' })
   }

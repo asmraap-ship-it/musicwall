@@ -331,6 +331,7 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   align-items: center;
   justify-content: center;
   position: relative;
+  overflow: hidden;
 }
 
 .lightbox-inhoud img {

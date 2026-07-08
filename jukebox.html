@@ -23,7 +23,15 @@
       <span data-i18n="jukebox.playlist">Playlist</span>
       <button class="leeg-btn" onclick="leegMaken()" data-i18n="jukebox.leegmaken">Leegmaken</button>
     </div>
+    <div class="bibliotheek-zoek-balk">
+      <input type="text" id="bibliotheek-zoekveld" oninput="zoekBibliotheekLive()" data-i18n-placeholder="jukebox.bibliotheekZoeken" placeholder="Zoek in je bibliotheek...">
+    </div>
     <div class="playlist-lijst" id="playlist-lijst"></div>
+    <div class="bibliotheek-resultaten" id="bibliotheek-resultaten" style="display:none"></div>
+  </div>
+  <div class="selectie-info" id="bibliotheek-selectie-info">
+    <span id="bibliotheek-selectie-tekst"></span>
+    <button class="naar-jukebox-btn" onclick="voegBibliotheekSelectieToe()" data-i18n="selectie.voegToeAanPlaylist">&#9835; Voeg toe aan de playlist</button>
   </div>
 
   <div class="speel-kolom">

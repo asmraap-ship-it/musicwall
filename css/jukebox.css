@@ -86,6 +86,114 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   color: #c0392b;
 }
 
+.bibliotheek-zoek-balk {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--rand);
+}
+
+.bibliotheek-zoek-balk input {
+  width: 100%;
+  background: var(--achtergrond-3);
+  border: 1px solid var(--rand-2);
+  border-radius: 3px;
+  color: var(--tekst);
+  font-size: 12px;
+  padding: 0.5rem 0.7rem;
+  -webkit-app-region: no-drag;
+}
+
+.bibliotheek-zoek-balk input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.bibliotheek-herkomst {
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  color: var(--tekst-donker);
+  margin-top: 2px;
+}
+
+.bibliotheek-resultaat.geselecteerd {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.bibliotheek-resultaat.geselecteerd .playlist-thumb-wrap::after {
+  content: '✓';
+  position: absolute;
+  top: 0.4rem;
+  left: 0.4rem;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--achtergrond);
+  font-size: 11px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#bibliotheek-resultaten {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.selecteer-alles-btn {
+  display: block;
+  margin: 0 0 0.5rem auto;
+  background: transparent;
+  border: 1px solid var(--rand-2);
+  border-radius: 3px;
+  color: var(--tekst-dim);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.selecteer-alles-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.selectie-info {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(13, 13, 13, 0.9);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 0.6rem 1.25rem;
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  z-index: 20;
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  gap: 1rem;
+}
+
+.selectie-info.zichtbaar { display: flex; }
+
+.naar-jukebox-btn {
+  background: var(--accent);
+  border: none;
+  border-radius: 3px;
+  color: var(--achtergrond);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+}
+
 .playlist-lijst {
   flex: 1;
   overflow-y: auto;

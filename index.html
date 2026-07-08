@@ -13,6 +13,10 @@
   <script>window.gsap = require('gsap').gsap</script>
 </head>
 <body>
+<script>
+  window.Flip = require('gsap/Flip').Flip
+  gsap.registerPlugin(Flip)
+</script>
 <canvas id="achtergrond"></canvas>
 <div class="selectie-info" id="selectie-info">
   <span id="selectie-tekst"></span>

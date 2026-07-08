@@ -233,6 +233,15 @@ function renderViewer() {
 
   if (item.type === 'foto') {
     inhoud.innerHTML = '<img src="file:///' + item.bestand_pad.replace(/\\/g, '/') + '" alt="">'
+    if (window.gsap) {
+      const img = inhoud.querySelector('img')
+      const varianten = [[1, 1], [-1, 1], [1, -1], [-1, -1]]
+      const [dx, dy] = varianten[Math.floor(Math.random() * varianten.length)]
+      gsap.fromTo(img,
+        { scale: 1, xPercent: 0, yPercent: 0 },
+        { scale: 1.08, xPercent: dx * 2.5, yPercent: dy * 2.5, duration: 13, ease: 'power1.inOut' }
+      )
+    }
   } else {
     const poster = posterMap[item.id] || ''
     const bronLabel = '<div class="viewer-bron ' + (item.type === 'youtube' ? 'youtube' : 'lokaal') + '">'

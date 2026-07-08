@@ -1,9 +1,14 @@
 const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
-const { getPlaylist, verwijderUitPlaylist, leegPlaylist, herschikPlaylist } = require('./db/playlist.js')
+const { getPlaylist, voegToeAanPlaylist, verwijderUitPlaylist, leegPlaylist, herschikPlaylist } = require('./db/playlist.js')
+const { zoekBibliotheek } = require('./db/zoeken.js')
 
 let playlist = []
 let huidigeIndex = -1
+
+let bibliotheekResultaten = []
+let bibliotheekSelectie = new Set()
+let bibliotheekZoekGeneratie = 0
 
 let ytFrameReady = false
 let ytPendingVideoId = null
@@ -90,6 +95,130 @@ async function laadPlaylist() {
     el.onclick = () => speelIndex(i)
     lijst.appendChild(el)
   }
+}
+
+function bibliotheekSleutel(resultaat) {
+  return resultaat.soort + '|' + (resultaat.lokaalPad || resultaat.youtubeUrl)
+}
+
+function zoekBibliotheekLive() {
+  const term = document.getElementById('bibliotheek-zoekveld').value.trim()
+  const playlistEl = document.getElementById('playlist-lijst')
+  const resultatenEl = document.getElementById('bibliotheek-resultaten')
+  const generatie = ++bibliotheekZoekGeneratie
+
+  if (!term) {
+    resultatenEl.style.display = 'none'
+    resultatenEl.innerHTML = ''
+    playlistEl.style.display = ''
+    bibliotheekResultaten = []
+    bibliotheekSelectie.clear()
+    updateBibliotheekSelectieInfo()
+    return
+  }
+
+  bibliotheekResultaten = zoekBibliotheek(term)
+  playlistEl.style.display = 'none'
+  resultatenEl.style.display = ''
+  renderBibliotheekResultaten(generatie)
+}
+
+async function renderBibliotheekResultaten(generatie) {
+  const resultatenEl = document.getElementById('bibliotheek-resultaten')
+
+  if (bibliotheekResultaten.length === 0) {
+    resultatenEl.innerHTML = '<div class="playlist-leeg">' + t('zoeken.geenResultaten') + '</div>'
+    return
+  }
+
+  resultatenEl.innerHTML = '<button class="selecteer-alles-btn" onclick="toggleSelecteerAlleBibliotheekResultaten()">' + t('zoeken.selecteerAlles') + '</button>'
+
+  for (const resultaat of bibliotheekResultaten) {
+    if (generatie !== bibliotheekZoekGeneratie) return
+    const sleutel = bibliotheekSleutel(resultaat)
+    const herkomstLabel = resultaat.bron === 'concert'
+      ? t('jukebox.herkomstConcert', { naam: resultaat.herkomst })
+      : t('jukebox.herkomstWall', { naam: resultaat.herkomst })
+    const bronLabel = '<div class="playlist-bron ' + resultaat.soort + '">'
+      + t(resultaat.soort === 'youtube' ? 'video.bron.youtube' : 'video.bron.lokaal') + '</div>'
+
+    let thumb = ''
+    if (resultaat.soort === 'youtube') {
+      const id = getYoutubeId(resultaat.youtubeUrl)
+      if (id) thumb = 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg'
+    } else if (resultaat.lokaalPad) {
+      const pad = await ipcRenderer.invoke('maak-thumbnail', resultaat.lokaalPad)
+      if (pad) thumb = 'file:///' + pad.replace(/\\/g, '/')
+    }
+
+    const el = document.createElement('div')
+    el.className = 'playlist-item bibliotheek-resultaat' + (bibliotheekSelectie.has(sleutel) ? ' geselecteerd' : '')
+    el.innerHTML = '<div class="playlist-thumb-wrap">'
+      + (thumb ? '<img src="' + thumb + '">' : '<div style="width:100%;aspect-ratio:16/9;background:#1a1a1a;border-radius:2px;flex-shrink:0"></div>')
+      + bronLabel
+      + '</div>'
+      + '<div class="playlist-info">'
+      + '<div class="playlist-artiest">' + (resultaat.artiest || '') + '</div>'
+      + '<div class="playlist-titel">' + resultaat.titel + '</div>'
+      + '<div class="bibliotheek-herkomst">' + herkomstLabel + '</div>'
+      + '</div>'
+    el.onclick = () => toggleBibliotheekResultaat(sleutel, el)
+    resultatenEl.appendChild(el)
+  }
+}
+
+function toggleBibliotheekResultaat(sleutel, el) {
+  if (bibliotheekSelectie.has(sleutel)) {
+    bibliotheekSelectie.delete(sleutel)
+    el.classList.remove('geselecteerd')
+  } else {
+    bibliotheekSelectie.add(sleutel)
+    el.classList.add('geselecteerd')
+  }
+  updateBibliotheekSelectieInfo()
+}
+
+function toggleSelecteerAlleBibliotheekResultaten() {
+  if (bibliotheekResultaten.length === 0) return
+
+  const sleutels = bibliotheekResultaten.map(bibliotheekSleutel)
+  const alleGeselecteerd = sleutels.every(s => bibliotheekSelectie.has(s))
+
+  sleutels.forEach(s => {
+    if (alleGeselecteerd) bibliotheekSelectie.delete(s)
+    else bibliotheekSelectie.add(s)
+  })
+
+  document.querySelectorAll('.bibliotheek-resultaat').forEach((el, i) => {
+    el.classList.toggle('geselecteerd', bibliotheekSelectie.has(sleutels[i]))
+  })
+
+  updateBibliotheekSelectieInfo()
+}
+
+function updateBibliotheekSelectieInfo() {
+  const info = document.getElementById('bibliotheek-selectie-info')
+  const tekst = document.getElementById('bibliotheek-selectie-tekst')
+
+  if (bibliotheekSelectie.size === 0) {
+    info.classList.remove('zichtbaar')
+  } else {
+    info.classList.add('zichtbaar')
+    tekst.textContent = t('selectie.tekst', { n: bibliotheekSelectie.size })
+  }
+}
+
+function voegBibliotheekSelectieToe() {
+  if (bibliotheekSelectie.size === 0) return
+
+  bibliotheekResultaten
+    .filter(r => bibliotheekSelectie.has(bibliotheekSleutel(r)))
+    .forEach(r => voegToeAanPlaylist({ type: r.soort, lokaalPad: r.lokaalPad, youtubeUrl: r.youtubeUrl, artiest: r.artiest, titel: r.titel }))
+
+  bibliotheekSelectie.clear()
+  document.getElementById('bibliotheek-zoekveld').value = ''
+  zoekBibliotheekLive()
+  laadPlaylist()
 }
 
 function verwijderItem(playlistId) {
@@ -319,6 +448,9 @@ window.naarEerste = naarEerste
 window.naarLaatste = naarLaatste
 window.schermvullend = schermvullend
 window.schudPlaylist = schudPlaylist
+window.zoekBibliotheekLive = zoekBibliotheekLive
+window.voegBibliotheekSelectieToe = voegBibliotheekSelectieToe
+window.toggleSelecteerAlleBibliotheekResultaten = toggleSelecteerAlleBibliotheekResultaten
 
 
 laadPlaylist()
