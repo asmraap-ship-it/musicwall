@@ -509,6 +509,28 @@ ipcMain.on('open-jukebox', () => {
   })
 })
 
+ipcMain.on('open-opslaan-playlist', () => {
+  const opslaanWin = new BrowserWindow({
+    width: 400,
+    height: 320,
+    title: t('playlistOpslaan.titel'),
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  opslaanWin.loadFile('opslaan-playlist.html')
+  opslaanWin.setMenuBarVisibility(false)
+})
+
+ipcMain.on('playlist-opgeslagen', (event, { naam, overgeslagen }) => {
+  if (jukeboxWin && !jukeboxWin.isDestroyed()) jukeboxWin.webContents.send('playlist-opgeslagen', { naam, overgeslagen })
+  BrowserWindow.getFocusedWindow().close()
+})
+
+ipcMain.handle('vraag-bevestiging', (event, { titel, bericht, knopTekst }) => vraagBevestiging(titel, bericht, knopTekst))
+
 ipcMain.on('toevoegen-aan-playlist', (event, videoIds) => {
   const { voegToeAanPlaylist } = require('./db/playlist.js')
   const { getVideo } = require('./db/videos.js')
@@ -562,11 +584,11 @@ ipcMain.on('bevestig-wall-verwijderen', async (event, { wallId, wallNaam }) => {
   }
 })
 
-function vraagBevestiging(titel, bericht) {
+function vraagBevestiging(titel, bericht, knopTekst) {
   return new Promise((resolve) => {
     const bevestigWin = new BrowserWindow({
       width: 420,
-      height: 320,
+      height: 380,
       title: titel,
       frame: false,
       resizable: false,
@@ -579,7 +601,7 @@ function vraagBevestiging(titel, bericht) {
     bevestigWin.setMenuBarVisibility(false)
 
     bevestigWin.webContents.on('did-finish-load', () => {
-      bevestigWin.webContents.send('stel-bevestiging-in', { titel, bericht })
+      bevestigWin.webContents.send('stel-bevestiging-in', { titel, bericht, knopTekst })
     })
 
     ipcMain.once('bevestiging-resultaat', (event, resultaat) => {
@@ -771,6 +793,16 @@ ipcMain.on('bevestig-concert-verwijderen', async (event, { concertId, concertNaa
   const akkoord = await vraagBevestiging(t('concert.verwijderen.titel'), bericht)
   if (akkoord) {
     verwijderConcert(concertId)
+    if (mainWindow) mainWindow.webContents.send('herlaad-concerten')
+  }
+})
+
+ipcMain.on('bevestig-concert-media-verwijderen-meerdere', async (event, { ids, namen }) => {
+  const akkoord = await vraagBevestiging(t('concertDetail.meerdereVerwijderen.titel', { n: ids.length }), namen)
+  if (akkoord) {
+    const { verwijderMedia } = require('./db/concerten.js')
+    ids.forEach(id => verwijderMedia(id))
+    event.sender.send('concert-media-verwijderd')
     if (mainWindow) mainWindow.webContents.send('herlaad-concerten')
   }
 })

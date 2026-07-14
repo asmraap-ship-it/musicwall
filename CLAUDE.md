@@ -24,12 +24,15 @@ db/walls.js           — CRUD voor walls
 db/wallgroepen.js     — CRUD voor wall_groepen, wall-toewijzing en herschikken
 db/videos.js          — CRUD voor videos incl. slaVolgordeOp
 db/concerten.js       — CRUD voor concerten en concert_media
-db/playlist.js        — Jukebox playlist
+db/playlist.js        — Jukebox playlist (live afspeel-queue)
+db/opgeslagenPlaylists.js — CRUD voor opgeslagen (benoemde) playlists, video_id-gebaseerd
 db/zoeken.js           — Doorzoekt videos + concert_media samen (jukebox-bibliotheekzoeken)
 nieuw-concert.html    — Formulier nieuw concert
 js/nieuw-concert.js   — Logica nieuw concert formulier
 nieuwe-wallgroep.html — Formulier nieuwe/hernoem wall-groep
 js/nieuwe-wallgroep.js — Logica nieuwe/hernoem wall-groep formulier
+opslaan-playlist.html — Formulier playlist opslaan (naam invoeren)
+js/opslaan-playlist.js — Logica playlist opslaan formulier
 hernoem-tab.html      — Formulier hernoemen vaste tab (Mijn walls / Mijn concerten)
 js/hernoem-tab.js     — Logica hernoemen vaste tab formulier
 help.html             — Helpscherm
@@ -48,11 +51,19 @@ videos       (id, wall_id, type, artiest, titel, verhaal, tag, youtube_url, loka
 concerten    (id, naam, artiest, datum, verhaal, volgorde)
 concert_media (id, concert_id, type, bestand_pad, volgorde)
 playlist     (id, type, lokaal_pad, youtube_url, artiest, titel, volgorde)
+playlists       (id, naam, aangemaakt_op)
+playlist_videos (id, playlist_id, video_id, volgorde)
 ```
 
-`walls.groep_id` verwijst (los, geen enforced FK — dit project gebruikt nergens `PRAGMA foreign_keys`) naar `wall_groepen.id`. `NULL` betekent ongegroepeerd. `groep_id` is via migratie toegevoegd (`ALTER TABLE walls ADD COLUMN groep_id INTEGER` in `database.js`, alleen als de kolom nog niet bestaat).
+`walls.groep_id` verwijst (los, geen FK-declaratie) naar `wall_groepen.id`. `NULL` betekent ongegroepeerd. `groep_id` is via migratie toegevoegd (`ALTER TABLE walls ADD COLUMN groep_id INTEGER` in `database.js`, alleen als de kolom nog niet bestaat).
+
+**Belangrijke correctie t.o.v. eerdere aannames**: dit project zet zelf nergens expliciet `PRAGMA foreign_keys` (geen enkele `.js`-file bevat die string), maar `db.pragma('foreign_keys')` geeft in de praktijk toch `1` (aan) terug — vermoedelijk een compile-time default van de meegeleverde SQLite-build in `better-sqlite3`, niet iets wat dit project zelf instelt. Dat betekent dat de bestaande `FOREIGN KEY ... ON DELETE CASCADE`-declaraties op `videos.wall_id` en `concert_media.concert_id` **wél degelijk actief afgedwongen worden** (een wall verwijderen cascadet dus ook op DB-niveau naar zijn video's, los van eventuele handmatige opschoning in de code) — dit is nooit een zichtbaar probleem geweest omdat die cascade toevallig al het gewenste gedrag is. Kolommen zoals `walls.groep_id` blijven ongemoeid bij verwijdering omdat ze bewust **geen** `FOREIGN KEY`-clausule hebben (niet omdat de pragma uit staat).
 
 De `playlist`-tabel (jukebox) staat los van `videos`/`concert_media` — bij toevoegen wordt `type`/`lokaal_pad`/`youtube_url`/`artiest`/`titel` gekopieerd, zodat zowel wall-video's als media uit concertervaringen toegevoegd kunnen worden, lokaal én YouTube. Dedupliceert op `lokaal_pad` (lokaal) resp. `youtube_url` (youtube). Nieuwe rijen krijgen `volgorde` = hoogste bestaande `volgorde` + 1 (niet `COUNT(*)+1`, dat gaf botsingen na verwijderingen). `type`/`youtube_url` zijn via migratie toegevoegd (`db/playlist.js`, tabel-rebuild net als de eerdere `video_id`→`lokaal_pad`-migratie, omdat SQLite een bestaande `NOT NULL`-kolom niet los kan maken via `ALTER TABLE`).
+
+**`playlists`/`playlist_videos`** (benoemde, opgeslagen playlists) zijn bewust **wél** `video_id`-gebaseerd — het tegenovergestelde ontwerp van de live `playlist`-tabel hierboven. Dit is opzet: de live jukebox-queue moet blijven werken ook als de bron-video verdwijnt (vandaar de kopie-aanpak), maar een opgeslagen playlist moet juist herkennen wanneer een video niet meer bestaat, zodat de gebruiker dat te zien krijgt. Omdat de live `playlist`-tabel zelf geen `video_id` bijhoudt, matcht `slaPlaylistOp()` (`db/opgeslagenPlaylists.js`) elk item terug naar een `videos.id` op basis van `lokaal_pad` (lokaal) of `youtube_url` (youtube) — items zonder match (bijv. uit een concertervaring toegevoegde media, die niet in de `videos`-tabel staan) worden niet opgeslagen en meegeteld in de `overgeslagen`-teller. `laadOpgeslagenPlaylist()` doet de omgekeerde check bij het laden: `playlist_videos`-rijen waarvan `video_id` niet meer in `videos` bestaat, worden dan pas (lazy, niet eager bij het verwijderen van de video zelf) stilzwijgend verwijderd uit `playlist_videos` en meegeteld in `overgeslagen` — de jukebox toont daarna een toast (`jukebox.playlistItemsOvergeslagen`) als dat aantal > 0 is. `verwijderOpgeslagenPlaylist()` verwijdert wél meteen (niet lazy) de bijbehorende `playlist_videos`-rijen bij het verwijderen van een hele opgeslagen playlist — handmatig in de query, niet via een FK-cascade. `playlists.naam` heeft geen DB-level `UNIQUE`-constraint (past bij de rest van dit project, dat naamvalidatie op applicatieniveau doet, niet via DB-constraints) — `opslaan-playlist.html` checkt vóór het opslaan met `bestaatPlaylistNaam(naam)` (hoofdletterongevoelig, `COLLATE NOCASE`) of de naam al bestaat en toont dan een inline meldingstekst (`playlistOpslaan.naamBestaatAl`) in plaats van op te slaan.
+
+**`playlist_videos.video_id` heeft bewust géén `FOREIGN KEY`-declaratie** (in tegenstelling tot `videos.wall_id`/`concert_media.concert_id`, die dat wel hebben) — juist *omdat* `foreign_keys` in de praktijk aan blijkt te staan (zie hierboven). Met een `ON DELETE CASCADE`-FK zou SQLite een `playlist_videos`-rij meteen (eager) verwijderen zodra de bijbehorende video verdwijnt, nog vóórdat de gebruiker ooit die opgeslagen playlist laadt — dan zou de expliciet gevraagde "melding bij ontbrekende video's bij het laden" nooit meer afgaan, omdat er op laadmoment al niets meer te detecteren valt. Eerdere ontwikkelversies van dit project hádden per ongeluk wél zo'n FK op deze kolom staan; `database.js` migreert dit automatisch weg (rename → recreate zonder FK → data terugkopiëren → oude tabel droppen) als de bestaande `playlist_videos`-tabel nog een `FOREIGN KEY` in zijn `sqlite_master`-definitie heeft.
 
 ## Belangrijke ontwerpkeuzes
 - `js/index.js` en `js/concerten.js` worden geladen na `js/achtergrond.js` in index.html
@@ -95,6 +106,7 @@ Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard
 
 ## Jukebox-gedrag
 - Selecteren met **Ctrl+klik** op video's, zowel lokaal als YouTube, in een wall-kaart of op een media-tegel in concert-detail — beide typen gaan naar de playlist
+- **Selectiebalk heeft twee acties**: naast "Voeg toe aan de playlist" staat een rode **"Verwijderen"**-knop (`verwijderSelectie()`, zowel in `js/index.js` als `js/concert-detail.js`) om de geselecteerde video's/media in één keer te verwijderen — een alternatief voor het bestaande drag-naar-prullenbak (walls) resp. losse ×-knop per tegel (concert-detail). Walls hergebruikt de al bestaande `bevestig-verwijderen-meerdere` IPC-handler (ook gebruikt door de prullenbak-drop); concert-detail kreeg hiervoor een nieuwe main.js-handler `bevestig-concert-media-verwijderen-meerdere` (dezelfde `vraagBevestiging()`-popup), omdat de bestaande losse media-×-knop rechtstreeks `verwijderMedia()` in de renderer aanroept zonder bevestiging — bulk verwijderen via de selectiebalk vraagt wél altijd bevestiging. Beide varianten deselecteren meteen na het versturen van het verwijderverzoek, ongeacht of de gebruiker de bevestiging accepteert of annuleert (zelfde gedrag als het meteen deselecteren bij "toevoegen aan playlist")
 - **Alles selecteren/deselecteren per wall**: een knop in de `wall-header` (naast de verwijder-knop, zichtbaar zodra de wall video's bevat) roept `toggleSelecteerAlleInWall(wallId)` aan — selecteert alle video's (lokaal én YouTube) van die wall als nog niet alles geselecteerd is, anders deselecteert het ze allemaal. Andere walls' selectie blijft ongemoeid. Vóór de YouTube-jukebox-ondersteuning was dit beperkt tot lokale video's (vandaar de oudere naam `toggleSelecteerAlleLokaal` in eerdere versies) — nu beide typen jukebox-geschikt zijn, selecteert de knop alles
 - **Concert-detail**: dezelfde toggle-knop staat in de `media-toevoegen-balk` (`#selecteer-alles-btn`, zichtbaar zodra het concert lokale of YouTube-video's heeft) en roept `toggleSelecteerAlleInConcert()` aan voor alle afspeelbare media-tegels van het concert (foto's blijven uitgesloten)
 - Handmatig bladeren (vorige/volgende/eerste/laatste) verwijdert nooit iets uit de playlist
@@ -110,6 +122,9 @@ Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard
 - Selectiesleutel is `soort + '|' + (lokaalPad of youtubeUrl)`, niet een DB-id — hetzelfde nummer dat in meerdere walls voorkomt (zelfde YouTube-url) deelt daardoor bewust dezelfde sleutel: klikken op één exemplaar markeert alle exemplaren als geselecteerd en telt als 1, wat correct is omdat het toch hetzelfde nummer is (`voegToeAanPlaylist()` dedupliceert daar ook al op)
 - **Selecteer alles**: `toggleSelecteerAlleBibliotheekResultaten()` boven de resultatenlijst, zelfde toggle-gedrag als bij walls/concert-detail/YouTube-zoeken — telt (en toont in de selectiebalk) het aantal *unieke* sleutels, dus bij duplicaten over meerdere walls kan het aantal geselecteerde rijen in de DOM hoger zijn dan het getoonde aantal
 - Race-guard (`bibliotheekZoekGeneratie`, opgehoogd bij elke nieuwe zoekopdracht): lokale-video-thumbnails in de resultatenlijst worden async opgehaald (`maak-thumbnail` IPC per item), dus bij snel typen kan een oudere zoekopdracht pas ná een nieuwere klaar zijn — elk resultaat-item checkt vóór het toevoegen aan de DOM of zijn zoekopdracht nog de actuele is, anders stopt het renderen stil
+- **Opgeslagen playlists**: 💾- en 📂-knop in de `playlist-header` (`js/jukebox.js`). 💾 (`openOpslaanPlaylist()`) stuurt IPC `open-opslaan-playlist` → `main.js` opent `opslaan-playlist.html` (zelfde vorm-venster-patroon als `nieuwe-wallgroep.html`: het venster zelf `require()`'t `db/opgeslagenPlaylists.js` en schrijft rechtstreeks naar de database, stuurt daarna alleen `playlist-opgeslagen` met `{ overgeslagen }` naar `main.js` om het venster te sluiten en de jukebox te notificeren). 📂 (`toonOpgeslagenPlaylists()`) toont `#opgeslagen-playlists` in plaats van `#playlist-lijst`/`#bibliotheek-resultaten` (zelfde verberg/toon-patroon als bibliotheekzoeken), met per opgeslagen playlist een ▶-knop (laden) en een ×-knop (verwijderen)
+- **Laden vervangt de huidige playlist**: `laadOpgeslagenPlaylistActie()` vraagt eerst bevestiging (`ipcRenderer.invoke('vraag-bevestiging', ...)`, een generieke main.js-handler die de bestaande `vraagBevestiging()`-popup ook voor renderer-initiatief bereikbaar maakt, in tegenstelling tot de bestaande `bevestig-*`-IPC's die allemaal hun eigen event-naam hebben) omdat het de lopende, onopgeslagen playlist overschrijft — bij akkoord: `leegPlaylist()` gevolgd door `voegToeAanPlaylist()` per item (in volgorde), afspelen gestopt (`stop()`) omdat de afgespeelde index niet meer klopt met de nieuwe inhoud
+- Als `laadOpgeslagenPlaylist()` items overslaat (video verwijderd sinds het opslaan), toont de jukebox daarna een toast (`jukebox.playlistItemsOvergeslagen`, hergebruikt de generieke `toonFoutMelding()`/`#foutmelding`-toast die ook voor "niet afspeelbaar op YouTube" gebruikt wordt — ondanks de naam is dit gewoon de enige algemene toast van de jukebox, niet specifiek voor fouten)
 
 ## Concert-detail mediaviewer
 - Klikken op een foto- of videotegel in `concert-detail.html` (zonder Ctrl) opent `openViewer(index)` in plaats van direct af te spelen — een volledig-scherm viewer (`#lightbox`/`#lightbox-inhoud`) die door alle media van het concert bladert via ‹ ›-knoppen (`viewerVorige()`/`viewerVolgende()`, met wrap-around) of de pijltjestoetsen; Ctrl+klik blijft ongewijzigd de bestaande jukebox-selectie
@@ -144,6 +159,7 @@ Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard
 
 ## Dialoogvensters
 - Eenvoudige formuliervensters met alleen titel + invoerveld + knop + melding (`nieuwe-wall.html`, `nieuwe-wallgroep.html`, `hernoem-tab.html`, gedeelde `css/toevoegen.css`) hebben in `main.js` een vaste `BrowserWindow`-hoogte van 320px nodig — de inhoud (titel + veld + knop + meldingsruimte) heeft ongeveer 300px nodig; een kleinere hoogte laat de opslaan-knop wegvallen buiten beeld zonder scrollbalk-indicatie
+- **`bevestigen.html`** (de generieke ja/nee-bevestigingspopup, `vraagBevestiging()` in `main.js`) kreeg een hogere `BrowserWindow` (320px → 380px) omdat bulk-bevestigingen (bijv. meerdere video's/media-items tegelijk verwijderen via de selectiebalk) een lange, met `\n` gescheiden `bericht`-tekst kunnen hebben — zonder ingreep kreeg de hele pagina een scrollbalk en vielen de knoppen buiten beeld. Opgelost door `html, body { overflow: hidden }` (geen paginascroll meer mogelijk) en `p#bericht { max-height: 110px; overflow-y: auto }` (alleen de berichttekst zelf scrolt intern indien nodig) — titel, icoon en knoppen blijven altijd zichtbaar
 
 ## YouTube API-sleutel instellen/wijzigen
 - `controleerApiSleutel()` in `main.js` draait bij elke opstart (`app.whenReady()`) en opent automatisch `api-sleutel-instellen.html` als `instellingen.json` ontbreekt of `youtubeApiKey` nog de placeholder (`VUL_HIER`) bevat — eenmalig, verschijnt niet meer zodra een echte sleutel is opgeslagen
@@ -161,7 +177,11 @@ Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard
 - `kies-concert-media` → bestandsdialoog voor foto/video, stuurt paden terug
 - `concert-media-toegevoegd` → herlaad concerten
 - `concert-media-naar-playlist` → voegt geselecteerde lokale video's uit concert-detail toe aan de jukebox-playlist
+- `bevestig-concert-media-verwijderen-meerdere` → bevestiging + bulk `verwijderMedia()` voor de geselecteerde media-items in concert-detail
 - `toevoegen-aan-playlist` → voegt geselecteerde lokale video's uit een wall toe aan de jukebox-playlist
+- `open-opslaan-playlist` → opent opslaan-playlist.html
+- `playlist-opgeslagen` → notificeert `jukeboxWin` (toast), sluit venster
+- `vraag-bevestiging` (handle) → generieke brug naar `vraagBevestiging()`, bruikbaar vanuit elke renderer via `ipcRenderer.invoke`
 - `sla-volgorde-op` → slaat video volgorde op via slaVolgordeOp()
 - `open-nieuwe-wallgroep` / `open-hernoem-wallgroep` → opent nieuwe-wallgroep.html in aanmaak- resp. hernoem-modus
 - `wallgroep-toegevoegd` → herlaad hoofdscherm, sluit venster

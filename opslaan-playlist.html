@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Playlist opslaan</title>
+  <link rel="stylesheet" href="css/toevoegen.css">
+  <script>
+    const thema = localStorage.getItem('musicwall-thema')
+    if (thema) document.documentElement.setAttribute('data-thema', thema)
+  </script>
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+  <link rel="stylesheet" href="css/themas/natuur.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+</head>
+<body>
+
+<div class="titelbalk-drag"></div>
+
+<h2 data-i18n="playlistOpslaan.titel">Playlist opslaan</h2>
+
+<div class="veld">
+  <label data-i18n="playlistOpslaan.naamLabel">Naam van de playlist</label>
+  <input type="text" id="naam" data-i18n-placeholder="playlistOpslaan.naamPlaceholder" placeholder="bijv. Top 2000" autofocus>
+</div>
+
+<button class="opslaan-btn" id="opslaan-btn" onclick="slaOp()" data-i18n="playlistOpslaan.opslaanBtn">Opslaan</button>
+<div class="melding" id="melding"></div>
+
+<script src="js/vertalingen.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/opslaan-playlist.js"></script>
+</body>
+</html>

@@ -2,6 +2,7 @@ const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
 const { getPlaylist, voegToeAanPlaylist, verwijderUitPlaylist, leegPlaylist, herschikPlaylist } = require('./db/playlist.js')
 const { zoekBibliotheek } = require('./db/zoeken.js')
+const { getOpgeslagenPlaylists, laadOpgeslagenPlaylist, verwijderOpgeslagenPlaylist } = require('./db/opgeslagenPlaylists.js')
 
 let playlist = []
 let huidigeIndex = -1
@@ -30,6 +31,16 @@ ipcRenderer.invoke('get-jukebox-server-poort').then(poort => {
 })
 
 ipcRenderer.on('playlist-bijgewerkt', laadPlaylist)
+
+ipcRenderer.on('playlist-opgeslagen', (event, { naam, overgeslagen }) => {
+  toonFoutMelding(overgeslagen > 0
+    ? t('jukebox.playlistOpgeslagenMetOvergeslagen', { naam, n: overgeslagen })
+    : t('jukebox.playlistOpgeslagen', { naam }))
+
+  if (document.getElementById('opgeslagen-playlists').style.display !== 'none') {
+    renderOpgeslagenPlaylists()
+  }
+})
 
 window.addEventListener('message', (event) => {
   const { type, code } = event.data || {}
@@ -241,6 +252,85 @@ function leegMaken() {
   stop()
   laadPlaylist()
 }
+
+function openOpslaanPlaylist() {
+  ipcRenderer.send('open-opslaan-playlist')
+}
+
+function toonOpgeslagenPlaylists() {
+  document.getElementById('playlist-lijst').style.display = 'none'
+  document.getElementById('bibliotheek-resultaten').style.display = 'none'
+  document.getElementById('opgeslagen-playlists').style.display = ''
+  renderOpgeslagenPlaylists()
+}
+
+function sluitOpgeslagenPlaylists() {
+  document.getElementById('opgeslagen-playlists').style.display = 'none'
+  document.getElementById('playlist-lijst').style.display = ''
+}
+
+function renderOpgeslagenPlaylists() {
+  const lijst = document.getElementById('opgeslagen-playlists-lijst')
+  const playlists = getOpgeslagenPlaylists()
+
+  if (playlists.length === 0) {
+    lijst.innerHTML = '<div class="playlist-leeg">' + t('jukebox.geenOpgeslagenPlaylists') + '</div>'
+    return
+  }
+
+  lijst.innerHTML = ''
+  playlists.forEach(p => {
+    const el = document.createElement('div')
+    el.className = 'opgeslagen-playlist-item'
+    el.innerHTML = '<div class="opgeslagen-playlist-info">'
+      + '<div class="opgeslagen-playlist-naam">' + p.naam + '</div>'
+      + '<div class="opgeslagen-playlist-aantal">' + t('jukebox.aantalNummers', { n: p.aantal }) + '</div>'
+      + '</div>'
+      + '<button class="opgeslagen-playlist-laden" title="' + t('jukebox.playlistLadenTooltip') + '">&#9658;</button>'
+      + '<button class="opgeslagen-playlist-verwijder" title="' + t('video.verwijderenTooltip') + '">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H6L5,6"/><path d="M10,11v6M14,11v6"/><path d="M9,6V4h6v2"/></svg>'
+      + '</button>'
+    el.querySelector('.opgeslagen-playlist-laden').onclick = () => laadOpgeslagenPlaylistActie(p.id, p.naam)
+    el.querySelector('.opgeslagen-playlist-verwijder').onclick = () => verwijderOpgeslagenPlaylistActie(p.id, p.naam)
+    lijst.appendChild(el)
+  })
+}
+
+async function laadOpgeslagenPlaylistActie(playlistId, naam) {
+  const akkoord = await ipcRenderer.invoke('vraag-bevestiging', {
+    titel: t('jukebox.playlistLadenTitel'),
+    bericht: t('jukebox.playlistLadenBevestiging', { naam }),
+    knopTekst: t('algemeen.okBtn')
+  })
+  if (!akkoord) return
+
+  const { items, overgeslagen } = laadOpgeslagenPlaylist(playlistId)
+
+  leegPlaylist()
+  items.forEach(item => voegToeAanPlaylist({
+    type: item.type, lokaalPad: item.lokaal_pad, youtubeUrl: item.youtube_url, artiest: item.artiest, titel: item.titel
+  }))
+
+  huidigeIndex = -1
+  stop()
+  sluitOpgeslagenPlaylists()
+  laadPlaylist()
+
+  if (overgeslagen > 0) {
+    toonFoutMelding(t('jukebox.playlistItemsOvergeslagen', { n: overgeslagen }))
+  }
+}
+
+async function verwijderOpgeslagenPlaylistActie(playlistId, naam) {
+  const akkoord = await ipcRenderer.invoke('vraag-bevestiging', {
+    titel: t('jukebox.playlistVerwijderenTitel'),
+    bericht: naam
+  })
+  if (!akkoord) return
+
+  verwijderOpgeslagenPlaylist(playlistId)
+  renderOpgeslagenPlaylists()
+}
 function schudPlaylist() {
   if (playlist.length < 2) return
 
@@ -451,6 +541,9 @@ window.schudPlaylist = schudPlaylist
 window.zoekBibliotheekLive = zoekBibliotheekLive
 window.voegBibliotheekSelectieToe = voegBibliotheekSelectieToe
 window.toggleSelecteerAlleBibliotheekResultaten = toggleSelecteerAlleBibliotheekResultaten
+window.openOpslaanPlaylist = openOpslaanPlaylist
+window.toonOpgeslagenPlaylists = toonOpgeslagenPlaylists
+window.sluitOpgeslagenPlaylists = sluitOpgeslagenPlaylists
 
 
 laadPlaylist()

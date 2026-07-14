@@ -21,13 +21,21 @@
   <div class="playlist-kolom">
     <div class="playlist-header">
       <span data-i18n="jukebox.playlist">Playlist</span>
-      <button class="leeg-btn" onclick="leegMaken()" data-i18n="jukebox.leegmaken">Leegmaken</button>
+      <div class="playlist-header-acties">
+        <button class="playlist-header-icoon-btn" onclick="openOpslaanPlaylist()" data-i18n-title="jukebox.playlistOpslaanTooltip" title="Playlist opslaan">💾</button>
+        <button class="playlist-header-icoon-btn" onclick="toonOpgeslagenPlaylists()" data-i18n-title="jukebox.opgeslagenPlaylistsTooltip" title="Opgeslagen playlists">📂</button>
+        <button class="leeg-btn" onclick="leegMaken()" data-i18n="jukebox.leegmaken">Leegmaken</button>
+      </div>
     </div>
     <div class="bibliotheek-zoek-balk">
       <input type="text" id="bibliotheek-zoekveld" oninput="zoekBibliotheekLive()" data-i18n-placeholder="jukebox.bibliotheekZoeken" placeholder="Zoek in je bibliotheek...">
     </div>
     <div class="playlist-lijst" id="playlist-lijst"></div>
     <div class="bibliotheek-resultaten" id="bibliotheek-resultaten" style="display:none"></div>
+    <div class="opgeslagen-playlists" id="opgeslagen-playlists" style="display:none">
+      <button class="terug-btn" onclick="sluitOpgeslagenPlaylists()">&#8592; <span data-i18n="jukebox.terugNaarPlaylist">Terug naar playlist</span></button>
+      <div class="opgeslagen-playlists-lijst" id="opgeslagen-playlists-lijst"></div>
+    </div>
   </div>
   <div class="selectie-info" id="bibliotheek-selectie-info">
     <span id="bibliotheek-selectie-tekst"></span>

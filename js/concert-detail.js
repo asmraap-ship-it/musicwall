@@ -219,6 +219,24 @@ function stuurNaarJukebox() {
   deselecteerAlles()
 }
 
+function verwijderSelectie() {
+  if (selectie.size === 0) return
+
+  const idArray = Array.from(selectie)
+  const namen = idArray.map(id => {
+    const m = huidigeMediaLijst.find(m => m.id === id)
+    if (!m) return ''
+    return m.type === 'youtube' ? m.bestand_pad : m.bestand_pad.split(/[\\/]/).pop()
+  }).join('\n')
+
+  ipcRenderer.send('bevestig-concert-media-verwijderen-meerdere', { ids: idArray, namen })
+  deselecteerAlles()
+}
+
+ipcRenderer.on('concert-media-verwijderd', () => {
+  laadMediaGrid()
+})
+
 function openViewer(index) {
   if (index < 0 || index >= huidigeMediaLijst.length) return
   viewerIndex = index
@@ -314,3 +332,4 @@ window.viewerVorige = viewerVorige
 window.viewerVolgende = viewerVolgende
 window.stuurNaarJukebox = stuurNaarJukebox
 window.toggleSelecteerAlleInConcert = toggleSelecteerAlleInConcert
+window.verwijderSelectie = verwijderSelectie

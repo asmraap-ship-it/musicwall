@@ -282,6 +282,23 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   letter-spacing: 0.03em;
 }
 
+.verwijder-selectie-btn {
+  background: transparent;
+  border: 1px solid #e74c3c;
+  border-radius: 3px;
+  color: #e74c3c;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+}
+
+.verwijder-selectie-btn:hover {
+  background: #e74c3c;
+  color: #fff;
+}
+
 .media-verwijder {
   position: absolute;
   top: 0.4rem;

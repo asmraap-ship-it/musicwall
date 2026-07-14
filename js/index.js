@@ -98,6 +98,19 @@ function stuurNaarJukebox() {
   deselecteerAlles()
 }
 
+function verwijderSelectie() {
+  if (selectie.size === 0) return
+
+  const idArray = Array.from(selectie)
+  const namen = idArray.map(id => {
+    const v = videoData.find(v => v.id === id)
+    return v ? (v.artiest ? v.artiest + ' — ' : '') + v.titel : ''
+  }).join('\n')
+
+  ipcRenderer.send('bevestig-verwijderen-meerdere', { ids: idArray, namen })
+  deselecteerAlles()
+}
+
 function wisselThema(thema) {
   if (thema) {
     document.documentElement.setAttribute('data-thema', thema)
@@ -748,6 +761,7 @@ window.kaartHoverIn = kaartHoverIn
 window.kaartHoverUit = kaartHoverUit
 window.openJukebox = openJukebox
 window.stuurNaarJukebox = stuurNaarJukebox
+window.verwijderSelectie = verwijderSelectie
 window.openHelp = openHelp
 window.bevestigWallVerwijderen = bevestigWallVerwijderen
 window.hernoemWallPrompt = hernoemWallPrompt

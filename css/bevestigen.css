@@ -11,6 +11,8 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+html, body { overflow: hidden; }
+
 body {
   background-color: var(--achtergrond);
   background-image:
@@ -76,6 +78,8 @@ p {
   color: var(--tekst-dim);
   margin-bottom: 1.75rem;
   white-space: pre-line;
+  max-height: 110px;
+  overflow-y: auto;
 }
 
 .knoppen {

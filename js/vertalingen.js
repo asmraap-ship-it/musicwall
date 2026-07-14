@@ -24,6 +24,7 @@ const VERTALINGEN = {
 
     // Selectie / jukebox-toevoegen
     'selectie.voegToeAanPlaylist': '♫ Voeg toe aan de playlist',
+    'selectie.verwijderen': 'Verwijderen',
     'selectie.tekst': '{n} geselecteerd · Esc om te deselecteren',
     'jukebox.geenSelectie': 'Selecteer eerst videos met Ctrl+klik.',
 
@@ -55,6 +56,7 @@ const VERTALINGEN = {
     'video.verwijderen.bevestiging': 'Weet u zeker dat u "{naam}" wilt verwijderen?',
     'video.meerdereVerwijderen.titel': '{n} videos verwijderen',
     'video.meerdereVerwijderen.bevestiging': 'Weet u zeker dat u {n} video(s) wilt verwijderen?',
+    'concertDetail.meerdereVerwijderen.titel': '{n} media-items verwijderen',
 
     // Concerten
     'concert.nieuw': 'Nieuw concert',
@@ -119,6 +121,13 @@ const VERTALINGEN = {
     'nieuweWallGroep.naamLabel': 'Naam van de groep',
     'nieuweWallGroep.naamPlaceholder': 'bijv. Feestjes',
     'nieuweWallGroep.aanmakenBtn': 'Aanmaken',
+
+    'playlistOpslaan.titel': 'Playlist opslaan',
+    'playlistOpslaan.naamLabel': 'Naam van de playlist',
+    'playlistOpslaan.naamPlaceholder': 'bijv. Top 2000',
+    'playlistOpslaan.opslaanBtn': 'Opslaan',
+    'playlistOpslaan.playlistLeeg': 'De playlist is leeg, er is niets om op te slaan.',
+    'playlistOpslaan.naamBestaatAl': 'Er bestaat al een playlist met deze naam.',
     'hernoemTab.titel': 'Tab hernoemen',
     'hernoemTab.naamLabel': 'Naam van de tab',
 
@@ -175,6 +184,18 @@ const VERTALINGEN = {
     'jukebox.alleAfgespeeld': 'Alle nummers zijn afgespeeld',
     'jukebox.eindeLijst': 'Einde van de playlist',
     'jukebox.nietAfspeelbaar': '"{titel}" niet afspeelbaar, verwijderd uit de playlist (handmatig nog wel mogelijk)',
+    'jukebox.playlistOpslaanTooltip': 'Playlist opslaan',
+    'jukebox.opgeslagenPlaylistsTooltip': 'Opgeslagen playlists',
+    'jukebox.terugNaarPlaylist': 'Terug naar playlist',
+    'jukebox.geenOpgeslagenPlaylists': 'Nog geen playlists opgeslagen.',
+    'jukebox.aantalNummers': '{n} nummer(s)',
+    'jukebox.playlistLadenTooltip': 'Playlist laden',
+    'jukebox.playlistLadenTitel': 'Playlist laden',
+    'jukebox.playlistLadenBevestiging': 'Dit vervangt de huidige playlist door "{naam}". Doorgaan?',
+    'jukebox.playlistVerwijderenTitel': 'Opgeslagen playlist verwijderen',
+    'jukebox.playlistItemsOvergeslagen': '{n} nummer(s) niet geladen, want verwijderd uit de bibliotheek',
+    'jukebox.playlistOpgeslagen': 'Playlist "{naam}" opgeslagen',
+    'jukebox.playlistOpgeslagenMetOvergeslagen': 'Playlist "{naam}" opgeslagen ({n} nummer(s) niet meegenomen)',
 
     // Bevestigen dialoog
     'bevestigen.annuleren': 'Annuleren',
@@ -183,6 +204,7 @@ const VERTALINGEN = {
     // Algemeen / validatie
     'algemeen.opslaanBtn': 'Opslaan',
     'algemeen.opgeslagen': '✓ Opgeslagen',
+    'algemeen.okBtn': 'Ok',
     'validatie.vulNaamIn': 'Vul een naam in.',
     'validatie.vulTitelIn': 'Vul minimaal een titel in.',
     'validatie.vulYoutubeUrlIn': 'Vul een YouTube URL in.',
@@ -244,6 +266,8 @@ const VERTALINGEN = {
     'help.jukebox.li6': 'Klik op het schermvullend-icoon rechtsonder in het videoscherm voor volledig scherm',
     'help.jukebox.li7': 'Een video die vanzelf is uitgespeeld, wordt automatisch uit de playlist verwijderd; daarna gaat het afspelen verder met het volgende nummer, of terug naar het eerste als het laatste nummer was',
     'help.jukebox.li8': 'Wanneer de playlist leeg is verschijnt een melding',
+    'help.jukebox.liOpslaan': 'Klik op <strong>💾</strong> boven de playlist om de huidige playlist onder een naam op te slaan, zodat je hem later kunt terugzetten',
+    'help.jukebox.liOpgeslagen': 'Klik op <strong>📂</strong> om je opgeslagen playlists te bekijken; ▶ laadt een playlist (dit vervangt de huidige playlist, na bevestiging) en het prullenbak-icoon verwijdert een opgeslagen playlist. Is een video sindsdien verwijderd, dan wordt die stilzwijgend overgeslagen bij het laden en verschijnt er een melding met het aantal overgeslagen nummers',
     'help.jukebox.liBeperking': 'Sommige officiële muziekvideo\'s (vaak van platenlabels) hebben insluiten uitgeschakeld — dit is een instelling van de rechthebbende zelf op YouTube en kan Musicwall niet omzeilen. Dit komt vaker voor bij lijsten met veel officiële videoclips, bijvoorbeeld een Top 2000-playlist; zulke nummers zijn dan alleen handmatig af te spelen, niet via de jukebox',
     'help.apikey.titel': 'YouTube zoeken instellen',
     'help.apikey.intro': 'Om YouTube te kunnen doorzoeken vanuit Musicwall heeft u een gratis YouTube API-key nodig. Bij de eerste opstart verschijnt hiervoor automatisch een scherm met uitleg en een link naar Google; onderstaande stappen kunt u ook gebruiken om dit later alsnog in te stellen.',
@@ -300,6 +324,7 @@ const VERTALINGEN = {
     'thema.licht': 'Light',
 
     'selectie.voegToeAanPlaylist': '♫ Add to playlist',
+    'selectie.verwijderen': 'Delete',
     'selectie.tekst': '{n} selected · Esc to deselect',
     'jukebox.geenSelectie': 'First select videos with Ctrl+click.',
 
@@ -329,6 +354,7 @@ const VERTALINGEN = {
     'video.verwijderen.bevestiging': 'Are you sure you want to delete "{naam}"?',
     'video.meerdereVerwijderen.titel': 'Delete {n} videos',
     'video.meerdereVerwijderen.bevestiging': 'Are you sure you want to delete {n} video(s)?',
+    'concertDetail.meerdereVerwijderen.titel': 'Delete {n} media items',
 
     'concert.nieuw': 'New concert',
     'concert.leeg': 'No concert experiences yet — click + to add your first concert.',
@@ -387,6 +413,14 @@ const VERTALINGEN = {
     'nieuweWallGroep.naamLabel': 'Group name',
     'nieuweWallGroep.naamPlaceholder': 'e.g. Parties',
     'nieuweWallGroep.aanmakenBtn': 'Create',
+
+    'playlistOpslaan.titel': 'Save playlist',
+    'playlistOpslaan.naamLabel': 'Playlist name',
+    'playlistOpslaan.naamPlaceholder': 'e.g. Top 2000',
+    'playlistOpslaan.opslaanBtn': 'Save',
+    'playlistOpslaan.playlistLeeg': 'The playlist is empty, there is nothing to save.',
+    'playlistOpslaan.naamBestaatAl': 'A playlist with this name already exists.',
+
     'hernoemTab.titel': 'Rename tab',
     'hernoemTab.naamLabel': 'Tab name',
 
@@ -440,12 +474,25 @@ const VERTALINGEN = {
     'jukebox.alleAfgespeeld': 'All tracks have been played',
     'jukebox.eindeLijst': 'End of playlist',
     'jukebox.nietAfspeelbaar': '"{titel}" not playable, removed from playlist (still playable manually)',
+    'jukebox.playlistOpslaanTooltip': 'Save playlist',
+    'jukebox.opgeslagenPlaylistsTooltip': 'Saved playlists',
+    'jukebox.terugNaarPlaylist': 'Back to playlist',
+    'jukebox.geenOpgeslagenPlaylists': 'No playlists saved yet.',
+    'jukebox.aantalNummers': '{n} track(s)',
+    'jukebox.playlistLadenTooltip': 'Load playlist',
+    'jukebox.playlistLadenTitel': 'Load playlist',
+    'jukebox.playlistLadenBevestiging': 'This will replace the current playlist with "{naam}". Continue?',
+    'jukebox.playlistVerwijderenTitel': 'Delete saved playlist',
+    'jukebox.playlistItemsOvergeslagen': '{n} track(s) not loaded because they were removed from the library',
+    'jukebox.playlistOpgeslagen': 'Playlist "{naam}" saved',
+    'jukebox.playlistOpgeslagenMetOvergeslagen': 'Playlist "{naam}" saved ({n} track(s) not included)',
 
     'bevestigen.annuleren': 'Cancel',
     'bevestigen.verwijderen': 'Delete',
 
     'algemeen.opslaanBtn': 'Save',
     'algemeen.opgeslagen': '✓ Saved',
+    'algemeen.okBtn': 'Ok',
     'validatie.vulNaamIn': 'Please enter a name.',
     'validatie.vulTitelIn': 'Please enter at least a title.',
     'validatie.vulYoutubeUrlIn': 'Please enter a YouTube URL.',
@@ -506,6 +553,8 @@ const VERTALINGEN = {
     'help.jukebox.li6': 'Click the fullscreen icon at the bottom right of the video screen for fullscreen',
     'help.jukebox.li7': 'A video that finishes playing on its own is automatically removed from the playlist; playback then continues with the next track, or loops back to the first if it was the last one',
     'help.jukebox.li8': 'A message appears when the playlist is empty',
+    'help.jukebox.liOpslaan': 'Click <strong>💾</strong> above the playlist to save the current playlist under a name, so you can restore it later',
+    'help.jukebox.liOpgeslagen': 'Click <strong>📂</strong> to view your saved playlists; ▶ loads a playlist (this replaces the current playlist, after confirmation) and the trash icon deletes a saved playlist. If a video has been removed since saving, it is silently skipped when loading and a message shows how many tracks were skipped',
     'help.jukebox.liBeperking': 'Some official music videos (often from record labels) have embedding disabled — this is a setting made by the rights holder on YouTube itself and cannot be bypassed by Musicwall. This is more common in lists full of official music videos, such as a Top 2000 playlist; those tracks can then only be played manually, not through the jukebox',
     'help.apikey.titel': 'Setting up YouTube search',
     'help.apikey.intro': 'To search YouTube from within Musicwall you need a free YouTube API key. A screen with instructions and a link to Google appears automatically on first launch; the steps below also work if you want to set it up later.',
