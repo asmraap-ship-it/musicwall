@@ -66,6 +66,7 @@ ipcMain.on('thema-gewijzigd', (event, thema) => {
   huidigThema = thema || ''
   BrowserWindow.getAllWindows().forEach(win => {
     try { win.setTitleBarOverlay(titelbalkOptiesVoorThema(huidigThema).titleBarOverlay) } catch (e) {}
+    if (win.webContents !== event.sender) win.webContents.send('thema-toegepast', huidigThema)
   })
 })
 

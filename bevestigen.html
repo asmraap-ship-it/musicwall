@@ -11,6 +11,10 @@
   <script>
     const thema = localStorage.getItem('musicwall-thema')
     if (thema) document.documentElement.setAttribute('data-thema', thema)
+    require('electron').ipcRenderer.on('thema-toegepast', (event, t) => {
+      if (t) document.documentElement.setAttribute('data-thema', t)
+      else document.documentElement.removeAttribute('data-thema')
+    })
   </script>
   <link rel="stylesheet" href="css/themas/metaal.css">
   <link rel="stylesheet" href="css/themas/licht.css">
