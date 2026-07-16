@@ -556,6 +556,14 @@ ipcMain.on('concert-media-naar-playlist', (event, items) => {
   if (jukeboxWin && !jukeboxWin.isDestroyed()) jukeboxWin.webContents.send('playlist-bijgewerkt')
 })
 
+ipcMain.on('globaal-zoeken-naar-playlist', (event, items) => {
+  const { voegToeAanPlaylist } = require('./db/playlist.js')
+  items.forEach(item => {
+    if (item && (item.lokaalPad || item.youtubeUrl)) voegToeAanPlaylist(item)
+  })
+  if (jukeboxWin && !jukeboxWin.isDestroyed()) jukeboxWin.webContents.send('playlist-bijgewerkt')
+})
+
 ipcMain.on('open-help', () => {
   const helpWin = new BrowserWindow({
     width: 650,

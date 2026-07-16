@@ -26,6 +26,7 @@
 <header>
   <div class="header-links">
     <h1><span>Musicwall</span> <span class="h1-icoon">&#9835;</span></h1>
+    <input type="text" class="globaal-zoekveld" id="globaal-zoekveld" oninput="zoekLive()" data-i18n-placeholder="header.globaalZoeken" placeholder="Zoek op artiest of titel…">
   </div>
   <div class="header-knoppen">
     <button class="toevoegen-btn" onclick="openImporteren()" data-i18n="header.mapImporteren">&#8593; Map importeren</button>
@@ -81,6 +82,7 @@
 </div>
 <div class="walls-container" id="walls-container"></div>
 <div class="concerten-container" id="concerten-container" style="display:none"></div>
+<div class="zoek-resultaten-container" id="globale-zoek-resultaten" style="display:none"></div>
 <script src="js/vertalingen.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/achtergrond.js"></script>

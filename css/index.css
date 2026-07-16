@@ -93,6 +93,33 @@ header {
 
 .header-links {
   flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.globaal-zoekveld {
+  -webkit-app-region: no-drag;
+  background: transparent;
+  border: 1px solid var(--rand-3);
+  border-radius: 3px;
+  padding: 0.5rem 0.85rem;
+  color: var(--tekst-donker);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  width: 220px;
+  transition: all 0.15s;
+}
+
+.globaal-zoekveld:focus {
+  outline: none;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.globaal-zoekveld::placeholder {
+  color: var(--tekst-donker);
+  opacity: 0.6;
 }
 
 .header-knoppen {
@@ -173,6 +200,87 @@ h1 {
   overflow-y: hidden;
   padding: 1.5rem;
   gap: 1.25rem;
+}
+
+.zoek-resultaten-container {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.zoek-resultaten-container::-webkit-scrollbar { width: 8px; }
+.zoek-resultaten-container::-webkit-scrollbar-track { background: var(--achtergrond-3); }
+.zoek-resultaten-container::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--tekst-dim), var(--tekst) 30%); border-radius: 4px; }
+.zoek-resultaten-container::-webkit-scrollbar-thumb:hover { background: var(--tekst); }
+
+.zoek-resultaten-container .card {
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.zoek-resultaten-balk {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.zoek-selecteer-alles-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  background: transparent;
+  border: 1px solid var(--rand-3);
+  border-radius: 3px;
+  color: var(--tekst-donker);
+  font-size: 12px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.15s;
+}
+
+.zoek-selecteer-alles-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.zoek-aantal {
+  font-size: 11px;
+  color: var(--tekst-donker);
+  opacity: 0.7;
+  letter-spacing: 0.05em;
+}
+
+.zoek-resultaten-container .card-artist,
+.zoek-resultaten-container .card-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-herkomst {
+  font-size: 10px;
+  color: var(--accent);
+  opacity: 0.7;
+  letter-spacing: 0.05em;
+  margin-top: 0.3rem;
+}
+
+.zoek-leeg {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--tekst-donker);
+  opacity: 0.6;
+  padding: 3rem 0;
+  font-size: 13px;
+  letter-spacing: 0.05em;
 }
 
 .walls-container::-webkit-scrollbar { height: 4px; }
@@ -274,9 +382,10 @@ h1 {
   color: var(--accent);
   opacity: 0.5;
   min-width: 18px;
+  flex-shrink: 0;
 }
 
-.card-meta { flex: 1; }
+.card-meta { flex: 1; min-width: 0; }
 
 .card-artist {
   font-size: 9px;
@@ -1110,7 +1219,8 @@ h1 {
 }
 
 .walls-container,
-.concerten-container {
+.concerten-container,
+.zoek-resultaten-container {
   position: relative;
   z-index: 1;
 }

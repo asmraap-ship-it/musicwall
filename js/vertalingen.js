@@ -8,6 +8,7 @@ const VERTALINGEN = {
     'header.prullenbakLabel': 'Sleep hierheen om te verwijderen',
     'header.themaKiezen': 'Kies een thema',
     'header.taalKiezen': 'Kies een taal',
+    'header.globaalZoeken': 'Zoek op artiest of titel…',
 
     // Tabs
     'tabs.walls': 'Mijn walls',
@@ -152,6 +153,7 @@ const VERTALINGEN = {
     'zoeken.voegGeselecteerdeToe': '♫ Voeg geselecteerde toe',
     'zoeken.zoeken': 'Zoeken...',
     'zoeken.geenResultaten': 'Geen resultaten gevonden.',
+    'zoeken.aantalResultaten': '{n} resultaten gevonden',
     'zoeken.fout': 'Fout: {bericht}',
     'zoeken.misgegaan': 'Er ging iets mis: {bericht}',
     'zoeken.toegevoegd': '✓ Toegevoegd',
@@ -311,6 +313,7 @@ const VERTALINGEN = {
     'header.prullenbakLabel': 'Drag here to delete',
     'header.themaKiezen': 'Choose a theme',
     'header.taalKiezen': 'Choose a language',
+    'header.globaalZoeken': 'Search artist or title…',
 
     'tabs.walls': 'My walls',
     'tabs.concerten': 'My concerts',
@@ -443,6 +446,7 @@ const VERTALINGEN = {
     'zoeken.voegGeselecteerdeToe': '♫ Add selected',
     'zoeken.zoeken': 'Searching...',
     'zoeken.geenResultaten': 'No results found.',
+    'zoeken.aantalResultaten': '{n} results found',
     'zoeken.fout': 'Error: {bericht}',
     'zoeken.misgegaan': 'Something went wrong: {bericht}',
     'zoeken.toegevoegd': '✓ Added',

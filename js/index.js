@@ -2,6 +2,7 @@ const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
 const { getAlleWalls, verwijderWall, hernoemWall } = require('./db/walls.js')
 const { getVideosVoorWall, verplaatsVideo, slaVolgordeOp } = require('./db/videos.js')
+const { zoekBibliotheek } = require('./db/zoeken.js')
 
 const geluiden = {
   click: new Audio('./sounds/click.mp3'),
@@ -20,6 +21,9 @@ function speelGeluid(type) {
 let active = {}
 let videoData = []
 let selectie = new Set()
+let zoekResultaten = []
+let zoekSelectie = new Set()
+let zoekGeneratie = 0
 
 function getYoutubeId(url) {
   if (!url) return null
@@ -89,6 +93,22 @@ function openJukebox() {
 }
 
 function stuurNaarJukebox() {
+  if (zoekModusActief()) {
+    if (zoekSelectie.size === 0) {
+      alert(t('jukebox.geenSelectie'))
+      return
+    }
+
+    const items = zoekResultaten
+      .filter(r => zoekSelectie.has(zoekSleutel(r)))
+      .map(r => ({ type: r.soort, lokaalPad: r.lokaalPad, youtubeUrl: r.youtubeUrl, artiest: r.artiest, titel: r.titel }))
+    ipcRenderer.send('globaal-zoeken-naar-playlist', items)
+    zoekSelectie.clear()
+    document.querySelectorAll('#globale-zoek-resultaten .card.geselecteerd').forEach(c => c.classList.remove('geselecteerd'))
+    updateSelectieInfo()
+    return
+  }
+
   if (selectie.size === 0) {
     alert(t('jukebox.geenSelectie'))
     return
@@ -222,6 +242,174 @@ function speelAfIdx(idx) {
   }
 }
 
+function zoekModusActief() {
+  const el = document.getElementById('globale-zoek-resultaten')
+  return !!el && el.style.display !== 'none'
+}
+
+function toonZoekResultaten() {
+  document.getElementById('walls-container').style.display = 'none'
+  document.getElementById('concerten-container').style.display = 'none'
+  document.getElementById('globale-zoek-resultaten').style.display = 'grid'
+  const prullenbak = document.getElementById('prullenbak')
+  if (prullenbak) prullenbak.style.display = 'none'
+}
+
+function verbergZoekResultaten() {
+  document.getElementById('globale-zoek-resultaten').style.display = 'none'
+  const isWalls = typeof huidigeSectie === 'undefined' || huidigeSectie === 'walls' || huidigeSectie === 'groep'
+  document.getElementById('walls-container').style.display = isWalls ? 'flex' : 'none'
+  document.getElementById('concerten-container').style.display = isWalls ? 'none' : 'flex'
+  const prullenbak = document.getElementById('prullenbak')
+  if (prullenbak) prullenbak.style.display = isWalls ? '' : 'none'
+}
+
+function zoekSleutel(resultaat) {
+  return resultaat.soort + '|' + (resultaat.lokaalPad || resultaat.youtubeUrl)
+}
+
+function zoekLive() {
+  const term = document.getElementById('globaal-zoekveld').value.trim()
+  const generatie = ++zoekGeneratie
+
+  if (!term) {
+    zoekResultaten = []
+    zoekSelectie.clear()
+    verbergZoekResultaten()
+    updateSelectieInfo()
+    return
+  }
+
+  zoekResultaten = zoekBibliotheek(term)
+  toonZoekResultaten()
+  renderZoekResultaten(generatie)
+}
+
+async function getZoekThumbnail(resultaat, idx) {
+  const playIcon = '<div class="card-thumb-play">'
+    + '<svg viewBox="0 0 24 24" fill="#c8a87a"><polygon points="5,3 19,12 5,21"/></svg>'
+    + '</div>'
+
+  const bronLabel = resultaat.soort === 'youtube'
+    ? '<div class="card-bron youtube">' + t('video.bron.youtube') + '</div>'
+    : '<div class="card-bron lokaal">' + t('video.bron.lokaal') + '</div>'
+
+  if (resultaat.soort === 'youtube') {
+    const id = getYoutubeId(resultaat.youtubeUrl)
+    if (id) {
+      return '<div class="card-thumb-wrap" onclick="if(!event.ctrlKey)zoekKlikAfspelen(' + idx + ')">'
+        + '<img class="card-thumbnail" loading="lazy" src="https://img.youtube.com/vi/' + id + '/hqdefault.jpg">'
+        + playIcon + bronLabel
+        + '</div>'
+    }
+  }
+
+  if (resultaat.lokaalPad) {
+    const pad = await ipcRenderer.invoke('maak-thumbnail', resultaat.lokaalPad)
+    if (pad) {
+      return '<div class="card-thumb-wrap" onclick="if(!event.ctrlKey)zoekKlikAfspelen(' + idx + ')">'
+        + '<img class="card-thumbnail" loading="lazy" src="file:///' + pad.replace(/\\/g, '/') + '">'
+        + playIcon + bronLabel
+        + '</div>'
+    }
+  }
+
+  return '<div class="card-thumb-wrap" onclick="if(!event.ctrlKey)zoekKlikAfspelen(' + idx + ')">'
+    + '<div class="card-thumbnail-placeholder">▶</div>'
+    + bronLabel
+    + '</div>'
+}
+
+async function bouwZoekKaartHtml(resultaat, idx) {
+  const sleutel = zoekSleutel(resultaat)
+  const thumbnail = await getZoekThumbnail(resultaat, idx)
+  const herkomstLabel = resultaat.bron === 'concert'
+    ? t('jukebox.herkomstConcert', { naam: resultaat.herkomst })
+    : t('jukebox.herkomstWall', { naam: resultaat.herkomst })
+  const geselecteerdClass = zoekSelectie.has(sleutel) ? ' geselecteerd' : ''
+
+  return '<div class="card' + geselecteerdClass + '" onclick="toggleZoekSelectie(event, this,' + idx + ')">'
+    + thumbnail
+    + '<div class="card-face card-front">'
+    + '<div class="card-number">' + (idx + 1) + '</div>'
+    + '<div class="card-meta">'
+    + '<div class="card-artist">' + (resultaat.artiest || '') + '</div>'
+    + '<div class="card-title">' + resultaat.titel + '</div>'
+    + '<div class="card-herkomst">' + herkomstLabel + '</div>'
+    + '</div>'
+    + '</div>'
+    + '</div>'
+}
+
+async function renderZoekResultaten(generatie) {
+  const container = document.getElementById('globale-zoek-resultaten')
+
+  if (zoekResultaten.length === 0) {
+    container.innerHTML = '<div class="zoek-leeg">' + t('zoeken.geenResultaten') + '</div>'
+    return
+  }
+
+  let html = '<div class="zoek-resultaten-balk">'
+    + '<button class="zoek-selecteer-alles-btn" onclick="toggleSelecteerAlleZoekResultaten()">' + t('zoeken.selecteerAlles') + '</button>'
+    + '<span class="zoek-aantal">' + t('zoeken.aantalResultaten', { n: zoekResultaten.length }) + '</span>'
+    + '</div>'
+  for (let idx = 0; idx < zoekResultaten.length; idx++) {
+    html += await bouwZoekKaartHtml(zoekResultaten[idx], idx)
+    if (generatie !== zoekGeneratie) return
+  }
+  container.innerHTML = html
+}
+
+function toggleSelecteerAlleZoekResultaten() {
+  if (zoekResultaten.length === 0) return
+
+  const sleutels = zoekResultaten.map(zoekSleutel)
+  const alleGeselecteerd = sleutels.every(s => zoekSelectie.has(s))
+
+  sleutels.forEach(s => {
+    if (alleGeselecteerd) zoekSelectie.delete(s)
+    else zoekSelectie.add(s)
+  })
+
+  document.querySelectorAll('#globale-zoek-resultaten .card').forEach((c, i) => {
+    c.classList.toggle('geselecteerd', zoekSelectie.has(sleutels[i]))
+  })
+
+  updateSelectieInfo()
+}
+
+function zoekKlikAfspelen(idx) {
+  const resultaat = zoekResultaten[idx]
+  if (!resultaat) return
+  speelGeluid('whoosh')
+  if (resultaat.soort === 'youtube') {
+    ipcRenderer.send('open-video', resultaat.youtubeUrl)
+  } else {
+    ipcRenderer.send('open-lokaal', resultaat.lokaalPad)
+  }
+}
+
+function toggleZoekSelectie(event, cardEl, idx) {
+  if (!event.ctrlKey) return
+
+  event.stopPropagation()
+  event.preventDefault()
+
+  const resultaat = zoekResultaten[idx]
+  if (!resultaat) return
+  const sleutel = zoekSleutel(resultaat)
+
+  if (zoekSelectie.has(sleutel)) {
+    zoekSelectie.delete(sleutel)
+    cardEl.classList.remove('geselecteerd')
+  } else {
+    zoekSelectie.add(sleutel)
+    cardEl.classList.add('geselecteerd')
+  }
+
+  updateSelectieInfo()
+}
+
 ipcRenderer.on('herlaad', () => {
   laadWalls()
 })
@@ -272,13 +460,18 @@ function toggleSelectie(event, cardEl, videoId) {
 function updateSelectieInfo() {
   const info = document.getElementById('selectie-info')
   const tekst = document.getElementById('selectie-tekst')
+  const verwijderBtn = document.getElementById('verwijder-selectie-btn')
+  const zoekActief = zoekModusActief()
+  const actieveSelectie = zoekActief ? zoekSelectie : selectie
 
-  if (selectie.size === 0) {
+  if (actieveSelectie.size === 0) {
     info.classList.remove('zichtbaar')
   } else {
     info.classList.add('zichtbaar')
-    tekst.textContent = t('selectie.tekst', { n: selectie.size })
+    tekst.textContent = t('selectie.tekst', { n: actieveSelectie.size })
   }
+
+  if (verwijderBtn) verwijderBtn.style.display = zoekActief ? 'none' : ''
 }
 
 function deselecteerAlles() {
@@ -312,7 +505,15 @@ function toggleSelecteerAlleInWall(wallId) {
 }
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') deselecteerAlles()
+  if (e.key !== 'Escape') return
+
+  if (zoekModusActief()) {
+    zoekSelectie.clear()
+    document.querySelectorAll('#globale-zoek-resultaten .card.geselecteerd').forEach(c => c.classList.remove('geselecteerd'))
+    updateSelectieInfo()
+  } else {
+    deselecteerAlles()
+  }
 })
 
 function prullenbakOver(event) {
@@ -716,7 +917,7 @@ async function laadWalls() {
       { opacity: 0, y: 24, scale: 0.97 },
       { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'power3.out', stagger: 0.08 }
     )
-    const kaartElementen = document.querySelectorAll('.card')
+    const kaartElementen = container.querySelectorAll('.card')
     const kaartStagger = kaartElementen.length > 0 ? Math.min(0.03, 0.6 / kaartElementen.length) : 0.03
     gsap.fromTo(kaartElementen,
       { opacity: 0, x: -12 },
@@ -777,6 +978,10 @@ window.wallDragEnd = wallDragEnd
 window.wallDragOver = wallDragOver
 window.wallDragLeave = wallDragLeave
 window.wallDrop = wallDrop
+window.zoekLive = zoekLive
+window.zoekKlikAfspelen = zoekKlikAfspelen
+window.toggleZoekSelectie = toggleZoekSelectie
+window.toggleSelecteerAlleZoekResultaten = toggleSelecteerAlleZoekResultaten
 
 if (window.gsap) {
   const introTl = gsap.timeline({ delay: 0.2 })
