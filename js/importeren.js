@@ -6,6 +6,7 @@ const { voegVideoToe } = require('./db/videos.js')
 const path = require('path')
 
 let bestanden = []
+let bestandenSelectie = new Set()
 let bezig = false
 
 function laadGroepen() {
@@ -61,24 +62,97 @@ function startImport() {
   }
 }
 
+function updateBestandLabel() {
+  document.getElementById('bestand-label').textContent = t('importeren.gevondenGeselecteerd', {
+    gevonden: bestanden.length,
+    geselecteerd: bestandenSelectie.size
+  })
+}
+
+function toggleBestandSelectie(event, el, idx) {
+  if (!event.ctrlKey) return
+
+  event.stopPropagation()
+  event.preventDefault()
+
+  if (bestandenSelectie.has(idx)) {
+    bestandenSelectie.delete(idx)
+    el.classList.remove('geselecteerd')
+  } else {
+    bestandenSelectie.add(idx)
+    el.classList.add('geselecteerd')
+  }
+
+  updateBestandLabel()
+}
+
+function toggleSelecteerAlleBestanden() {
+  if (bestanden.length === 0) return
+
+  if (bestandenSelectie.size === bestanden.length) {
+    bestandenSelectie.clear()
+  } else {
+    bestandenSelectie = new Set(bestanden.map((_, i) => i))
+  }
+
+  document.querySelectorAll('#bestand-lijst .bestand-item').forEach((el, i) => {
+    el.classList.toggle('geselecteerd', bestandenSelectie.has(i))
+  })
+
+  updateBestandLabel()
+}
+
+function filterBestanden() {
+  const term = document.getElementById('bestand-filter').value.trim().toLowerCase()
+
+  bestanden.forEach((pad, i) => {
+    const item = document.getElementById('bestand-' + i)
+    if (!item) return
+
+    const matcht = path.basename(pad).toLowerCase().includes(term)
+    item.style.display = (!term || matcht) ? 'flex' : 'none'
+
+    if (term) {
+      if (matcht) bestandenSelectie.add(i)
+      else bestandenSelectie.delete(i)
+      item.classList.toggle('geselecteerd', matcht)
+    }
+  })
+
+  updateBestandLabel()
+}
+
 ipcRenderer.on('import-bestanden', (event, gevonden) => {
   bestanden = gevonden
+  bestandenSelectie = new Set(bestanden.map((_, i) => i))
+
   const lijst = document.getElementById('bestand-lijst')
-  const label = document.getElementById('bestand-label')
   const container = document.getElementById('bestand-lijst-container')
 
+  document.getElementById('bestand-filter').value = ''
   container.style.display = 'block'
-  label.textContent = t('importeren.videobestandenGevonden', { n: bestanden.length })
   lijst.innerHTML = ''
 
   bestanden.forEach((pad, i) => {
     const item = document.createElement('div')
-    item.className = 'bestand-item'
+    item.className = 'bestand-item geselecteerd'
     item.id = 'bestand-' + i
-    item.textContent = path.basename(pad)
+    item.onclick = (e) => toggleBestandSelectie(e, item, i)
+
+    const nummer = document.createElement('span')
+    nummer.className = 'bestand-nummer'
+    nummer.textContent = i + 1
+
+    const naam = document.createElement('span')
+    naam.className = 'bestand-naam'
+    naam.textContent = path.basename(pad)
+
+    item.appendChild(nummer)
+    item.appendChild(naam)
     lijst.appendChild(item)
   })
 
+  updateBestandLabel()
   document.getElementById('import-btn').textContent = t('importeren.importerenBtn')
   document.getElementById('melding').textContent = ''
 })
@@ -92,20 +166,28 @@ async function importeer() {
     return
   }
 
+  if (bestandenSelectie.size === 0) {
+    document.getElementById('melding').textContent = t('validatie.geenBestandenGeselecteerd')
+    return
+  }
+
+  const teImporteren = bestanden.map((_, i) => i).filter(i => bestandenSelectie.has(i))
+
   bezig = true
   const btn = document.getElementById('import-btn')
   btn.disabled = true
 
-  for (let i = 0; i < bestanden.length; i++) {
+  for (let n = 0; n < teImporteren.length; n++) {
+    const i = teImporteren[n]
     const pad = bestanden[i]
     const naam = path.basename(pad, path.extname(pad))
 
     const item = document.getElementById('bestand-' + i)
     if (item) item.className = 'bestand-item actief'
 
-    const pct = Math.round((i / bestanden.length) * 100)
+    const pct = Math.round((n / teImporteren.length) * 100)
     document.getElementById('voortgang-vulling').style.width = pct + '%'
-    document.getElementById('voortgang-tekst').textContent = t('importeren.voortgang', { i: i + 1, n: bestanden.length, naam })
+    document.getElementById('voortgang-tekst').textContent = t('importeren.voortgang', { i: n + 1, n: teImporteren.length, naam })
 
     voegVideoToe({
       wallId,
@@ -122,7 +204,7 @@ async function importeer() {
   }
 
   document.getElementById('voortgang-vulling').style.width = '100%'
-  document.getElementById('voortgang-tekst').textContent = t('importeren.klaar', { n: bestanden.length })
+  document.getElementById('voortgang-tekst').textContent = t('importeren.klaar', { n: teImporteren.length })
   document.getElementById('melding').textContent = t('importeren.voltooid')
 
   bezig = false

@@ -19,6 +19,7 @@ if (!fs.existsSync(thumbnailsPath)) {
 let mainWindow
 let videoWindow = null
 let jukeboxWin = null
+let importWin = null
 let huidigThema = ''
 let huidigeTaal = 'nl'
 
@@ -437,9 +438,14 @@ ipcMain.on('open-import', async (event) => {
 })
 
 ipcMain.on('open-importeren', () => {
-  const importWin = new BrowserWindow({
+  if (importWin && !importWin.isDestroyed()) {
+    importWin.focus()
+    return
+  }
+
+  importWin = new BrowserWindow({
     width: 550,
-    height: 620,
+    height: 760,
     title: t('importeren.titel'),
     ...titelbalkOpties,
     webPreferences: {
@@ -449,6 +455,10 @@ ipcMain.on('open-importeren', () => {
   })
   importWin.loadFile('importeren.html')
   importWin.setMenuBarVisibility(false)
+
+  importWin.on('closed', () => {
+    importWin = null
+  })
 })
 
 ipcMain.on('import-klaar', () => {

@@ -14,6 +14,14 @@ function schakelSectie(sectie, groepId) {
   huidigeSectie = sectie
   huidigeGroepId = sectie === 'groep' ? groepId : null
 
+  if (zoekModusActief()) {
+    document.getElementById('globaal-zoekveld').value = ''
+    zoekResultaten = []
+    zoekSelectie.clear()
+    document.getElementById('globale-zoek-resultaten').style.display = 'none'
+    updateSelectieInfo()
+  }
+
   const wallsContainer = document.getElementById('walls-container')
   const concertenContainer = document.getElementById('concerten-container')
   const btnWalls = document.getElementById('btn-walls')

@@ -52,14 +52,71 @@
       padding: 0.5rem;
     }
 
+    #bestand-filter {
+      margin-bottom: 0.75rem;
+    }
+
+    .bestand-lijst-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .bestand-selecteer-alles-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.65rem;
+      background: transparent;
+      border: 1px solid var(--rand-2);
+      border-radius: 3px;
+      color: var(--tekst-donker);
+      font-size: 11px;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .bestand-selecteer-alles-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
     .bestand-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       font-size: 12px;
       color: var(--tekst-dim);
       padding: 0.25rem 0;
       border-bottom: 1px solid var(--rand);
+      border-left: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .bestand-nummer {
+      font-size: 10px;
+      color: var(--accent);
+      opacity: 0.5;
+      min-width: 18px;
+      flex-shrink: 0;
+    }
+
+    .bestand-naam {
+      flex: 1;
+      min-width: 0;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    .bestand-item.geselecteerd {
+      border-left-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 14%, transparent);
+      color: var(--tekst);
     }
 
     .bestand-item.klaar { color: var(--accent); }
@@ -84,7 +141,11 @@
 
 <div id="bestand-lijst-container" style="display:none">
   <div class="veld">
-    <label id="bestand-label">0 videobestanden gevonden</label>
+    <input type="text" id="bestand-filter" oninput="filterBestanden()" data-i18n-placeholder="importeren.filterPlaceholder" placeholder="Filter op bestandsnaam…">
+    <div class="bestand-lijst-header">
+      <label id="bestand-label">0 videobestanden gevonden</label>
+      <button type="button" class="bestand-selecteer-alles-btn" id="bestand-selecteer-alles-btn" onclick="toggleSelecteerAlleBestanden()" data-i18n="importeren.selecteerAlles">☑ Selecteer alles</button>
+    </div>
     <div class="bestand-lijst" id="bestand-lijst"></div>
   </div>
 
