@@ -37,6 +37,7 @@
 <div class="sectie" id="stap1">
   <p class="stap-titel" data-i18n="apiSleutelDialoog.stap1Titel">Schakel de YouTube Data API in</p>
   <p class="uitleg" data-i18n="apiSleutelDialoog.stap1Uitleg">Log in bij Google en schakel de YouTube Data API in voor uw project — dat is nodig om straks op YouTube te kunnen zoeken vanuit Musicwall.</p>
+  <button class="bestand-btn" onclick="openGoogleConsole()" data-i18n="apiSleutelDialoog.openGoogleBtn">🔗 Open Google Cloud Console</button>
   <div class="stap-nav">
     <button class="opslaan-btn" onclick="volgendeStap()" data-i18n="apiSleutelDialoog.volgendeBtn">Volgende stap →</button>
   </div>
@@ -45,6 +46,7 @@
 <div class="sectie" id="stap2">
   <p class="stap-titel" data-i18n="apiSleutelDialoog.stap2Titel">Maak een API-sleutel aan</p>
   <p class="uitleg" data-i18n="apiSleutelDialoog.stap2Uitleg">Klik op + Create credentials → API key om een nieuwe sleutel aan te maken.</p>
+  <button class="bestand-btn" onclick="maakApiKey()" data-i18n="apiSleutelDialoog.maakSleutelBtn">Maak API key aan</button>
   <div class="stap-nav">
     <button class="bestand-btn" onclick="vorigeStap()" data-i18n="apiSleutelDialoog.vorigeBtn">← Vorige stap</button>
     <button class="opslaan-btn" onclick="volgendeStap()" data-i18n="apiSleutelDialoog.volgendeBtn">Volgende stap →</button>
@@ -55,7 +57,10 @@
   <p class="stap-titel" data-i18n="apiSleutelDialoog.stap3Titel">Vul de sleutel in</p>
   <div class="veld">
     <label data-i18n="apiSleutelDialoog.sleutelLabel">YouTube API-sleutel</label>
-    <input type="text" id="sleutel" data-i18n-placeholder="apiSleutelDialoog.sleutelPlaceholder" placeholder="Plak hier uw API-sleutel">
+    <div class="veld-rij">
+      <input type="text" id="sleutel" data-i18n-placeholder="apiSleutelDialoog.sleutelPlaceholder" placeholder="Plak hier uw API-sleutel">
+      <button class="bestand-btn" onclick="plakSleutel()" data-i18n="apiSleutelDialoog.plakBtn">📋 Plak</button>
+    </div>
   </div>
   <button class="opslaan-btn" id="opslaan-btn" onclick="slaOp()" data-i18n="apiSleutelDialoog.opslaanBtn">Opslaan</button>
   <div class="stap-nav">

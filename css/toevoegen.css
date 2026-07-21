@@ -271,3 +271,17 @@ textarea {
 .stap-nav button {
   flex: 1;
 }
+
+.veld-rij {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.veld-rij input {
+  flex: 1;
+  min-width: 0;
+}
+
+.veld-rij .bestand-btn {
+  white-space: nowrap;
+}

@@ -1,9 +1,25 @@
 const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
+const shell = electron.shell
+const clipboard = electron.clipboard
 const fs = require('fs')
+
+const SLEUTEL_FORMAAT = /^AIza[0-9A-Za-z_-]{35}$/
 
 const modus = new URLSearchParams(window.location.search).get('modus')
 let huidigeStap = 1
+
+function openGoogleConsole() {
+  shell.openExternal('https://console.cloud.google.com/apis/library/youtube.googleapis.com')
+}
+
+function maakApiKey() {
+  shell.openExternal('https://console.cloud.google.com/apis/credentials')
+}
+
+function plakSleutel() {
+  document.getElementById('sleutel').value = clipboard.readText().trim()
+}
 
 function toonStap(n) {
   document.querySelectorAll('.sectie').forEach(el => el.classList.remove('zichtbaar'))
@@ -57,6 +73,10 @@ async function slaOp() {
     document.getElementById('melding').textContent = t('apiSleutelDialoog.leegMelding')
     return
   }
+  if (!SLEUTEL_FORMAAT.test(sleutel)) {
+    document.getElementById('melding').textContent = t('apiSleutelDialoog.formaatFout')
+    return
+  }
 
   const instellingenPad = await ipcRenderer.invoke('get-instellingen-pad')
   let instellingen = {}
@@ -77,5 +97,8 @@ function overslaan() {
 
 window.volgendeStap = volgendeStap
 window.vorigeStap = vorigeStap
+window.openGoogleConsole = openGoogleConsole
+window.maakApiKey = maakApiKey
+window.plakSleutel = plakSleutel
 window.slaOp = slaOp
 window.overslaan = overslaan
