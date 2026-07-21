@@ -1,7 +1,5 @@
 const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
-const fs = require('fs')
-const path = require('path')
 const { getAlleWalls } = require('./db/walls.js')
 const { getAlleWallGroepen } = require('./db/wallgroepen.js')
 const { voegVideoToe } = require('./db/videos.js')
@@ -15,23 +13,13 @@ let playlistResultatenCache = []
 
 async function laadApiSleutel() {
   try {
-    const instellingenPad = await ipcRenderer.invoke('get-instellingen-pad')
+    apiKey = await ipcRenderer.invoke('haal-api-sleutel-op')
 
-    if (!fs.existsSync(instellingenPad)) {
-      const voorbeeldPad = await ipcRenderer.invoke('get-instellingen-voorbeeld-pad')
-      if (fs.existsSync(voorbeeldPad)) {
-        fs.copyFileSync(voorbeeldPad, instellingenPad)
-      }
-    }
-
-    const instellingen = JSON.parse(fs.readFileSync(instellingenPad, 'utf8'))
-    apiKey = instellingen.youtubeApiKey
-
-    if (!apiKey || apiKey.includes('VUL_HIER')) {
-      document.getElementById('resultaten').innerHTML = '<div class="fout">' + t('zoeken.apiKeyOntbreekt', { pad: instellingenPad }) + '</div>'
+    if (!apiKey) {
+      document.getElementById('resultaten').innerHTML = '<div class="fout">' + t('zoeken.apiKeyOntbreekt') + '</div>'
     }
   } catch (e) {
-    console.error('Fout bij laden instellingen:', e.message)
+    console.error('Fout bij laden API-sleutel:', e.message)
     document.getElementById('resultaten').innerHTML = '<div class="fout">' + t('zoeken.instellingenFout', { bericht: e.message }) + '</div>'
   }
 }

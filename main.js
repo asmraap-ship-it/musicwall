@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog, safeStorage } = require('electron')
 const ffmpegPath = require('ffmpeg-static')
 const { execFile } = require('child_process')
 const fs = require('fs')
@@ -657,16 +657,26 @@ ipcMain.on('herlaad-hoofdscherm', () => {
   if (mainWindow) mainWindow.webContents.send('herlaad')
 })
 
-ipcMain.handle('get-instellingen-pad', () => {
-  return path.join(userDataPath, 'instellingen.json')
-})
-
-ipcMain.handle('get-instellingen-voorbeeld-pad', () => {
-  return path.join(__dirname, 'instellingen.voorbeeld.json')
-})
-
 ipcMain.on('api-sleutel-venster-sluiten', () => {
   BrowserWindow.getFocusedWindow().close()
+})
+
+ipcMain.handle('haal-api-sleutel-op', () => {
+  const sleutelPad = path.join(userDataPath, 'api-sleutel.enc')
+  if (!fs.existsSync(sleutelPad)) return null
+  try {
+    const versleuteld = Buffer.from(fs.readFileSync(sleutelPad, 'utf8'), 'base64')
+    return safeStorage.decryptString(versleuteld)
+  } catch (e) {
+    return null
+  }
+})
+
+ipcMain.handle('sla-api-sleutel-op', (event, sleutel) => {
+  if (!safeStorage.isEncryptionAvailable()) return { ok: false }
+  const sleutelPad = path.join(userDataPath, 'api-sleutel.enc')
+  fs.writeFileSync(sleutelPad, safeStorage.encryptString(sleutel).toString('base64'))
+  return { ok: true }
 })
 
 function openApiSleutelWindow(modus) {
@@ -691,20 +701,26 @@ ipcMain.on('open-api-sleutel-instellen', () => {
 function controleerApiSleutel() {
   const instellingenPad = path.join(userDataPath, 'instellingen.json')
   const voorbeeldPad = path.join(__dirname, 'instellingen.voorbeeld.json')
+  const sleutelPad = path.join(userDataPath, 'api-sleutel.enc')
 
-  if (!fs.existsSync(instellingenPad)) {
-    if (!fs.existsSync(voorbeeldPad)) return
+  if (!fs.existsSync(instellingenPad) && fs.existsSync(voorbeeldPad)) {
     fs.copyFileSync(voorbeeldPad, instellingenPad)
   }
 
-  let instellingen
-  try {
-    instellingen = JSON.parse(fs.readFileSync(instellingenPad, 'utf8'))
-  } catch (e) {
-    return
+  // Migratie: bestaande installaties met een platte-tekst sleutel in instellingen.json
+  // krijgen die eenmalig versleuteld overgezet naar api-sleutel.enc, en de platte kopie verwijderd.
+  if (!fs.existsSync(sleutelPad) && fs.existsSync(instellingenPad)) {
+    try {
+      const instellingen = JSON.parse(fs.readFileSync(instellingenPad, 'utf8'))
+      if (instellingen.youtubeApiKey && !instellingen.youtubeApiKey.includes('VUL_HIER') && safeStorage.isEncryptionAvailable()) {
+        fs.writeFileSync(sleutelPad, safeStorage.encryptString(instellingen.youtubeApiKey).toString('base64'))
+        delete instellingen.youtubeApiKey
+        fs.writeFileSync(instellingenPad, JSON.stringify(instellingen, null, 2))
+      }
+    } catch (e) {}
   }
 
-  if (!instellingen.youtubeApiKey || instellingen.youtubeApiKey.includes('VUL_HIER')) {
+  if (!fs.existsSync(sleutelPad)) {
     openApiSleutelWindow()
   }
 }

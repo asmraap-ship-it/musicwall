@@ -2,7 +2,6 @@ var electron = require('electron')
 var ipcRenderer = electron.ipcRenderer
 var shell = electron.shell
 var clipboard = electron.clipboard
-var fs = require('fs')
 
 var SLEUTEL_FORMAAT = /^AIza[0-9A-Za-z_-]{35}$/
 var TEST_VIDEO_ID = 'jNQXAC9IVRw'
@@ -49,14 +48,9 @@ async function initModus() {
   document.getElementById('intro').textContent = t('apiSleutelDialoog.introWijzigen')
   document.getElementById('overslaan-link').textContent = t('apiSleutelDialoog.annulerenBtn')
 
-  const instellingenPad = await ipcRenderer.invoke('get-instellingen-pad')
-  if (fs.existsSync(instellingenPad)) {
-    try {
-      const instellingen = JSON.parse(fs.readFileSync(instellingenPad, 'utf8'))
-      if (instellingen.youtubeApiKey && !instellingen.youtubeApiKey.includes('VUL_HIER')) {
-        document.getElementById('sleutel').value = instellingen.youtubeApiKey
-      }
-    } catch (e) {}
+  const huidigeSleutel = await ipcRenderer.invoke('haal-api-sleutel-op')
+  if (huidigeSleutel) {
+    document.getElementById('sleutel').value = huidigeSleutel
   }
 
   toonStap(3)
@@ -109,18 +103,15 @@ async function slaOp() {
     return
   }
 
+  const opslagResultaat = await ipcRenderer.invoke('sla-api-sleutel-op', sleutel)
+  if (!opslagResultaat.ok) {
+    meldingEl.textContent = t('apiSleutelDialoog.foutOnbekend')
+    opnieuwTestenBtn.style.display = 'block'
+    return
+  }
+
   opnieuwTestenBtn.style.display = 'none'
   meldingEl.textContent = ''
-
-  const instellingenPad = await ipcRenderer.invoke('get-instellingen-pad')
-  let instellingen = {}
-  if (fs.existsSync(instellingenPad)) {
-    try {
-      instellingen = JSON.parse(fs.readFileSync(instellingenPad, 'utf8'))
-    } catch (e) {}
-  }
-  instellingen.youtubeApiKey = sleutel
-  fs.writeFileSync(instellingenPad, JSON.stringify(instellingen, null, 2))
 
   ipcRenderer.send('api-sleutel-venster-sluiten')
 }
