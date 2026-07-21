@@ -63,9 +63,18 @@
     </div>
   </div>
   <button class="opslaan-btn" id="opslaan-btn" onclick="slaOp()" data-i18n="apiSleutelDialoog.opslaanBtn">Opslaan</button>
+  <button class="bestand-btn" id="opnieuw-testen-btn" style="display:none;width:100%;justify-content:center;margin-top:0.5rem" onclick="slaOp()" data-i18n="apiSleutelDialoog.opnieuwTestenBtn">Opnieuw testen</button>
   <div class="stap-nav">
     <button class="bestand-btn" onclick="vorigeStap()" data-i18n="apiSleutelDialoog.vorigeBtn">← Vorige stap</button>
   </div>
+  <details class="troubleshoot">
+    <summary data-i18n="apiSleutelDialoog.troubleshootTitel">Lukt het niet?</summary>
+    <ul>
+      <li data-i18n="apiSleutelDialoog.troubleshootLi1">Controleer of u bij stap 1 echt op "Inschakelen" hebt geklikt voor de YouTube Data API v3</li>
+      <li data-i18n="apiSleutelDialoog.troubleshootLi2">Een net aangemaakte sleutel kan een paar minuten nodig hebben voordat hij werkt</li>
+      <li data-i18n="apiSleutelDialoog.troubleshootLi3">Controleer of de sleutel geen restricties heeft die een lokale toepassing blokkeren (kies bij "Application restrictions" liefst "None")</li>
+    </ul>
+  </details>
 </div>
 
 <a href="#" class="overslaan-link" id="overslaan-link" onclick="overslaan(); return false;" data-i18n="apiSleutelDialoog.overslaanBtn">Later instellen</a>
@@ -73,6 +82,7 @@
 
 <script src="js/vertalingen.js"></script>
 <script src="js/i18n.js"></script>
+<script src="js/api-sleutel-foutmapping.js"></script>
 <script src="js/api-sleutel-wizard.js"></script>
 </body>
 </html>

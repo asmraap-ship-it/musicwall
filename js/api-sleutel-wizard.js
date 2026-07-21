@@ -1,13 +1,14 @@
-const electron = require('electron')
-const ipcRenderer = electron.ipcRenderer
-const shell = electron.shell
-const clipboard = electron.clipboard
-const fs = require('fs')
+var electron = require('electron')
+var ipcRenderer = electron.ipcRenderer
+var shell = electron.shell
+var clipboard = electron.clipboard
+var fs = require('fs')
 
-const SLEUTEL_FORMAAT = /^AIza[0-9A-Za-z_-]{35}$/
+var SLEUTEL_FORMAAT = /^AIza[0-9A-Za-z_-]{35}$/
+var TEST_VIDEO_ID = 'jNQXAC9IVRw'
 
-const modus = new URLSearchParams(window.location.search).get('modus')
-let huidigeStap = 1
+var modus = new URLSearchParams(window.location.search).get('modus')
+var huidigeStap = 1
 
 function openGoogleConsole() {
   shell.openExternal('https://console.cloud.google.com/apis/library/youtube.googleapis.com')
@@ -67,16 +68,49 @@ document.getElementById('sleutel').addEventListener('keyup', (e) => {
   if (e.key === 'Enter') slaOp()
 })
 
+async function testSleutel(sleutel) {
+  const url = 'https://www.googleapis.com/youtube/v3/videos?part=id&id=' + TEST_VIDEO_ID + '&key=' + sleutel
+  try {
+    const response = await fetch(url)
+    const json = await response.json()
+    return { status: response.status, json }
+  } catch (e) {
+    return { netwerkfout: true }
+  }
+}
+
 async function slaOp() {
   const sleutel = document.getElementById('sleutel').value.trim()
+  const meldingEl = document.getElementById('melding')
   if (!sleutel) {
-    document.getElementById('melding').textContent = t('apiSleutelDialoog.leegMelding')
+    meldingEl.textContent = t('apiSleutelDialoog.leegMelding')
     return
   }
   if (!SLEUTEL_FORMAAT.test(sleutel)) {
-    document.getElementById('melding').textContent = t('apiSleutelDialoog.formaatFout')
+    meldingEl.textContent = t('apiSleutelDialoog.formaatFout')
     return
   }
+
+  const opslaanBtn = document.getElementById('opslaan-btn')
+  const opnieuwTestenBtn = document.getElementById('opnieuw-testen-btn')
+  opslaanBtn.disabled = true
+  opnieuwTestenBtn.disabled = true
+  meldingEl.textContent = t('apiSleutelDialoog.testBezig')
+
+  const resultaat = await testSleutel(sleutel)
+  const foutSleutel = bepaalFoutmelding(resultaat)
+
+  opslaanBtn.disabled = false
+  opnieuwTestenBtn.disabled = false
+
+  if (foutSleutel) {
+    meldingEl.textContent = t(foutSleutel)
+    opnieuwTestenBtn.style.display = 'block'
+    return
+  }
+
+  opnieuwTestenBtn.style.display = 'none'
+  meldingEl.textContent = ''
 
   const instellingenPad = await ipcRenderer.invoke('get-instellingen-pad')
   let instellingen = {}
