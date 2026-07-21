@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube API-sleutel</title>
+  <link rel="stylesheet" href="css/toevoegen.css">
+  <script>
+    const thema = localStorage.getItem('musicwall-thema')
+    if (thema) document.documentElement.setAttribute('data-thema', thema)
+    require('electron').ipcRenderer.on('thema-toegepast', (event, t) => {
+      if (t) document.documentElement.setAttribute('data-thema', t)
+      else document.documentElement.removeAttribute('data-thema')
+    })
+  </script>
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+  <link rel="stylesheet" href="css/themas/natuur.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+</head>
+<body>
+
+<div class="titelbalk-drag"></div>
+
+<h2 id="titel" data-i18n="apiSleutelDialoog.titel">YouTube API-sleutel instellen</h2>
+
+<p class="uitleg" id="intro" data-i18n="apiSleutelDialoog.intro">Om video's op YouTube te kunnen zoeken heeft Musicwall een gratis YouTube API-sleutel nodig. Vraag deze eenmalig aan via Google en plak hem hieronder — dit scherm verschijnt niet meer zodra dat gelukt is.</p>
+
+<div class="stap-indicator">
+  <span class="stap-bol" id="bol-1"></span>
+  <span class="stap-bol" id="bol-2"></span>
+  <span class="stap-bol" id="bol-3"></span>
+</div>
+<p class="stap-label" id="stap-label"></p>
+
+<div class="sectie" id="stap1">
+  <p class="stap-titel" data-i18n="apiSleutelDialoog.stap1Titel">Schakel de YouTube Data API in</p>
+  <p class="uitleg" data-i18n="apiSleutelDialoog.stap1Uitleg">Log in bij Google en schakel de YouTube Data API in voor uw project — dat is nodig om straks op YouTube te kunnen zoeken vanuit Musicwall.</p>
+  <div class="stap-nav">
+    <button class="opslaan-btn" onclick="volgendeStap()" data-i18n="apiSleutelDialoog.volgendeBtn">Volgende stap →</button>
+  </div>
+</div>
+
+<div class="sectie" id="stap2">
+  <p class="stap-titel" data-i18n="apiSleutelDialoog.stap2Titel">Maak een API-sleutel aan</p>
+  <p class="uitleg" data-i18n="apiSleutelDialoog.stap2Uitleg">Klik op + Create credentials → API key om een nieuwe sleutel aan te maken.</p>
+  <div class="stap-nav">
+    <button class="bestand-btn" onclick="vorigeStap()" data-i18n="apiSleutelDialoog.vorigeBtn">← Vorige stap</button>
+    <button class="opslaan-btn" onclick="volgendeStap()" data-i18n="apiSleutelDialoog.volgendeBtn">Volgende stap →</button>
+  </div>
+</div>
+
+<div class="sectie" id="stap3">
+  <p class="stap-titel" data-i18n="apiSleutelDialoog.stap3Titel">Vul de sleutel in</p>
+  <div class="veld">
+    <label data-i18n="apiSleutelDialoog.sleutelLabel">YouTube API-sleutel</label>
+    <input type="text" id="sleutel" data-i18n-placeholder="apiSleutelDialoog.sleutelPlaceholder" placeholder="Plak hier uw API-sleutel">
+  </div>
+  <button class="opslaan-btn" id="opslaan-btn" onclick="slaOp()" data-i18n="apiSleutelDialoog.opslaanBtn">Opslaan</button>
+  <div class="stap-nav">
+    <button class="bestand-btn" onclick="vorigeStap()" data-i18n="apiSleutelDialoog.vorigeBtn">← Vorige stap</button>
+  </div>
+</div>
+
+<a href="#" class="overslaan-link" id="overslaan-link" onclick="overslaan(); return false;" data-i18n="apiSleutelDialoog.overslaanBtn">Later instellen</a>
+<div class="melding" id="melding"></div>
+
+<script src="js/vertalingen.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/api-sleutel-wizard.js"></script>
+</body>
+</html>

@@ -672,7 +672,7 @@ ipcMain.on('api-sleutel-venster-sluiten', () => {
 function openApiSleutelWindow(modus) {
   const apiWin = new BrowserWindow({
     width: 480,
-    height: 700,
+    height: 680,
     title: t(modus === 'wijzig' ? 'apiSleutelDialoog.titelWijzigen' : 'apiSleutelDialoog.titel'),
     ...titelbalkOpties,
     webPreferences: {
@@ -680,7 +680,7 @@ function openApiSleutelWindow(modus) {
       contextIsolation: false
     }
   })
-  apiWin.loadFile('api-sleutel-instellen.html', modus ? { query: { modus } } : undefined)
+  apiWin.loadFile('api-sleutel-wizard.html', modus ? { query: { modus } } : undefined)
   apiWin.setMenuBarVisibility(false)
 }
 

@@ -226,3 +226,48 @@ textarea {
 .bestand-lijst::-webkit-scrollbar-thumb:hover {
   background: var(--accent);
 }
+
+.stap-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.stap-bol {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rand-2);
+  transition: background 0.15s;
+}
+
+.stap-bol.actief {
+  background: var(--accent);
+}
+
+.stap-titel {
+  font-size: 15px;
+  color: var(--tekst);
+  margin-bottom: 0.5rem;
+}
+
+.stap-label {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tekst-donker);
+  margin-top: -1rem;
+  margin-bottom: 1.25rem;
+}
+
+.stap-nav {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.stap-nav button {
+  flex: 1;
+}
