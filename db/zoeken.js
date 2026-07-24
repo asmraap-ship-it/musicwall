@@ -8,9 +8,9 @@ function zoekBibliotheek(term) {
            videos.youtube_url, videos.lokaal_pad, walls.naam as herkomst
     FROM videos
     JOIN walls ON walls.id = videos.wall_id
-    WHERE videos.artiest LIKE ? OR videos.titel LIKE ?
+    WHERE videos.artiest LIKE ? OR videos.titel LIKE ? OR videos.tag LIKE ?
     ORDER BY videos.titel
-  `).all(patroon, patroon).map(v => ({
+  `).all(patroon, patroon, patroon).map(v => ({
     bron: 'wall',
     soort: v.type === 'youtube' ? 'youtube' : 'lokaal',
     artiest: v.artiest,

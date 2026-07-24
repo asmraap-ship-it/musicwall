@@ -20,7 +20,8 @@ if (!fs.existsSync(userDataPath)) {
   fs.mkdirSync(userDataPath, { recursive: true })
 }
 
-const db = new Database(path.join(userDataPath, 'musicwall.db'))
+const dbPad = process.env.MUSICWALL_TEST_DB_PAD || path.join(userDataPath, 'musicwall.db')
+const db = new Database(dbPad)
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS walls (
