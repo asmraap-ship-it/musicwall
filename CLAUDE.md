@@ -224,6 +224,12 @@ Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard
 - `open-api-sleutel-instellen` → opent api-sleutel-wizard.html in wijzig-modus (zie `## YouTube API-sleutel setup-wizard`)
 - `haal-api-sleutel-op` (handle) / `sla-api-sleutel-op` (handle) → lezen resp. versleuteld opslaan van de YouTube API-sleutel via `safeStorage` (zie `## YouTube API-sleutel setup-wizard`)
 
+## Geplande uitbreidingen / bekende beperkingen
+- **Zoeken uitbreiden met tag-veld**: globaal zoeken (`js/index.js`'s `zoekLive()`/`db/zoeken.js`'s `zoekBibliotheek()`) en de jukebox-bibliotheekzoekfunctie doorzoeken nu alleen artiest/titel — `videos.tag` bestaat al als kolom maar wordt niet meegenomen in de `LIKE`-matching. Uit te breiden zodat een zoekterm ook op `tag` matcht.
+- **Backup/restore van de data(base)**: er bestaat momenteel geen manier om `%APPDATA%\Musicwall\musicwall.db` (+ `thumbnails/`) te back-uppen of terug te zetten vanuit de app zelf — bij dataverlies (schijfcrash, verkeerde verwijdering) is er geen ingebouwd vangnet. Te bouwen: een export/import-functie (bijv. kopie van de database + thumbnailmap naar een door de gebruiker gekozen locatie, en terugzetten vanuit zo'n kopie).
+- **Testdekking beperkt zich tot `test/api-sleutel-foutmapping.test.js`**: de CRUD-modules in `db/` (cascade-deletes, volgorde-logica in o.a. `db/walls.js`, `db/videos.js`, `db/concerten.js`, `db/wallgroepen.js`) zijn ongetest. `better-sqlite3` is synchroon en dus eenvoudig te testen met een in-memory database (`new Database(':memory:')`) — bij een app die geheugens bewaart weegt een kapotte delete zwaarder dan een UI-detail. Uit te breiden met `node:test`-suites per `db/*.js`-module tegen een in-memory database.
+- **Alleen reactieve linkcontrole**: een onspeelbare YouTube-video wordt nu pas ontdekt tijdens afspelen in de Jukebox, via de IFrame Player API's `onError` (`js/jukebox.js`, regel 62–64) — walls en concerten zelf tonen vooraf geen waarschuwing als een clip inmiddels privé of verwijderd is. Een lichte controle bij het openen van een wall (of periodiek op de achtergrond) via de gratis, sleutelloze YouTube-oEmbed-endpoint (`https://www.youtube.com/oembed?url=...&format=json`, HTTP 404 = niet meer beschikbaar) zou dat proactief kunnen signaleren, zonder extra quotagebruik op de Data API-sleutel.
+
 ## Stijlprincipes
 - Donker goudkleurig palet: `--accent: #c8a87a`
 - Achtergrond: gematigd donker `#2b2620` (niet bijna-zwart, zie `## Thema's`)
