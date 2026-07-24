@@ -782,6 +782,22 @@ h1 {
   border: 1px solid rgba(200, 168, 122, 0.3);
 }
 
+.card-warning {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0.25rem 0.4rem;
+  border-radius: 2px;
+  background: rgba(200, 120, 0, 0.85);
+  color: #fff;
+}
+
+.verborgen {
+  display: none;
+}
+
 .thema-dropdown {
   position: relative;
   z-index: 100;

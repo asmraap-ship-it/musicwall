@@ -51,6 +51,7 @@ const VERTALINGEN = {
     // Video's
     'video.bron.youtube': 'YouTube',
     'video.bron.lokaal': 'Lokaal',
+    'video.mogelijkNietBeschikbaar': 'Deze video is mogelijk niet meer beschikbaar op YouTube',
     'video.verwijderenTooltip': 'Video verwijderen',
     'video.bewerkenTooltip': 'Video bewerken',
     'video.verwijderen.titel': 'Video verwijderen',
@@ -384,6 +385,7 @@ const VERTALINGEN = {
 
     'video.bron.youtube': 'YouTube',
     'video.bron.lokaal': 'Local',
+    'video.mogelijkNietBeschikbaar': 'This video may no longer be available on YouTube',
     'video.verwijderenTooltip': 'Delete video',
     'video.bewerkenTooltip': 'Edit video',
     'video.verwijderen.titel': 'Delete video',

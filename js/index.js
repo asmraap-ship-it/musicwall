@@ -49,9 +49,10 @@ async function getThumbnail(video, idx) {
   if (video.type === 'youtube') {
     const id = getYoutubeId(video.youtube_url)
     if (id) {
-      return '<div class="card-thumb-wrap" onclick="if(!event.ctrlKey)speelAfIdx(' + idx + ')">'
+      return '<div class="card-thumb-wrap" data-youtube-url="' + video.youtube_url + '" onclick="if(!event.ctrlKey)speelAfIdx(' + idx + ')">'
         + '<img class="card-thumbnail" loading="lazy" src="https://img.youtube.com/vi/' + id + '/hqdefault.jpg">'
         + playIcon + deleteKnop + bewerkKnop + bronLabel
+        + '<div class="card-warning verborgen" title="' + t('video.mogelijkNietBeschikbaar') + '">⚠</div>'
         + '</div>'
     }
   }
@@ -847,6 +848,7 @@ async function toonAlleKaarten(wallId) {
     gsap.fromTo(nieuweKaarten, { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: Math.min(0.02, 0.6 / nieuweKaarten.length) })
   }
   startKaartAdemhaling(nieuweKaarten)
+  controleerKaartenInContainer(wallVideosEl)
 }
 
 async function laadWalls() {
@@ -927,6 +929,8 @@ async function laadWalls() {
   } else {
     document.querySelectorAll('.wall, .card').forEach(el => { el.style.opacity = '1' })
   }
+
+  controleerKaartenInContainer(container)
 }
 
 laadWalls()

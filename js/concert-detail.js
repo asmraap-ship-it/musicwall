@@ -66,8 +66,10 @@ async function laadMediaGrid() {
           : '<div class="media-placeholder">&#9835;</div>')
         + playIcon
         + '<div class="media-bron youtube">' + t('video.bron.youtube') + '</div>'
+        + '<div class="media-warning verborgen" title="' + t('video.mogelijkNietBeschikbaar') + '">⚠</div>'
         + verwijderKnop
       tegel.dataset.mediaId = item.id
+      tegel.dataset.youtubeUrl = item.bestand_pad
       if (selectie.has(item.id)) tegel.classList.add('geselecteerd')
       tegel.onclick = (event) => {
         if (event.ctrlKey) {
@@ -110,6 +112,8 @@ async function laadMediaGrid() {
       { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out', stagger: 0.04 }
     )
   }
+
+  controleerKaartenInContainer(grid)
 }
 
 function kiesMedia() {
