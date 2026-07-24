@@ -679,6 +679,77 @@ ipcMain.handle('sla-api-sleutel-op', (event, sleutel) => {
   return { ok: true }
 })
 
+function tijdstempel() {
+  const nu = new Date()
+  const pad = n => String(n).padStart(2, '0')
+  return nu.getFullYear() + '-' + pad(nu.getMonth() + 1) + '-' + pad(nu.getDate())
+    + '_' + pad(nu.getHours()) + '-' + pad(nu.getMinutes()) + '-' + pad(nu.getSeconds())
+}
+
+ipcMain.handle('maak-backup', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+    title: t('backup.mapKiezenTitel')
+  })
+  if (result.canceled || result.filePaths.length === 0) return { ok: false, geannuleerd: true }
+
+  try {
+    const database = require('./database.js')
+    const backupMap = path.join(result.filePaths[0], 'musicwall-backup-' + tijdstempel())
+    fs.mkdirSync(backupMap, { recursive: true })
+
+    await database.backup(path.join(backupMap, 'musicwall.db'))
+
+    if (fs.existsSync(thumbnailsPath)) {
+      fs.cpSync(thumbnailsPath, path.join(backupMap, 'thumbnails'), { recursive: true })
+    }
+
+    return { ok: true, pad: backupMap }
+  } catch (e) {
+    return { ok: false, foutmelding: e.message }
+  }
+})
+
+ipcMain.handle('herstel-backup', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+    title: t('backup.herstelMapKiezenTitel')
+  })
+  if (result.canceled || result.filePaths.length === 0) return { ok: false, geannuleerd: true }
+
+  const backupMap = result.filePaths[0]
+  const backupDbPad = path.join(backupMap, 'musicwall.db')
+  if (!fs.existsSync(backupDbPad)) return { ok: false, foutSleutel: 'backup.geenGeldigeMap' }
+
+  const akkoord = await vraagBevestiging(
+    t('backup.herstelBevestigingTitel'),
+    t('backup.herstelBevestigingBericht')
+  )
+  if (!akkoord) return { ok: false, geannuleerd: true }
+
+  try {
+    const database = require('./database.js')
+    database.close()
+
+    fs.copyFileSync(backupDbPad, path.join(userDataPath, 'musicwall.db'))
+
+    const backupThumbsPad = path.join(backupMap, 'thumbnails')
+    if (fs.existsSync(backupThumbsPad)) {
+      fs.rmSync(thumbnailsPath, { recursive: true, force: true })
+      fs.cpSync(backupThumbsPad, thumbnailsPath, { recursive: true })
+    }
+
+    setTimeout(() => {
+      app.relaunch()
+      app.exit()
+    }, 1000)
+
+    return { ok: true }
+  } catch (e) {
+    return { ok: false, foutmelding: e.message }
+  }
+})
+
 function openApiSleutelWindow(modus) {
   const apiWin = new BrowserWindow({
     width: 480,

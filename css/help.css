@@ -139,3 +139,14 @@ strong {
 .wijzig-sleutel-btn:hover {
   background: rgba(var(--accent-rgb), 0.12);
 }
+
+.wijzig-sleutel-btn + .wijzig-sleutel-btn {
+  margin-left: 0.5rem;
+}
+
+#backup-melding {
+  margin-top: 0.5rem;
+  font-size: 12px;
+  color: var(--accent);
+  min-height: 1em;
+}
