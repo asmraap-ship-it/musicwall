@@ -396,17 +396,32 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   border: 1px solid var(--rand-2);
 }
 
+.meest-gespeeld-thumb {
+  width: 48px;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.meest-gespeeld-thumb-leeg {
+  background: #1a1a1a;
+}
+
 .opgeslagen-playlist-info {
   flex: 1;
   min-width: 0;
 }
 
+/* title-attribuut (native tooltip) toont de volledige naam bij hover - nodig zodra white-space:nowrap +
+   text-overflow:ellipsis 'm afkapt in deze smalle rij */
 .opgeslagen-playlist-naam {
   font-size: 12px;
   color: var(--tekst);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: default;
 }
 
 .opgeslagen-playlist-aantal {
@@ -507,6 +522,73 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   justify-content: center;
   font-size: 28px;
   color: var(--accent);
+}
+
+.spectrum-analyzer {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 56px;
+  padding: 0.5rem 1rem;
+  background: var(--achtergrond-2);
+  border-top: 1px solid var(--rand);
+}
+
+.spectrum-analyzer.verborgen {
+  display: none;
+}
+
+/* background-color geeft de "uit"-balk een eigen, zichtbare vorm (--achtergrond-3 contrasteert altijd tegen
+   de --achtergrond-2 van .spectrum-analyzer, in elk thema) - een eerdere versie had alleen de
+   segmentjes-textuur zonder eigen achtergrondkleur, waardoor er op het lichte thema helemaal geen balkvorm
+   zichtbaar was (enkel de rgba(255,255,255,..)-textuur, onzichtbaar tegen een lichte achtergrond) en je alleen
+   de opgelichte .spectrum-fill/.spectrum-peak-blokjes zag zonder duidelijke balk eromheen. color-mix() met
+   var(--tekst) i.p.v. een vast wit/zwart maakt de textuur zelf ook thema-onafhankelijk: licht bij donkere
+   thema's (waar --tekst wit is), donker bij het lichte thema (waar --tekst zwart is) */
+.spectrum-bar {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  border-radius: 1px;
+  overflow: hidden;
+  background-color: var(--achtergrond-3);
+  background-image: repeating-linear-gradient(to top, color-mix(in srgb, var(--tekst) 10%, transparent) 0px, color-mix(in srgb, var(--tekst) 10%, transparent) 4px, transparent 4px, transparent 6px);
+}
+
+/* clip-path i.p.v. height animeren: de kleurovergang (groen/geel/rood) blijft zo altijd op zijn absolute
+   positie in de balk staan (rood bovenaan, groen onderaan) terwijl alleen het zichtbare deel verandert -
+   met een geanimeerde height zou de kleur "meeschuiven" met het niveau i.p.v. een vaste toonhoogte-indicatie.
+   Bewust GEEN CSS transition op clip-path/bottom hier (en op .spectrum-peak): js/jukebox.js's spectrumTick()
+   schrijft deze waarden zelf al meerdere keren per seconde met zijn eigen smoothing/interpolatie, dus een
+   CSS-transition zou daar continu overheen concurreren - dat bleek bij lokale video's (die in hetzelfde
+   renderproces draaien als de analyzer, in tegenstelling tot een YouTube-nummer in zijn eigen iframe) de
+   videodecodering merkbaar te laten haperen door de extra, overbodige repaint/animatiedruk op de hoofdthread */
+.spectrum-fill {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(to top, rgba(0, 0, 0, 0.35) 0px, rgba(0, 0, 0, 0.35) 1px, transparent 1px, transparent 6px),
+    linear-gradient(to top, #34d058 0%, #34d058 55%, #e8d44a 55%, #e8d44a 80%, #ff4d4d 80%, #ff4d4d 100%);
+  clip-path: inset(100% 0 0 0);
+}
+
+/* Los "topje" boven op de vulling, springt meteen mee naar een nieuwe piek en zakt daarna in eigen tempo
+   terug (spectrumPiekWaarden in js/jukebox.js) - het "torentjes"-effect van een klassieke VU-meter. Kleinere
+   blur dan een eerdere versie (was 4px) - een box-shadow met blur is relatief kostbaar om steeds opnieuw te
+   tekenen op 28 elementen tegelijk */
+.spectrum-peak {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0%;
+  height: 3px;
+  background: #fff;
+  box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.6);
+}
+
+#spectrum-toggle-btn.actief {
+  color: #34d058;
+  border-color: #34d058;
 }
 
 .navigatie {

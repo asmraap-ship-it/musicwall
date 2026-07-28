@@ -207,6 +207,7 @@ const VERTALINGEN = {
     'jukebox.meestGespeeldTooltip': 'Meest gespeeld',
     'jukebox.geenMeestGespeeld': 'Nog niets afgespeeld.',
     'jukebox.keerAfgespeeld': '{n}× afgespeeld',
+    'jukebox.spectrumTooltip': 'Equalizer tonen/verbergen',
 
     // Kapotte links
     'kapotteLinks.titel': 'Kapotte YouTube-links',
@@ -295,6 +296,7 @@ const VERTALINGEN = {
     'help.jukebox.liOpslaan': 'Klik op <strong>💾</strong> boven de playlist om de huidige playlist onder een naam op te slaan, zodat je hem later kunt terugzetten',
     'help.jukebox.liOpgeslagen': 'Klik op <strong>📂</strong> om je opgeslagen playlists te bekijken; ▶ laadt een playlist (dit vervangt de huidige playlist, na bevestiging) en het prullenbak-icoon verwijdert een opgeslagen playlist. Is een video sindsdien verwijderd, dan wordt die stilzwijgend overgeslagen bij het laden en verschijnt er een melding met het aantal overgeslagen nummers',
     'help.jukebox.liMeestGespeeld': 'Klik op <strong>📊</strong> om je meest gespeelde nummers te bekijken — een nummer telt mee zodra het door de jukebox is uitgespeeld (handmatig afspelen buiten de jukebox telt niet mee); klik op <strong>+</strong> om een nummer aan de huidige playlist toe te voegen zonder hem te vervangen',
+    'help.jukebox.liSpectrum': 'Onder het videoscherm beweegt een retro LED-equalizer mee met de muziek — bij lokale video\'s echt op basis van het geluid, bij YouTube-nummers gesimuleerd (technisch niet uit te lezen uit de YouTube-speler)',
     'help.jukebox.liBeperking': 'Sommige officiële muziekvideo\'s (vaak van platenlabels) hebben insluiten uitgeschakeld — dit is een instelling van de rechthebbende zelf op YouTube en kan Musicwall niet omzeilen. Dit komt vaker voor bij lijsten met veel officiële videoclips, bijvoorbeeld een Top 2000-playlist; zulke nummers zijn dan alleen handmatig af te spelen, niet via de jukebox',
     'help.apikey.titel': 'YouTube zoeken instellen',
     'help.apikey.intro': 'Om YouTube te kunnen doorzoeken vanuit Musicwall heeft u een gratis YouTube API-key nodig. Bij de eerste opstart verschijnt hiervoor automatisch een wizard die u er stap voor stap doorheen leidt; onderstaande knop opent dezelfde wizard om dit later alsnog in te stellen of te wijzigen.',
@@ -549,6 +551,7 @@ const VERTALINGEN = {
     'jukebox.meestGespeeldTooltip': 'Most played',
     'jukebox.geenMeestGespeeld': 'Nothing played yet.',
     'jukebox.keerAfgespeeld': 'Played {n}×',
+    'jukebox.spectrumTooltip': 'Show/hide equalizer',
 
     // Broken links
     'kapotteLinks.titel': 'Broken YouTube links',
@@ -634,6 +637,7 @@ const VERTALINGEN = {
     'help.jukebox.liOpslaan': 'Click <strong>💾</strong> above the playlist to save the current playlist under a name, so you can restore it later',
     'help.jukebox.liOpgeslagen': 'Click <strong>📂</strong> to view your saved playlists; ▶ loads a playlist (this replaces the current playlist, after confirmation) and the trash icon deletes a saved playlist. If a video has been removed since saving, it is silently skipped when loading and a message shows how many tracks were skipped',
     'help.jukebox.liMeestGespeeld': 'Click <strong>📊</strong> to view your most played tracks — a track counts once the jukebox has played it all the way through (manual playback outside the jukebox does not count); click <strong>+</strong> to add a track to the current playlist without replacing it',
+    'help.jukebox.liSpectrum': 'A retro LED equalizer moves along with the music below the video screen — genuinely audio-driven for local videos, simulated for YouTube tracks (technically impossible to read out of the YouTube player)',
     'help.jukebox.liBeperking': 'Some official music videos (often from record labels) have embedding disabled — this is a setting made by the rights holder on YouTube itself and cannot be bypassed by Musicwall. This is more common in lists full of official music videos, such as a Top 2000 playlist; those tracks can then only be played manually, not through the jukebox',
     'help.apikey.titel': 'Setting up YouTube search',
     'help.apikey.intro': 'To search YouTube from within Musicwall you need a free YouTube API key. A wizard walks you through this step by step automatically on first launch; the button below opens the same wizard to set it up later or change it.',

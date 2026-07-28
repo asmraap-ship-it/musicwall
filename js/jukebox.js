@@ -27,6 +27,191 @@ function stuurNaarYtFrame(bericht) {
   if (frame && frame.contentWindow) frame.contentWindow.postMessage(bericht, '*')
 }
 
+// Spectrum-analyzer: retro LED-balkjes die meebewegen met de muziek, geïnspireerd op de equalizer-displays
+// van moderne jukeboxen. Voor lokale video's echt audio-reactief via de Web Audio API (AnalyserNode op de
+// <video>). Voor YouTube-nummers is dat NIET mogelijk: het YouTube IFrame-element draait in een cross-origin
+// iframe (yt-embed.html, geserveerd door de lokale jukebox-server) en de Web Audio API kan geen audiodata
+// uitlezen uit een cross-origin <video>/<iframe> - de browser blokkeert dat net als bij canvas-pixels van een
+// cross-origin afbeelding. Daarom krijgt YouTube-afspelen een gesimuleerde, vloeiend bewegende uitslag
+// (random-walk met demping) i.p.v. een dode balk - geen "echte" data, maar wel levendig, wat dichter bij het
+// oorspronkelijke jukebox-gevoel ligt dan een bevroren display.
+const SPECTRUM_BALKEN = 28
+const SPECTRUM_PIEK_VAL_PER_FRAME = 1.8
+// ~30fps i.p.v. de volle 60fps van requestAnimationFrame - ruim genoeg voor een vloeiend ogende equalizer,
+// maar halveert de hoeveelheid stijl-writes/repaints per seconde op de hoofdthread. Bleek nodig: bij lokale
+// video's deelt de spectrum-analyzer die hoofdthread met de eigenlijke videodecodering (in tegenstelling tot
+// een YouTube-nummer, dat in zijn eigen iframe/proces draait), dus onnodige renderdruk hier kan daar merkbaar
+// haperen veroorzaken.
+const SPECTRUM_INTERVAL_MS = 33
+let audioCtx = null
+let analyser = null
+let analyserData = null
+let spectrumActief = false
+let spectrumFrameId = null
+let spectrumLaatsteUpdate = 0
+let spectrumVullingen = []
+let spectrumPieken = []
+let ytSimWaarden = new Array(SPECTRUM_BALKEN).fill(0)
+let spectrumPiekWaarden = new Array(SPECTRUM_BALKEN).fill(0)
+let spectrumZichtbaar = localStorage.getItem('musicwall-spectrum-zichtbaar') !== 'nee'
+
+// Versterkt het contrast tussen stil en luid (exponent > 1 duwt lage waarden verder omlaag terwijl hoge
+// waarden relatief hoog blijven) - zonder deze curve oogde de analyzer vlak/gedempt, met een grillige
+// live-uitslag waarbij stille stukken merkbaar sneller wegzakken en pieken duidelijker uitschieten
+function versterk(pct) {
+  const genormaliseerd = Math.min(100, Math.max(0, pct)) / 100
+  return Math.pow(genormaliseerd, 1.5) * 100
+}
+
+// Elementreferenties worden hier eenmalig bewaard (spectrumVullingen/spectrumPieken) i.p.v. elke tick
+// opnieuw document.querySelectorAll() aan te roepen - die set verandert toch nooit na het opbouwen
+function bouwSpectrumAnalyzer() {
+  const container = document.getElementById('spectrum-analyzer')
+  for (let i = 0; i < SPECTRUM_BALKEN; i++) {
+    const balk = document.createElement('div')
+    balk.className = 'spectrum-bar'
+    const vulling = document.createElement('div')
+    vulling.className = 'spectrum-fill'
+    const piek = document.createElement('div')
+    piek.className = 'spectrum-peak'
+    balk.appendChild(vulling)
+    balk.appendChild(piek)
+    container.appendChild(balk)
+    spectrumVullingen.push(vulling)
+    spectrumPieken.push(piek)
+  }
+  if (!spectrumZichtbaar) container.classList.add('verborgen')
+}
+
+// Lazy + eenmalig: createMediaElementSource() gooit een InvalidStateError als je 'm twee keer op hetzelfde
+// <video>-element aanroept, dus dit mag nooit opnieuw draaien voor eenzelfde pagina-sessie. AudioContext
+// vereist bovendien een user-gesture om niet in 'suspended' te blijven hangen - deze functie wordt daarom pas
+// aangeroepen vanuit de eerste echte 'play' op #speler, nooit al bij het laden van de pagina.
+function initLokaleAnalyser() {
+  if (audioCtx) return
+  try {
+    const speler = document.getElementById('speler')
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+    const bron = audioCtx.createMediaElementSource(speler)
+    analyser = audioCtx.createAnalyser()
+    analyser.fftSize = 128
+    analyser.smoothingTimeConstant = 0.6
+    bron.connect(analyser)
+    analyser.connect(audioCtx.destination)
+    analyserData = new Uint8Array(analyser.frequencyBinCount)
+  } catch (e) {
+    // Web Audio API-opzet mag nooit het afspelen zelf breken - spectrumTick() valt terug op een lege
+    // (platte) balk zolang analyser null blijft
+    console.warn('Spectrum-analyzer kon niet starten:', e.message)
+  }
+}
+
+function spectrumTick(tijdstip) {
+  if (!spectrumActief) return
+  // Eerst de volgende frame al inplannen, ongeacht of dit tick'je zelf werk doet - anders stopt de hele
+  // lus zodra er één keer geskipt wordt door de throttle hieronder
+  spectrumFrameId = requestAnimationFrame(spectrumTick)
+
+  if (tijdstip - spectrumLaatsteUpdate < SPECTRUM_INTERVAL_MS) return
+  spectrumLaatsteUpdate = tijdstip
+
+  const item = playlist[huidigeIndex]
+  let waarden
+
+  if (item && item.type === 'youtube') {
+    // Asymmetrische attack/release (snel omhoog, trager omlaag) i.p.v. een symmetrische interpolatie -
+    // een echte VU-meter springt snel naar een piek en zakt daarna langzamer terug, dat "punchy" gevoel
+    // ontbrak met een vaste factor in beide richtingen
+    waarden = ytSimWaarden.map(v => {
+      const doel = Math.random() * 100
+      const factor = doel > v ? 0.5 : 0.15
+      return v + (doel - v) * factor
+    })
+    ytSimWaarden = waarden
+  } else if (analyser) {
+    analyser.getByteFrequencyData(analyserData)
+    const perBalk = Math.max(1, Math.floor(analyserData.length / SPECTRUM_BALKEN))
+    waarden = []
+    for (let i = 0; i < SPECTRUM_BALKEN; i++) {
+      let som = 0
+      for (let j = 0; j < perBalk; j++) som += analyserData[i * perBalk + j] || 0
+      waarden.push((som / perBalk / 255) * 100)
+    }
+  } else {
+    waarden = new Array(SPECTRUM_BALKEN).fill(0)
+  }
+
+  waarden.forEach((ruw, i) => {
+    const pct = versterk(ruw)
+    if (spectrumVullingen[i]) spectrumVullingen[i].style.clipPath = 'inset(' + (100 - pct) + '% 0 0 0)'
+
+    // Peak-hold: springt meteen mee omhoog met een nieuwe piek, zakt daarna in vaste kleine stapjes per
+    // update terug omlaag (losstaand van de vulling zelf, die door versterk()/smoothing al sneller daalt)
+    if (pct >= spectrumPiekWaarden[i]) {
+      spectrumPiekWaarden[i] = pct
+    } else {
+      spectrumPiekWaarden[i] = Math.max(0, spectrumPiekWaarden[i] - SPECTRUM_PIEK_VAL_PER_FRAME)
+    }
+    if (spectrumPieken[i]) spectrumPieken[i].style.bottom = spectrumPiekWaarden[i] + '%'
+  })
+}
+
+function startSpectrum() {
+  if (spectrumActief || !spectrumZichtbaar) return
+  spectrumActief = true
+  // spectrumLaatsteUpdate op 0 -> het verschil met de eerste (hoge) rAF-tijdstip is sowieso groter dan
+  // SPECTRUM_INTERVAL_MS, dus de allereerste tick rendert altijd meteen i.p.v. eerst 33ms te wachten.
+  // Bewust via requestAnimationFrame(spectrumTick) i.p.v. spectrumTick() direct aanroepen, zodat 'tijdstip'
+  // altijd een echt getal is - een handmatige aanroep zonder argument zou 'tijdstip' op undefined zetten,
+  // wat de throttle-vergelijking hierboven (NaN < ...) altijd false maakt en zo de throttle omzeilt
+  spectrumLaatsteUpdate = 0
+  spectrumFrameId = requestAnimationFrame(spectrumTick)
+}
+
+function stopSpectrum() {
+  spectrumActief = false
+  if (spectrumFrameId) cancelAnimationFrame(spectrumFrameId)
+  ytSimWaarden = new Array(SPECTRUM_BALKEN).fill(0)
+  spectrumPiekWaarden = new Array(SPECTRUM_BALKEN).fill(0)
+  spectrumVullingen.forEach(vulling => {
+    vulling.style.clipPath = 'inset(100% 0 0 0)'
+  })
+  spectrumPieken.forEach(piek => {
+    piek.style.bottom = '0%'
+  })
+}
+
+function toggleSpectrumZichtbaar() {
+  spectrumZichtbaar = !spectrumZichtbaar
+  localStorage.setItem('musicwall-spectrum-zichtbaar', spectrumZichtbaar ? 'ja' : 'nee')
+
+  const container = document.getElementById('spectrum-analyzer')
+  container.classList.toggle('verborgen', !spectrumZichtbaar)
+  document.getElementById('spectrum-toggle-btn').classList.toggle('actief', spectrumZichtbaar)
+
+  if (spectrumZichtbaar) {
+    // Alleen herstarten als er op dit moment ook echt iets speelt - anders zou de analyzer een lege,
+    // stilstaande balk tonen totdat de volgende 'play'/'playing' toch al opnieuw startSpectrum() aanroept
+    const item = playlist[huidigeIndex]
+    const speler = document.getElementById('speler')
+    if ((item && item.type === 'youtube' && ytIsPlaying) || (item && item.type !== 'youtube' && !speler.paused)) {
+      startSpectrum()
+    }
+  } else {
+    stopSpectrum()
+  }
+}
+
+bouwSpectrumAnalyzer()
+document.getElementById('spectrum-toggle-btn').classList.toggle('actief', spectrumZichtbaar)
+
+document.getElementById('speler').addEventListener('play', () => {
+  initLokaleAnalyser()
+  if (audioCtx.state === 'suspended') audioCtx.resume()
+  startSpectrum()
+})
+document.getElementById('speler').addEventListener('pause', stopSpectrum)
+
 ipcRenderer.invoke('get-jukebox-server-poort').then(poort => {
   document.getElementById('youtube-speler-frame').src = 'http://127.0.0.1:' + poort + '/yt-embed.html'
 })
@@ -55,14 +240,18 @@ window.addEventListener('message', (event) => {
   } else if (type === 'playing') {
     ytIsPlaying = true
     document.getElementById('play-btn').textContent = '⏸'
+    startSpectrum()
   } else if (type === 'paused') {
     ytIsPlaying = false
     document.getElementById('play-btn').textContent = '▶'
+    stopSpectrum()
   } else if (type === 'ended') {
+    stopSpectrum()
     registreerHuidigeAfspeling()
     afgespeeldGaVerder()
   } else if (type === 'error') {
     console.warn('YouTube speler kon nummer niet afspelen:', code)
+    stopSpectrum()
     foutGaVerder()
   }
 })
@@ -444,6 +633,11 @@ function stop() {
   if (ytFrameReady) {
     stuurNaarYtFrame({ actie: 'stoppen' })
   }
+  // player.stopVideo() in yt-embed.html levert geen 'paused'-postMessage op (YouTube's state gaat naar
+  // UNSTARTED, niet afgehandeld in de message-listener hierboven) - zonder deze losse aanroep zou de
+  // spectrum-analyzer na het stoppen van een YouTube-nummer stiekem door blijven simuleren
+  ytIsPlaying = false
+  stopSpectrum()
 
   document.getElementById('speel-placeholder').style.display = 'block'
   document.getElementById('fullscreen-btn').classList.remove('zichtbaar')
@@ -555,7 +749,7 @@ function sluitMeestGespeeld() {
   document.getElementById('playlist-lijst').style.display = ''
 }
 
-function renderMeestGespeeld() {
+async function renderMeestGespeeld() {
   const lijst = document.getElementById('meest-gespeeld-lijst')
   const items = getMeestGespeeld(50)
 
@@ -565,11 +759,28 @@ function renderMeestGespeeld() {
   }
 
   lijst.innerHTML = ''
-  items.forEach(item => {
+
+  // async/for i.p.v. forEach: lokale thumbnails gaan via de maak-thumbnail-IPC (await nodig), zelfde patroon
+  // als laadPlaylist() hierboven
+  for (const item of items) {
+    let thumb = ''
+    if (item.type === 'youtube') {
+      const id = getYoutubeId(item.youtube_url)
+      if (id) thumb = 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg'
+    } else if (item.lokaal_pad) {
+      const pad = await ipcRenderer.invoke('maak-thumbnail', item.lokaal_pad)
+      if (pad) thumb = 'file:///' + pad.replace(/\\/g, '/')
+    }
+
+    const naam = (item.artiest ? item.artiest + ' - ' : '') + (item.titel || '')
+
     const el = document.createElement('div')
     el.className = 'opgeslagen-playlist-item'
-    el.innerHTML = '<div class="opgeslagen-playlist-info">'
-      + '<div class="opgeslagen-playlist-naam">' + (item.artiest ? item.artiest + ' - ' : '') + (item.titel || '') + '</div>'
+    el.innerHTML = (thumb
+      ? '<img class="meest-gespeeld-thumb" src="' + thumb + '">'
+      : '<div class="meest-gespeeld-thumb meest-gespeeld-thumb-leeg"></div>')
+      + '<div class="opgeslagen-playlist-info">'
+      + '<div class="opgeslagen-playlist-naam" title="' + naam + '">' + naam + '</div>'
       + '<div class="opgeslagen-playlist-aantal">' + t('jukebox.keerAfgespeeld', { n: item.aantal }) + '</div>'
       + '</div>'
       + '<button class="opgeslagen-playlist-laden" title="' + t('selectie.voegToeAanPlaylist') + '">+</button>'
@@ -578,7 +789,7 @@ function renderMeestGespeeld() {
       laadPlaylist()
     }
     lijst.appendChild(el)
-  })
+  }
 }
 
 window.leegMaken = leegMaken
@@ -599,6 +810,7 @@ window.toonMeestGespeeld = toonMeestGespeeld
 window.sluitMeestGespeeld = sluitMeestGespeeld
 window.toonOpgeslagenPlaylists = toonOpgeslagenPlaylists
 window.sluitOpgeslagenPlaylists = sluitOpgeslagenPlaylists
+window.toggleSpectrumZichtbaar = toggleSpectrumZichtbaar
 
 
 laadPlaylist()
