@@ -203,6 +203,28 @@ select {
   color: var(--tekst-dim);
 }
 
+.resultaat-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.resultaat-stats .weergaven {
+  font-size: 11px;
+  color: var(--tekst-dim);
+}
+
+.resultaat-stats .hd-badge {
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  color: var(--accent);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 0.05rem 0.3rem;
+}
+
 .resultaat.geselecteerd {
   border-color: var(--accent);
   background: rgba(var(--accent-rgb), 0.12);
@@ -287,10 +309,21 @@ select {
 }
 
 .resultaten-acties {
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 
-.terug-btn, .selecteer-alles-btn {
+.navigatie-rechts {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sorteer-toggle {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.terug-btn, .selecteer-alles-btn, .sorteer-btn {
   background: transparent;
   border: 1px solid var(--rand-2);
   border-radius: 3px;
@@ -302,7 +335,12 @@ select {
   transition: border-color 0.15s, color 0.15s;
 }
 
-.terug-btn:hover, .selecteer-alles-btn:hover {
+.terug-btn:hover, .selecteer-alles-btn:hover, .sorteer-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.sorteer-btn.actief {
   border-color: var(--accent);
   color: var(--accent);
 }

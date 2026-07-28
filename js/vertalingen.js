@@ -170,6 +170,8 @@ const VERTALINGEN = {
     'zoeken.geenPlaylists': 'Geen playlists gevonden.',
     'zoeken.terugNaarPlaylists': '← Terug naar playlists',
     'zoeken.selecteerAlles': 'Selecteer alles',
+    'zoeken.sorteerRelevantie': 'Relevantie',
+    'zoeken.sorteerWeergaven': 'Meest bekeken',
 
     // Jukebox
     'jukebox.playlist': 'Playlist',
@@ -497,6 +499,8 @@ const VERTALINGEN = {
     'zoeken.geenPlaylists': 'No playlists found.',
     'zoeken.terugNaarPlaylists': '← Back to playlists',
     'zoeken.selecteerAlles': 'Select all',
+    'zoeken.sorteerRelevantie': 'Relevance',
+    'zoeken.sorteerWeergaven': 'Most viewed',
 
     'jukebox.playlist': 'Playlist',
     'jukebox.leegmaken': 'Clear',

@@ -10,6 +10,9 @@ let selectie = new Set()
 let zoekModus = 'videos'
 let huidigePlaylistId = null
 let playlistResultatenCache = []
+let statsData = {}
+let volgordeRelevantie = []
+let sortModus = 'relevantie'
 
 async function laadApiSleutel() {
   try {
@@ -95,6 +98,94 @@ function zoek() {
   }
 }
 
+function formatteerWeergaven(n) {
+  const locale = huidigeTaalCode() === 'nl' ? 'nl-NL' : 'en-US'
+  return new Intl.NumberFormat(locale, { notation: 'compact', maximumFractionDigits: 1 }).format(n)
+}
+
+// Verrijkt zoekresultaten met view-aantal + HD/SD-resolutie via videos.list (1 quotumeenheid per aanroep,
+// ongeacht het aantal ids) - los van de relevantie-sortering van search.list, zodat de gebruiker zelf
+// populariteit en kwaliteit kan afwegen i.p.v. blind op een sorteervolgorde te vertrouwen.
+async function haalStatistieken(videoIds) {
+  const stats = {}
+  for (let i = 0; i < videoIds.length; i += 50) {
+    const chunk = videoIds.slice(i, i + 50)
+    try {
+      const url = 'https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails&id='
+        + chunk.join(',') + '&key=' + apiKey
+
+      const response = await fetch(url)
+      const data = await response.json()
+      const items = data.items || []
+
+      items.forEach(item => {
+        stats[item.id] = {
+          weergaven: parseInt((item.statistics || {}).viewCount, 10) || 0,
+          hd: (item.contentDetails || {}).definition === 'hd'
+        }
+      })
+    } catch (e) {
+      // statistieken zijn een verrijking, geen kernfunctie - stilzwijgend overslaan bij een netwerkfout
+    }
+  }
+  return stats
+}
+
+function toonStatistieken(stats) {
+  Object.keys(stats).forEach(videoId => {
+    const el = document.getElementById('res-' + videoId)
+    const info = el && el.querySelector('.resultaat-info')
+    if (!info) return
+
+    const { weergaven, hd } = stats[videoId]
+    const statsEl = document.createElement('div')
+    statsEl.className = 'resultaat-stats'
+    statsEl.innerHTML = '<span class="weergaven">👁 ' + formatteerWeergaven(weergaven) + '</span>'
+      + (hd ? '<span class="hd-badge">HD</span>' : '')
+    info.appendChild(statsEl)
+  })
+}
+
+// Sorteertoggle-HTML, gedeeld tussen de normale videozoek-actiebalk en de playlist-navigatiebalk
+function bouwSorteerToggleHtml() {
+  return '<div class="sorteer-toggle">'
+    + '<button class="sorteer-btn' + (sortModus === 'relevantie' ? ' actief' : '') + '" data-modus="relevantie" onclick="stelSorteringIn(\'relevantie\')">' + t('zoeken.sorteerRelevantie') + '</button>'
+    + '<button class="sorteer-btn' + (sortModus === 'weergaven' ? ' actief' : '') + '" data-modus="weergaven" onclick="stelSorteringIn(\'weergaven\')">' + t('zoeken.sorteerWeergaven') + '</button>'
+    + '</div>'
+}
+
+// Sorteert puur client-side op de al opgehaalde statistieken - geen extra API-aanroep. 'weergaven' sorteert
+// aflopend op view-aantal (ontbrekende statistieken tellen als 0, dus die zakken naar onder); 'relevantie'
+// herstelt de oorspronkelijke search.list-volgorde via de bij het ophalen vastgelegde id-volgorde.
+function sorteerResultaten() {
+  const container = document.getElementById('resultaten')
+  const kaarten = Array.from(container.querySelectorAll('.resultaat'))
+  if (kaarten.length === 0) return
+
+  kaarten.sort((a, b) => {
+    const idA = a.id.replace('res-', '')
+    const idB = b.id.replace('res-', '')
+
+    if (sortModus === 'weergaven') {
+      const wA = (statsData[idA] && statsData[idA].weergaven) || 0
+      const wB = (statsData[idB] && statsData[idB].weergaven) || 0
+      return wB - wA
+    }
+
+    return volgordeRelevantie.indexOf(idA) - volgordeRelevantie.indexOf(idB)
+  })
+
+  kaarten.forEach(el => container.appendChild(el))
+}
+
+function stelSorteringIn(modus) {
+  sortModus = modus
+  document.querySelectorAll('.sorteer-btn').forEach(btn => {
+    btn.classList.toggle('actief', btn.dataset.modus === modus)
+  })
+  sorteerResultaten()
+}
+
 async function zoekVideos() {
   const term = document.getElementById('zoekterm').value.trim()
   if (!term) return
@@ -102,6 +193,8 @@ async function zoekVideos() {
   const resultaten = document.getElementById('resultaten')
   resultaten.innerHTML = '<div class="laden">' + t('zoeken.zoeken') + '</div>'
   resultatenData = {}
+  statsData = {}
+  volgordeRelevantie = []
   deselecteerAlles()
 
   try {
@@ -124,8 +217,11 @@ async function zoekVideos() {
     resultaten.innerHTML = ''
     const acties = document.createElement('div')
     acties.className = 'resultaten-acties'
-    acties.innerHTML = '<button class="selecteer-alles-btn" onclick="selecteerAlleZoekresultaten()">' + t('zoeken.selecteerAlles') + '</button>'
+    acties.innerHTML = bouwSorteerToggleHtml()
+      + '<button class="selecteer-alles-btn" onclick="selecteerAlleZoekresultaten()">' + t('zoeken.selecteerAlles') + '</button>'
     resultaten.appendChild(acties)
+
+    volgordeRelevantie = data.items.map(item => item.id.videoId)
 
     data.items.forEach(item => {
       const videoId = item.id.videoId
@@ -146,6 +242,12 @@ async function zoekVideos() {
 
       el.onclick = () => toggleSelectie(videoId, el)
       resultaten.appendChild(el)
+    })
+
+    haalStatistieken(Object.keys(resultatenData)).then(stats => {
+      Object.assign(statsData, stats)
+      toonStatistieken(stats)
+      sorteerResultaten()
     })
   } catch (err) {
     resultaten.innerHTML = '<div class="fout">' + t('zoeken.misgegaan', { bericht: err.message }) + '</div>'
@@ -215,6 +317,8 @@ function renderPlaylistLijst() {
 async function toonPlaylistVideos(playlistId) {
   huidigePlaylistId = playlistId
   resultatenData = {}
+  statsData = {}
+  volgordeRelevantie = []
   deselecteerAlles()
 
   const resultaten = document.getElementById('resultaten')
@@ -247,7 +351,9 @@ async function toonPlaylistVideos(playlistId) {
     const navigatie = document.createElement('div')
     navigatie.className = 'playlist-navigatie'
     navigatie.innerHTML = '<button class="terug-btn" onclick="terugNaarPlaylists()">' + t('zoeken.terugNaarPlaylists') + '</button>'
+      + '<div class="navigatie-rechts">' + bouwSorteerToggleHtml()
       + '<button class="selecteer-alles-btn" onclick="selecteerAlleZoekresultaten()">' + t('zoeken.selecteerAlles') + '</button>'
+      + '</div>'
     resultaten.appendChild(navigatie)
 
     const onbeschikbareTitels = ['private video', 'deleted video']
@@ -261,6 +367,8 @@ async function toonPlaylistVideos(playlistId) {
       resultaten.innerHTML += '<div class="geen-resultaten">' + t('zoeken.geenResultaten') + '</div>'
       return
     }
+
+    volgordeRelevantie = geldigeItems.map(item => item.snippet.resourceId.videoId)
 
     geldigeItems.forEach(item => {
       const videoId = item.snippet.resourceId.videoId
@@ -283,6 +391,12 @@ async function toonPlaylistVideos(playlistId) {
       el.onclick = () => toggleSelectie(videoId, el)
       resultaten.appendChild(el)
     })
+
+    haalStatistieken(Object.keys(resultatenData)).then(stats => {
+      Object.assign(statsData, stats)
+      toonStatistieken(stats)
+      sorteerResultaten()
+    })
   } catch (err) {
     resultaten.innerHTML = '<div class="fout">' + t('zoeken.misgegaan', { bericht: err.message }) + '</div>'
   }
@@ -291,6 +405,8 @@ async function toonPlaylistVideos(playlistId) {
 function terugNaarPlaylists() {
   huidigePlaylistId = null
   resultatenData = {}
+  statsData = {}
+  volgordeRelevantie = []
   deselecteerAlles()
   renderPlaylistLijst()
 }
@@ -388,5 +504,6 @@ window.voegGeselecteerdeToe = voegGeselecteerdeToe
 window.stelModusIn = stelModusIn
 window.terugNaarPlaylists = terugNaarPlaylists
 window.selecteerAlleZoekresultaten = selecteerAlleZoekresultaten
+window.stelSorteringIn = stelSorteringIn
 
 laadGroepen()
