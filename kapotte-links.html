@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Kapotte YouTube-links</title>
+  <link rel="stylesheet" href="css/kapotte-links.css">
+  <script>
+    const thema = localStorage.getItem('musicwall-thema')
+    if (thema) document.documentElement.setAttribute('data-thema', thema)
+    require('electron').ipcRenderer.on('thema-toegepast', (event, t) => {
+      if (t) document.documentElement.setAttribute('data-thema', t)
+      else document.documentElement.removeAttribute('data-thema')
+    })
+  </script>
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+  <link rel="stylesheet" href="css/themas/natuur.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+</head>
+<body>
+
+<div class="titelbalk-drag"></div>
+
+<div class="selectie-info" id="selectie-info">
+  <span id="selectie-tekst"></span>
+  <button class="verwijder-geselecteerde-btn" onclick="verwijderGeselecteerde()" data-i18n="bevestigen.verwijderen">Verwijderen</button>
+</div>
+
+<h2 data-i18n="kapotteLinks.titel">Kapotte YouTube-links</h2>
+<p id="status" class="status"></p>
+<div id="acties" class="acties"></div>
+
+<div id="lijst" class="lijst"></div>
+
+<script src="js/vertalingen.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/link-controle.js"></script>
+<script src="js/kapotte-links.js"></script>
+</body>
+</html>

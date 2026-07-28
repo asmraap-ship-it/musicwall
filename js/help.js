@@ -4,6 +4,10 @@ function wijzigApiSleutel() {
   ipcRenderer.send('open-api-sleutel-instellen')
 }
 
+function controleerKapotteLinks() {
+  ipcRenderer.send('open-kapotte-links')
+}
+
 async function maakBackup() {
   const meldingEl = document.getElementById('backup-melding')
   meldingEl.textContent = t('backup.bezigMetBackup')
@@ -38,3 +42,4 @@ document.getElementById('help-versie').textContent = t('help.versieLabel', { ver
 window.wijzigApiSleutel = wijzigApiSleutel
 window.maakBackup = maakBackup
 window.herstelBackup = herstelBackup
+window.controleerKapotteLinks = controleerKapotteLinks

@@ -494,6 +494,25 @@ ipcMain.on('open-zoeken', () => {
   })
 })
 
+ipcMain.on('open-kapotte-links', () => {
+  const kapotteLinksWin = new BrowserWindow({
+    width: 550,
+    height: 700,
+    title: t('kapotteLinks.titel'),
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  kapotteLinksWin.loadFile('kapotte-links.html')
+  kapotteLinksWin.setMenuBarVisibility(false)
+
+  kapotteLinksWin.on('closed', () => {
+    if (mainWindow) mainWindow.webContents.send('herlaad')
+  })
+})
+
 ipcMain.handle('get-jukebox-server-poort', () => jukeboxServerPort)
 
 ipcMain.on('open-jukebox', () => {

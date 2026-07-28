@@ -1,0 +1,200 @@
+:root {
+  --achtergrond: #17150f;
+  --achtergrond-3: #221e15;
+  --accent: #c8a87a;
+  --accent-rgb: 200, 168, 122;
+  --tekst: #f0ede8;
+  --tekst-dim: #888888;
+  --tekst-donker: #555555;
+  --rand: #1a1a1a;
+  --rand-2: #222222;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--achtergrond);
+  background-image:
+    repeating-linear-gradient(125deg, rgba(var(--accent-rgb), 0.05) 0px, rgba(var(--accent-rgb), 0.05) 1px, transparent 1px, transparent 6px),
+    radial-gradient(ellipse at 50% -10%, rgba(var(--accent-rgb), 0.14), transparent 60%);
+  color: var(--tekst);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 1.5rem;
+}
+
+html::before,
+html::after {
+  content: '';
+  position: fixed;
+  bottom: 10px;
+  width: 22px;
+  height: 22px;
+  border-color: rgba(var(--accent-rgb), 0.45);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+html::before { left: 10px; border-bottom-width: 2px; border-left-width: 2px; }
+html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
+
+.titelbalk-drag {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 32px;
+  -webkit-app-region: drag;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.status {
+  font-size: 12px;
+  color: var(--tekst-dim);
+  margin-bottom: 0.75rem;
+}
+
+.acties {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.selecteer-alles-btn {
+  background: transparent;
+  border: 1px solid var(--rand-2);
+  border-radius: 3px;
+  color: var(--tekst-dim);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.selecteer-alles-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.lijst {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 560px;
+  overflow-y: auto;
+}
+
+.lijst::-webkit-scrollbar { width: 4px; }
+.lijst::-webkit-scrollbar-track { background: var(--achtergrond); }
+.lijst::-webkit-scrollbar-thumb { background: var(--rand-2); border-radius: 2px; }
+.lijst::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+.kapot-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--achtergrond-3);
+  border: 1px solid var(--rand);
+  border-radius: 3px;
+  padding: 0.65rem 0.85rem;
+}
+
+.kapot-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.kapot-titel {
+  font-size: 13px;
+  color: var(--tekst);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kapot-herkomst {
+  font-size: 11px;
+  color: var(--tekst-dim);
+  margin-top: 0.2rem;
+}
+
+.kapot-verwijder {
+  background: transparent;
+  border: none;
+  color: var(--tekst-donker);
+  cursor: pointer;
+  padding: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.kapot-verwijder:hover {
+  background: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
+}
+
+.kapot-item.geselecteerd {
+  border-color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.12);
+}
+
+.kapot-item.geselecteerd::after {
+  content: '✓';
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--achtergrond);
+  font-size: 11px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.selectie-info {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(13, 13, 13, 0.9);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 0.6rem 1.25rem;
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  z-index: 20;
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  gap: 1rem;
+}
+
+.selectie-info.zichtbaar { display: flex; }
+
+.verwijder-geselecteerde-btn {
+  background: #e74c3c;
+  border: none;
+  border-radius: 3px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+}

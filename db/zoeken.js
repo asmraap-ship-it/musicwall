@@ -41,4 +41,42 @@ function zoekBibliotheek(term) {
   return [...videoResultaten, ...mediaResultaten]
 }
 
-module.exports = { zoekBibliotheek }
+// Alle YouTube-video's uit zowel walls als concertervaringen, met id + herkomst - gebruikt door het
+// kapotte-links-overzichtsscherm (help.html) om proactief te kunnen controleren en losse items te
+// kunnen verwijderen. Losse functie i.p.v. zoekBibliotheek('') hergebruiken: die geeft geen id's terug
+// (nodig voor de verwijderknop) en '%%' als LIKE-patroon zou een verwarrende impliciete aanname zijn.
+function alleYoutubeItems() {
+  const videoResultaten = db.prepare(`
+    SELECT videos.id, videos.artiest, videos.titel, videos.youtube_url, walls.naam as herkomst
+    FROM videos
+    JOIN walls ON walls.id = videos.wall_id
+    WHERE videos.type = 'youtube'
+    ORDER BY videos.titel
+  `).all().map(v => ({
+    bron: 'wall',
+    id: v.id,
+    artiest: v.artiest,
+    titel: v.titel,
+    herkomst: v.herkomst,
+    youtubeUrl: v.youtube_url
+  }))
+
+  const mediaResultaten = db.prepare(`
+    SELECT concert_media.id, concerten.artiest as artiest, concerten.naam as titel, concert_media.bestand_pad
+    FROM concert_media
+    JOIN concerten ON concerten.id = concert_media.concert_id
+    WHERE concert_media.type = 'youtube'
+    ORDER BY concerten.naam
+  `).all().map(m => ({
+    bron: 'concert',
+    id: m.id,
+    artiest: m.artiest,
+    titel: m.titel,
+    herkomst: m.titel,
+    youtubeUrl: m.bestand_pad
+  }))
+
+  return [...videoResultaten, ...mediaResultaten]
+}
+
+module.exports = { zoekBibliotheek, alleYoutubeItems }
