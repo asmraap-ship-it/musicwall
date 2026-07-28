@@ -28,6 +28,7 @@
       <div class="playlist-header-acties">
         <button class="playlist-header-icoon-btn" onclick="openOpslaanPlaylist()" data-i18n-title="jukebox.playlistOpslaanTooltip" title="Playlist opslaan">💾</button>
         <button class="playlist-header-icoon-btn" onclick="toonOpgeslagenPlaylists()" data-i18n-title="jukebox.opgeslagenPlaylistsTooltip" title="Opgeslagen playlists">📂</button>
+        <button class="playlist-header-icoon-btn" onclick="toonMeestGespeeld()" data-i18n-title="jukebox.meestGespeeldTooltip" title="Meest gespeeld">📊</button>
         <button class="leeg-btn" onclick="leegMaken()" data-i18n="jukebox.leegmaken">Leegmaken</button>
       </div>
     </div>
@@ -39,6 +40,10 @@
     <div class="opgeslagen-playlists" id="opgeslagen-playlists" style="display:none">
       <button class="terug-btn" onclick="sluitOpgeslagenPlaylists()">&#8592; <span data-i18n="jukebox.terugNaarPlaylist">Terug naar playlist</span></button>
       <div class="opgeslagen-playlists-lijst" id="opgeslagen-playlists-lijst"></div>
+    </div>
+    <div class="opgeslagen-playlists" id="meest-gespeeld" style="display:none">
+      <button class="terug-btn" onclick="sluitMeestGespeeld()">&#8592; <span data-i18n="jukebox.terugNaarPlaylist">Terug naar playlist</span></button>
+      <div class="opgeslagen-playlists-lijst" id="meest-gespeeld-lijst"></div>
     </div>
   </div>
   <div class="selectie-info" id="bibliotheek-selectie-info">

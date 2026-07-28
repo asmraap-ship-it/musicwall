@@ -3,6 +3,7 @@ const ipcRenderer = electron.ipcRenderer
 const { getPlaylist, voegToeAanPlaylist, verwijderUitPlaylist, leegPlaylist, herschikPlaylist } = require('./db/playlist.js')
 const { zoekBibliotheek } = require('./db/zoeken.js')
 const { getOpgeslagenPlaylists, laadOpgeslagenPlaylist, verwijderOpgeslagenPlaylist } = require('./db/opgeslagenPlaylists.js')
+const { registreerAfspeling, getMeestGespeeld } = require('./db/afspeelstatistieken.js')
 
 let playlist = []
 let huidigeIndex = -1
@@ -58,6 +59,7 @@ window.addEventListener('message', (event) => {
     ytIsPlaying = false
     document.getElementById('play-btn').textContent = '▶'
   } else if (type === 'ended') {
+    registreerHuidigeAfspeling()
     afgespeeldGaVerder()
   } else if (type === 'error') {
     console.warn('YouTube speler kon nummer niet afspelen:', code)
@@ -260,6 +262,7 @@ function openOpslaanPlaylist() {
 function toonOpgeslagenPlaylists() {
   document.getElementById('playlist-lijst').style.display = 'none'
   document.getElementById('bibliotheek-resultaten').style.display = 'none'
+  document.getElementById('meest-gespeeld').style.display = 'none'
   document.getElementById('opgeslagen-playlists').style.display = ''
   renderOpgeslagenPlaylists()
 }
@@ -486,6 +489,14 @@ function naarLaatste() {
   if (playlist.length > 0) speelIndex(playlist.length - 1)
 }
 
+// Alleen aangeroepen bij een echt 'ended' (lokaal of YouTube), niet vanuit foutGaVerder() - een nummer dat
+// niet kon afspelen telt niet mee als "afgespeeld" voor de eigen luisterstatistieken.
+function registreerHuidigeAfspeling() {
+  const item = playlist[huidigeIndex]
+  if (!item) return
+  registreerAfspeling({ type: item.type, lokaalPad: item.lokaal_pad, youtubeUrl: item.youtube_url, artiest: item.artiest, titel: item.titel })
+}
+
 function afgespeeldGaVerder() {
   const afgespeeld = playlist[huidigeIndex]
   if (afgespeeld) {
@@ -526,7 +537,49 @@ function foutGaVerder() {
   afgespeeldGaVerder()
 }
 
-document.getElementById('speler').addEventListener('ended', afgespeeldGaVerder)
+document.getElementById('speler').addEventListener('ended', () => {
+  registreerHuidigeAfspeling()
+  afgespeeldGaVerder()
+})
+
+function toonMeestGespeeld() {
+  document.getElementById('playlist-lijst').style.display = 'none'
+  document.getElementById('bibliotheek-resultaten').style.display = 'none'
+  document.getElementById('opgeslagen-playlists').style.display = 'none'
+  document.getElementById('meest-gespeeld').style.display = ''
+  renderMeestGespeeld()
+}
+
+function sluitMeestGespeeld() {
+  document.getElementById('meest-gespeeld').style.display = 'none'
+  document.getElementById('playlist-lijst').style.display = ''
+}
+
+function renderMeestGespeeld() {
+  const lijst = document.getElementById('meest-gespeeld-lijst')
+  const items = getMeestGespeeld(50)
+
+  if (items.length === 0) {
+    lijst.innerHTML = '<div class="playlist-leeg">' + t('jukebox.geenMeestGespeeld') + '</div>'
+    return
+  }
+
+  lijst.innerHTML = ''
+  items.forEach(item => {
+    const el = document.createElement('div')
+    el.className = 'opgeslagen-playlist-item'
+    el.innerHTML = '<div class="opgeslagen-playlist-info">'
+      + '<div class="opgeslagen-playlist-naam">' + (item.artiest ? item.artiest + ' - ' : '') + (item.titel || '') + '</div>'
+      + '<div class="opgeslagen-playlist-aantal">' + t('jukebox.keerAfgespeeld', { n: item.aantal }) + '</div>'
+      + '</div>'
+      + '<button class="opgeslagen-playlist-laden" title="' + t('selectie.voegToeAanPlaylist') + '">+</button>'
+    el.querySelector('.opgeslagen-playlist-laden').onclick = () => {
+      voegToeAanPlaylist({ type: item.type, lokaalPad: item.lokaal_pad, youtubeUrl: item.youtube_url, artiest: item.artiest, titel: item.titel })
+      laadPlaylist()
+    }
+    lijst.appendChild(el)
+  })
+}
 
 window.leegMaken = leegMaken
 window.verwijderItem = verwijderItem
@@ -542,6 +595,8 @@ window.zoekBibliotheekLive = zoekBibliotheekLive
 window.voegBibliotheekSelectieToe = voegBibliotheekSelectieToe
 window.toggleSelecteerAlleBibliotheekResultaten = toggleSelecteerAlleBibliotheekResultaten
 window.openOpslaanPlaylist = openOpslaanPlaylist
+window.toonMeestGespeeld = toonMeestGespeeld
+window.sluitMeestGespeeld = sluitMeestGespeeld
 window.toonOpgeslagenPlaylists = toonOpgeslagenPlaylists
 window.sluitOpgeslagenPlaylists = sluitOpgeslagenPlaylists
 
