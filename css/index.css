@@ -355,6 +355,22 @@ h1 {
 
 .card:hover { background: var(--oppervlak-hover); }
 
+/* "Ademende" kaarten: was 180+ losse GSAP-tweens die elke frame vanuit JS filter op elk kaartelement
+   herschreven (zwaar op de hoofdthread, en liep bovendien stilletjes door op verwijderde kaarten na een
+   herlaad omdat GSAP-tweens nooit expliciet gekild werden). Een native CSS-animatie doet exact hetzelfde
+   zichtbare effect maar wordt door de browser zelf getimed, buiten JS om - en stopt vanzelf zodra het element
+   uit de DOM verdwijnt. --adem-duur/--adem-vertraging worden per kaart eenmalig gezet in startKaartAdemhaling()
+   (js/index.js), niet elke frame. cubic-bezier benadert GSAP's sine.inOut-easing die dit verving. */
+@keyframes card-ademhaling {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.05); }
+}
+
+.card-ademend {
+  animation: card-ademhaling var(--adem-duur, 8s) cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+  animation-delay: var(--adem-vertraging, 0s);
+}
+
 .card-flip {
   cursor: pointer;
   perspective: 1200px;

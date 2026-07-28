@@ -753,21 +753,31 @@ function kaartHoverUit(el) {
   if (window.gsap) gsap.to(el, { scale: 1, duration: 0.2, ease: 'power2.out' })
 }
 
-function startKaartAdemhaling(cardEls) {
-  if (!window.gsap || cardEls.length === 0) return
+// Eén gedeelde observer i.p.v. per kaart: alleen kaarten die daadwerkelijk in beeld zijn krijgen de
+// .card-ademend-animatie, kaarten buiten het zichtbare (scrollbare) gebied van hun wall niet - bij walls met
+// veel video's draaide de animatie voorheen ook door voor tientallen kaarten die de gebruiker nooit ziet.
+// rootMargin geeft een kleine marge zodat de animatie net vóór het scrollen in beeld al aan/uit gaat, i.p.v.
+// een merkbare "flits" precies op de rand.
+let ademObserver = null
 
+function krijgAdemObserver() {
+  if (!ademObserver) {
+    ademObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => entry.target.classList.toggle('card-ademend', entry.isIntersecting))
+    }, { rootMargin: '150px' })
+  }
+  return ademObserver
+}
+
+function startKaartAdemhaling(cardEls) {
+  // Zie css/index.css's .card-ademend: dit was ooit een losse GSAP-tween per kaart, nu een puur CSS-gedreven
+  // animatie, alleen actief zolang de observer de kaart als zichtbaar meldt. --adem-duur is een volledige
+  // heen-en-terug-cyclus (dus 2x de oude GSAP-duration per richting).
+  const observer = krijgAdemObserver()
   cardEls.forEach(el => {
-    gsap.fromTo(el,
-      { filter: 'brightness(1)' },
-      {
-        filter: 'brightness(1.05)',
-        duration: 3 + Math.random() * 2,
-        delay: Math.random() * 3,
-        ease: 'sine.inOut',
-        repeat: -1,
-        yoyo: true
-      }
-    )
+    el.style.setProperty('--adem-duur', (6 + Math.random() * 4) + 's')
+    el.style.setProperty('--adem-vertraging', (Math.random() * 3) + 's')
+    observer.observe(el)
   })
 }
 
@@ -854,6 +864,10 @@ async function toonAlleKaarten(wallId) {
 async function laadWalls() {
   const container = document.getElementById('walls-container')
   container.innerHTML = ''
+  // Voorkomt dat de ademhaling-observer (zie startKaartAdemhaling) kaarten van de vorige render blijft
+  // volgen nadat hun DOM-node hierboven al vervangen is - observe() zonder een bijbehorende unobserve() zou
+  // die verwijderde kaarten voor altijd als geobserveerd blijven vasthouden
+  if (ademObserver) ademObserver.disconnect()
 
   const alleWalls = getAlleWalls()
   const walls = typeof huidigeGroepId !== 'undefined' && huidigeGroepId

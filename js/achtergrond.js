@@ -7,9 +7,19 @@ let muis = { x: 0, y: 0 }
 const AANTAL_DEELTJES = 80
 const AANTAL_LIJNEN = 8
 
+// ~30fps i.p.v. de volle 60fps van requestAnimationFrame - zelfde reden en aanpak als de spectrum-analyzer
+// in de jukebox (zie SPECTRUM_INTERVAL_MS in js/jukebox.js): dit draait continu, ook als er verder niets op
+// het scherm gebeurt, en deelt zijn renderproces met eventueel open andere vensters (o.a. de jukebox). Beweging
+// wordt met dtFactor geschaald naar verstreken tijd, zodat de animatiesnelheid ondanks de lagere framerate
+// gelijk blijft aan de oorspronkelijke 60fps-versie.
+const ACHTERGROND_INTERVAL_MS = 33
+let laatsteTekenTijd = 0
+let statischeAchtergrondLaag = null
+
 function resize() {
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
+  statischeAchtergrondLaag = null
 }
 
 function maakDeeltje() {
@@ -54,6 +64,7 @@ function leesThemaKleuren() {
   const achtergrond = stijl.getPropertyValue('--achtergrond').trim() || '#2b2620'
   themaKleuren = { accentRgb, achtergrond }
   diagonaalPatroon = null
+  statischeAchtergrondLaag = null
 }
 
 new MutationObserver(() => { themaKleuren = null }).observe(
@@ -101,48 +112,65 @@ function maakDiagonaalPatroon() {
   diagonaalPatroon = ctx.createPattern(tegel, 'repeat')
 }
 
-function tekenAchtergrond() {
-  if (!themaKleuren) leesThemaKleuren()
+// Gradient + patroon zijn per frame identiek (hangen alleen af van thema en canvasgrootte) maar werden
+// voorheen elke tick opnieuw opgebouwd en tweemaal over het volledige canvas gefillt - verreweg de duurste
+// canvas-bewerking in deze animatie. Nu eenmalig pre-gerenderd op een offscreen laag, per frame alleen nog
+// een goedkope drawImage-blit; ongewijzigd resultaat, alleen invalidatie bij resize/themawissel.
+function bouwStatischeAchtergrondLaag() {
   const basis = hexNaarRgb(themaKleuren.achtergrond)
+  const laag = document.createElement('canvas')
+  laag.width = canvas.width
+  laag.height = canvas.height
+  const lctx = laag.getContext('2d')
 
-  const gradient = ctx.createRadialGradient(
-    canvas.width * 0.3, canvas.height * 0.4, 0,
-    canvas.width * 0.3, canvas.height * 0.4, canvas.width * 0.8
+  const gradient = lctx.createRadialGradient(
+    laag.width * 0.3, laag.height * 0.4, 0,
+    laag.width * 0.3, laag.height * 0.4, laag.width * 0.8
   )
   gradient.addColorStop(0, rgbNaarCss(lichter(basis, 0.35)))
   gradient.addColorStop(0.5, rgbNaarCss(basis))
   gradient.addColorStop(1, rgbNaarCss(donkerder(basis, 0.35)))
-  ctx.fillStyle = gradient
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  lctx.fillStyle = gradient
+  lctx.fillRect(0, 0, laag.width, laag.height)
 
   if (!diagonaalPatroon) maakDiagonaalPatroon()
-  ctx.fillStyle = diagonaalPatroon
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  lctx.fillStyle = diagonaalPatroon
+  lctx.fillRect(0, 0, laag.width, laag.height)
+
+  statischeAchtergrondLaag = laag
 }
 
-function tekenDeeltjes() {
+function tekenAchtergrond() {
+  if (!themaKleuren) leesThemaKleuren()
+  if (!statischeAchtergrondLaag) bouwStatischeAchtergrondLaag()
+  ctx.drawImage(statischeAchtergrondLaag, 0, 0)
+}
+
+function tekenDeeltjes(dtFactor) {
+  const kleur = getDeeltjesKleur()
   deeltjes.forEach(d => {
-    d.puls += d.pulsTempo
+    d.puls += d.pulsTempo * dtFactor
     const alpha = d.alpha * (0.6 + 0.4 * Math.sin(d.puls))
 
     ctx.beginPath()
     ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2)
-    ctx.fillStyle = 'rgba(' + getDeeltjesKleur() + ', ' + alpha + ')'
+    ctx.fillStyle = 'rgba(' + kleur + ', ' + alpha + ')'
     ctx.fill()
 
     ctx.beginPath()
     ctx.arc(d.x, d.y, d.r * 4, 0, Math.PI * 2)
-    ctx.fillStyle = 'rgba(' + getDeeltjesKleur() + ', ' + alpha * 0.06 + ')'
+    ctx.fillStyle = 'rgba(' + kleur + ', ' + alpha * 0.06 + ')'
     ctx.fill()
 
-    d.x += d.dx
-    d.y += d.dy
+    d.x += d.dx * dtFactor
+    d.y += d.dy * dtFactor
     if (d.x < 0 || d.x > canvas.width) d.dx *= -1
     if (d.y < 0 || d.y > canvas.height) d.dy *= -1
   })
 }
 
-function tekenLijnen() {
+function tekenLijnen(dtFactor) {
+  const kleur = getDeeltjesKleur()
   lijnen.forEach(l => {
     const gloed = ctx.createLinearGradient(
       l.horizontaal ? l.offset : l.positie,
@@ -150,10 +178,10 @@ function tekenLijnen() {
       l.horizontaal ? l.offset + l.lengte : l.positie,
       l.horizontaal ? l.positie : l.offset + l.lengte
     )
-    gloed.addColorStop(0, 'rgba(' + getDeeltjesKleur() + ', 0)')   
-    gloed.addColorStop(0.5, 'rgba(' + getDeeltjesKleur() + ', ' + l.alpha + ')')
-    gloed.addColorStop(1, 'rgba(' + getDeeltjesKleur() + ', 0)')
-	
+    gloed.addColorStop(0, 'rgba(' + kleur + ', 0)')
+    gloed.addColorStop(0.5, 'rgba(' + kleur + ', ' + l.alpha + ')')
+    gloed.addColorStop(1, 'rgba(' + kleur + ', 0)')
+
     ctx.beginPath()
     ctx.strokeStyle = gloed
     ctx.lineWidth = 0.5
@@ -167,7 +195,7 @@ function tekenLijnen() {
     }
     ctx.stroke()
 
-    l.offset += l.snelheid
+    l.offset += l.snelheid * dtFactor
 
     if (l.horizontaal) {
       if (l.offset > canvas.width) l.offset = -l.lengte
@@ -179,12 +207,22 @@ function tekenLijnen() {
   })
 }
 
-function teken() {
+function teken(tijdstip) {
+  // Eerst de volgende frame al inplannen, ongeacht of dit tick'je zelf werk doet - anders stopt de hele lus
+  // zodra er één keer geskipt wordt door de throttle hieronder (zelfde patroon als spectrumTick())
+  requestAnimationFrame(teken)
+
+  if (tijdstip - laatsteTekenTijd < ACHTERGROND_INTERVAL_MS) return
+  // Math.min(4, ...) vangt een uitzonderlijk grote sprong op (bv. na minimaliseren/tabwissel, waarbij
+  // requestAnimationFrame een tijd stilligt) - zonder deze clamp zouden deeltjes/lijnen in één keer een groot
+  // stuk verspringen i.p.v. gewoon een gemiste periode over te slaan
+  const dtFactor = laatsteTekenTijd === 0 ? 1 : Math.min(4, (tijdstip - laatsteTekenTijd) / (1000 / 60))
+  laatsteTekenTijd = tijdstip
+
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   tekenAchtergrond()
-  tekenLijnen()
-  tekenDeeltjes()
-  requestAnimationFrame(teken)
+  tekenLijnen(dtFactor)
+  tekenDeeltjes(dtFactor)
 }
 
 window.addEventListener('mousemove', (e) => {
@@ -197,4 +235,4 @@ window.addEventListener('resize', () => {
 })
 
 initialiseer()
-teken()
+requestAnimationFrame(teken)
