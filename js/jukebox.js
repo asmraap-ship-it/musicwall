@@ -38,11 +38,16 @@ function stuurNaarYtFrame(bericht) {
 const SPECTRUM_BALKEN = 28
 const SPECTRUM_PIEK_VAL_PER_FRAME = 1.8
 // ~30fps i.p.v. de volle 60fps van requestAnimationFrame - ruim genoeg voor een vloeiend ogende equalizer,
-// maar halveert de hoeveelheid stijl-writes/repaints per seconde op de hoofdthread. Bleek nodig: bij lokale
-// video's deelt de spectrum-analyzer die hoofdthread met de eigenlijke videodecodering (in tegenstelling tot
-// een YouTube-nummer, dat in zijn eigen iframe/proces draait), dus onnodige renderdruk hier kan daar merkbaar
-// haperen veroorzaken.
+// maar halveert de hoeveelheid stijl-writes/repaints per seconde op de hoofdthread. Nodig voor lokale video's,
+// die deze hoofdthread rechtstreeks delen met de videodecodering.
 const SPECTRUM_INTERVAL_MS = 33
+// Voor YouTube nóg lager (~15fps): in de praktijk blijkt een YouTube-nummer NIET in een eigen OS-proces te
+// draaien zoals eerder aangenomen - jukebox.html draait met nodeIntegration: true, en Electron zet cross-origin
+// iframes dan niet als out-of-process iframe (OOPIF) op, dus yt-embed.html deelt gewoon dezelfde renderer-
+// hoofdthread. Gebruikersrapport (met VPN uit, dus geen netwerkoorzaak) bevestigde dit: YouTube-afspelen
+// hapert merkbaar met de analyzer aan, en loopt vloeiend zodra hij uitstaat. Omdat de YouTube-balk toch al een
+// simulatie is (geen echte audiodata), gaat een lagere update-frequentie niet ten koste van waargenomen kwaliteit.
+const SPECTRUM_INTERVAL_MS_YOUTUBE = 66
 let audioCtx = null
 let analyser = null
 let analyserData = null
@@ -112,10 +117,11 @@ function spectrumTick(tijdstip) {
   // lus zodra er één keer geskipt wordt door de throttle hieronder
   spectrumFrameId = requestAnimationFrame(spectrumTick)
 
-  if (tijdstip - spectrumLaatsteUpdate < SPECTRUM_INTERVAL_MS) return
+  const item = playlist[huidigeIndex]
+  const interval = (item && item.type === 'youtube') ? SPECTRUM_INTERVAL_MS_YOUTUBE : SPECTRUM_INTERVAL_MS
+  if (tijdstip - spectrumLaatsteUpdate < interval) return
   spectrumLaatsteUpdate = tijdstip
 
-  const item = playlist[huidigeIndex]
   let waarden
 
   if (item && item.type === 'youtube') {

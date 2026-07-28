@@ -560,9 +560,9 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
    met een geanimeerde height zou de kleur "meeschuiven" met het niveau i.p.v. een vaste toonhoogte-indicatie.
    Bewust GEEN CSS transition op clip-path/bottom hier (en op .spectrum-peak): js/jukebox.js's spectrumTick()
    schrijft deze waarden zelf al meerdere keren per seconde met zijn eigen smoothing/interpolatie, dus een
-   CSS-transition zou daar continu overheen concurreren - dat bleek bij lokale video's (die in hetzelfde
-   renderproces draaien als de analyzer, in tegenstelling tot een YouTube-nummer in zijn eigen iframe) de
-   videodecodering merkbaar te laten haperen door de extra, overbodige repaint/animatiedruk op de hoofdthread */
+   CSS-transition zou daar continu overheen concurreren - dat bleek zowel bij lokale video's als bij YouTube-
+   nummers (beide delen in de praktijk dezelfde renderer-hoofdthread, zie js/jukebox.js) de videoweergave
+   merkbaar te laten haperen door de extra, overbodige repaint/animatiedruk op de hoofdthread */
 .spectrum-fill {
   position: absolute;
   inset: 0;
