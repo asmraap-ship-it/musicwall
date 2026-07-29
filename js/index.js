@@ -104,7 +104,7 @@ function stuurNaarJukebox() {
 
     const items = zoekResultatenRuw
       .filter(r => zoekSelectie.has(zoekSleutel(r)))
-      .map(r => ({ type: r.soort, lokaalPad: r.lokaalPad, youtubeUrl: r.youtubeUrl, artiest: r.artiest, titel: r.titel }))
+      .map(r => ({ type: r.soort, lokaalPad: r.lokaalPad, youtubeUrl: r.youtubeUrl, artiest: r.artiest, titel: r.titel, coverPad: r.coverPad }))
     ipcRenderer.send('globaal-zoeken-naar-playlist', items)
     zoekSelectie.clear()
     document.querySelectorAll('#globale-zoek-resultaten .card.geselecteerd').forEach(c => c.classList.remove('geselecteerd'))
@@ -290,10 +290,15 @@ function zoekLive() {
   renderZoekResultaten(generatie)
 }
 
+function zoekMediaSoort(resultaat) {
+  if (resultaat.soort === 'youtube') return 'youtube'
+  return resultaat.bron === 'album' ? 'muziek' : 'video'
+}
+
 function pasZoekTypeFilterToe() {
   zoekResultaten = zoekTypeFilter === 'alle'
     ? zoekResultatenRuw
-    : zoekResultatenRuw.filter(r => r.soort === zoekTypeFilter)
+    : zoekResultatenRuw.filter(r => zoekMediaSoort(r) === zoekTypeFilter)
 }
 
 function stelZoekTypeFilter(type) {
@@ -307,7 +312,8 @@ function bouwZoekTypeFilterHtml() {
   return '<div class="zoek-type-filter">'
     + '<button class="zoek-filter-btn' + (zoekTypeFilter === 'alle' ? ' actief' : '') + '" onclick="stelZoekTypeFilter(\'alle\')">' + t('zoeken.filterAlle') + '</button>'
     + '<button class="zoek-filter-btn' + (zoekTypeFilter === 'youtube' ? ' actief' : '') + '" onclick="stelZoekTypeFilter(\'youtube\')">' + t('video.bron.youtube') + '</button>'
-    + '<button class="zoek-filter-btn' + (zoekTypeFilter === 'lokaal' ? ' actief' : '') + '" onclick="stelZoekTypeFilter(\'lokaal\')">' + t('video.bron.lokaal') + '</button>'
+    + '<button class="zoek-filter-btn' + (zoekTypeFilter === 'video' ? ' actief' : '') + '" onclick="stelZoekTypeFilter(\'video\')">' + t('zoeken.filterVideo') + '</button>'
+    + '<button class="zoek-filter-btn' + (zoekTypeFilter === 'muziek' ? ' actief' : '') + '" onclick="stelZoekTypeFilter(\'muziek\')">' + t('zoeken.filterMuziek') + '</button>'
     + '</div>'
 }
 
@@ -328,6 +334,14 @@ async function getZoekThumbnail(resultaat, idx) {
         + playIcon + bronLabel
         + '</div>'
     }
+  }
+
+  if (resultaat.coverPad) {
+    // albumtrack: hoesafbeelding rechtstreeks tonen, geen ffmpeg-frame-grab proberen op een audio-only bestand
+    return '<div class="card-thumb-wrap" onclick="if(!event.ctrlKey)zoekKlikAfspelen(' + idx + ')">'
+      + '<img class="card-thumbnail" loading="lazy" src="file:///' + resultaat.coverPad.replace(/\\/g, '/') + '">'
+      + playIcon + bronLabel
+      + '</div>'
   }
 
   if (resultaat.lokaalPad) {
@@ -351,7 +365,9 @@ async function bouwZoekKaartHtml(resultaat, idx) {
   const thumbnail = await getZoekThumbnail(resultaat, idx)
   const herkomstLabel = resultaat.bron === 'concert'
     ? t('jukebox.herkomstConcert', { naam: resultaat.herkomst })
-    : t('jukebox.herkomstWall', { naam: resultaat.herkomst })
+    : resultaat.bron === 'album'
+      ? t('jukebox.herkomstAlbum', { naam: resultaat.herkomst })
+      : t('jukebox.herkomstWall', { naam: resultaat.herkomst })
   const geselecteerdClass = zoekSelectie.has(sleutel) ? ' geselecteerd' : ''
 
   return '<div class="card' + geselecteerdClass + '" onclick="toggleZoekSelectie(event, this,' + idx + ')">'
@@ -419,7 +435,7 @@ function zoekKlikAfspelen(idx) {
   if (resultaat.soort === 'youtube') {
     ipcRenderer.send('open-video', resultaat.youtubeUrl)
   } else {
-    ipcRenderer.send('open-lokaal', resultaat.lokaalPad)
+    ipcRenderer.send('open-lokaal', resultaat.lokaalPad, resultaat.coverPad)
   }
 }
 

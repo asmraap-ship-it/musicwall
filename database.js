@@ -63,6 +63,23 @@ db.exec(`
     naam TEXT NOT NULL,
     volgorde INTEGER DEFAULT 0
   );
+  CREATE TABLE IF NOT EXISTS albums (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    groep_id INTEGER,
+    naam TEXT NOT NULL,
+    artiest TEXT,
+    cover_pad TEXT,
+    volgorde INTEGER DEFAULT 0
+  );
+  CREATE TABLE IF NOT EXISTS album_tracks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    album_id INTEGER NOT NULL,
+    artiest TEXT,
+    titel TEXT NOT NULL,
+    lokaal_pad TEXT NOT NULL,
+    volgorde INTEGER DEFAULT 0,
+    FOREIGN KEY (album_id) REFERENCES albums(id) ON DELETE CASCADE
+  );
   CREATE TABLE IF NOT EXISTS playlists (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     naam TEXT NOT NULL,
@@ -79,6 +96,11 @@ db.exec(`
 const wallKolommen = db.prepare("PRAGMA table_info(walls)").all().map(k => k.name)
 if (!wallKolommen.includes('groep_id')) {
   db.exec('ALTER TABLE walls ADD COLUMN groep_id INTEGER')
+}
+
+const wallGroepenKolommen = db.prepare("PRAGMA table_info(wall_groepen)").all().map(k => k.name)
+if (!wallGroepenKolommen.includes('type')) {
+  db.exec("ALTER TABLE wall_groepen ADD COLUMN type TEXT NOT NULL DEFAULT 'walls'")
 }
 
 const playlistVideosTabel = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='playlist_videos'").get()

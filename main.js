@@ -11,15 +11,23 @@ if (!fs.existsSync(userDataPath)) {
   fs.mkdirSync(userDataPath, { recursive: true })
 }
 
+const AUDIO_EXTENSIES = ['.mp3', '.m4a', '.flac', '.wav']
+
 const thumbnailsPath = path.join(userDataPath, 'thumbnails')
 if (!fs.existsSync(thumbnailsPath)) {
   fs.mkdirSync(thumbnailsPath, { recursive: true })
+}
+
+const albumCoversPath = path.join(userDataPath, 'album-covers')
+if (!fs.existsSync(albumCoversPath)) {
+  fs.mkdirSync(albumCoversPath, { recursive: true })
 }
 
 let mainWindow
 let videoWindow = null
 let jukeboxWin = null
 let importWin = null
+let albumImportWin = null
 let huidigThema = ''
 let huidigeTaal = 'nl'
 
@@ -183,7 +191,7 @@ ipcMain.on('open-video', (event, url) => {
   })
 })
 
-ipcMain.on('open-lokaal', (event, pad) => {
+ipcMain.on('open-lokaal', (event, pad, coverPad) => {
   if (videoWindow && !videoWindow.isDestroyed()) {
     videoWindow.close()
   }
@@ -198,12 +206,26 @@ ipcMain.on('open-lokaal', (event, pad) => {
   videoWindow = win
 
   const bestandUrl = pathToFileURL(pad).href
-  const spelerHtml = '<!DOCTYPE html><html><head><style>'
-    + 'html,body{margin:0;background:#000;height:100%;overflow:hidden}'
-    + 'video{width:100vw;height:100vh;object-fit:contain;background:#000}'
-    + '</style></head><body>'
-    + '<video src="' + bestandUrl + '" autoplay controls></video>'
-    + '</body></html>'
+  const isAudio = AUDIO_EXTENSIES.includes(path.extname(pad).toLowerCase())
+
+  // audio-only bestanden (mp3/m4a/flac/wav) in een <video>-tag tonen gaf een lelijk zwart beeld (geen
+  // videoframe om te tekenen) - toont in plaats daarvan de albumhoes (indien bekend) met een <audio>-element
+  const spelerHtml = isAudio
+    ? '<!DOCTYPE html><html><head><style>'
+      + 'html,body{margin:0;background:#000;height:100%;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}'
+      + 'img{max-width:55%;max-height:70%;object-fit:cover;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}'
+      + '.placeholder{font-size:72px;color:#c8a87a;opacity:0.2}'
+      + 'audio{width:420px}'
+      + '</style></head><body>'
+      + (coverPad ? '<img src="' + pathToFileURL(coverPad).href + '">' : '<div class="placeholder">&#9835;</div>')
+      + '<audio src="' + bestandUrl + '" autoplay controls></audio>'
+      + '</body></html>'
+    : '<!DOCTYPE html><html><head><style>'
+      + 'html,body{margin:0;background:#000;height:100%;overflow:hidden}'
+      + 'video{width:100vw;height:100vh;object-fit:contain;background:#000}'
+      + '</style></head><body>'
+      + '<video src="' + bestandUrl + '" autoplay controls></video>'
+      + '</body></html>'
   const spelerPad = path.join(userDataPath, 'video-speler.html')
   fs.writeFileSync(spelerPad, spelerHtml)
   win.loadFile(spelerPad)
@@ -279,7 +301,7 @@ ipcMain.on('wallgroep-toegevoegd', () => {
 ipcMain.on('open-nieuwe-wallgroep', () => {
   const groepWin = new BrowserWindow({
     width: 400,
-    height: 320,
+    height: 390,
     title: t('nieuweWallGroep.titel'),
     ...titelbalkOpties,
     webPreferences: {
@@ -335,11 +357,24 @@ ipcMain.on('tab-hernoemd', (event, { type, naam }) => {
 })
 
 ipcMain.on('bevestig-wallgroep-verwijderen', async (event, { groepId, groepNaam }) => {
-  const bericht = t('wallGroep.verwijderen.bevestiging', { naam: groepNaam })
+  const { getAlleWallGroepen, verwijderWallGroep } = require('./db/wallgroepen.js')
+  const groep = getAlleWallGroepen().find(g => g.id === groepId)
+
+  // een albums-groep verwijderen verwijdert (i.t.t. een walls-groep) ook echt de albums erin - geen
+  // "Mijn albums"-vangnet zoals "Mijn walls" heeft voor ongegroepeerde walls, dus de bevestiging moet dat
+  // hier expliciet en anders formuleren dan de standaard walls-boodschap
+  let bericht
+  if (groep && groep.type === 'albums') {
+    const { getAlbumsVoorGroep } = require('./db/albums.js')
+    const aantal = getAlbumsVoorGroep(groepId).length
+    bericht = t('wallGroep.verwijderen.bevestigingAlbums', { naam: groepNaam }) + '\n'
+      + (aantal > 0 ? t('wallGroep.verwijderen.metAlbums', { n: aantal }) : t('wallGroep.verwijderen.geenAlbums'))
+  } else {
+    bericht = t('wallGroep.verwijderen.bevestiging', { naam: groepNaam })
+  }
 
   const akkoord = await vraagBevestiging(t('wallGroep.verwijderen.titel'), bericht)
   if (akkoord) {
-    const { verwijderWallGroep } = require('./db/wallgroepen.js')
     verwijderWallGroep(groepId)
     if (mainWindow) mainWindow.webContents.send('herlaad')
   }
@@ -464,6 +499,205 @@ ipcMain.on('open-importeren', () => {
 ipcMain.on('import-klaar', () => {
   if (mainWindow) mainWindow.webContents.send('herlaad')
   BrowserWindow.getFocusedWindow().close()
+})
+
+ipcMain.on('open-album-import', (event, groepId) => {
+  if (albumImportWin && !albumImportWin.isDestroyed()) {
+    albumImportWin.focus()
+    return
+  }
+
+  albumImportWin = new BrowserWindow({
+    width: 550,
+    height: 640,
+    title: t('albumImport.titel'),
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  albumImportWin.loadFile('album-import.html')
+  albumImportWin.setMenuBarVisibility(false)
+
+  albumImportWin.webContents.on('did-finish-load', () => {
+    albumImportWin.webContents.send('stel-groep-in', groepId)
+  })
+
+  albumImportWin.on('closed', () => {
+    albumImportWin = null
+  })
+})
+
+ipcMain.on('kies-album-map', async (event) => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+    title: t('albumImport.mapKiezenTitel')
+  })
+
+  if (result.canceled || result.filePaths.length === 0) return
+
+  const mapPad = result.filePaths[0]
+  const afbeeldingExtensies = ['.jpg', '.jpeg', '.png']
+
+  const alleBestanden = fs.readdirSync(mapPad)
+  const audioBestanden = alleBestanden
+    .filter(f => AUDIO_EXTENSIES.includes(path.extname(f).toLowerCase()))
+    .map(f => path.join(mapPad, f))
+
+  if (audioBestanden.length === 0) {
+    dialog.showMessageBoxSync({
+      type: 'info',
+      title: t('albumImport.geenBestandenTitel'),
+      message: t('albumImport.geenBestandenBericht')
+    })
+    return
+  }
+
+  // Hoesbestand-detectie: prioriteitenlijst folder.* -> cover.* -> albumart.* -> eerste afbeelding in de map
+  // (bestandsnaam wisselt per map bij deze gebruiker, dus geen vaste naam aannemen)
+  const prioriteiten = ['folder', 'cover', 'albumart']
+  let coverPad = null
+  for (const naam of prioriteiten) {
+    const match = alleBestanden.find(f => {
+      const ext = path.extname(f).toLowerCase()
+      return afbeeldingExtensies.includes(ext) && path.basename(f, ext).toLowerCase() === naam
+    })
+    if (match) { coverPad = path.join(mapPad, match); break }
+  }
+  if (!coverPad) {
+    const eersteAfbeelding = alleBestanden.find(f => afbeeldingExtensies.includes(path.extname(f).toLowerCase()))
+    if (eersteAfbeelding) coverPad = path.join(mapPad, eersteAfbeelding)
+  }
+
+  // ID3-tags per bestand uitlezen gebeurt hier in het main-process (een echte Node.js-omgeving) en niet in
+  // de renderer: music-metadata is vanaf v8 ESM-only (geen require() mogelijk), en dynamic import() van een
+  // bare package-specifier bleek vanuit een via <script src> geladen renderer-bestand onbetrouwbaar/stil
+  // te falen (geen foutmelding, importeer-knop bleef uitgeschakeld) - in het main-process, waar Electron
+  // gewoon kale Node.js draait, is dezelfde import() wél het standaard, betrouwbare interoppatroon.
+  let mm
+  try {
+    mm = await import('music-metadata')
+  } catch (e) {
+    console.error('music-metadata kon niet geladen worden:', e.message)
+    event.sender.send('album-map-gekozen', {
+      mapPad,
+      coverPad,
+      tracks: audioBestanden.map(pad => ({ lokaalPad: pad, artiest: '', titel: path.basename(pad, path.extname(pad)) }))
+    })
+    return
+  }
+
+  const tracks = []
+  for (const pad of audioBestanden) {
+    const bestandsnaam = path.basename(pad, path.extname(pad))
+    let artiest = ''
+    let titel = bestandsnaam
+
+    try {
+      const metadata = await mm.parseFile(pad)
+      if (metadata.common.artist) artiest = metadata.common.artist
+      if (metadata.common.title) titel = metadata.common.title
+
+      // geen los hoesbestand in de map gevonden -> terugval op de embedded ID3-hoes van het eerste
+      // bestand dat er een heeft (eenmalig, alleen zolang coverPad nog leeg is)
+      if (!coverPad && metadata.common.picture && metadata.common.picture.length > 0) {
+        const plaatje = mm.selectCover(metadata.common.picture)
+        if (plaatje) {
+          const ext = (plaatje.format || '').includes('png') ? '.png' : '.jpg'
+          const bestandspad = path.join(albumCoversPath, 'album-' + Date.now() + ext)
+          fs.writeFileSync(bestandspad, plaatje.data)
+          coverPad = bestandspad
+        }
+      }
+    } catch (e) {
+      // ontbrekende/beschadigde tags: gewoon terugvallen op de bestandsnaam
+    }
+
+    tracks.push({ lokaalPad: pad, artiest, titel })
+  }
+
+  event.sender.send('album-map-gekozen', { mapPad, coverPad, tracks })
+})
+
+ipcMain.on('album-toegevoegd', () => {
+  // naar alle vensters (niet alleen mainWindow) - een open album-detail.html moet zichzelf ook verversen
+  // als het zojuist bewerkte album daar getoond wordt
+  BrowserWindow.getAllWindows().forEach(win => win.webContents.send('herlaad-albums'))
+  BrowserWindow.getFocusedWindow().close()
+})
+
+ipcMain.on('open-bewerk-album', (event, album) => {
+  const bewerkWin = new BrowserWindow({
+    width: 400,
+    height: 320,
+    title: t('albumBewerken.titel'),
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  bewerkWin.loadFile('bewerk-album.html')
+  bewerkWin.setMenuBarVisibility(false)
+
+  bewerkWin.webContents.on('did-finish-load', () => {
+    bewerkWin.webContents.send('stel-album-in', album)
+  })
+})
+
+ipcMain.on('open-album-detail', (event, albumId) => {
+  const detailWin = new BrowserWindow({
+    width: 900,
+    height: 750,
+    title: 'Album',
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  detailWin.loadFile('album-detail.html')
+  detailWin.setMenuBarVisibility(false)
+
+  detailWin.webContents.on('did-finish-load', () => {
+    detailWin.webContents.send('laad-album', albumId)
+  })
+})
+
+ipcMain.on('sla-album-volgorde-op', (event, volgordeArray) => {
+  const { herschikAlbums } = require('./db/albums.js')
+  herschikAlbums(volgordeArray)
+})
+
+ipcMain.on('bevestig-album-verwijderen', async (event, { albumId, albumNaam }) => {
+  const { getTracksVoorAlbum, verwijderAlbum } = require('./db/albums.js')
+  const aantal = getTracksVoorAlbum(albumId).length
+  const bericht = t('albums.verwijderen.bevestiging', { naam: albumNaam }) + '\n'
+    + (aantal > 0 ? t('albums.verwijderen.metTracks', { n: aantal }) : t('albums.verwijderen.geenTracks'))
+
+  const akkoord = await vraagBevestiging(t('albums.verwijderen.titel'), bericht)
+  if (akkoord) {
+    verwijderAlbum(albumId)
+    BrowserWindow.getAllWindows().forEach(win => win.webContents.send('herlaad-albums'))
+  }
+})
+
+ipcMain.on('bevestig-album-tracks-verwijderen-meerdere', async (event, { ids, namen }) => {
+  const akkoord = await vraagBevestiging(t('albumDetail.meerdereVerwijderen.titel', { n: ids.length }), namen)
+  if (akkoord) {
+    const { verwijderTrack } = require('./db/albums.js')
+    ids.forEach(id => verwijderTrack(id))
+    event.sender.send('album-tracks-verwijderd')
+  }
+})
+
+ipcMain.on('album-tracks-naar-playlist', (event, items) => {
+  const { voegToeAanPlaylist } = require('./db/playlist.js')
+  items.forEach(item => {
+    if (item && item.lokaalPad) voegToeAanPlaylist(item)
+  })
+  if (jukeboxWin && !jukeboxWin.isDestroyed()) jukeboxWin.webContents.send('playlist-bijgewerkt')
 })
 
 ipcMain.on('bevestig-verwijderen-meerdere', async (event, { ids, namen }) => {
@@ -723,6 +957,10 @@ ipcMain.handle('maak-backup', async () => {
       fs.cpSync(thumbnailsPath, path.join(backupMap, 'thumbnails'), { recursive: true })
     }
 
+    if (fs.existsSync(albumCoversPath)) {
+      fs.cpSync(albumCoversPath, path.join(backupMap, 'album-covers'), { recursive: true })
+    }
+
     return { ok: true, pad: backupMap }
   } catch (e) {
     return { ok: false, foutmelding: e.message }
@@ -756,6 +994,12 @@ ipcMain.handle('herstel-backup', async () => {
     if (fs.existsSync(backupThumbsPad)) {
       fs.rmSync(thumbnailsPath, { recursive: true, force: true })
       fs.cpSync(backupThumbsPad, thumbnailsPath, { recursive: true })
+    }
+
+    const backupAlbumCoversPad = path.join(backupMap, 'album-covers')
+    if (fs.existsSync(backupAlbumCoversPad)) {
+      fs.rmSync(albumCoversPath, { recursive: true, force: true })
+      fs.cpSync(backupAlbumCoversPad, albumCoversPath, { recursive: true })
     }
 
     setTimeout(() => {

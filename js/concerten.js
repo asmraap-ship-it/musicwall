@@ -23,6 +23,7 @@ function schakelSectie(sectie, groepId) {
   }
 
   const wallsContainer = document.getElementById('walls-container')
+  const albumsContainer = document.getElementById('albums-container')
   const concertenContainer = document.getElementById('concerten-container')
   const btnWalls = document.getElementById('btn-walls')
   const btnConcerten = document.getElementById('btn-concerten')
@@ -31,8 +32,12 @@ function schakelSectie(sectie, groepId) {
 
   document.querySelectorAll('.tab-btn[data-groep-id]').forEach(el => el.classList.remove('actief'))
 
-  if (sectie === 'walls' || sectie === 'groep') {
+  const groep = sectie === 'groep' ? getAlleWallGroepen().find(g => g.id === groepId) : null
+  const isAlbumGroep = !!(groep && groep.type === 'albums')
+
+  if (sectie === 'walls' || (sectie === 'groep' && !isAlbumGroep)) {
     wallsContainer.style.display = 'flex'
+    albumsContainer.style.display = 'none'
     concertenContainer.style.display = 'none'
     btnConcerten.classList.remove('actief')
     if (selectieInfo) selectieInfo.style.display = ''
@@ -47,8 +52,20 @@ function schakelSectie(sectie, groepId) {
     }
 
     laadWalls()
+  } else if (sectie === 'groep' && isAlbumGroep) {
+    wallsContainer.style.display = 'none'
+    albumsContainer.style.display = 'flex'
+    concertenContainer.style.display = 'none'
+    btnWalls.classList.remove('actief')
+    btnConcerten.classList.remove('actief')
+    if (selectieInfo) selectieInfo.style.display = 'none'
+    if (prullenbak) prullenbak.style.display = 'none'
+    const tabEl = document.querySelector('.tab-btn[data-groep-id="' + groepId + '"]')
+    if (tabEl) tabEl.classList.add('actief')
+    laadAlbums(groepId)
   } else {
     wallsContainer.style.display = 'none'
+    albumsContainer.style.display = 'none'
     concertenContainer.style.display = 'flex'
     btnWalls.classList.remove('actief')
     btnConcerten.classList.add('actief')
@@ -334,6 +351,13 @@ ipcRenderer.on('herlaad-concerten', () => {
 
 ipcRenderer.on('herlaad', () => {
   laadWallGroepenTabs()
+
+  // als de groep die net actief was verwijderd is (bv. via de wallgroep-verwijderknop), blijft anders de
+  // laatst-gerenderde inhoud (walls of albums) stilzwijgend op het scherm staan, zonder dat enige tab nog
+  // als actief aangemerkt is - val dan terug op de vaste "Mijn walls"-tab
+  if (huidigeSectie === 'groep' && !getAlleWallGroepen().some(g => g.id === huidigeGroepId)) {
+    schakelSectie('walls')
+  }
 })
 
 ipcRenderer.on('tab-naam-gewijzigd', (event, { type, naam }) => {

@@ -7,10 +7,11 @@ const db = require('../database.js')
 const { maakWall } = require('../db/walls.js')
 const { voegVideoToe } = require('../db/videos.js')
 const { maakConcert, voegMediaToe } = require('../db/concerten.js')
+const { maakAlbum, voegTrackToe } = require('../db/albums.js')
 const { zoekBibliotheek, alleYoutubeItems } = require('../db/zoeken.js')
 
 test.beforeEach(() => {
-  db.exec('DELETE FROM videos; DELETE FROM walls; DELETE FROM concert_media; DELETE FROM concerten;')
+  db.exec('DELETE FROM videos; DELETE FROM walls; DELETE FROM concert_media; DELETE FROM concerten; DELETE FROM album_tracks; DELETE FROM albums;')
 })
 
 test('zoekBibliotheek vindt een video op artiest', () => {
@@ -84,4 +85,26 @@ test('alleYoutubeItems sluit foto\'s en lokale video\'s uit concertervaringen ui
   voegMediaToe({ concertId, type: 'video', bestandPad: 'C:/video.mp4' })
 
   assert.equal(alleYoutubeItems().length, 0)
+})
+
+test('zoekBibliotheek vindt een albumtrack op titel/artiest, met album als herkomst en soort lokaal', () => {
+  const albumId = maakAlbum({ naam: 'Innuendo', artiest: 'Queen', coverPad: 'C:/covers/innuendo.jpg', groepId: null }).lastInsertRowid
+  voegTrackToe({ albumId, artiest: 'Queen', titel: 'The Show Must Go On', lokaalPad: 'C:/muziek/innuendo/06.mp3' })
+
+  const resultaten = zoekBibliotheek('Show Must Go On')
+  assert.equal(resultaten.length, 1)
+  assert.equal(resultaten[0].bron, 'album')
+  assert.equal(resultaten[0].soort, 'lokaal')
+  assert.equal(resultaten[0].herkomst, 'Innuendo')
+  assert.equal(resultaten[0].coverPad, 'C:/covers/innuendo.jpg')
+  assert.equal(resultaten[0].youtubeUrl, null)
+})
+
+test('zoekBibliotheek vindt een albumtrack via de albumnaam als de track zelf geen artiest heeft', () => {
+  const albumId = maakAlbum({ naam: 'Live Aid Bootleg', artiest: null, coverPad: null, groepId: null }).lastInsertRowid
+  voegTrackToe({ albumId, artiest: null, titel: 'Nummer zonder eigen artiest', lokaalPad: 'C:/muziek/liveaid/01.mp3' })
+
+  const resultaten = zoekBibliotheek('Live Aid')
+  assert.equal(resultaten.length, 1)
+  assert.equal(resultaten[0].titel, 'Nummer zonder eigen artiest')
 })

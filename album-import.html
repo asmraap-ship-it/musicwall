@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Album importeren</title>
+  <link rel="stylesheet" href="css/toevoegen.css">
+  <script>
+  const thema = localStorage.getItem('musicwall-thema')
+  if (thema) document.documentElement.setAttribute('data-thema', thema)
+  require('electron').ipcRenderer.on('thema-toegepast', (event, t) => {
+    if (t) document.documentElement.setAttribute('data-thema', t)
+    else document.documentElement.removeAttribute('data-thema')
+  })
+  </script>
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+  <link rel="stylesheet" href="css/themas/natuur.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+
+  <style>
+    .voortgang {
+      margin-top: 1rem;
+      font-size: 12px;
+      color: var(--tekst-dim);
+      letter-spacing: 0.05em;
+    }
+
+    .voortgang-balk {
+      width: 100%;
+      height: 2px;
+      background: var(--rand-2);
+      border-radius: 1px;
+      margin-top: 0.5rem;
+      overflow: hidden;
+    }
+
+    .voortgang-vulling {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 1px;
+      width: 0%;
+      transition: width 0.2s;
+    }
+
+    .bestand-lijst {
+      margin-top: 1rem;
+      max-height: 150px;
+      overflow-y: auto;
+      border: 1px solid var(--rand-2);
+      border-radius: 3px;
+      padding: 0.5rem;
+    }
+
+    .bestand-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 12px;
+      color: var(--tekst-dim);
+      padding: 0.25rem 0;
+      border-bottom: 1px solid var(--rand);
+    }
+
+    .bestand-nummer {
+      font-size: 10px;
+      color: var(--accent);
+      opacity: 0.5;
+      min-width: 18px;
+      flex-shrink: 0;
+    }
+
+    .bestand-naam {
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bestand-item.klaar { color: var(--accent); }
+    .bestand-item.actief { color: var(--tekst); }
+
+    .cover-preview {
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 3px;
+      border: 1px solid var(--rand-2);
+      margin-bottom: 0.75rem;
+    }
+
+    .cover-preview-leeg {
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      opacity: 0.2;
+      border-radius: 3px;
+      border: 1px dashed var(--rand-2);
+      margin-bottom: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="titelbalk-drag"></div>
+
+<h2 data-i18n="albumImport.titel">Album importeren</h2>
+
+<div id="voor-map">
+  <button class="opslaan-btn" id="kies-map-btn" onclick="kiesMap()" data-i18n="albumImport.kiesMapBtn">Kies map</button>
+</div>
+
+<div id="na-map" style="display:none">
+  <div id="cover-container"></div>
+
+  <div class="veld">
+    <label data-i18n="albumImport.naamLabel">Albumnaam</label>
+    <input type="text" id="album-naam" autofocus>
+  </div>
+
+  <div class="veld">
+    <label data-i18n="albumImport.artiestLabel">Artiest</label>
+    <input type="text" id="album-artiest">
+  </div>
+
+  <div class="bestand-lijst" id="bestand-lijst"></div>
+
+  <div class="voortgang" id="voortgang-tekst"></div>
+  <div class="voortgang-balk">
+    <div class="voortgang-vulling" id="voortgang-vulling"></div>
+  </div>
+
+  <button class="opslaan-btn" id="importeer-btn" onclick="importeer()" style="margin-top:1rem" data-i18n="albumImport.importerenBtn">Importeren</button>
+</div>
+
+<div class="melding" id="melding"></div>
+
+<script src="js/vertalingen.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/album-import.js"></script>
+</body>
+</html>

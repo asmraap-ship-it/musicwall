@@ -17,7 +17,8 @@ function zoekBibliotheek(term) {
     titel: v.titel,
     herkomst: v.herkomst,
     lokaalPad: v.lokaal_pad,
-    youtubeUrl: v.youtube_url
+    youtubeUrl: v.youtube_url,
+    coverPad: null
   }))
 
   const mediaResultaten = db.prepare(`
@@ -35,10 +36,32 @@ function zoekBibliotheek(term) {
     titel: m.titel,
     herkomst: m.titel,
     lokaalPad: m.type === 'youtube' ? null : m.bestand_pad,
-    youtubeUrl: m.type === 'youtube' ? m.bestand_pad : null
+    youtubeUrl: m.type === 'youtube' ? m.bestand_pad : null,
+    coverPad: null
   }))
 
-  return [...videoResultaten, ...mediaResultaten]
+  // Albumtracks zijn altijd lokale audiobestanden (nooit YouTube) - soort is daarom altijd 'lokaal',
+  // waardoor deze resultaten vanzelf meelopen in alle bestaande soort==='lokaal'-afhandeling
+  // (playlist-tabel, afspeelstatistieken, de alle/YouTube/lokaal-filters) zonder die code aan te passen.
+  const trackResultaten = db.prepare(`
+    SELECT album_tracks.artiest as track_artiest, album_tracks.titel, album_tracks.lokaal_pad,
+           albums.naam as album_naam, albums.artiest as album_artiest, albums.cover_pad
+    FROM album_tracks
+    JOIN albums ON albums.id = album_tracks.album_id
+    WHERE album_tracks.artiest LIKE ? OR album_tracks.titel LIKE ? OR albums.naam LIKE ?
+    ORDER BY albums.naam, album_tracks.volgorde
+  `).all(patroon, patroon, patroon).map(track => ({
+    bron: 'album',
+    soort: 'lokaal',
+    artiest: track.track_artiest || track.album_artiest,
+    titel: track.titel,
+    herkomst: track.album_naam,
+    lokaalPad: track.lokaal_pad,
+    youtubeUrl: null,
+    coverPad: track.cover_pad
+  }))
+
+  return [...videoResultaten, ...mediaResultaten, ...trackResultaten]
 }
 
 // Alle YouTube-video's uit zowel walls als concertervaringen, met id + herkomst - gebruikt door het

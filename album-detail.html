@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Album</title>
+  <link rel="stylesheet" href="css/concert-detail.css">
+  <link rel="stylesheet" href="css/album-detail.css">
+  <script>
+    const thema = localStorage.getItem('musicwall-thema')
+    if (thema) document.documentElement.setAttribute('data-thema', thema)
+    require('electron').ipcRenderer.on('thema-toegepast', (event, t) => {
+      if (t) document.documentElement.setAttribute('data-thema', t)
+      else document.documentElement.removeAttribute('data-thema')
+    })
+  </script>
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+  <link rel="stylesheet" href="css/themas/natuur.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+  <script>window.gsap = require('gsap').gsap</script>
+</head>
+<body>
+
+<div class="titelbalk-drag"></div>
+
+<div class="selectie-info" id="selectie-info">
+  <span id="selectie-tekst"></span>
+  <button class="naar-jukebox-btn" onclick="stuurNaarJukebox()" data-i18n="selectie.voegToeAanPlaylist">&#9835; Voeg toe aan de playlist</button>
+  <button class="verwijder-selectie-btn" onclick="verwijderSelectie()" data-i18n="selectie.verwijderen">Verwijderen</button>
+</div>
+
+<div class="album-header">
+  <div class="album-cover-groot" id="album-cover"></div>
+  <div class="album-header-info">
+    <div class="concert-header-artiest" id="detail-artiest"></div>
+    <h1 class="concert-header-naam" id="detail-naam"></h1>
+    <div class="album-track-aantal" id="detail-aantal"></div>
+    <button class="bestand-btn" onclick="bewerkHuidigAlbum()" data-i18n="albumDetail.bewerkenBtn">✎ Album bewerken</button>
+  </div>
+</div>
+
+<div class="track-acties-balk">
+  <button class="bestand-btn" id="selecteer-alles-btn" onclick="toggleSelecteerAlleInAlbum()" data-i18n="concertDetail.selecteerAllesBtn" style="display:none">☑ Selecteer alles</button>
+</div>
+
+<div class="track-lijst" id="track-lijst"></div>
+
+<script src="js/vertalingen.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/album-detail.js"></script>
+</body>
+</html>

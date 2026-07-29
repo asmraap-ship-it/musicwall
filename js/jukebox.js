@@ -8,6 +8,14 @@ const { registreerAfspeling, getMeestGespeeld } = require('./db/afspeelstatistie
 let playlist = []
 let huidigeIndex = -1
 
+const AUDIO_EXTENSIES = ['.mp3', '.m4a', '.flac', '.wav']
+function isAudioBestand(pad) {
+  if (!pad) return false
+  const punt = pad.lastIndexOf('.')
+  if (punt === -1) return false
+  return AUDIO_EXTENSIES.includes(pad.slice(punt).toLowerCase())
+}
+
 let bibliotheekResultaten = []
 let bibliotheekResultatenRuw = []
 let bibliotheekTypeFilter = 'alle'
@@ -220,6 +228,25 @@ document.getElementById('speler').addEventListener('play', () => {
 })
 document.getElementById('speler').addEventListener('pause', stopSpectrum)
 
+// eigen voortgangsbalk voor audio-only lokale bestanden - #speler's eigen native controls zijn dan
+// onzichtbaar (zie speelIndex(), .zichtbaar staat uit ten gunste van de albumhoes), dus zonder dit zou
+// er tijdens mp3-afspelen geen enkele voortgangsindicatie meer te zien zijn
+document.getElementById('speler').addEventListener('timeupdate', () => {
+  if (!document.getElementById('audio-cover-wrap').classList.contains('zichtbaar')) return
+  const speler = document.getElementById('speler')
+  const pct = speler.duration ? (speler.currentTime / speler.duration) * 100 : 0
+  document.getElementById('audio-progress-vulling').style.width = pct + '%'
+})
+
+function zoekInAudio(event) {
+  const speler = document.getElementById('speler')
+  if (!speler.duration) return
+  const balk = document.getElementById('audio-progress-balk')
+  const rect = balk.getBoundingClientRect()
+  const fractie = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width))
+  speler.currentTime = fractie * speler.duration
+}
+
 ipcRenderer.invoke('get-jukebox-server-poort').then(poort => {
   document.getElementById('youtube-speler-frame').src = 'http://127.0.0.1:' + poort + '/yt-embed.html'
 })
@@ -284,6 +311,9 @@ async function laadPlaylist() {
     if (item.type === 'youtube') {
       const id = getYoutubeId(item.youtube_url)
       if (id) thumb = 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg'
+    } else if (item.cover_pad) {
+      // albumtrack: hoesafbeelding rechtstreeks tonen, geen ffmpeg-frame-grab proberen op een audio-only bestand
+      thumb = 'file:///' + item.cover_pad.replace(/\\/g, '/')
     } else if (item.lokaal_pad) {
       const pad = await ipcRenderer.invoke('maak-thumbnail', item.lokaal_pad)
       if (pad) thumb = 'file:///' + pad.replace(/\\/g, '/')
@@ -335,10 +365,15 @@ function zoekBibliotheekLive() {
   renderBibliotheekResultaten(generatie)
 }
 
+function bibliotheekMediaSoort(resultaat) {
+  if (resultaat.soort === 'youtube') return 'youtube'
+  return resultaat.bron === 'album' ? 'muziek' : 'video'
+}
+
 function pasBibliotheekTypeFilterToe() {
   bibliotheekResultaten = bibliotheekTypeFilter === 'alle'
     ? bibliotheekResultatenRuw
-    : bibliotheekResultatenRuw.filter(r => r.soort === bibliotheekTypeFilter)
+    : bibliotheekResultatenRuw.filter(r => bibliotheekMediaSoort(r) === bibliotheekTypeFilter)
 }
 
 function stelBibliotheekTypeFilter(type) {
@@ -352,7 +387,8 @@ function bouwBibliotheekTypeFilterHtml() {
   return '<div class="bibliotheek-type-filter">'
     + '<button class="bibliotheek-filter-btn' + (bibliotheekTypeFilter === 'alle' ? ' actief' : '') + '" onclick="stelBibliotheekTypeFilter(\'alle\')">' + t('zoeken.filterAlle') + '</button>'
     + '<button class="bibliotheek-filter-btn' + (bibliotheekTypeFilter === 'youtube' ? ' actief' : '') + '" onclick="stelBibliotheekTypeFilter(\'youtube\')">' + t('video.bron.youtube') + '</button>'
-    + '<button class="bibliotheek-filter-btn' + (bibliotheekTypeFilter === 'lokaal' ? ' actief' : '') + '" onclick="stelBibliotheekTypeFilter(\'lokaal\')">' + t('video.bron.lokaal') + '</button>'
+    + '<button class="bibliotheek-filter-btn' + (bibliotheekTypeFilter === 'video' ? ' actief' : '') + '" onclick="stelBibliotheekTypeFilter(\'video\')">' + t('zoeken.filterVideo') + '</button>'
+    + '<button class="bibliotheek-filter-btn' + (bibliotheekTypeFilter === 'muziek' ? ' actief' : '') + '" onclick="stelBibliotheekTypeFilter(\'muziek\')">' + t('zoeken.filterMuziek') + '</button>'
     + '</div>'
 }
 
@@ -379,7 +415,9 @@ async function renderBibliotheekResultaten(generatie) {
     const sleutel = bibliotheekSleutel(resultaat)
     const herkomstLabel = resultaat.bron === 'concert'
       ? t('jukebox.herkomstConcert', { naam: resultaat.herkomst })
-      : t('jukebox.herkomstWall', { naam: resultaat.herkomst })
+      : resultaat.bron === 'album'
+        ? t('jukebox.herkomstAlbum', { naam: resultaat.herkomst })
+        : t('jukebox.herkomstWall', { naam: resultaat.herkomst })
     const bronLabel = '<div class="playlist-bron ' + resultaat.soort + '">'
       + t(resultaat.soort === 'youtube' ? 'video.bron.youtube' : 'video.bron.lokaal') + '</div>'
 
@@ -387,6 +425,8 @@ async function renderBibliotheekResultaten(generatie) {
     if (resultaat.soort === 'youtube') {
       const id = getYoutubeId(resultaat.youtubeUrl)
       if (id) thumb = 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg'
+    } else if (resultaat.coverPad) {
+      thumb = 'file:///' + resultaat.coverPad.replace(/\\/g, '/')
     } else if (resultaat.lokaalPad) {
       const pad = await ipcRenderer.invoke('maak-thumbnail', resultaat.lokaalPad)
       if (pad) thumb = 'file:///' + pad.replace(/\\/g, '/')
@@ -454,7 +494,7 @@ function voegBibliotheekSelectieToe() {
 
   bibliotheekResultatenRuw
     .filter(r => bibliotheekSelectie.has(bibliotheekSleutel(r)))
-    .forEach(r => voegToeAanPlaylist({ type: r.soort, lokaalPad: r.lokaalPad, youtubeUrl: r.youtubeUrl, artiest: r.artiest, titel: r.titel }))
+    .forEach(r => voegToeAanPlaylist({ type: r.soort, lokaalPad: r.lokaalPad, youtubeUrl: r.youtubeUrl, artiest: r.artiest, titel: r.titel, coverPad: r.coverPad }))
 
   bibliotheekSelectie.clear()
   document.getElementById('bibliotheek-zoekveld').value = ''
@@ -584,6 +624,7 @@ function speelIndex(i) {
 
   const speler = document.getElementById('speler')
   const ytWrap = document.getElementById('youtube-speler-wrap')
+  const audioCoverWrap = document.getElementById('audio-cover-wrap')
   const placeholder = document.getElementById('speel-placeholder')
   const fsBtn = document.getElementById('fullscreen-btn')
 
@@ -594,6 +635,7 @@ function speelIndex(i) {
     speler.pause()
     speler.removeAttribute('src')
     speler.classList.remove('zichtbaar')
+    audioCoverWrap.classList.remove('zichtbaar')
 
     ytWrap.classList.add('zichtbaar')
     const videoId = getYoutubeId(item.youtube_url)
@@ -610,8 +652,22 @@ function speelIndex(i) {
     ytWrap.classList.remove('zichtbaar')
 
     speler.src = 'file:///' + item.lokaal_pad.replace(/\\/g, '/')
-    speler.classList.add('zichtbaar')
     speler.play()
+
+    // audio-only lokale bestanden (mp3/m4a/flac/wav) tonen een lelijk zwart beeld in een <video>-element
+    // (geen videoframe om te tekenen) - #speler blijft de speel-engine (spectrum-analyzer blijft eraan
+    // hangen, zie initLokaleAnalyser), maar wordt visueel verborgen ten gunste van de albumhoes
+    if (isAudioBestand(item.lokaal_pad)) {
+      speler.classList.remove('zichtbaar')
+      document.getElementById('audio-cover-content').innerHTML = item.cover_pad
+        ? '<img src="file:///' + item.cover_pad.replace(/\\/g, '/') + '" alt="">'
+        : '<div class="audio-cover-placeholder">&#9835;</div>'
+      document.getElementById('audio-progress-vulling').style.width = '0%'
+      audioCoverWrap.classList.add('zichtbaar')
+    } else {
+      speler.classList.add('zichtbaar')
+      audioCoverWrap.classList.remove('zichtbaar')
+    }
   }
 
   document.getElementById('play-btn').textContent = '⏸'
@@ -624,6 +680,12 @@ function schermvullend() {
   if (item && item.type === 'youtube') {
     const ytWrap = document.getElementById('youtube-speler-wrap')
     if (ytWrap.requestFullscreen) ytWrap.requestFullscreen()
+    return
+  }
+
+  if (item && isAudioBestand(item.lokaal_pad)) {
+    const audioCoverWrap = document.getElementById('audio-cover-wrap')
+    if (audioCoverWrap.requestFullscreen) audioCoverWrap.requestFullscreen()
     return
   }
 
@@ -666,6 +728,8 @@ function stop() {
   speler.pause()
   speler.removeAttribute('src')
   speler.classList.remove('zichtbaar')
+  document.getElementById('audio-cover-wrap').classList.remove('zichtbaar')
+  document.getElementById('audio-progress-vulling').style.width = '0%'
 
   const ytWrap = document.getElementById('youtube-speler-wrap')
   ytWrap.classList.remove('zichtbaar')
@@ -727,7 +791,7 @@ function naarLaatste() {
 function registreerHuidigeAfspeling() {
   const item = playlist[huidigeIndex]
   if (!item) return
-  registreerAfspeling({ type: item.type, lokaalPad: item.lokaal_pad, youtubeUrl: item.youtube_url, artiest: item.artiest, titel: item.titel })
+  registreerAfspeling({ type: item.type, lokaalPad: item.lokaal_pad, youtubeUrl: item.youtube_url, artiest: item.artiest, titel: item.titel, coverPad: item.cover_pad })
 }
 
 function afgespeeldGaVerder() {
@@ -806,6 +870,8 @@ async function renderMeestGespeeld() {
     if (item.type === 'youtube') {
       const id = getYoutubeId(item.youtube_url)
       if (id) thumb = 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg'
+    } else if (item.cover_pad) {
+      thumb = 'file:///' + item.cover_pad.replace(/\\/g, '/')
     } else if (item.lokaal_pad) {
       const pad = await ipcRenderer.invoke('maak-thumbnail', item.lokaal_pad)
       if (pad) thumb = 'file:///' + pad.replace(/\\/g, '/')
@@ -824,7 +890,7 @@ async function renderMeestGespeeld() {
       + '</div>'
       + '<button class="opgeslagen-playlist-laden" title="' + t('selectie.voegToeAanPlaylist') + '">+</button>'
     el.querySelector('.opgeslagen-playlist-laden').onclick = () => {
-      voegToeAanPlaylist({ type: item.type, lokaalPad: item.lokaal_pad, youtubeUrl: item.youtube_url, artiest: item.artiest, titel: item.titel })
+      voegToeAanPlaylist({ type: item.type, lokaalPad: item.lokaal_pad, youtubeUrl: item.youtube_url, artiest: item.artiest, titel: item.titel, coverPad: item.cover_pad })
       laadPlaylist()
     }
     lijst.appendChild(el)
@@ -832,6 +898,7 @@ async function renderMeestGespeeld() {
 }
 
 window.leegMaken = leegMaken
+window.zoekInAudio = zoekInAudio
 window.verwijderItem = verwijderItem
 window.speelPauze = speelPauze
 window.stop = stop

@@ -8,7 +8,8 @@ Een persoonlijke Electron desktop-applicatie waarbij gebruikers YouTube-video's 
 - SQLite via better-sqlite3
 - GSAP voor animaties
 - ffmpeg-static voor thumbnails
-- Gebruikersdata: `%APPDATA%\Musicwall\` (database, thumbnails)
+- music-metadata voor ID3-tags/embedded albumhoezen bij MP3-import (pure JS, ESM-only — zie `## MP3-albums`)
+- Gebruikersdata: `%APPDATA%\Musicwall\` (database, thumbnails, album-covers)
 - Projectmap: `C:\Software\Musicwall\`
 
 ## Projectstructuur
@@ -26,8 +27,15 @@ db/videos.js          — CRUD voor videos incl. slaVolgordeOp
 db/concerten.js       — CRUD voor concerten en concert_media
 db/playlist.js        — Jukebox playlist (live afspeel-queue)
 db/opgeslagenPlaylists.js — CRUD voor opgeslagen (benoemde) playlists, video_id-gebaseerd
-db/zoeken.js           — Doorzoekt videos + concert_media samen (jukebox-bibliotheekzoeken); alleYoutubeItems() voor het kapotte-links-scherm
+db/zoeken.js           — Doorzoekt videos + concert_media + album_tracks samen (jukebox-bibliotheekzoeken); alleYoutubeItems() voor het kapotte-links-scherm
 db/afspeelstatistieken.js — Eigen "meest gespeeld"-telling per nummer (jukebox)
+db/albums.js           — CRUD voor albums en album_tracks (MP3-albums, zie `## MP3-albums`)
+js/albums.js           — Albumkaarten-grid binnen een wallgroep van het type 'albums'
+album-import.html      — Formulier album importeren (map kiezen, ID3-tags/hoes uitlezen)
+js/album-import.js     — Logica album importeren formulier
+album-detail.html      — Tracklijst-scherm van een album
+js/album-detail.js     — Logica tracklijst-scherm, selectie/afspelen/verwijderen van tracks
+css/album-detail.css   — Tracklijst-styling (aanvullend op css/concert-detail.css)
 kapotte-links.html    — Overzichtsscherm kapotte YouTube-links
 js/kapotte-links.js   — Logica kapotte-links overzichtsscherm
 nieuw-concert.html    — Formulier nieuw concert
@@ -49,14 +57,16 @@ build/icon.ico        — App icoon
 ## Database tabellen
 ```sql
 walls        (id, naam, volgorde, groep_id)
-wall_groepen (id, naam, volgorde)
+wall_groepen (id, naam, volgorde, type)
 videos       (id, wall_id, type, artiest, titel, verhaal, tag, youtube_url, lokaal_pad, volgorde)
 concerten    (id, naam, artiest, datum, verhaal, volgorde)
 concert_media (id, concert_id, type, bestand_pad, volgorde)
-playlist     (id, type, lokaal_pad, youtube_url, artiest, titel, volgorde)
+albums       (id, groep_id, naam, artiest, cover_pad, volgorde)
+album_tracks (id, album_id, artiest, titel, lokaal_pad, volgorde)
+playlist     (id, type, lokaal_pad, youtube_url, artiest, titel, cover_pad, volgorde)
 playlists       (id, naam, aangemaakt_op)
 playlist_videos (id, playlist_id, video_id, volgorde)
-afspeelstatistieken (sleutel, type, lokaal_pad, youtube_url, artiest, titel, aantal, laatst_afgespeeld)
+afspeelstatistieken (sleutel, type, lokaal_pad, youtube_url, artiest, titel, cover_pad, aantal, laatst_afgespeeld)
 ```
 
 `walls.groep_id` verwijst (los, geen FK-declaratie) naar `wall_groepen.id`. `NULL` betekent ongegroepeerd. `groep_id` is via migratie toegevoegd (`ALTER TABLE walls ADD COLUMN groep_id INTEGER` in `database.js`, alleen als de kolom nog niet bestaat).
@@ -96,6 +106,23 @@ Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard
 - **Groepstabs herordenen**: sleep een tab-knop op een andere (`groepTabId`-dataTransfer-payload, apart van `wallId` zodat beide drop-doelen naast elkaar kunnen bestaan op dezelfde tab-knop) → `herschikGroepTabs()` → IPC `sla-wallgroep-volgorde-op` → `herschikWallGroepen()`
 - **Groep verwijderen**: hover + `×` op de tab → bevestiging via `bevestig-wallgroep-verwijderen` (dezelfde `vraagBevestiging()`-popup als walls/concerten) → `verwijderWallGroep()` zet alleen `groep_id = NULL` op de walls erin, verwijdert de walls zelf niet
 - **Tabs hernoemen**: dubbelklik op een tab. Voor groepstabs gaat dit via `open-hernoem-wallgroep` → `nieuwe-wallgroep.html` in hernoem-modus (database, `hernoemWallGroep()`). Voor de vaste tabs "Mijn walls"/"Mijn concerten" (geen database-rij) gaat dit via een apart `hernoem-tab.html`/`js/hernoem-tab.js` venster dat de naam terugstuurt via `tab-hernoemd` → `tab-naam-gewijzigd`, opgeslagen in `localStorage` (`musicwall-tab-walls-naam` / `musicwall-tab-concerten-naam`) en toegepast via `pasTabNamenToe()` — verwijdert dan het `data-i18n`-attribuut van het label zodat een taalwissel de aangepaste naam niet overschrijft
+
+## MP3-albums (wallgroep-type 'albums')
+Op verzoek van de gebruiker (een grote lokale MP3-verzameling, per album in een map met een albumhoes-afbeelding erbij) kunnen wallgroepen naast de normale "walls"-inhoud ook albums bevatten — geen aparte hardcoded tab, maar een tweede *type* bovenop het bestaande wallgroep-tabmechanisme.
+- **`wall_groepen.type`** (`'walls'` default, of `'albums'`) bepaalt wat een groepstab toont. Alleen instelbaar bij het **aanmaken** van een groep (`nieuwe-wallgroep.html`'s `.type-keuze`/`.type-btn`-radiogroep, hetzelfde UI-patroon als de youtube/lokaal-typekeuze in `toevoegen.html`) — bewust niet wijzigbaar bij hernoemen, want een bestaande groep van type wisselen zou de albums/walls erin dubbelzinnig maken.
+- **`js/concerten.js`'s `schakelSectie(sectie, groepId)`** zoekt bij `sectie === 'groep'` de groep op in `getAlleWallGroepen()` en route op `groep.type`: `'walls'` → bestaand gedrag (`#walls-container`, `laadWalls()`); `'albums'` → `#albums-container` (nieuw element in `index.html`, hergebruikt de `.concerten-container`-CSS-klasse zodat geen aparte albums-CSS-laag nodig was) + `laadAlbums(groepId)` uit het nieuwe `js/albums.js`.
+- **Albums en tracks hergebruiken bewust het `concerten`/`concert_media`-patroon** (parent + child, eigen tabellen `albums`/`album_tracks`), niet het `walls`/`videos`-patroon — een album is voor de gebruiker conceptueel een kaart met een hoes die je opent (zoals een concertervaring), geen sectie met een grid van losse kaarten erin (zoals een wall). `db/albums.js` is vrijwel een letterlijke kopie van `db/concerten.js`'s CRUD-idioom. `albums.groep_id` volgt hetzelfde losse (geen FK) patroon als `walls.groep_id`.
+- **Albumkaarten hergebruiken de bestaande `.concert-kaart`/`.concert-cover`/`.concert-info`-CSS letterlijk** (`js/albums.js`'s `laadAlbums()`) — hoes i.p.v. concert-cover-foto, trackaantal-badge i.p.v. media-aantal-badge, verder identieke opbouw/hover/drag-herordenen (`albumDragStart`/`albumDrop`/... zijn kopieën van `concertDragStart`/`concertDrop`/...). Geen nieuwe CSS-bestand nodig voor de kaartweergave zelf.
+- **Album importeren = de enige manier om een album aan te maken**: de `+`-tegel in de albums-grid opent direct `album-import.html` (`open-album-import` IPC) — geen tussenstap "leeg album aanmaken, dan tracks toevoegen" zoals bij walls, want een album is per definitie een mapimport (alle MP3's uit één map + de bijbehorende hoes, in één keer).
+  - **Hoesdetectie + ID3-tags uitlezen gebeuren allebei in `main.js`'s `kies-album-map`-handler**, niet in de renderer: hoesdetectie via een prioriteitenlijst `folder.*` → `cover.*` → `albumart.*` (case-insensitive, `.jpg/.jpeg/.png`) → eerste afbeelding in de map → embedded ID3-hoes van het eerste bestand dat er een heeft. Gekozen na gebruikersfeedback dat de bestandsnaam per map wisselt in zijn verzameling — een enkele vaste naam aannemen zou voor een deel van zijn collectie stil hebben gefaald.
+  - **Herkende extensies**: `.mp3/.m4a/.flac/.wav`, niet-recursief gescand (zelfde `fs.readdirSync`-aanpak als `open-import` voor video's).
+  - **`music-metadata` is ESM-only** (`"type": "module"`, geen `require()`-exportconditie) — vandaar `const mm = await import('music-metadata')` i.p.v. de gebruikelijke `require()`. **Bug gevonden en gefixt tijdens gebruik**: de eerste versie deed dit `import()` in de renderer (`js/album-import.js`, geladen via `<script src>` met `nodeIntegration: true`) — leek in een losse Node-testaanroep te werken, maar faalde in de praktijk stil zodra de gebruiker echt op "Importeren" klikte: geen foutmelding, de knop bleef gewoon uitgeschakeld (`await import(...)` stond niet in een `try/catch`, dus een afgewezen promise werd een ongeziene "unhandled rejection" in de renderer). Root cause: dynamic `import()` van een *bare* package-specifier is in een via `<script src>` geladen, niet-als-module geparste renderer-script minder betrouwbaar dan in main.js, waar Electron gewoon kale Node.js draait. Opgelost door alle `music-metadata`-aanroepen (tags lezen én embedded hoes wegschrijven) te verplaatsen naar `main.js`'s `kies-album-map`-handler — een echte Node-omgeving, waar dit dynamic-import-interoppatroon voor ESM-only packages het standaard, stabiele mechanisme is. `kies-album-map` stuurt nu direct de kant-en-klare tracklijst (`{lokaalPad, artiest, titel}` per bestand) terug; `js/album-import.js` doet zelf geen ID3-werk meer, alleen nog de UI + `maakAlbum`/`voegTrackToe`-DB-writes.
+  - Per track: ID3 `common.artist`/`common.title`, terugval op de bestandsnaam-zonder-extensie bij ontbrekende/beschadigde tags (`try/catch` rond `mm.parseFile()`, mag de rest van de import nooit blokkeren) — plus een aparte `try/catch` rond `await import('music-metadata')` zelf, die bij falen terugvalt op bestandsnaam-only tracks i.p.v. de hele import te laten crashen. Embedded hoes (`mm.selectCover(common.picture)`) wordt alleen weggeschreven als er nog géén hoes bekend is (los bestand niet gevonden), naar een nieuwe `%APPDATA%\Musicwall\album-covers\`-map (zelfde soort beheerde map als `thumbnails/`, met dezelfde behandeling: aangemaakt bij opstart in `main.js`, uitgesloten van de electron-builder `files`-lijst, meegenomen in `maak-backup`/`herstel-backup`).
+- **Tracklijst-scherm (`album-detail.html`/`js/album-detail.js`)** is een vereenvoudigde variant van `concert-detail.html` — een verticale rijenlijst i.p.v. een tegelgrid (tracks hebben geen zinvolle eigen thumbnail om als tegel te tonen), geen lightbox/viewer (niet van toepassing op audio). Zelfde interactiepatroon: Ctrl+klik selecteert (geen lightbox-conflict zoals bij concert-media, dus hier zelfs zonder Ctrl-vereiste had gekund, maar bewust consistent gehouden met de rest van de app), een ▶-knop per rij speelt af via de bestaande `open-lokaal` IPC (HTML5 `<video>`-element speelt audio-only bestanden gewoon af, geen aparte audio-afspeelroute nodig), selectiebalk onderin hergebruikt de generieke `selectie.tekst`/`selectie.voegToeAanPlaylist`-vertalingen.
+- **Zoeken/jukebox/playlist-integratie kostte bewust bijna geen wijzigingen aan bestaande `soort`-onderscheidingen**: albumtracks zijn per definitie lokale bestanden (nooit YouTube), dus `db/zoeken.js`'s nieuwe derde brontak (`album_tracks` JOIN `albums`, parallel aan de bestaande `videos`- en `concert_media`-taken) geeft altijd `soort: 'lokaal'` terug — daardoor vallen albumtracks vanzelf onder de bestaande "Lokaal"-filter (`bouwZoekTypeFilterHtml`/`bouwBibliotheekTypeFilterHtml`, geen nieuwe filterknop nodig) en onder de bestaande `soort === 'lokaal'`-tak in `db/playlist.js`'s `voegToeAanPlaylist()` en `db/afspeelstatistieken.js`'s `registreerAfspeling()` (geen wijziging aan die binaire soort-logica nodig).
+  - Elk zoekresultaat-object kreeg wél een nieuw `coverPad`-veld (`null` voor wall-video's/concert-media, gevuld voor albumtracks) — overal waar voorheen altijd `maak-thumbnail` (ffmpeg-frame-grab) werd aangeroepen voor lokale bestanden, checkt de code nu eerst op `coverPad`/`cover_pad` en toont die rechtstreeks als `file:///`-pad, want ffmpeg kan geen frame grijpen uit een audio-only bestand. Aangepast: `js/jukebox.js`'s `laadPlaylist()`/`renderBibliotheekResultaten()`/`renderMeestGespeeld()`, `js/index.js`'s `getZoekThumbnail()`.
+  - `cover_pad` is om dezelfde reden als `db/playlist.js`'s bestaande "kopie i.p.v. FK"-filosofie (zie hieronder bij de `playlist`-tabel) ook toegevoegd aan de `playlist`- en `afspeelstatistieken`-tabellen zelf (migratie via `ALTER TABLE ... ADD COLUMN`, zelfde idioom als de `wall_groepen.type`-migratie) — de albumhoes moet ook nog tonen nadat het album zelf verwijderd is.
+  - Herkomstlabel: nieuwe vertaalsleutel `jukebox.herkomstAlbum` ("Album: {naam}"), naast de bestaande `jukebox.herkomstWall`/`jukebox.herkomstConcert`.
 
 ## Wall kiezen bij importeren/zoeken
 - `importeren.html` en `zoeken.html` tonen eerst een groepskeuze (`#groep-keuze`, gevuld via `getAlleWallGroepen()` + een vaste "ongegroepeerd"-optie met het label van `tabs.walls`), pas daarna een wall-dropdown (`#wall-keuze`) die alleen walls uit de gekozen groep toont (`laadWallsVoorGroep()`) — voorkomt dat alle walls van alle groepen plat in één lijst staan
@@ -239,13 +266,19 @@ Zeven thema's via `data-thema` attribuut op `<html>` (leeg attribuut = standaard
 - `maak-thumbnail` (handle) → ffmpeg thumbnail generatie
 - `open-api-sleutel-instellen` → opent api-sleutel-wizard.html in wijzig-modus (zie `## YouTube API-sleutel setup-wizard`)
 - `haal-api-sleutel-op` (handle) / `sla-api-sleutel-op` (handle) → lezen resp. versleuteld opslaan van de YouTube API-sleutel via `safeStorage` (zie `## YouTube API-sleutel setup-wizard`)
-- `maak-backup` (handle) / `herstel-backup` (handle) → backup maken resp. herstellen van de database + thumbnails (zie `## Backup en herstel van de database`)
+- `maak-backup` (handle) / `herstel-backup` (handle) → backup maken resp. herstellen van de database + thumbnails + album-covers (zie `## Backup en herstel van de database`)
 - `open-kapotte-links` → opent kapotte-links.html (zie `## Proactieve YouTube-linkcontrole`)
+- `open-album-import` / `kies-album-map` → opent album-import.html resp. folderdialoog + audioscan + hoesdetectie (zie `## MP3-albums`)
+- `album-toegevoegd` → herlaad albums-grid, sluit venster
+- `open-album-detail` → opent album-detail.html
+- `sla-album-volgorde-op` → herschikAlbums()
+- `bevestig-album-verwijderen` / `bevestig-album-tracks-verwijderen-meerdere` → bevestiging + verwijderAlbum() resp. bulk verwijderTrack()
+- `album-tracks-naar-playlist` → voegt geselecteerde tracks uit album-detail toe aan de jukebox-playlist
 
 ## Testinfrastructuur
 - `npm test` draait via `electron --test` met `ELECTRON_RUN_AS_NODE=1` (`package.json`), niet via kale `node --test`: `better-sqlite3` is gecompileerd tegen Electrons Node-ABI (`@electron/rebuild`), niet die van de systeem-Node, dus tests die `database.js` laden crashen onder kale `node` met een `NODE_MODULE_VERSION`-mismatch. `ELECTRON_RUN_AS_NODE=1` laat de Electron-executable als kale Node-runtime draaien (geen `app`/`BrowserWindow`), waardoor native modules met Electrons ABI wél laden.
 - `database.js` opent normaal de echte database op `%APPDATA%\Musicwall\musicwall.db` als module-singleton — dat zou tests zonder ingreep tegen de productiedatabase van de gebruiker laten draaien (buiten de Electron-runtime valt `getUserDataPath()`'s `require('electron')`-detectie terug op de homedir-pad-gok, niet op een test-sandbox). Opgelost met een env-var-override: `const dbPad = process.env.MUSICWALL_TEST_DB_PAD || path.join(userDataPath, 'musicwall.db')`. Elk testbestand onder `test/db-*.test.js` zet `process.env.MUSICWALL_TEST_DB_PAD = ':memory:'` als allereerste regel, vóór enige `require('../db/...')` — `node --test` (ook onder Electron) draait elk testbestand in een eigen kindproces, dus deze override is per bestand geïsoleerd en heeft geen effect op productie (env var staat daar nooit).
-- Testdekking voor de `db/`-CRUD-modules: `test/db-walls.test.js`, `test/db-videos.test.js`, `test/db-concerten.test.js`, `test/db-wallgroepen.test.js`, `test/db-zoeken.test.js` — gericht op cascade-deletes en volgorde-herordeningslogica (o.a. dat `verwijderWall` expliciet ook zijn video's verwijdert, en dat `verwijderConcert` cascadeert naar `concert_media` via de FK die in de praktijk actief blijkt te staan, zie de "Belangrijke correctie"-paragraaf hierboven). Elk testbestand reset zijn tabellen in `test.beforeEach()` (`DELETE FROM ...`), omdat de `:memory:`-database per bestand maar één keer wordt aangemaakt en dus gedeeld wordt tussen de `test()`-blokken in dat bestand.
+- Testdekking voor de `db/`-CRUD-modules: `test/db-walls.test.js`, `test/db-videos.test.js`, `test/db-concerten.test.js`, `test/db-wallgroepen.test.js`, `test/db-zoeken.test.js`, `test/db-albums.test.js` — gericht op cascade-deletes en volgorde-herordeningslogica (o.a. dat `verwijderWall` expliciet ook zijn video's verwijdert, dat `verwijderConcert` cascadeert naar `concert_media` via de FK die in de praktijk actief blijkt te staan, zie de "Belangrijke correctie"-paragraaf hierboven, en dat `verwijderAlbum` op dezelfde manier expliciet zijn `album_tracks` opruimt). Elk testbestand reset zijn tabellen in `test.beforeEach()` (`DELETE FROM ...`), omdat de `:memory:`-database per bestand maar één keer wordt aangemaakt en dus gedeeld wordt tussen de `test()`-blokken in dat bestand.
 
 ## Zoeken op tag
 `zoekBibliotheek(term)` (`db/zoeken.js`, gebruikt door zowel het globale zoekveld op het hoofdscherm als de jukebox-bibliotheekzoekfunctie) matcht naast `videos.artiest`/`videos.titel` nu ook op `videos.tag` (`OR videos.tag LIKE ?`). De `concert_media`-query blijft ongemoeid — die tabel heeft geen `tag`-kolom.

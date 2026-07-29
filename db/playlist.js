@@ -11,6 +11,7 @@ if (kolommen.length === 0) {
       youtube_url TEXT,
       artiest TEXT,
       titel TEXT,
+      cover_pad TEXT,
       volgorde INTEGER DEFAULT 0
     );
   `)
@@ -55,15 +56,19 @@ if (kolommen.length === 0) {
   db.exec(`DROP TABLE playlist_oud`)
 }
 
+if (!db.prepare("PRAGMA table_info(playlist)").all().map(k => k.name).includes('cover_pad')) {
+  db.exec('ALTER TABLE playlist ADD COLUMN cover_pad TEXT')
+}
+
 function getPlaylist() {
   return db.prepare(`
-    SELECT id as playlist_id, type, lokaal_pad, youtube_url, artiest, titel
+    SELECT id as playlist_id, type, lokaal_pad, youtube_url, artiest, titel, cover_pad
     FROM playlist
     ORDER BY volgorde
   `).all()
 }
 
-function voegToeAanPlaylist({ type, lokaalPad, youtubeUrl, artiest, titel }) {
+function voegToeAanPlaylist({ type, lokaalPad, youtubeUrl, artiest, titel, coverPad }) {
   const soort = type === 'youtube' ? 'youtube' : 'lokaal'
   const sleutel = soort === 'youtube' ? youtubeUrl : lokaalPad
   if (!sleutel) return
@@ -74,8 +79,8 @@ function voegToeAanPlaylist({ type, lokaalPad, youtubeUrl, artiest, titel }) {
   if (bestaat) return
 
   const hoogste = db.prepare('SELECT COALESCE(MAX(volgorde), 0) as max FROM playlist').get()
-  return db.prepare('INSERT INTO playlist (type, lokaal_pad, youtube_url, artiest, titel, volgorde) VALUES (?, ?, ?, ?, ?, ?)')
-    .run(soort, soort === 'lokaal' ? lokaalPad : null, soort === 'youtube' ? youtubeUrl : null, artiest || null, titel || null, hoogste.max + 1)
+  return db.prepare('INSERT INTO playlist (type, lokaal_pad, youtube_url, artiest, titel, cover_pad, volgorde) VALUES (?, ?, ?, ?, ?, ?, ?)')
+    .run(soort, soort === 'lokaal' ? lokaalPad : null, soort === 'youtube' ? youtubeUrl : null, artiest || null, titel || null, coverPad || null, hoogste.max + 1)
 }
 
 function verwijderUitPlaylist(playlistId) {

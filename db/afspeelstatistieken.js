@@ -13,11 +13,15 @@ db.exec(`
   )
 `)
 
+if (!db.prepare("PRAGMA table_info(afspeelstatistieken)").all().map(k => k.name).includes('cover_pad')) {
+  db.exec('ALTER TABLE afspeelstatistieken ADD COLUMN cover_pad TEXT')
+}
+
 // Sleutel/opbouw bewust hetzelfde patroon als db/playlist.js (type + lokaal_pad/youtube_url als kopie i.p.v.
 // een FK naar videos/concert_media) - een afspeelstatistiek moet blijven bestaan en tonen ook nadat de
 // bron-video verwijderd is, en hetzelfde nummer dat in meerdere walls voorkomt (zelfde url/pad) telt bewust
 // als één afspeelstatistiek, net als bij de bibliotheekzoek-selectiesleutel in de jukebox.
-function registreerAfspeling({ type, lokaalPad, youtubeUrl, artiest, titel }) {
+function registreerAfspeling({ type, lokaalPad, youtubeUrl, artiest, titel, coverPad }) {
   const soort = type === 'youtube' ? 'youtube' : 'lokaal'
   const pad = soort === 'youtube' ? youtubeUrl : lokaalPad
   if (!pad) return
@@ -25,14 +29,15 @@ function registreerAfspeling({ type, lokaalPad, youtubeUrl, artiest, titel }) {
   const sleutel = soort + '|' + pad
 
   db.prepare(`
-    INSERT INTO afspeelstatistieken (sleutel, type, lokaal_pad, youtube_url, artiest, titel, aantal, laatst_afgespeeld)
-    VALUES (?, ?, ?, ?, ?, ?, 1, datetime('now'))
+    INSERT INTO afspeelstatistieken (sleutel, type, lokaal_pad, youtube_url, artiest, titel, cover_pad, aantal, laatst_afgespeeld)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 1, datetime('now'))
     ON CONFLICT(sleutel) DO UPDATE SET
       aantal = aantal + 1,
       artiest = excluded.artiest,
       titel = excluded.titel,
+      cover_pad = excluded.cover_pad,
       laatst_afgespeeld = excluded.laatst_afgespeeld
-  `).run(sleutel, soort, soort === 'lokaal' ? pad : null, soort === 'youtube' ? pad : null, artiest || null, titel || null)
+  `).run(sleutel, soort, soort === 'lokaal' ? pad : null, soort === 'youtube' ? pad : null, artiest || null, titel || null, coverPad || null)
 }
 
 function getMeestGespeeld(limiet) {

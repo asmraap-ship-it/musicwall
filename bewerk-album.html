@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Wall-groep</title>
+  <title>Album bewerken</title>
   <link rel="stylesheet" href="css/toevoegen.css">
   <script>
     const thema = localStorage.getItem('musicwall-thema')
@@ -23,23 +23,23 @@
 
 <div class="titelbalk-drag"></div>
 
-<h2 id="titel" data-i18n="nieuweWallGroep.titel">Nieuwe groep</h2>
+<h2 data-i18n="albumBewerken.titel">Album bewerken</h2>
 
 <div class="veld">
-  <label data-i18n="nieuweWallGroep.naamLabel">Naam van de groep</label>
-  <input type="text" id="naam" data-i18n-placeholder="nieuweWallGroep.naamPlaceholder" placeholder="bijv. Feestjes" autofocus>
+  <label data-i18n="albumImport.naamLabel">Albumnaam</label>
+  <input type="text" id="album-naam" autofocus>
 </div>
 
-<div class="type-keuze" id="type-keuze">
-  <div class="type-btn actief" id="btn-type-walls" onclick="kiesType('walls')" data-i18n="wallGroep.typeWalls">Walls</div>
-  <div class="type-btn" id="btn-type-albums" onclick="kiesType('albums')" data-i18n="wallGroep.typeAlbums">Albums</div>
+<div class="veld">
+  <label data-i18n="albumImport.artiestLabel">Artiest</label>
+  <input type="text" id="album-artiest">
 </div>
 
-<button class="opslaan-btn" id="opslaan-btn" onclick="slaOp()" data-i18n="nieuweWallGroep.aanmakenBtn">Aanmaken</button>
+<button class="opslaan-btn" onclick="slaOp()" data-i18n="algemeen.opslaanBtn">Opslaan</button>
 <div class="melding" id="melding"></div>
 
 <script src="js/vertalingen.js"></script>
 <script src="js/i18n.js"></script>
-<script src="js/nieuwe-wallgroep.js"></script>
+<script src="js/bewerk-album.js"></script>
 </body>
 </html>
