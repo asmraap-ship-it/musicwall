@@ -713,10 +713,28 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   background: #000;
   display: none;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
 }
 
 .audio-cover-wrap.zichtbaar {
   display: flex;
+}
+
+/* Vult de zwarte leegte rond een (vaak laagresolutie) hoes met diezelfde hoes, uitvergroot en vervaagd -
+   i.p.v. de hoes zelf op te rekken (dat gaf een flets/wazig resultaat bij kleine bronbestanden, zie
+   ## Jukebox-gedrag). transform:scale() compenseert de onscherpe rand die blur() aan de zijkanten van het
+   element zelf achterlaat. z-index:-1 (i.c.m. position:relative op de wrap) volstaat om dit laagje achter de
+   gewone, niet-gepositioneerde kinderen (.audio-cover-content, .audio-progress-balk) te laten vallen, zonder
+   dat die zelf een z-index nodig hebben */
+.audio-cover-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(40px) brightness(0.45);
+  transform: scale(1.15);
+  z-index: -1;
 }
 
 .audio-cover-content {
@@ -727,12 +745,16 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   min-height: 0;
 }
 
+/* Bewuste middenweg: width/height (i.p.v. max-width/max-height) laat een lowres hoes altijd merkbaar groter
+   tonen dan zijn eigen kleine brongrootte (max-* deed dat niet, zie ## Jukebox-gedrag), maar op een bewust
+   kleiner percentage dan de eerdere 90%-poging - die vergrootte zo hard dat het duidelijk flets/wazig oogde.
+   Bij deze kleinere schaalfactor is de onvermijdelijke opschaal-zachtheid van een lowres bron minder opvallend */
 .audio-cover-content img {
-  max-width: 55%;
-  max-height: 80%;
+  width: 55%;
+  height: 65%;
   object-fit: cover;
   border-radius: 6px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
 }
 
 .audio-cover-placeholder {
@@ -741,10 +763,26 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   opacity: 0.2;
 }
 
-.audio-progress-balk {
+.audio-progress-rij {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   flex-shrink: 0;
-  height: 6px;
   margin: 0 2rem 1.5rem;
+}
+
+.audio-tijd {
+  flex-shrink: 0;
+  min-width: 32px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.audio-progress-balk {
+  flex: 1;
+  height: 6px;
   background: rgba(255, 255, 255, 0.12);
   border-radius: 3px;
   cursor: pointer;

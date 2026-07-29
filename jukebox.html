@@ -58,9 +58,14 @@
 	    <iframe id="youtube-speler-frame" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media"></iframe>
 	  </div>
 	  <div class="audio-cover-wrap" id="audio-cover-wrap">
+	    <div class="audio-cover-bg" id="audio-cover-bg"></div>
 	    <div class="audio-cover-content" id="audio-cover-content"></div>
-	    <div class="audio-progress-balk" id="audio-progress-balk" onclick="zoekInAudio(event)">
-	      <div class="audio-progress-vulling" id="audio-progress-vulling"></div>
+	    <div class="audio-progress-rij">
+	      <span class="audio-tijd" id="audio-tijd-huidig">0:00</span>
+	      <div class="audio-progress-balk" id="audio-progress-balk" onclick="zoekInAudio(event)">
+	        <div class="audio-progress-vulling" id="audio-progress-vulling"></div>
+	      </div>
+	      <span class="audio-tijd" id="audio-tijd-duur">0:00</span>
 	    </div>
 	  </div>
 	  <div class="speel-placeholder" id="speel-placeholder">

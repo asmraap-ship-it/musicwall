@@ -6,6 +6,8 @@ let huidigAlbumId = null
 let huidigAlbum = null
 let selectie = new Set()
 let huidigeTrackLijst = []
+let huidigSpeelTrackId = null
+const albumSpeler = document.getElementById('album-speler')
 
 async function laadAlbum(albumId) {
   huidigAlbumId = albumId
@@ -38,12 +40,20 @@ function laadTrackLijst() {
   const tracks = getTracksVoorAlbum(huidigAlbumId)
   huidigeTrackLijst = tracks
 
+  // een track die net verwijderd is (los, of via bulkverwijderen vanuit de selectiebalk) kan de track zijn
+  // die op dit moment in #album-speler staat - zonder deze check zou de navigatiebalk een niet meer
+  // bestaande track blijven tonen
+  if (huidigSpeelTrackId !== null && !tracks.some(t => t.id === huidigSpeelTrackId)) {
+    albumStop()
+  }
+
   document.getElementById('detail-aantal').textContent = t('albums.trackAantal', { n: tracks.length })
 
   if (tracks.length === 0) {
     lijst.innerHTML = '<div class="media-leeg">' + t('albumDetail.geenTracks') + '</div>'
     const selecteerBtn = document.getElementById('selecteer-alles-btn')
     if (selecteerBtn) selecteerBtn.style.display = 'none'
+    bijwerkenSpeelUI()
     return
   }
 
@@ -75,7 +85,125 @@ function laadTrackLijst() {
       { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out', stagger: 0.02 }
     )
   }
+
+  bijwerkenSpeelUI()
 }
+
+function bijwerkenSpeelUI() {
+  document.querySelectorAll('.track-rij.speelt').forEach(el => el.classList.remove('speelt'))
+
+  const label = document.getElementById('album-navigatie-track')
+  const track = huidigSpeelTrackId !== null ? huidigeTrackLijst.find(t => t.id === huidigSpeelTrackId) : null
+
+  if (!track) {
+    if (label) label.textContent = ''
+    return
+  }
+
+  const rij = document.querySelector('.track-rij[data-track-id="' + track.id + '"]')
+  if (rij) {
+    rij.classList.add('speelt')
+    rij.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+  if (label) label.textContent = (track.artiest || (huidigAlbum && huidigAlbum.artiest) || '') + ' - ' + track.titel
+}
+
+function huidigSpeelIndex() {
+  return huidigeTrackLijst.findIndex(t => t.id === huidigSpeelTrackId)
+}
+
+function laadTrack(track) {
+  huidigSpeelTrackId = track.id
+  albumSpeler.src = 'file:///' + track.lokaal_pad.replace(/\\/g, '/')
+  albumSpeler.play()
+  document.getElementById('album-play-btn').textContent = '⏸'
+  document.getElementById('album-progress-vulling').style.width = '0%'
+  document.getElementById('album-tijd-huidig').textContent = '0:00'
+  document.getElementById('album-tijd-duur').textContent = '0:00'
+  bijwerkenSpeelUI()
+}
+
+function formatTijd(seconden) {
+  if (!isFinite(seconden) || seconden < 0) seconden = 0
+  const m = Math.floor(seconden / 60)
+  const s = Math.floor(seconden % 60)
+  return m + ':' + String(s).padStart(2, '0')
+}
+
+albumSpeler.addEventListener('timeupdate', () => {
+  const pct = albumSpeler.duration ? (albumSpeler.currentTime / albumSpeler.duration) * 100 : 0
+  document.getElementById('album-progress-vulling').style.width = pct + '%'
+  document.getElementById('album-tijd-huidig').textContent = formatTijd(albumSpeler.currentTime)
+})
+
+albumSpeler.addEventListener('loadedmetadata', () => {
+  document.getElementById('album-tijd-duur').textContent = formatTijd(albumSpeler.duration)
+})
+
+function zoekInAlbumSpeler(event) {
+  if (!albumSpeler.duration) return
+  const balk = document.getElementById('album-progress-balk')
+  const rect = balk.getBoundingClientRect()
+  const fractie = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width))
+  albumSpeler.currentTime = fractie * albumSpeler.duration
+}
+
+function albumSpeelPauze() {
+  if (huidigSpeelTrackId === null) {
+    if (huidigeTrackLijst.length > 0) laadTrack(huidigeTrackLijst[0])
+    return
+  }
+
+  if (albumSpeler.paused) {
+    albumSpeler.play()
+    document.getElementById('album-play-btn').textContent = '⏸'
+  } else {
+    albumSpeler.pause()
+    document.getElementById('album-play-btn').textContent = '▶'
+  }
+}
+
+function albumStop() {
+  albumSpeler.pause()
+  albumSpeler.removeAttribute('src')
+  huidigSpeelTrackId = null
+  document.getElementById('album-play-btn').textContent = '▶'
+  document.getElementById('album-progress-vulling').style.width = '0%'
+  document.getElementById('album-tijd-huidig').textContent = '0:00'
+  document.getElementById('album-tijd-duur').textContent = '0:00'
+  bijwerkenSpeelUI()
+}
+
+function albumVorige() {
+  const i = huidigSpeelIndex()
+  if (i <= 0) return
+  laadTrack(huidigeTrackLijst[i - 1])
+}
+
+function albumVolgende() {
+  const i = huidigSpeelIndex()
+  if (i === -1 || i >= huidigeTrackLijst.length - 1) return
+  laadTrack(huidigeTrackLijst[i + 1])
+}
+
+function albumEerste() {
+  if (huidigeTrackLijst.length === 0) return
+  laadTrack(huidigeTrackLijst[0])
+}
+
+function albumLaatste() {
+  if (huidigeTrackLijst.length === 0) return
+  laadTrack(huidigeTrackLijst[huidigeTrackLijst.length - 1])
+}
+
+albumSpeler.addEventListener('ended', () => {
+  const i = huidigSpeelIndex()
+  if (i !== -1 && i < huidigeTrackLijst.length - 1) {
+    albumVolgende()
+  } else {
+    document.getElementById('album-play-btn').textContent = '▶'
+  }
+})
 
 function toggleSelecteerAlleInAlbum() {
   if (huidigeTrackLijst.length === 0) return
@@ -98,7 +226,7 @@ function toggleSelecteerAlleInAlbum() {
 function speelTrackAf(trackId) {
   const track = huidigeTrackLijst.find(t => t.id === trackId)
   if (!track) return
-  ipcRenderer.send('open-lokaal', track.lokaal_pad, huidigAlbum.cover_pad)
+  laadTrack(track)
 }
 
 function verwijderTrackItem(trackId) {
@@ -195,3 +323,10 @@ window.bewerkHuidigAlbum = bewerkHuidigAlbum
 window.stuurNaarJukebox = stuurNaarJukebox
 window.verwijderSelectie = verwijderSelectie
 window.toggleSelecteerAlleInAlbum = toggleSelecteerAlleInAlbum
+window.albumSpeelPauze = albumSpeelPauze
+window.albumStop = albumStop
+window.albumVorige = albumVorige
+window.albumVolgende = albumVolgende
+window.albumEerste = albumEerste
+window.albumLaatste = albumLaatste
+window.zoekInAlbumSpeler = zoekInAlbumSpeler

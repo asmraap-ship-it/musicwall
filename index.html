@@ -29,8 +29,8 @@
     <input type="text" class="globaal-zoekveld" id="globaal-zoekveld" oninput="zoekLive()" data-i18n-placeholder="header.globaalZoeken" placeholder="Zoek op artiest of titel…">
   </div>
   <div class="header-knoppen">
-    <button class="toevoegen-btn" onclick="openImporteren()" data-i18n="header.mapImporteren">&#8593; Map importeren</button>
-    <button class="toevoegen-btn" onclick="openZoeken()" data-i18n="header.youtubeZoeken">&#8981; YouTube zoeken</button>
+    <button class="toevoegen-btn" id="map-importeren-btn" onclick="openImporteren()" data-i18n="header.mapImporteren">&#8593; Map importeren</button>
+    <button class="toevoegen-btn" id="youtube-zoeken-btn" onclick="openZoeken()" data-i18n="header.youtubeZoeken">&#8981; YouTube zoeken</button>
     <button class="toevoegen-btn" onclick="openJukebox()" data-i18n="header.jukebox">&#9835; Jukebox</button>
     <button class="toevoegen-btn" onclick="openHelp()" data-i18n="header.help">? Help</button>
     <div id="prullenbak" ondragover="prullenbakOver(event)" ondragleave="prullenbakLeave(event)" ondrop="prullenbakDrop(event)">

@@ -228,14 +228,27 @@ document.getElementById('speler').addEventListener('play', () => {
 })
 document.getElementById('speler').addEventListener('pause', stopSpectrum)
 
-// eigen voortgangsbalk voor audio-only lokale bestanden - #speler's eigen native controls zijn dan
-// onzichtbaar (zie speelIndex(), .zichtbaar staat uit ten gunste van de albumhoes), dus zonder dit zou
-// er tijdens mp3-afspelen geen enkele voortgangsindicatie meer te zien zijn
+function formatTijd(seconden) {
+  if (!isFinite(seconden) || seconden < 0) seconden = 0
+  const m = Math.floor(seconden / 60)
+  const s = Math.floor(seconden % 60)
+  return m + ':' + String(s).padStart(2, '0')
+}
+
+// eigen voortgangsbalk (incl. verstreken tijd/lengte) voor audio-only lokale bestanden - #speler's eigen
+// native controls zijn dan onzichtbaar (zie speelIndex(), .zichtbaar staat uit ten gunste van de albumhoes),
+// dus zonder dit zou er tijdens mp3-afspelen geen enkele voortgangsindicatie meer te zien zijn
 document.getElementById('speler').addEventListener('timeupdate', () => {
   if (!document.getElementById('audio-cover-wrap').classList.contains('zichtbaar')) return
   const speler = document.getElementById('speler')
   const pct = speler.duration ? (speler.currentTime / speler.duration) * 100 : 0
   document.getElementById('audio-progress-vulling').style.width = pct + '%'
+  document.getElementById('audio-tijd-huidig').textContent = formatTijd(speler.currentTime)
+})
+
+document.getElementById('speler').addEventListener('loadedmetadata', () => {
+  if (!document.getElementById('audio-cover-wrap').classList.contains('zichtbaar')) return
+  document.getElementById('audio-tijd-duur').textContent = formatTijd(document.getElementById('speler').duration)
 })
 
 function zoekInAudio(event) {
@@ -659,10 +672,18 @@ function speelIndex(i) {
     // hangen, zie initLokaleAnalyser), maar wordt visueel verborgen ten gunste van de albumhoes
     if (isAudioBestand(item.lokaal_pad)) {
       speler.classList.remove('zichtbaar')
-      document.getElementById('audio-cover-content').innerHTML = item.cover_pad
-        ? '<img src="file:///' + item.cover_pad.replace(/\\/g, '/') + '" alt="">'
-        : '<div class="audio-cover-placeholder">&#9835;</div>'
+      const audioCoverBg = document.getElementById('audio-cover-bg')
+      if (item.cover_pad) {
+        const coverUrl = 'file:///' + item.cover_pad.replace(/\\/g, '/')
+        document.getElementById('audio-cover-content').innerHTML = '<img src="' + coverUrl + '" alt="">'
+        audioCoverBg.style.backgroundImage = "url('" + coverUrl + "')"
+      } else {
+        document.getElementById('audio-cover-content').innerHTML = '<div class="audio-cover-placeholder">&#9835;</div>'
+        audioCoverBg.style.backgroundImage = 'none'
+      }
       document.getElementById('audio-progress-vulling').style.width = '0%'
+      document.getElementById('audio-tijd-huidig').textContent = '0:00'
+      document.getElementById('audio-tijd-duur').textContent = '0:00'
       audioCoverWrap.classList.add('zichtbaar')
     } else {
       speler.classList.add('zichtbaar')
@@ -730,6 +751,8 @@ function stop() {
   speler.classList.remove('zichtbaar')
   document.getElementById('audio-cover-wrap').classList.remove('zichtbaar')
   document.getElementById('audio-progress-vulling').style.width = '0%'
+  document.getElementById('audio-tijd-huidig').textContent = '0:00'
+  document.getElementById('audio-tijd-duur').textContent = '0:00'
 
   const ytWrap = document.getElementById('youtube-speler-wrap')
   ytWrap.classList.remove('zichtbaar')

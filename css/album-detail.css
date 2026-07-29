@@ -141,3 +141,118 @@
 
 .track-rij:hover .track-verwijder { opacity: 1; }
 .track-verwijder:hover { background: #e74c3c; color: #fff; }
+
+.track-rij.speelt {
+  background: rgba(200, 168, 122, 0.1);
+}
+
+.track-rij.speelt .track-titel {
+  color: var(--accent);
+}
+
+/* Vaste balk onderin i.p.v. het losse open-lokaal-popupvenster - navigatie blijft zo "binnen het album",
+   je kunt zonder het scherm te verlaten door de tracklijst heen bladeren. .track-lijst krijgt evenveel
+   padding-bottom als deze balk (tijd/voortgangsrij + knoppenrij) hoog is, anders valt de laatste rij (deels)
+   achter de balk */
+.track-lijst {
+  padding-bottom: 120px;
+}
+
+.album-navigatie {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--achtergrond-3);
+  border-top: 1px solid var(--rand);
+  z-index: 30;
+}
+
+.album-progress-rij {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.5rem 0;
+}
+
+.album-tijd {
+  flex-shrink: 0;
+  min-width: 32px;
+  font-size: 11px;
+  color: var(--tekst-donker);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.album-progress-balk {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.album-progress-vulling {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 3px;
+}
+
+.album-navigatie-knoppen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem 1rem;
+}
+
+.album-navigatie button {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--achtergrond);
+  border: 1px solid var(--rand-2);
+  color: var(--accent);
+  font-size: 13px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.album-navigatie button:hover {
+  border-color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.1);
+}
+
+#album-play-btn {
+  width: 46px;
+  height: 46px;
+  font-size: 15px;
+}
+
+/* .selectie-info (bulk-verwijderen/toevoegen-aan-playlist-balk, uit css/concert-detail.css) staat daar
+   standaard op bottom:1.5rem - zou hier onder de nieuwe .album-navigatie-balk (~110px hoog, incl. de
+   tijd/voortgangsrij) wegvallen. Deze override (album-detail.css laadt na concert-detail.css, dus wint bij
+   gelijke specificiteit) tilt 'm erboven */
+.selectie-info {
+  bottom: 7.5rem;
+}
+
+.album-navigatie-track {
+  flex: 1;
+  min-width: 0;
+  max-width: 280px;
+  margin-left: 0.5rem;
+  font-size: 12px;
+  color: var(--tekst-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

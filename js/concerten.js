@@ -29,11 +29,18 @@ function schakelSectie(sectie, groepId) {
   const btnConcerten = document.getElementById('btn-concerten')
   const selectieInfo = document.getElementById('selectie-info')
   const prullenbak = document.getElementById('prullenbak')
+  const mapImporterenBtn = document.getElementById('map-importeren-btn')
+  const youtubeZoekenBtn = document.getElementById('youtube-zoeken-btn')
 
   document.querySelectorAll('.tab-btn[data-groep-id]').forEach(el => el.classList.remove('actief'))
 
   const groep = sectie === 'groep' ? getAlleWallGroepen().find(g => g.id === groepId) : null
   const isAlbumGroep = !!(groep && groep.type === 'albums')
+
+  // "Map importeren" en "YouTube zoeken" importeren/voegen altijd toe aan een wall (video's) - op een
+  // albums-tab is er geen wall om naartoe te importeren/toe te voegen, dus geen van beide is daar bruikbaar
+  if (mapImporterenBtn) mapImporterenBtn.style.display = isAlbumGroep ? 'none' : ''
+  if (youtubeZoekenBtn) youtubeZoekenBtn.style.display = isAlbumGroep ? 'none' : ''
 
   if (sectie === 'walls' || (sectie === 'groep' && !isAlbumGroep)) {
     wallsContainer.style.display = 'flex'

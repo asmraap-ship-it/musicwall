@@ -196,9 +196,11 @@ ipcMain.on('open-lokaal', (event, pad, coverPad) => {
     videoWindow.close()
   }
 
+  const isAudio = AUDIO_EXTENSIES.includes(path.extname(pad).toLowerCase())
+
   const win = new BrowserWindow({
-    width: 1280,
-    height: 720,
+    width: isAudio ? 480 : 1280,
+    height: isAudio ? 560 : 720,
     title: 'Musicwall',
     frame: false,
     backgroundColor: '#000000'
@@ -206,7 +208,6 @@ ipcMain.on('open-lokaal', (event, pad, coverPad) => {
   videoWindow = win
 
   const bestandUrl = pathToFileURL(pad).href
-  const isAudio = AUDIO_EXTENSIES.includes(path.extname(pad).toLowerCase())
 
   // audio-only bestanden (mp3/m4a/flac/wav) in een <video>-tag tonen gaf een lelijk zwart beeld (geen
   // videoframe om te tekenen) - toont in plaats daarvan de albumhoes (indien bekend) met een <audio>-element
@@ -630,7 +631,7 @@ ipcMain.on('album-toegevoegd', () => {
 ipcMain.on('open-bewerk-album', (event, album) => {
   const bewerkWin = new BrowserWindow({
     width: 400,
-    height: 320,
+    height: 420,
     title: t('albumBewerken.titel'),
     ...titelbalkOpties,
     webPreferences: {
