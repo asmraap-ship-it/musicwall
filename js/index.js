@@ -22,6 +22,8 @@ let active = {}
 let videoData = []
 let selectie = new Set()
 let zoekResultaten = []
+let zoekResultatenRuw = []
+let zoekTypeFilter = 'alle'
 let zoekSelectie = new Set()
 let zoekGeneratie = 0
 
@@ -100,7 +102,7 @@ function stuurNaarJukebox() {
       return
     }
 
-    const items = zoekResultaten
+    const items = zoekResultatenRuw
       .filter(r => zoekSelectie.has(zoekSleutel(r)))
       .map(r => ({ type: r.soort, lokaalPad: r.lokaalPad, youtubeUrl: r.youtubeUrl, artiest: r.artiest, titel: r.titel }))
     ipcRenderer.send('globaal-zoeken-naar-playlist', items)
@@ -274,6 +276,7 @@ function zoekLive() {
   const generatie = ++zoekGeneratie
 
   if (!term) {
+    zoekResultatenRuw = []
     zoekResultaten = []
     zoekSelectie.clear()
     verbergZoekResultaten()
@@ -281,9 +284,31 @@ function zoekLive() {
     return
   }
 
-  zoekResultaten = zoekBibliotheek(term)
+  zoekResultatenRuw = zoekBibliotheek(term)
+  pasZoekTypeFilterToe()
   toonZoekResultaten()
   renderZoekResultaten(generatie)
+}
+
+function pasZoekTypeFilterToe() {
+  zoekResultaten = zoekTypeFilter === 'alle'
+    ? zoekResultatenRuw
+    : zoekResultatenRuw.filter(r => r.soort === zoekTypeFilter)
+}
+
+function stelZoekTypeFilter(type) {
+  zoekTypeFilter = type
+  pasZoekTypeFilterToe()
+  const generatie = ++zoekGeneratie
+  renderZoekResultaten(generatie)
+}
+
+function bouwZoekTypeFilterHtml() {
+  return '<div class="zoek-type-filter">'
+    + '<button class="zoek-filter-btn' + (zoekTypeFilter === 'alle' ? ' actief' : '') + '" onclick="stelZoekTypeFilter(\'alle\')">' + t('zoeken.filterAlle') + '</button>'
+    + '<button class="zoek-filter-btn' + (zoekTypeFilter === 'youtube' ? ' actief' : '') + '" onclick="stelZoekTypeFilter(\'youtube\')">' + t('video.bron.youtube') + '</button>'
+    + '<button class="zoek-filter-btn' + (zoekTypeFilter === 'lokaal' ? ' actief' : '') + '" onclick="stelZoekTypeFilter(\'lokaal\')">' + t('video.bron.lokaal') + '</button>'
+    + '</div>'
 }
 
 async function getZoekThumbnail(resultaat, idx) {
@@ -345,15 +370,23 @@ async function bouwZoekKaartHtml(resultaat, idx) {
 async function renderZoekResultaten(generatie) {
   const container = document.getElementById('globale-zoek-resultaten')
 
-  if (zoekResultaten.length === 0) {
+  if (zoekResultatenRuw.length === 0) {
     container.innerHTML = '<div class="zoek-leeg">' + t('zoeken.geenResultaten') + '</div>'
     return
   }
 
   let html = '<div class="zoek-resultaten-balk">'
     + '<button class="zoek-selecteer-alles-btn" onclick="toggleSelecteerAlleZoekResultaten()">' + t('zoeken.selecteerAlles') + '</button>'
+    + bouwZoekTypeFilterHtml()
     + '<span class="zoek-aantal">' + t('zoeken.aantalResultaten', { n: zoekResultaten.length }) + '</span>'
     + '</div>'
+
+  if (zoekResultaten.length === 0) {
+    html += '<div class="zoek-leeg">' + t('zoeken.geenResultaten') + '</div>'
+    container.innerHTML = html
+    return
+  }
+
   for (let idx = 0; idx < zoekResultaten.length; idx++) {
     html += await bouwZoekKaartHtml(zoekResultaten[idx], idx)
     if (generatie !== zoekGeneratie) return
@@ -1000,6 +1033,7 @@ window.zoekLive = zoekLive
 window.zoekKlikAfspelen = zoekKlikAfspelen
 window.toggleZoekSelectie = toggleZoekSelectie
 window.toggleSelecteerAlleZoekResultaten = toggleSelecteerAlleZoekResultaten
+window.stelZoekTypeFilter = stelZoekTypeFilter
 
 if (window.gsap) {
   const introTl = gsap.timeline({ delay: 0.2 })

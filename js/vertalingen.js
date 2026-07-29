@@ -172,6 +172,7 @@ const VERTALINGEN = {
     'zoeken.selecteerAlles': 'Selecteer alles',
     'zoeken.sorteerRelevantie': 'Relevantie',
     'zoeken.sorteerWeergaven': 'Meest bekeken',
+    'zoeken.filterAlle': 'Alle',
 
     // Jukebox
     'jukebox.playlist': 'Playlist',
@@ -517,6 +518,7 @@ const VERTALINGEN = {
     'zoeken.selecteerAlles': 'Select all',
     'zoeken.sorteerRelevantie': 'Relevance',
     'zoeken.sorteerWeergaven': 'Most viewed',
+    'zoeken.filterAlle': 'All',
 
     'jukebox.playlist': 'Playlist',
     'jukebox.leegmaken': 'Clear',

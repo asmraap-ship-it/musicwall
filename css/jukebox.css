@@ -165,6 +165,23 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   padding: 0.5rem;
 }
 
+#bibliotheek-resultaten::-webkit-scrollbar {
+  width: 4px;
+}
+
+#bibliotheek-resultaten::-webkit-scrollbar-track {
+  background: var(--achtergrond-2);
+}
+
+#bibliotheek-resultaten::-webkit-scrollbar-thumb {
+  background: var(--rand-2);
+  border-radius: 2px;
+}
+
+#bibliotheek-resultaten::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
 .selecteer-alles-btn {
   display: block;
   margin: 0 0 0.5rem auto;
@@ -180,6 +197,45 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
 }
 
 .selecteer-alles-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.bibliotheek-resultaten-balk {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.bibliotheek-resultaten-balk .selecteer-alles-btn {
+  margin: 0;
+}
+
+.bibliotheek-type-filter {
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
+.bibliotheek-filter-btn {
+  background: transparent;
+  border: 1px solid var(--rand-2);
+  border-radius: 3px;
+  color: var(--tekst-dim);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.bibliotheek-filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.bibliotheek-filter-btn.actief {
   border-color: var(--accent);
   color: var(--accent);
 }

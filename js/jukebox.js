@@ -9,6 +9,8 @@ let playlist = []
 let huidigeIndex = -1
 
 let bibliotheekResultaten = []
+let bibliotheekResultatenRuw = []
+let bibliotheekTypeFilter = 'alle'
 let bibliotheekSelectie = new Set()
 let bibliotheekZoekGeneratie = 0
 
@@ -319,27 +321,58 @@ function zoekBibliotheekLive() {
     resultatenEl.style.display = 'none'
     resultatenEl.innerHTML = ''
     playlistEl.style.display = ''
+    bibliotheekResultatenRuw = []
     bibliotheekResultaten = []
     bibliotheekSelectie.clear()
     updateBibliotheekSelectieInfo()
     return
   }
 
-  bibliotheekResultaten = zoekBibliotheek(term)
+  bibliotheekResultatenRuw = zoekBibliotheek(term)
+  pasBibliotheekTypeFilterToe()
   playlistEl.style.display = 'none'
   resultatenEl.style.display = ''
   renderBibliotheekResultaten(generatie)
 }
 
+function pasBibliotheekTypeFilterToe() {
+  bibliotheekResultaten = bibliotheekTypeFilter === 'alle'
+    ? bibliotheekResultatenRuw
+    : bibliotheekResultatenRuw.filter(r => r.soort === bibliotheekTypeFilter)
+}
+
+function stelBibliotheekTypeFilter(type) {
+  bibliotheekTypeFilter = type
+  pasBibliotheekTypeFilterToe()
+  const generatie = ++bibliotheekZoekGeneratie
+  renderBibliotheekResultaten(generatie)
+}
+
+function bouwBibliotheekTypeFilterHtml() {
+  return '<div class="bibliotheek-type-filter">'
+    + '<button class="bibliotheek-filter-btn' + (bibliotheekTypeFilter === 'alle' ? ' actief' : '') + '" onclick="stelBibliotheekTypeFilter(\'alle\')">' + t('zoeken.filterAlle') + '</button>'
+    + '<button class="bibliotheek-filter-btn' + (bibliotheekTypeFilter === 'youtube' ? ' actief' : '') + '" onclick="stelBibliotheekTypeFilter(\'youtube\')">' + t('video.bron.youtube') + '</button>'
+    + '<button class="bibliotheek-filter-btn' + (bibliotheekTypeFilter === 'lokaal' ? ' actief' : '') + '" onclick="stelBibliotheekTypeFilter(\'lokaal\')">' + t('video.bron.lokaal') + '</button>'
+    + '</div>'
+}
+
 async function renderBibliotheekResultaten(generatie) {
   const resultatenEl = document.getElementById('bibliotheek-resultaten')
 
-  if (bibliotheekResultaten.length === 0) {
+  if (bibliotheekResultatenRuw.length === 0) {
     resultatenEl.innerHTML = '<div class="playlist-leeg">' + t('zoeken.geenResultaten') + '</div>'
     return
   }
 
-  resultatenEl.innerHTML = '<button class="selecteer-alles-btn" onclick="toggleSelecteerAlleBibliotheekResultaten()">' + t('zoeken.selecteerAlles') + '</button>'
+  resultatenEl.innerHTML = '<div class="bibliotheek-resultaten-balk">'
+    + '<button class="selecteer-alles-btn" onclick="toggleSelecteerAlleBibliotheekResultaten()">' + t('zoeken.selecteerAlles') + '</button>'
+    + bouwBibliotheekTypeFilterHtml()
+    + '</div>'
+
+  if (bibliotheekResultaten.length === 0) {
+    resultatenEl.innerHTML += '<div class="playlist-leeg">' + t('zoeken.geenResultaten') + '</div>'
+    return
+  }
 
   for (const resultaat of bibliotheekResultaten) {
     if (generatie !== bibliotheekZoekGeneratie) return
@@ -419,7 +452,7 @@ function updateBibliotheekSelectieInfo() {
 function voegBibliotheekSelectieToe() {
   if (bibliotheekSelectie.size === 0) return
 
-  bibliotheekResultaten
+  bibliotheekResultatenRuw
     .filter(r => bibliotheekSelectie.has(bibliotheekSleutel(r)))
     .forEach(r => voegToeAanPlaylist({ type: r.soort, lokaalPad: r.lokaalPad, youtubeUrl: r.youtubeUrl, artiest: r.artiest, titel: r.titel }))
 
@@ -811,6 +844,7 @@ window.schudPlaylist = schudPlaylist
 window.zoekBibliotheekLive = zoekBibliotheekLive
 window.voegBibliotheekSelectieToe = voegBibliotheekSelectieToe
 window.toggleSelecteerAlleBibliotheekResultaten = toggleSelecteerAlleBibliotheekResultaten
+window.stelBibliotheekTypeFilter = stelBibliotheekTypeFilter
 window.openOpslaanPlaylist = openOpslaanPlaylist
 window.toonMeestGespeeld = toonMeestGespeeld
 window.sluitMeestGespeeld = sluitMeestGespeeld
