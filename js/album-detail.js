@@ -64,7 +64,7 @@ function laadTrackLijst() {
     if (selectie.has(track.id)) rij.classList.add('geselecteerd')
 
     rij.innerHTML = '<span class="track-nummer">' + (i + 1) + '</span>'
-      + '<button class="track-play" title="' + t('albumDetail.afspelenTooltip') + '" onclick="event.stopPropagation();speelTrackAf(' + track.id + ')"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg></button>'
+      + '<button class="track-play" title="' + t('albumDetail.afspelenTooltip') + '" onclick="event.stopPropagation();trackKnopKlik(' + track.id + ')">' + trackPlayIconHtml(false) + '</button>'
       + '<div class="track-info"><div class="track-titel">' + track.titel + '</div><div class="track-artiest">' + (track.artiest || huidigAlbum.artiest || '') + '</div></div>'
       + '<button class="track-verwijder" title="' + t('albumDetail.trackVerwijderenTooltip') + '" onclick="event.stopPropagation();verwijderTrackItem(' + track.id + ')">&times;</button>'
 
@@ -89,6 +89,31 @@ function laadTrackLijst() {
   bijwerkenSpeelUI()
 }
 
+// ▶-driehoek (niet spelend) vs. ⏸-blokjes (deze track speelt op dit moment) - bijwerkenTrackKnoppen()
+// zet dit apart van de rest van bijwerkenSpeelUI() zodat een simpele pauze/hervat-toggle niet ook meteen
+// de rij opnieuw laat scrollen (zie albumSpeelPauze())
+function trackPlayIconHtml(spelend) {
+  return spelend
+    ? '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>'
+}
+
+function trackKnopKlik(trackId) {
+  if (huidigSpeelTrackId === trackId) {
+    albumSpeelPauze()
+  } else {
+    speelTrackAf(trackId)
+  }
+}
+
+function bijwerkenTrackKnoppen() {
+  document.querySelectorAll('.track-play').forEach(btn => { btn.innerHTML = trackPlayIconHtml(false) })
+  if (huidigSpeelTrackId === null) return
+  const rij = document.querySelector('.track-rij[data-track-id="' + huidigSpeelTrackId + '"]')
+  const knop = rij && rij.querySelector('.track-play')
+  if (knop) knop.innerHTML = trackPlayIconHtml(!albumSpeler.paused)
+}
+
 function bijwerkenSpeelUI() {
   document.querySelectorAll('.track-rij.speelt').forEach(el => el.classList.remove('speelt'))
 
@@ -97,6 +122,7 @@ function bijwerkenSpeelUI() {
 
   if (!track) {
     if (label) label.textContent = ''
+    bijwerkenTrackKnoppen()
     return
   }
 
@@ -106,6 +132,7 @@ function bijwerkenSpeelUI() {
     rij.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
   if (label) label.textContent = (track.artiest || (huidigAlbum && huidigAlbum.artiest) || '') + ' - ' + track.titel
+  bijwerkenTrackKnoppen()
 }
 
 function huidigSpeelIndex() {
@@ -161,6 +188,7 @@ function albumSpeelPauze() {
     albumSpeler.pause()
     document.getElementById('album-play-btn').textContent = '▶'
   }
+  bijwerkenTrackKnoppen()
 }
 
 function albumStop() {
@@ -318,6 +346,7 @@ document.addEventListener('taal-gewijzigd', () => {
 })
 
 window.speelTrackAf = speelTrackAf
+window.trackKnopKlik = trackKnopKlik
 window.verwijderTrackItem = verwijderTrackItem
 window.bewerkHuidigAlbum = bewerkHuidigAlbum
 window.stuurNaarJukebox = stuurNaarJukebox

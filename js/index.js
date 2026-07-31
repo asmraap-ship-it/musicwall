@@ -253,18 +253,36 @@ function zoekModusActief() {
 function toonZoekResultaten() {
   document.getElementById('walls-container').style.display = 'none'
   document.getElementById('concerten-container').style.display = 'none'
+  const albumsContainer = document.getElementById('albums-container')
+  if (albumsContainer) albumsContainer.style.display = 'none'
   document.getElementById('globale-zoek-resultaten').style.display = 'grid'
   const prullenbak = document.getElementById('prullenbak')
   if (prullenbak) prullenbak.style.display = 'none'
+  const selectieInfo = document.getElementById('selectie-info')
+  if (selectieInfo) selectieInfo.style.display = ''
 }
 
+// Herstelt na het zoeken exact de container die vóór het zoeken actief was - inclusief het albums-type van
+// een groepstab (schakelSectie() zelf verbergt globale-zoek-resultaten al bij het wisselen van tab, dus deze
+// functie hoeft alleen het geval "zoekveld leegmaken terwijl dezelfde tab actief blijft" te dekken)
 function verbergZoekResultaten() {
   document.getElementById('globale-zoek-resultaten').style.display = 'none'
-  const isWalls = typeof huidigeSectie === 'undefined' || huidigeSectie === 'walls' || huidigeSectie === 'groep'
+  const albumsContainer = document.getElementById('albums-container')
+  const isConcerten = typeof huidigeSectie !== 'undefined' && huidigeSectie === 'concerten'
+  let isAlbumGroep = false
+  if (!isConcerten && typeof huidigeSectie !== 'undefined' && huidigeSectie === 'groep' &&
+      typeof huidigeGroepId !== 'undefined' && huidigeGroepId && typeof getAlleWallGroepen === 'function') {
+    const groep = getAlleWallGroepen().find(g => g.id === huidigeGroepId)
+    isAlbumGroep = !!(groep && groep.type === 'albums')
+  }
+  const isWalls = !isConcerten && !isAlbumGroep
   document.getElementById('walls-container').style.display = isWalls ? 'flex' : 'none'
-  document.getElementById('concerten-container').style.display = isWalls ? 'none' : 'flex'
+  document.getElementById('concerten-container').style.display = isConcerten ? 'flex' : 'none'
+  if (albumsContainer) albumsContainer.style.display = isAlbumGroep ? 'flex' : 'none'
   const prullenbak = document.getElementById('prullenbak')
   if (prullenbak) prullenbak.style.display = isWalls ? '' : 'none'
+  const selectieInfo = document.getElementById('selectie-info')
+  if (selectieInfo) selectieInfo.style.display = isWalls ? '' : 'none'
 }
 
 function zoekSleutel(resultaat) {

@@ -721,46 +721,323 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   display: flex;
 }
 
-/* Vult de zwarte leegte rond een (vaak laagresolutie) hoes met diezelfde hoes, uitvergroot en vervaagd -
-   i.p.v. de hoes zelf op te rekken (dat gaf een flets/wazig resultaat bij kleine bronbestanden, zie
-   ## Jukebox-gedrag). transform:scale() compenseert de onscherpe rand die blur() aan de zijkanten van het
-   element zelf achterlaat. z-index:-1 (i.c.m. position:relative op de wrap) volstaat om dit laagje achter de
-   gewone, niet-gepositioneerde kinderen (.audio-cover-content, .audio-progress-balk) te laten vallen, zonder
-   dat die zelf een z-index nodig hebben */
-.audio-cover-bg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  filter: blur(40px) brightness(0.45);
-  transform: scale(1.15);
-  z-index: -1;
-}
-
 .audio-cover-content {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 0;
+  gap: 1.5rem;
 }
 
-/* Bewuste middenweg: width/height (i.p.v. max-width/max-height) laat een lowres hoes altijd merkbaar groter
-   tonen dan zijn eigen kleine brongrootte (max-* deed dat niet, zie ## Jukebox-gedrag), maar op een bewust
-   kleiner percentage dan de eerdere 90%-poging - die vergrootte zo hard dat het duidelijk flets/wazig oogde.
-   Bij deze kleinere schaalfactor is de onvermijdelijke opschaal-zachtheid van een lowres bron minder opvallend */
-.audio-cover-content img {
-  width: 55%;
-  height: 65%;
-  object-fit: cover;
-  border-radius: 6px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+/* Chassis rond plaat + tonearm-zijpaneel, naar het uiterlijk van een echte DJ-platenspeler (bv. Pioneer
+   PLX-1000): geborsteld-metaal paneel met de plaat links en een smalle strook rechts met de tonearm-basis
+   en een pitch-fader - i.p.v. de plaat los "zwevend" in het scherm. */
+.turntable-chassis {
+  display: flex;
+  align-items: stretch;
+  gap: 2.6rem;
+  width: min(72vh, 92%);
+  aspect-ratio: 1.28;
+  padding: 1.1rem;
+  border-radius: 14px;
+  background:
+    repeating-linear-gradient(100deg, rgba(255, 255, 255, 0.025) 0px, rgba(255, 255, 255, 0.025) 1px, transparent 1px, transparent 3px),
+    linear-gradient(155deg, #2c2c2e 0%, #17171a 55%, #0e0e10 100%);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.audio-cover-placeholder {
-  font-size: 64px;
+/* Wrapper rond plaat + tonearm, zodat de SVG-arm (position:absolute) precies over de plaat kan overlappen */
+.platenspeler {
+  position: relative;
+  height: 100%;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+}
+
+/* Draaiende vinylplaat i.p.v. een losse hoes-afbeelding - vervangt de eerdere vervaagde-achtergrond-aanpak
+   (zie CLAUDE.md ## Jukebox-gedrag): de plaat zelf vult de ruimte, dus geen zwarte leegte en geen opgerekte/
+   flets vergrote hoes meer nodig. Past ook beter bij het Wurlitzer-jukebox-thema van de app. */
+.vinyl-plaat {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle at center, #1c1c1c 0px, #1c1c1c 2px, #262626 3px, #1c1c1c 4px),
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.08), transparent 55%);
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.65),
+    inset 0 0 0 3px rgba(214, 219, 224, 0.35),
+    inset 0 0 0 6px #0d0d0d;
+  animation: vinyl-draaien 4s linear infinite;
+  animation-play-state: paused;
+}
+
+/* Twee concentrische, gestippelde ringen dicht tegen de rand - de stroboscoopstippen-look van een echte
+   DJ-platenspeler-mat. Puur decoratief (geen daadwerkelijke stroboscoop-functie), draaien vanzelf mee met
+   de plaat omdat het pseudo-elementen van .vinyl-plaat zelf zijn. */
+.vinyl-plaat::before,
+.vinyl-plaat::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.vinyl-plaat::before {
+  inset: 4.5%;
+  border: 2.5px dotted rgba(224, 228, 233, 0.55);
+}
+
+.vinyl-plaat::after {
+  inset: 7.5%;
+  border: 1px dotted rgba(224, 228, 233, 0.3);
+}
+
+.vinyl-plaat.speelt {
+  animation-play-state: running;
+}
+
+@keyframes vinyl-draaien {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.vinyl-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 42%;
+  height: 42%;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-color: #2a2a2a;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08), 0 4px 20px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--accent);
-  opacity: 0.2;
+  font-size: 28px;
+}
+
+.vinyl-label.leeg {
+  opacity: 0.4;
+}
+
+.vinyl-gaatje {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0d0d0d;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
+}
+
+/* SVG pick-uparm bovenop de plaat (zie js/tonearm.js). viewBox 0 0 100 100 komt 1-op-1 overeen met de
+   vierkante bounding box van .platenspeler (waarin de cirkelvormige .vinyl-plaat is ingeschreven), zodat het
+   draaipunt (84,6) net buiten de plaat zelf valt (afstand tot het middelpunt (50,50) > de plaatstraal 50) -
+   zoals bij een echte platenspeler, waar de arm op de plint naast de plaat is gemonteerd.
+   Hoek/geometrie-fix: de vorige versie gebruikte een rechte lijn met een tip die bij zowel -20° als -5°
+   halverwege de plaat bleef hangen (straal tot het midden liep maar van ~29 naar ~24, op een plaat met
+   straal 50) - de naald leek daardoor nooit de buitenrand te raken en amper te bewegen. Het exacte hoekbereik
+   (-20°/-5°, zie CLAUDE.md) staat vast, dus opgelost door draaipunt + tip-coördinaten opnieuw te berekenen
+   (kleine rekenscript, geen educated guess): bij -20° raakt de tip nu ~92% van de plaatstraal (net op de
+   buitenrand, "start van het nummer"), bij -5° ligt de tip duidelijk dichter naar het midden - de fysieke
+   grens van een 15°-boei met een plausibel-lange arm laat "helemaal tot bij het label" niet toe zonder een
+   onrealistisch lange arm, dus dit is de maximale geloofwaardige uitslag binnen die hoekbeperking. */
+.tonearm {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.5));
+  /* De arm/pivot steekt bewust over de rand van .platenspeler heen, tot in de .tt-zijpaneel-strook (net als
+     op een echte platenspeler, waar de tonearm-montage naast de plaat zit). Zonder eigen z-index tekende
+     .tt-zijpaneel (een latere flex-sibling, dus later in de paint-volgorde) daar gewoon overheen - de arm
+     leek dan "onder de pitch-fader" te verdwijnen. Een eigen stacking context met hogere z-index dan de
+     zijpaneel-flex-items (die impliciet z-index:auto/0 hebben) lost dat op. */
+  z-index: 3;
+}
+
+/* #tonearm-lift krijgt de "optillen"-transitie (CSS, getimed) - los van #tonearm-rotatie eronder, die zijn
+   rotate()-hoek rechtstreeks als SVG-attribuut krijgt (js/tonearm.js, geen CSS-transitie) zodat die exact
+   gelijke tred houdt met currentTime. Twee geneste groepen i.p.v. één, omdat een SVG-element maar één
+   transform tegelijk kan dragen. transform-box:view-box laat transform-origin in viewBox-coördinaten
+   werken (Chromium-only hier, dus geen cross-browser zorg) - zo kan de lift om hetzelfde draaipunt (108,20)
+   kantelen als de rotatie zelf. */
+#tonearm-lift {
+  transform-box: view-box;
+  transform-origin: 108px 20px;
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Bug gevonden en gefixt tijdens gebruik: "translate(-2px, -5px)" oogde als een verwaarloosbaar klein
+   nudge-je, maar door transform-box:view-box hierboven wordt een CSS-pixel in déze transform-declaratie
+   niet als scherm-pixel geïnterpreteerd, maar als hele viewBox-eenheid (bevestigd via getComputedStyle:
+   de gerenderde matrix had letterlijk e=-2/f=-5) - op een 100-eenheden-viewBox is dat dus een verschuiving
+   van 2-5% van de hele plaatdiameter, in werkelijke schermpixels tientallen pixels. Ruim genoeg om de
+   headshell, die bij rust al maar een kleine marge (~1,6 eenheden) tot de plaatrand had (zie js/tonearm.js),
+   tijdens de optil-transitie alsnog over de rand te laten steken - precies het "de arm valt bij de start
+   buiten de plaat"-effect. Opgelost door de lift een stuk subtieler te maken (waarden nu bewust < 1
+   viewBox-eenheid), niet door de geometrie zelf verder te verkrappen. */
+.tonearm.opgetild #tonearm-lift {
+  transform: translate(-0.4px, -1px) rotate(1.5deg);
+}
+
+/* Basis/gimbal-behuizing: twee concentrische cirkels i.p.v. één vlak rondje, voor het "gimbal head"-uiterlijk
+   van een echte tonearm-montage. Blijft buiten #tonearm-rotatie (draait dus niet mee, alleen de arm zelf). */
+.tonearm-basis-buiten {
+  fill: #0f0f10;
+  stroke: rgba(255, 255, 255, 0.18);
+  stroke-width: 0.6;
+}
+
+.tonearm-basis {
+  fill: #232326;
+  stroke: rgba(255, 255, 255, 0.28);
+  stroke-width: 0.5;
+}
+
+.tonearm-tegengewicht {
+  stroke: #2c2c2f;
+  stroke-linecap: round;
+}
+
+/* Buis met een subtiele bocht (één quadratic-bezier-controlepunt, licht uit het midden van de rechte
+   lijn pivot->tip getrokken) i.p.v. een volledig rechte lijn óf de eerdere overdreven S-bocht - afgeleid
+   van een echte PLX-1000-foto: de arm is daar grotendeels recht met slechts één zachte knik/slinger
+   halverwege (rond de kraag/koppelstuk), geen dubbele S-vorm. De rotatie/positie van de héle buis blijft
+   rekenkundig gelijk aan een rechte lijn tussen hetzelfde start-/eindpunt (de bocht is puur visueel, geen
+   extra vrijheidsgraad), dus de hoekberekening in js/tonearm.js hoeft hier geen rekening mee te houden. */
+.tonearm-buis {
+  fill: none;
+  stroke: #d4d8dc;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+
+.tonearm-headshell {
+  fill: #38383c;
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 0.4;
+}
+
+.tonearm-stylus {
+  fill: var(--accent);
+}
+
+/* Rechterstrook naast de plaat: LED-rijtje + pitch-fader, puur decoratief (geen functie), naar het brede
+   ±8%-tempo-schuifje van een DJ-platenspeler ("wide pitchband") - vandaar een lange, smalle rail i.p.v. een
+   kort volumeschuifje. */
+.tt-zijpaneel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 15%;
+  min-width: 34px;
+  flex-shrink: 0;
+  padding: 0.4rem 0;
+}
+
+.tt-leds {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.6rem;
+}
+
+.tt-led {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.tt-led-actief {
+  background: var(--accent);
+  box-shadow: 0 0 5px 1px var(--accent);
+}
+
+.pitch-fader {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 0;
+}
+
+.pitch-fader-tick {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+.pitch-fader-rail {
+  position: relative;
+  flex: 1;
+  width: 5px;
+  min-height: 40px;
+  border-radius: 3px;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.22) 0px, rgba(255, 255, 255, 0.22) 1px,
+    transparent 1px, transparent 11%
+  ), #0a0a0b;
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.8);
+}
+
+.pitch-fader-cap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 9px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #e8e9eb 0%, #b9bcc0 45%, #8c8f93 100%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.pitch-fader-cap::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 1px;
+  background: #55575a;
+}
+
+.pitch-fader-label {
+  margin-top: 0.5rem;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
+}
+
+.audio-track-info {
+  text-align: center;
+}
+
+.audio-track-artiest {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.audio-track-titel {
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
 }
 
 .audio-progress-rij {

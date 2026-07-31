@@ -139,3 +139,9 @@ ipcRenderer.on('herlaad-albums', () => {
 window.openAlbum = openAlbum
 window.bevestigAlbumVerwijderen = bevestigAlbumVerwijderen
 window.bewerkAlbum = bewerkAlbum
+
+// Hier (en niet aan het eind van js/concerten.js) aangeroepen omdat dit het laatst geladen script is - een
+// onthouden 'albums'-soortfilter kan bij opstart meteen naar een albumgroep willen schakelen (laadAlbums()
+// hierboven), en dat moet pas gebeuren nadat alle scripts, inclusief dit bestand, geladen zijn
+pasSoortFilterToe()
+navigeerNaarSoort(soortFilter, false)

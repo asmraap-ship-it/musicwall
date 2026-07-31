@@ -56,6 +56,12 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
       </button>
     </div>
+    <select class="soort-filter-select" id="soort-filter-select" onchange="stelSoortFilterIn(this.value)" data-i18n-title="soortFilter.tooltip" title="Toon alleen dit soort tabs">
+      <option value="alle" data-i18n="soortFilter.alle">Alles</option>
+      <option value="concerten" data-i18n="soortFilter.concerten">Concerten</option>
+      <option value="walls" data-i18n="soortFilter.videos">Video's</option>
+      <option value="albums" data-i18n="soortFilter.muziek">Muziek</option>
+    </select>
   </div>
 </header>
 <div class="sectie-tabs" id="sectie-tabs">

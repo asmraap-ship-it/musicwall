@@ -3,6 +3,10 @@ const { getAlleWallGroepen, verplaatsWallNaarGroep } = require('./db/wallgroepen
 
 let huidigeSectie = 'walls'
 let huidigeGroepId = null
+// Soort-filter voor de tabbalk zelf: 'alle'/'concerten'/'walls'/'albums' - verbergt tab-knoppen die niet bij
+// de gekozen soort horen (zie pasSoortFilterToe()), i.p.v. losse tabbalken per soort. Onthouden net als
+// musicwall-thema/-taal, zodat een gekozen filter ook na een herstart blijft staan
+let soortFilter = localStorage.getItem('musicwall-soort-filter') || 'alle'
 
 function getYoutubeId(url) {
   if (!url) return null
@@ -94,6 +98,7 @@ async function laadWallGroepenTabs() {
     const btn = document.createElement('button')
     btn.className = 'tab-btn' + (huidigeSectie === 'groep' && huidigeGroepId === groep.id ? ' actief' : '')
     btn.dataset.groepId = groep.id
+    btn.dataset.type = groep.type || 'walls'
 
     const verwijderKnop = document.createElement('button')
     verwijderKnop.className = 'tab-verwijder'
@@ -147,6 +152,95 @@ async function laadWallGroepenTabs() {
 
     tabs.insertBefore(btn, nieuweGroepBtn)
   })
+}
+
+// Zoekt binnen de zichtbare (huidig door het soort-filter toegelaten) groepstabs de eerste van het
+// opgegeven type - gebruikt om ergens naartoe te kunnen overschakelen als de actieve sectie net onzichtbaar
+// is geworden (bv. filter wisselt naar "Muziek" terwijl een walls-groep actief was)
+function eersteZichtbareGroepId(type) {
+  const tab = document.querySelector('#sectie-tabs .tab-btn[data-groep-id][data-type="' + type + '"]')
+  return tab ? parseInt(tab.dataset.groepId) : null
+}
+
+function huidigeSectieZichtbaarBijFilter(filter) {
+  if (filter === 'alle') return true
+  if (huidigeSectie === 'concerten') return filter === 'concerten'
+  if (huidigeSectie === 'walls') return filter === 'walls'
+  if (huidigeSectie === 'groep') {
+    const groep = getAlleWallGroepen().find(g => g.id === huidigeGroepId)
+    const type = groep ? (groep.type || 'walls') : 'walls'
+    return filter === type
+  }
+  return true
+}
+
+// De schakelSectie()-aanroep die bij een gegeven filter hoort - Concerten/Walls gaan altijd naar hun vaste
+// tab, Muziek naar de eerste albums-groepstab in DOM-volgorde. Los getrokken uit pasSoortFilterToe() zodat
+// zowel een passieve her-toepassing (alleen indien nodig, zie forceer=false hieronder) als een bewuste klik
+// (altijd, zie stelSoortFilterIn()) 'm kunnen gebruiken zonder de dispatch-logica te dupliceren
+function navigeerNaarSoort(filter, forceer) {
+  if (!forceer && huidigeSectieZichtbaarBijFilter(filter)) return
+
+  if (filter === 'concerten') {
+    schakelSectie('concerten')
+  } else if (filter === 'walls') {
+    schakelSectie('walls')
+  } else if (filter === 'albums') {
+    const groepId = eersteZichtbareGroepId('albums')
+    if (groepId) schakelSectie('groep', groepId)
+  }
+}
+
+// Toont/verbergt de tab-knoppen in #sectie-tabs op basis van soortFilter - één balk i.p.v. losse balken per
+// soort. Moet opnieuw aangeroepen worden na elke laadWallGroepenTabs() (die de dynamische tabs herbouwt en
+// dus elke eerder gezette display/dataset-status kwijtraakt). Navigeert zelf NIET meer - zie navigeerNaarSoort()
+function pasSoortFilterToe() {
+  const select = document.getElementById('soort-filter-select')
+  if (select) select.value = soortFilter
+
+  const btnWalls = document.getElementById('btn-walls')
+  const btnConcerten = document.getElementById('btn-concerten')
+  const btnNieuweGroep = document.getElementById('btn-nieuwe-groep')
+  btnWalls.style.display = (soortFilter === 'alle' || soortFilter === 'walls') ? '' : 'none'
+  btnConcerten.style.display = (soortFilter === 'alle' || soortFilter === 'concerten') ? '' : 'none'
+  // De +-knop maakt altijd een walls- of albums-groep aan (concerten heeft geen groep-type, zie hierboven) -
+  // bij het Concerten-filter zou een nieuwe groep meteen door dit filter verborgen worden, dus geen zin om
+  // 'm daar aan te bieden
+  if (btnNieuweGroep) btnNieuweGroep.style.display = soortFilter === 'concerten' ? 'none' : ''
+
+  document.querySelectorAll('#sectie-tabs .tab-btn[data-groep-id]').forEach(tab => {
+    const type = tab.dataset.type || 'walls'
+    tab.style.display = (soortFilter === 'alle' || soortFilter === type) ? '' : 'none'
+  })
+}
+
+function stelSoortFilterIn(filter) {
+  soortFilter = filter
+  localStorage.setItem('musicwall-soort-filter', filter)
+
+  // Een actieve zoekopdracht (globaal zoeken op het hoofdscherm) weet niets van dit filter - zonder dit bleven
+  // de zoekresultaten overeind staan zodra het gekozen filter toevallig nog bij de huidige (onzichtbare, want
+  // door het zoeken verborgen) sectie past, want dan zou navigeerNaarSoort() hieronder anders geen schakelSectie()
+  // aanroepen (die dit normaal al afhandelt bij een tab-klik) om de zoekmodus te verlaten
+  if (zoekModusActief()) {
+    document.getElementById('globaal-zoekveld').value = ''
+    zoekResultatenRuw = []
+    zoekResultaten = []
+    zoekSelectie.clear()
+    verbergZoekResultaten()
+    updateSelectieInfo()
+  }
+
+  pasSoortFilterToe()
+
+  // Een bewuste klik in de selectiebox moet ALTIJD naar een vaste, voorspelbare bestemming navigeren
+  // (forceer=true) - in tegenstelling tot de "alleen overschakelen als het echt nodig is"-variant die
+  // opstart/herlaad gebruiken (die mogen een actieve groepstab niet ongevraagd wegklikken bij een achtergrond-
+  // ververs). Zonder deze forcering leek een klik soms niets te doen: stond de huidige sectie toevallig al
+  // "logisch" bij het nieuwe filter (bv. al op een walls-groep terwijl "Video's" gekozen wordt), dan sloeg de
+  // oude "is al zichtbaar"-check de navigatie stilzwijgend over - onopvallend zolang alles al klopte, maar
+  // gaf geen enkele manier meer om een eerder verstoorde weergave via de selectiebox te herstellen
+  navigeerNaarSoort(filter, true)
 }
 
 function herschikGroepTabs(bronGroepId, doelGroepId) {
@@ -365,6 +459,9 @@ ipcRenderer.on('herlaad', () => {
   if (huidigeSectie === 'groep' && !getAlleWallGroepen().some(g => g.id === huidigeGroepId)) {
     schakelSectie('walls')
   }
+
+  pasSoortFilterToe()
+  navigeerNaarSoort(soortFilter, false)
 })
 
 ipcRenderer.on('tab-naam-gewijzigd', (event, { type, naam }) => {
@@ -380,6 +477,7 @@ window.bevestigConcertVerwijderen = bevestigConcertVerwijderen
 window.bewerkConcert = bewerkConcert
 window.voegWallGroepToe = voegWallGroepToe
 window.bevestigWallGroepVerwijderen = bevestigWallGroepVerwijderen
+window.stelSoortFilterIn = stelSoortFilterIn
 
 document.getElementById('btn-walls').addEventListener('click', () => schakelSectie('walls'))
 document.getElementById('btn-concerten').addEventListener('click', () => schakelSectie('concerten'))
@@ -408,3 +506,7 @@ btnWallsTab.addEventListener('drop', (event) => {
 
 pasTabNamenToe()
 laadWallGroepenTabs()
+// pasSoortFilterToe() zelf wordt hier bewust NIET aangeroepen: als het onthouden filter 'albums' is, zou dit
+// meteen naar een albumgroep willen schakelen (laadAlbums()) - maar js/albums.js (het volgende <script
+// src>-bestand) is op dit punt nog niet geladen/geëvalueerd, dus die functie bestaat dan nog niet. Vandaar
+// een verplaatste aanroep helemaal onderaan js/albums.js, het laatst geladen script (zie daar)

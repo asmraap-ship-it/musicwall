@@ -13,6 +13,11 @@ const VERTALINGEN = {
     // Tabs
     'tabs.walls': 'Mijn walls',
     'tabs.concerten': 'Mijn concerten',
+    'soortFilter.alle': 'Alles',
+    'soortFilter.concerten': 'Concerten',
+    'soortFilter.videos': 'Video\'s',
+    'soortFilter.muziek': 'Muziek',
+    'soortFilter.tooltip': 'Toon alleen dit soort tabs',
 
     // Thema's
     'thema.standaard': 'Standaard',
@@ -415,6 +420,11 @@ const VERTALINGEN = {
 
     'tabs.walls': 'My walls',
     'tabs.concerten': 'My concerts',
+    'soortFilter.alle': 'All',
+    'soortFilter.concerten': 'Concerts',
+    'soortFilter.videos': 'Videos',
+    'soortFilter.muziek': 'Music',
+    'soortFilter.tooltip': 'Show only this kind of tab',
 
     'thema.standaard': 'Default',
     'thema.metaal': 'Metal',

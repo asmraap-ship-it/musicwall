@@ -1276,6 +1276,31 @@ h1 {
   border-radius: 4px 4px 0 0;
 }
 
+.soort-filter-select {
+  -webkit-app-region: no-drag;
+  background: var(--achtergrond-3);
+  border: 1px solid var(--rand-3);
+  border-radius: var(--radius);
+  color: var(--tekst-dim);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.soort-filter-select:hover,
+.soort-filter-select:focus {
+  border-color: var(--accent);
+  color: var(--accent);
+  outline: none;
+}
+
+.soort-filter-select option {
+  background: var(--achtergrond-3);
+  color: var(--tekst-dim);
+}
+
 .walls-container,
 .concerten-container,
 .zoek-resultaten-container {
