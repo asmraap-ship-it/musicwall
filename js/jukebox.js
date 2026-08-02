@@ -8,6 +8,11 @@ const { registreerAfspeling, getMeestGespeeld } = require('./db/afspeelstatistie
 let playlist = []
 let huidigeIndex = -1
 let stopOpruimTimer = null
+let afgespeeldVertragingTimer = null
+
+// Iets langer dan ARM_DROP_DUUR in js/turntable.js (1.3s) - genoeg marge zodat de tonearm-lift-animatie
+// écht klaar is voordat de opruiming (stop()) resp. het volgende nummer (afgespeeldGaVerder()) start.
+const TONEARM_LIFT_MS = 1400
 
 const AUDIO_EXTENSIES = ['.mp3', '.m4a', '.flac', '.wav']
 function isAudioBestand(pad) {
@@ -650,6 +655,10 @@ function speelIndex(i) {
   // Annuleert een eventueel nog lopende opruimtimer van een eerdere stop() (zie aldaar) - anders zou die
   // timer straks alsnog afgaan en de albumhoes van dít nieuwe nummer verbergen/de tonearm resetten.
   clearTimeout(stopOpruimTimer)
+  // Annuleert een eventueel nog lopende auto-advance-vertraging van afgespeeldGaVerder() (zie aldaar) -
+  // zonder deze guard zou handmatig navigeren tijdens die vertraging straks alsnog overschreven worden
+  // door het inmiddels ingehaalde, oorspronkelijk geplande "volgende nummer".
+  clearTimeout(afgespeeldVertragingTimer)
 
   const speler = document.getElementById('speler')
   const ytWrap = document.getElementById('youtube-speler-wrap')
@@ -761,6 +770,7 @@ function speelPauze() {
 
 function stop() {
   clearTimeout(stopOpruimTimer)
+  clearTimeout(afgespeeldVertragingTimer)
 
   const speler = document.getElementById('speler')
   speler.pause()
@@ -777,7 +787,7 @@ function stop() {
   stopOpruimTimer = setTimeout(() => {
     document.getElementById('audio-cover-wrap').classList.remove('zichtbaar')
     if (window.Turntable) window.Turntable.reset()
-  }, 1400)
+  }, TONEARM_LIFT_MS)
 
   const ytWrap = document.getElementById('youtube-speler-wrap')
   ytWrap.classList.remove('zichtbaar')
@@ -844,6 +854,11 @@ function registreerHuidigeAfspeling() {
 
 function afgespeeldGaVerder() {
   const afgespeeld = playlist[huidigeIndex]
+  // Alleen bij een écht uitgespeeld lokaal audiobestand stond de tonearm zichtbaar neer - bij YouTube of
+  // een mislukte poging (foutGaVerder(), ook via afgespeeldGaVerder) is er niets om te tonen, dus geen
+  // kunstmatige vertraging nodig.
+  const wasLokaleAudio = afgespeeld && afgespeeld.type !== 'youtube' && isAudioBestand(afgespeeld.lokaal_pad)
+
   if (afgespeeld) {
     verwijderUitPlaylist(afgespeeld.playlist_id)
   }
@@ -860,7 +875,17 @@ function afgespeeldGaVerder() {
 
   const volgendeIndex = huidigeIndex < playlist.length ? huidigeIndex : 0
   huidigeIndex = -1
-  speelIndex(volgendeIndex)
+
+  if (wasLokaleAudio && window.Turntable) {
+    // Zonder deze vertraging snapt speelIndex()'s eigen reset() de arm instant terug naar rust (bedoeld
+    // voor snelle handmatige navigatie via vorige/volgende), waardoor de rustige lift-terug-naar-rust bij
+    // een natuurlijk einde van een nummer nooit zichtbaar was - de arm ging al terug, alleen te snel om
+    // te zien. Hier laten we 'm eerst echt (zichtbaar) teruglopen voordat het volgende nummer laadt.
+    window.Turntable.stop()
+    afgespeeldVertragingTimer = setTimeout(() => speelIndex(volgendeIndex), TONEARM_LIFT_MS)
+  } else {
+    speelIndex(volgendeIndex)
+  }
 }
 
 function toonFoutMelding(tekst) {
