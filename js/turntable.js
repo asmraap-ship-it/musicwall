@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const VINYL_ORIGIN = '390 395'
+const DRAAISCHIJF_ORIGIN = '390 395'
 const ARM_ORIGIN = '863 142'
 // Rotatie-deltas t.o.v. de as-getekende stand van #toonarm in svg/pioneer-plx1000.svg (rotatie 0),
 // berekend rond pivot (863,142): de naaldpunt staat in de brontekening zelf al vlak buiten het label
@@ -20,12 +20,12 @@ const RPM_DEFAULT = 33
 // bij stoppen/pauzeren voelden te snel/abrupt aan. Geldt voor beide (start()/stop() delen deze constante).
 const ARM_DROP_DUUR = 1.3
 
-let vinylEl = null
+let draaischijfEl = null
 let toonarmEl = null
 let coverPlaceholderEl = null
 let coverIcoonEl = null
 let coverImageEl = null
-let vinylTween = null
+let draaischijfTween = null
 let laatsteProgressie = 0
 
 function hoekVoorProgressie(progressie) {
@@ -47,33 +47,36 @@ function initTurntable() {
     return
   }
 
-  vinylEl = wrap.querySelector('#vinyl')
+  draaischijfEl = wrap.querySelector('#draaischijf')
   toonarmEl = wrap.querySelector('#toonarm')
   coverPlaceholderEl = wrap.querySelector('#album-cover-placeholder')
   coverIcoonEl = wrap.querySelector('#album-cover-icoon')
   coverImageEl = wrap.querySelector('#album-cover-image')
 
-  if (!vinylEl || !toonarmEl) {
-    console.error('Turntable: #vinyl of #toonarm niet gevonden in de geïnjecteerde svg')
+  if (!draaischijfEl || !toonarmEl) {
+    console.error('Turntable: #draaischijf of #toonarm niet gevonden in de geïnjecteerde svg')
     return
   }
 
   gsap.set(toonarmEl, { svgOrigin: ARM_ORIGIN, rotation: RUST_HOEK })
 
-  // Eén keer aangemaakt, daarna alleen play()/pause() - i.p.v. de tween telkens te herscheppen, zodat
-  // pauzeren de huidige rotatie vasthoudt en hervatten vloeiend doorloopt (geen jank/reset naar 0).
-  vinylTween = gsap.to(vinylEl, {
+  // Roteert #draaischijf, niet #vinyl rechtstreeks - #vinyl is een geneste child-groep van #draaischijf
+  // in svg/pioneer-plx1000.svg (mechanisch: de motor drijft de platter aan, de vinyl draait daar via de
+  // slipmat gewoon in mee), dus één rotatie hier volstaat voor beide. Eén keer aangemaakt, daarna alleen
+  // play()/pause() - i.p.v. de tween telkens te herscheppen, zodat pauzeren de huidige rotatie vasthoudt
+  // en hervatten vloeiend doorloopt (geen jank/reset naar 0).
+  draaischijfTween = gsap.to(draaischijfEl, {
     rotation: '+=360',
     duration: 60 / RPM_DEFAULT,
     repeat: -1,
     ease: 'none',
-    svgOrigin: VINYL_ORIGIN,
+    svgOrigin: DRAAISCHIJF_ORIGIN,
     paused: true
   })
 }
 
 function start() {
-  if (vinylTween) vinylTween.play()
+  if (draaischijfTween) draaischijfTween.play()
   if (toonarmEl) {
     // Needle drop: vanaf de ruststand naar de hoek die bij de laatst bekende trackvoortgang hoort - bij
     // een vers nummer is dat startHoek (het begin van de vinyl, niet de ruststand zelf), bij hervatten
@@ -90,7 +93,7 @@ function start() {
 }
 
 function stop() {
-  if (vinylTween) vinylTween.pause()
+  if (draaischijfTween) draaischijfTween.pause()
   if (toonarmEl) {
     gsap.killTweensOf(toonarmEl)
     gsap.to(toonarmEl, {
