@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="css/themas/nacht.css">
   <link rel="stylesheet" href="css/themas/jr.css">
   <link rel="stylesheet" href="css/themas/licht.css">
+  <script>window.gsap = require('gsap').gsap</script>
 
 </head>
 <body>
@@ -59,40 +60,7 @@
 	  </div>
 	  <div class="audio-cover-wrap" id="audio-cover-wrap">
 	    <div class="audio-cover-content" id="audio-cover-content">
-	      <div class="turntable-chassis">
-	        <div class="platenspeler">
-	          <div class="vinyl-plaat" id="vinyl-plaat">
-	            <div class="vinyl-label" id="vinyl-label"></div>
-	            <div class="vinyl-gaatje"></div>
-	          </div>
-	          <svg class="tonearm" id="tonearm" viewBox="0 0 100 100">
-	            <g id="tonearm-lift">
-	              <g id="tonearm-rotatie" transform="rotate(-20 108 20)">
-	                <line class="tonearm-tegengewicht" x1="108" y1="20" x2="111.15" y2="16.12" stroke-width="5.5"></line>
-	                <path class="tonearm-buis" d="M 108,20 Q 98.08,40.15 73.5,62.5"></path>
-	                <rect class="tonearm-headshell" x="66.54" y="63.19" width="8" height="4" rx="1.1" transform="rotate(137.72 70.54 65.19)"></rect>
-	                <circle class="tonearm-stylus" cx="67.58" cy="67.88" r="1.2"></circle>
-	              </g>
-	            </g>
-	            <circle class="tonearm-basis-buiten" cx="108" cy="20" r="6"></circle>
-	            <circle class="tonearm-basis" cx="108" cy="20" r="3.5"></circle>
-	          </svg>
-	        </div>
-	        <div class="tt-zijpaneel">
-	          <div class="tt-leds">
-	            <span class="tt-led"></span>
-	            <span class="tt-led tt-led-actief"></span>
-	          </div>
-	          <div class="pitch-fader">
-	            <span class="pitch-fader-tick">+8</span>
-	            <div class="pitch-fader-rail">
-	              <div class="pitch-fader-cap"></div>
-	            </div>
-	            <span class="pitch-fader-tick">-8</span>
-	          </div>
-	          <div class="pitch-fader-label">TEMPO</div>
-	        </div>
-	      </div>
+	      <div id="turntable-svg-wrap"></div>
 	      <div class="audio-track-info" id="audio-track-info"></div>
 	    </div>
 	    <div class="audio-progress-rij">
@@ -126,7 +94,7 @@
 
 <script src="js/vertalingen.js"></script>
 <script src="js/i18n.js"></script>
-<script src="js/tonearm.js"></script>
+<script src="js/turntable.js"></script>
 <script src="js/jukebox.js"></script>
 </body>
 </html>

@@ -1,0 +1,383 @@
+<svg id="turntable-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 780" width="1000" height="780">
+  <defs>
+    <linearGradient id="chassisGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3a3b3e"/>
+      <stop offset="45%" stop-color="#232427"/>
+      <stop offset="100%" stop-color="#161719"/>
+    </linearGradient>
+    <linearGradient id="chassisSheen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.06"/>
+      <stop offset="12%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.12"/>
+    </linearGradient>
+    <radialGradient id="platterGrad" cx="35%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#2b2b2e"/>
+      <stop offset="55%" stop-color="#131315"/>
+      <stop offset="100%" stop-color="#050506"/>
+    </radialGradient>
+    <linearGradient id="dotGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f4f5f6"/>
+      <stop offset="100%" stop-color="#9a9ba0"/>
+    </linearGradient>
+    <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c7c8cb"/>
+      <stop offset="18%" stop-color="#f4f5f6"/>
+      <stop offset="45%" stop-color="#9fa0a4"/>
+      <stop offset="70%" stop-color="#e4e5e7"/>
+      <stop offset="100%" stop-color="#8a8b8f"/>
+    </linearGradient>
+    <linearGradient id="metalGradV" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#e9eaec"/>
+      <stop offset="50%" stop-color="#a6a7ab"/>
+      <stop offset="100%" stop-color="#c9cacd"/>
+    </linearGradient>
+    <radialGradient id="knobGrad" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#f2f3f4"/>
+      <stop offset="55%" stop-color="#aeafb3"/>
+      <stop offset="100%" stop-color="#6f7074"/>
+    </radialGradient>
+    <radialGradient id="ledGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7fe0ff"/>
+      <stop offset="100%" stop-color="#2596c9"/>
+    </radialGradient>
+    <radialGradient id="vinylGrad" cx="38%" cy="32%" r="72%">
+      <stop offset="0%" stop-color="#2a2a2c"/>
+      <stop offset="45%" stop-color="#101011"/>
+      <stop offset="100%" stop-color="#020203"/>
+    </radialGradient>
+    <linearGradient id="albumGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff7a59"/>
+      <stop offset="50%" stop-color="#c2438a"/>
+      <stop offset="100%" stop-color="#4b3fd1"/>
+    </linearGradient>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- ======================================================= -->
+  <!-- 1) BEHUIZING - basis, fader, knoppen, lampjes, logo      -->
+  <!-- ======================================================= -->
+  <g id="behuizing">
+    <rect x="8" y="8" width="984" height="764" rx="20" fill="url(#chassisGrad)" stroke="#0a0a0b" stroke-width="2"/>
+    <rect x="8" y="8" width="984" height="764" rx="20" fill="url(#chassisSheen)"/>
+
+    <circle cx="42" cy="42" r="7" fill="#0d0d0e" stroke="#4a4b4e" stroke-width="1.5"/>
+    <!-- 45-toeren adapter: zelfde formaat als start/stop, zilverkleurig, met gaatje zoals in de vinylplaat -->
+    <g transform="translate(100,100)">
+      <circle r="44" fill="url(#knobGrad)" stroke="#6c6d70" stroke-width="1.5"/>
+      <circle r="6" fill="#050506" stroke="#000000" stroke-width="1"/>
+    </g>
+
+    <circle cx="42" cy="738" r="7" fill="#0d0d0e" stroke="#4a4b4e" stroke-width="1.5"/>
+    <circle cx="958" cy="738" r="7" fill="#0d0d0e" stroke="#4a4b4e" stroke-width="1.5"/>
+    <circle cx="600" cy="60" r="14" fill="none" stroke="#101012" stroke-width="6"/>
+    <circle cx="600" cy="60" r="14" fill="none" stroke="#525356" stroke-width="1.5"/>
+
+    <!-- pivot basisplaat (statisch, fotogetrouw geplaatst t.o.v. het origineel) -->
+    <circle cx="863" cy="142" r="124" fill="#101012" stroke="#3a3b3e" stroke-width="2"/>
+    <circle cx="863" cy="142" r="106" fill="none" stroke="#2c2d30" stroke-width="10"/>
+    <line x1="965.0" y1="142.0" x2="969.0" y2="142.0" stroke="#55565a" stroke-width="1"/>
+      <line x1="963.7" y1="158.0" x2="967.7" y2="158.6" stroke="#55565a" stroke-width="1"/>
+      <line x1="960.0" y1="173.5" x2="963.8" y2="174.8" stroke="#55565a" stroke-width="1"/>
+      <line x1="953.9" y1="188.3" x2="957.4" y2="190.1" stroke="#55565a" stroke-width="1"/>
+      <line x1="945.5" y1="202.0" x2="948.8" y2="204.3" stroke="#55565a" stroke-width="1"/>
+      <line x1="935.1" y1="214.1" x2="938.0" y2="217.0" stroke="#55565a" stroke-width="1"/>
+      <line x1="923.0" y1="224.5" x2="925.3" y2="227.8" stroke="#55565a" stroke-width="1"/>
+      <line x1="909.3" y1="232.9" x2="911.1" y2="236.4" stroke="#55565a" stroke-width="1"/>
+      <line x1="894.5" y1="239.0" x2="895.8" y2="242.8" stroke="#55565a" stroke-width="1"/>
+      <line x1="879.0" y1="242.7" x2="879.6" y2="246.7" stroke="#55565a" stroke-width="1"/>
+      <line x1="863.0" y1="244.0" x2="863.0" y2="248.0" stroke="#55565a" stroke-width="1"/>
+      <line x1="847.0" y1="242.7" x2="846.4" y2="246.7" stroke="#55565a" stroke-width="1"/>
+      <line x1="831.5" y1="239.0" x2="830.2" y2="242.8" stroke="#55565a" stroke-width="1"/>
+      <line x1="816.7" y1="232.9" x2="814.9" y2="236.4" stroke="#55565a" stroke-width="1"/>
+      <line x1="803.0" y1="224.5" x2="800.7" y2="227.8" stroke="#55565a" stroke-width="1"/>
+      <line x1="790.9" y1="214.1" x2="788.0" y2="217.0" stroke="#55565a" stroke-width="1"/>
+      <line x1="780.5" y1="202.0" x2="777.2" y2="204.3" stroke="#55565a" stroke-width="1"/>
+      <line x1="772.1" y1="188.3" x2="768.6" y2="190.1" stroke="#55565a" stroke-width="1"/>
+      <line x1="766.0" y1="173.5" x2="762.2" y2="174.8" stroke="#55565a" stroke-width="1"/>
+      <line x1="762.3" y1="158.0" x2="758.3" y2="158.6" stroke="#55565a" stroke-width="1"/>
+      <line x1="761.0" y1="142.0" x2="757.0" y2="142.0" stroke="#55565a" stroke-width="1"/>
+      <line x1="762.3" y1="126.0" x2="758.3" y2="125.4" stroke="#55565a" stroke-width="1"/>
+      <line x1="766.0" y1="110.5" x2="762.2" y2="109.2" stroke="#55565a" stroke-width="1"/>
+      <line x1="772.1" y1="95.7" x2="768.6" y2="93.9" stroke="#55565a" stroke-width="1"/>
+      <line x1="780.5" y1="82.0" x2="777.2" y2="79.7" stroke="#55565a" stroke-width="1"/>
+      <line x1="790.9" y1="69.9" x2="788.0" y2="67.0" stroke="#55565a" stroke-width="1"/>
+      <line x1="803.0" y1="59.5" x2="800.7" y2="56.2" stroke="#55565a" stroke-width="1"/>
+      <line x1="816.7" y1="51.1" x2="814.9" y2="47.6" stroke="#55565a" stroke-width="1"/>
+      <line x1="831.5" y1="45.0" x2="830.2" y2="41.2" stroke="#55565a" stroke-width="1"/>
+      <line x1="847.0" y1="41.3" x2="846.4" y2="37.3" stroke="#55565a" stroke-width="1"/>
+      <line x1="863.0" y1="40.0" x2="863.0" y2="36.0" stroke="#55565a" stroke-width="1"/>
+      <line x1="879.0" y1="41.3" x2="879.6" y2="37.3" stroke="#55565a" stroke-width="1"/>
+      <line x1="894.5" y1="45.0" x2="895.8" y2="41.2" stroke="#55565a" stroke-width="1"/>
+      <line x1="909.3" y1="51.1" x2="911.1" y2="47.6" stroke="#55565a" stroke-width="1"/>
+      <line x1="923.0" y1="59.5" x2="925.3" y2="56.2" stroke="#55565a" stroke-width="1"/>
+      <line x1="935.1" y1="69.9" x2="938.0" y2="67.0" stroke="#55565a" stroke-width="1"/>
+      <line x1="945.5" y1="82.0" x2="948.8" y2="79.7" stroke="#55565a" stroke-width="1"/>
+      <line x1="953.9" y1="95.7" x2="957.4" y2="93.9" stroke="#55565a" stroke-width="1"/>
+      <line x1="960.0" y1="110.5" x2="963.8" y2="109.2" stroke="#55565a" stroke-width="1"/>
+      <line x1="963.7" y1="126.0" x2="967.7" y2="125.4" stroke="#55565a" stroke-width="1"/>
+    <circle cx="863" cy="142" r="78" fill="#0b0b0c"/>
+
+    <!-- anti-skating dial -->
+    <circle cx="946" cy="189" r="20" fill="url(#knobGrad)" stroke="#1a1a1b" stroke-width="2"/>
+    <line x1="932.2" y1="177.4" x2="927.6" y2="173.6" stroke="#c9cacd" stroke-width="1.2"/>
+      <line x1="941.3" y1="171.6" x2="939.8" y2="165.8" stroke="#c9cacd" stroke-width="1.2"/>
+      <line x1="952.2" y1="172.1" x2="954.2" y2="166.4" stroke="#c9cacd" stroke-width="1.2"/>
+      <line x1="960.7" y1="178.7" x2="965.7" y2="175.2" stroke="#c9cacd" stroke-width="1.2"/>
+      <line x1="964.0" y1="189.0" x2="970.0" y2="189.0" stroke="#c9cacd" stroke-width="1.2"/>
+      <line x1="960.7" y1="199.3" x2="965.7" y2="202.8" stroke="#c9cacd" stroke-width="1.2"/>
+      <line x1="952.2" y1="205.9" x2="954.2" y2="211.6" stroke="#c9cacd" stroke-width="1.2"/>
+      <line x1="941.3" y1="206.4" x2="939.8" y2="212.2" stroke="#c9cacd" stroke-width="1.2"/>
+      <line x1="932.2" y1="200.6" x2="927.6" y2="204.4" stroke="#c9cacd" stroke-width="1.2"/>
+    <circle cx="946" cy="189" r="4.5" fill="#26272a"/>
+
+    <!-- lock / cueing mechaniek knop -->
+    <circle cx="898" cy="78" r="12" fill="#1c1d1f" stroke="#4a4b4e" stroke-width="1.5"/>
+    <circle cx="898" cy="78" r="5.5" fill="#333437"/>
+
+    <!-- tempo range indicatorlampjes + knop (ruim onder de pivotplaat) -->
+    <rect x="858" y="292" width="94" height="20" rx="4" fill="#232427" stroke="#4a4b4e" stroke-width="1"/>
+    <rect x="858" y="318" width="94" height="20" rx="4" fill="url(#ledGlow)" stroke="#bdeeff" stroke-width="1"/>
+    <rect x="858" y="344" width="94" height="20" rx="4" fill="#232427" stroke="#4a4b4e" stroke-width="1"/>
+    <rect x="858" y="372" width="94" height="30" rx="5" fill="#0c0c0d" stroke="#4a4b4e" stroke-width="1.5"/>
+    <text x="905" y="391" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" font-weight="700" fill="#d7d8da">TEMPO RANGE</text>
+
+    <!-- pitch fader -->
+    <rect x="880" y="432" width="46" height="270" rx="8" fill="#0b0b0c" stroke="#3a3b3e" stroke-width="2"/>
+    <rect x="891" y="444" width="10" height="246" rx="4" fill="#000000"/>
+    <line x1="893" y1="472.0" x2="901" y2="472.0" stroke="#8a8b8e" stroke-width="1.4"/>
+      <line x1="893" y1="503.0" x2="901" y2="503.0" stroke="#8a8b8e" stroke-width="1.4"/>
+      <line x1="893" y1="534.0" x2="901" y2="534.0" stroke="#8a8b8e" stroke-width="1.4"/>
+      <line x1="893" y1="565.0" x2="901" y2="565.0" stroke="#8a8b8e" stroke-width="1.4"/>
+      <line x1="893" y1="596.0" x2="901" y2="596.0" stroke="#8a8b8e" stroke-width="1.4"/>
+      <line x1="893" y1="627.0" x2="901" y2="627.0" stroke="#8a8b8e" stroke-width="1.4"/>
+      <line x1="893" y1="658.0" x2="901" y2="658.0" stroke="#8a8b8e" stroke-width="1.4"/>
+      <line x1="893" y1="689.0" x2="901" y2="689.0" stroke="#8a8b8e" stroke-width="1.4"/>
+      <line x1="893" y1="720.0" x2="901" y2="720.0" stroke="#8a8b8e" stroke-width="1.4"/>
+    <rect x="883" y="555" width="40" height="26" rx="5" fill="url(#metalGrad)" stroke="#6c6d70" stroke-width="1.2"/>
+    <rect x="883" y="564" width="40" height="3" fill="#3a3b3e"/>
+    <text x="903" y="722" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#c9cacd">TEMPO</text>
+
+    <!-- power knop -->
+    <circle cx="60" cy="610" r="28" fill="url(#knobGrad)" stroke="#1a1a1b" stroke-width="2"/>
+    <circle cx="60" cy="610" r="28" fill="none" stroke="#4a4b4e" stroke-width="1"/>
+    <rect x="57" y="586" width="6" height="12" rx="2" fill="#2c2d30"/>
+    <circle cx="38" cy="610" r="4.5" fill="url(#ledGlow)"/>
+    <text x="60" y="650" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#c9cacd">POWER</text>
+
+    <!-- start/stop knop -->
+    <circle cx="75" cy="715" r="44" fill="#0b0b0c" stroke="url(#ledGlow)" stroke-width="4"/>
+    <circle cx="75" cy="715" r="35" fill="url(#knobGrad)"/>
+    <text x="75" y="712" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" font-weight="700" fill="#26272a">START/</text>
+    <text x="75" y="723" text-anchor="middle" font-family="Arial, sans-serif" font-size="8.5" font-weight="700" fill="#26272a">STOP</text>
+
+    <!-- 33/45 snelheidskeuze: verder naar onderen, los van start/stop -->
+    <rect x="160" y="734" width="50" height="26" rx="4" fill="#12233a" stroke="#4a4b4e" stroke-width="1.5"/>
+    <text x="185" y="752" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7fe0ff">33</text>
+    <rect x="216" y="734" width="50" height="26" rx="4" fill="#1a1b1d" stroke="#4a4b4e" stroke-width="1.5"/>
+    <text x="241" y="752" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#8a8b8f">45</text>
+
+    <!-- wordmark: verschoven naar links -->
+    <text x="560" y="745" font-family="Arial, sans-serif" font-size="22" font-style="italic" font-weight="800" fill="#d7d8da">Pioneer DJ</text>
+    <text x="560" y="762" font-family="Arial, sans-serif" font-size="10" letter-spacing="1" fill="#8a8b8f">PROFESSIONAL TURNTABLE&#160;&#160;PLX-1000</text>
+  </g>
+
+  <!-- ======================================================= -->
+  <!-- 2) DRAAISCHIJF - de ronde platter + strobe-stipjes       -->
+  <!-- ======================================================= -->
+  <g id="draaischijf">
+    <circle cx="390" cy="395" r="335" fill="url(#platterGrad)" filter="url(#softShadow)"/>
+    <circle cx="390" cy="395" r="335" fill="none" stroke="#3f4044" stroke-width="2"/>
+    <circle cx="706.0" cy="395.0" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="705.3" cy="416.6" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="703.1" cy="438.0" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="699.4" cy="459.3" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="694.3" cy="480.3" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="687.8" cy="500.8" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="679.8" cy="520.9" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="670.6" cy="540.4" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="660.0" cy="559.2" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="648.2" cy="577.2" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="635.1" cy="594.4" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="620.9" cy="610.7" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="605.7" cy="625.9" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="589.4" cy="640.1" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="572.2" cy="653.2" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="554.2" cy="665.0" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="535.4" cy="675.6" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="515.9" cy="684.8" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="495.8" cy="692.8" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="475.3" cy="699.3" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="454.3" cy="704.4" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="433.0" cy="708.1" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="411.6" cy="710.3" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="390.0" cy="711.0" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="368.4" cy="710.3" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="347.0" cy="708.1" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="325.7" cy="704.4" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="304.7" cy="699.3" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="284.2" cy="692.8" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="264.1" cy="684.8" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="244.6" cy="675.6" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="225.8" cy="665.0" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="207.8" cy="653.2" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="190.6" cy="640.1" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="174.3" cy="625.9" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="159.1" cy="610.7" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="144.9" cy="594.4" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="131.8" cy="577.2" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="120.0" cy="559.2" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="109.4" cy="540.4" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="100.2" cy="520.9" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="92.2" cy="500.8" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="85.7" cy="480.3" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="80.6" cy="459.3" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="76.9" cy="438.0" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="74.7" cy="416.6" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="74.0" cy="395.0" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="74.7" cy="373.4" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="76.9" cy="352.0" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="80.6" cy="330.7" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="85.7" cy="309.7" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="92.2" cy="289.2" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="100.2" cy="269.1" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="109.4" cy="249.6" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="120.0" cy="230.8" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="131.8" cy="212.8" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="144.9" cy="195.6" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="159.1" cy="179.3" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="174.3" cy="164.1" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="190.6" cy="149.9" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="207.8" cy="136.8" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="225.8" cy="125.0" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="244.6" cy="114.4" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="264.1" cy="105.2" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="284.2" cy="97.2" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="304.7" cy="90.7" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="325.7" cy="85.6" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="347.0" cy="81.9" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="368.4" cy="79.7" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="390.0" cy="79.0" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="411.6" cy="79.7" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="433.0" cy="81.9" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="454.3" cy="85.6" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="475.3" cy="90.7" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="495.8" cy="97.2" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="515.9" cy="105.2" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="535.4" cy="114.4" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="554.2" cy="125.0" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="572.2" cy="136.8" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="589.4" cy="149.9" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="605.7" cy="164.1" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="620.9" cy="179.3" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="635.1" cy="195.6" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="648.2" cy="212.8" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="660.0" cy="230.8" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="670.6" cy="249.6" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="679.8" cy="269.1" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="687.8" cy="289.2" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="694.3" cy="309.7" r="5.2" fill="url(#dotGrad)"/>
+      <circle cx="699.4" cy="330.7" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="703.1" cy="352.0" r="3.0" fill="url(#dotGrad)"/>
+      <circle cx="705.3" cy="373.4" r="3.0" fill="url(#dotGrad)"/>
+    <circle cx="390" cy="395" r="298" fill="none" stroke="#3a3b3e" stroke-width="2"/>
+    <circle cx="390" cy="395" r="285" fill="none" stroke="#232427" stroke-width="1"/>
+    <!-- wordmark op de mat: gecentreerd links van de spindel, geen overlap meer -->
+    <text x="290" y="382" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-style="italic" font-weight="700" fill="#4d4e52">Pioneer DJ</text>
+    <circle cx="390" cy="395" r="10" fill="url(#knobGrad)" stroke="#1a1a1b" stroke-width="2"/>
+    <circle cx="390" cy="395" r="3" fill="#1a1a1b"/>
+  </g>
+
+
+  <!-- ======================================================= -->
+  <!-- 4) VINYL - de plaat met albumhoes-label, draait mee met  -->
+  <!--    de draaischijf (los animeerbaar voor bv. in/uitfaden) -->
+  <!-- ======================================================= -->
+  <g id="vinyl">
+    <circle cx="390" cy="395" r="292" fill="url(#vinylGrad)"/>
+    <circle cx="390" cy="395" r="292" fill="none" stroke="#000000" stroke-width="2"/>
+    <circle cx="390" cy="395" r="278" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="271" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="264" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="257" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="250" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="243" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="236" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="229" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="222" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="215" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="208" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="201" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="194" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="187" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="180" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="173" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="166" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="159" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="152" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="145" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="138" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="131" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="124" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="117" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="110" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="103" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="390" cy="395" r="96" fill="none" stroke="#000000" stroke-opacity="0.35" stroke-width="1"/>
+    <circle cx="390" cy="395" r="90" fill="#0a0a0b" stroke="#000000" stroke-width="1"/>
+    <clipPath id="albumClip">
+      <circle cx="390" cy="395" r="84"/>
+    </clipPath>
+    <g clip-path="url(#albumClip)">
+      <rect id="album-cover-placeholder" x="306" y="311" width="168" height="168" fill="url(#albumGrad)"/>
+      <image id="album-cover-image" x="306" y="311" width="168" height="168" preserveAspectRatio="xMidYMid slice" style="display:none"/>
+      <circle cx="390" cy="395" r="84" fill="none" stroke="#000000" stroke-opacity="0.25" stroke-width="6"/>
+      <g id="album-cover-icoon">
+        <path d="M 330 440 L 360 340 L 390 440 M 340 410 L 380 410" fill="none" stroke="#ffffff" stroke-opacity="0.85" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="430" cy="360" r="22" fill="none" stroke="#ffffff" stroke-opacity="0.85" stroke-width="6"/>
+      </g>
+    </g>
+    <circle cx="390" cy="395" r="84" fill="none" stroke="#1a1a1b" stroke-width="3"/>
+    <circle cx="390" cy="395" r="6" fill="#050506" stroke="#000000" stroke-width="1"/>
+  </g>
+
+  <!-- ======================================================= -->
+  <!-- 3) TOONARM - arm, contragewicht en headshell (ruststand) -->
+  <!-- fotogetrouw nagetekend op basis van de originele foto    -->
+  <!-- ======================================================= -->
+  <g id="toonarm">
+    <!-- korte verbindingsbuis tussen pivot en contragewicht (staart van de arm) -->
+    <path d="M 863 142 L 897 105" fill="none" stroke="url(#metalGrad)" stroke-width="24" stroke-linecap="round"/>
+
+    <!-- contragewicht (achterzijde, tegenovergesteld aan de headshell) -->
+    <g transform="translate(897,105) rotate(43)">
+      <rect x="-14" y="-20" width="28" height="40" rx="7" fill="url(#metalGrad)" stroke="#6c6d70" stroke-width="1.5"/>
+      <line x1="-14" y1="-10" x2="14" y2="-10" stroke="#6c6d70" stroke-width="1"/>
+      <line x1="-14" y1="0" x2="14" y2="0" stroke="#6c6d70" stroke-width="1"/>
+      <line x1="-14" y1="10" x2="14" y2="10" stroke="#6c6d70" stroke-width="1"/>
+    </g>
+
+    <!-- S-vormige armbuis, 1-op-1 nagetekend uit de brongrafiek (Catmull-Rom spline) -->
+    <path d="M 863.0 142.0 L 786.7 224.7 Q 756.2 257.8 733.7 296.8 L 699.5 356.2 Q 672.0 403.9 619.9 421.5 L 509.0 459.0"
+          fill="none" stroke="url(#metalGrad)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 863.0 142.0 L 786.7 224.7 Q 756.2 257.8 733.7 296.8 L 699.5 356.2 Q 672.0 403.9 619.9 421.5 L 509.0 459.0"
+          fill="none" stroke="#ffffff" stroke-width="2" stroke-opacity="0.35" stroke-linecap="round"/>
+
+    <!-- verdikte kraag bovenaan de arm, BOVEN de dunne stang getekend zodat hij zichtbaar dikker is -->
+    <path d="M 863 142 L 825.7 182.4" fill="none" stroke="url(#metalGrad)" stroke-width="24" stroke-linecap="round"/>
+
+    <!-- pivot-as (draaiende dop, boven op de statische basisplaat) -->
+    <circle cx="863" cy="142" r="18" fill="url(#knobGrad)" stroke="#3a3b3e" stroke-width="2"/>
+    <circle cx="863" cy="142" r="6.5" fill="#3a3b3e"/>
+
+    <!-- headshell + cartridge + naald, uitgelijnd met de eindraaklijn van de buis -->
+    <g transform="translate(509,459) rotate(161)">
+      <rect x="-14" y="-18" width="38" height="26" rx="5" fill="url(#metalGrad)" stroke="#6c6d70" stroke-width="1.2"/>
+      <path d="M 22 -16 L 54 -8 L 54 4 L 22 6 Z" fill="#e9e5da" stroke="#6c6d70" stroke-width="1"/>
+      <line x1="54" y1="-4" x2="70" y2="-1" stroke="#3a3b3e" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="-4" cy="-9" r="2.2" fill="#3a3b3e"/>
+      <circle cx="10" cy="-9" r="2.2" fill="#3a3b3e"/>
+      <path d="M -14 -18 L -37 -18 L -37 -7" fill="none" stroke="url(#metalGradV)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+</svg>

@@ -225,13 +225,11 @@ document.getElementById('speler').addEventListener('play', () => {
   initLokaleAnalyser()
   if (audioCtx.state === 'suspended') audioCtx.resume()
   startSpectrum()
-  document.getElementById('vinyl-plaat').classList.add('speelt')
-  if (window.Tonearm) window.Tonearm.start()
+  if (window.Turntable) window.Turntable.start()
 })
 document.getElementById('speler').addEventListener('pause', () => {
   stopSpectrum()
-  document.getElementById('vinyl-plaat').classList.remove('speelt')
-  if (window.Tonearm) window.Tonearm.stop()
+  if (window.Turntable) window.Turntable.stop()
 })
 
 function formatTijd(seconden) {
@@ -250,7 +248,7 @@ document.getElementById('speler').addEventListener('timeupdate', () => {
   const pct = speler.duration ? (speler.currentTime / speler.duration) * 100 : 0
   document.getElementById('audio-progress-vulling').style.width = pct + '%'
   document.getElementById('audio-tijd-huidig').textContent = formatTijd(speler.currentTime)
-  if (window.Tonearm) window.Tonearm.bijwerken(speler.currentTime, speler.duration)
+  if (window.Turntable) window.Turntable.bijwerken(speler.currentTime, speler.duration)
 })
 
 document.getElementById('speler').addEventListener('loadedmetadata', () => {
@@ -685,23 +683,17 @@ function speelIndex(i) {
     // hangen, zie initLokaleAnalyser), maar wordt visueel verborgen ten gunste van de albumhoes
     if (isAudioBestand(item.lokaal_pad)) {
       speler.classList.remove('zichtbaar')
-      const vinylLabel = document.getElementById('vinyl-label')
-      if (item.cover_pad) {
-        vinylLabel.style.backgroundImage = "url('file:///" + item.cover_pad.replace(/\\/g, '/') + "')"
-        vinylLabel.innerHTML = ''
-        vinylLabel.classList.remove('leeg')
-      } else {
-        vinylLabel.style.backgroundImage = 'none'
-        vinylLabel.innerHTML = '&#9835;'
-        vinylLabel.classList.add('leeg')
-      }
       document.getElementById('audio-track-info').innerHTML =
         '<div class="audio-track-artiest">' + (item.artiest || '') + '</div>'
         + '<div class="audio-track-titel">' + (item.titel || '') + '</div>'
       document.getElementById('audio-progress-vulling').style.width = '0%'
       document.getElementById('audio-tijd-huidig').textContent = '0:00'
       document.getElementById('audio-tijd-duur').textContent = '0:00'
-      if (window.Tonearm) window.Tonearm.reset()
+      if (window.Turntable) {
+        window.Turntable.stop()
+        window.Turntable.reset()
+        if (item.cover_pad) window.Turntable.setAlbumCover(item.cover_pad)
+      }
       audioCoverWrap.classList.add('zichtbaar')
     } else {
       speler.classList.add('zichtbaar')
@@ -771,7 +763,10 @@ function stop() {
   document.getElementById('audio-progress-vulling').style.width = '0%'
   document.getElementById('audio-tijd-huidig').textContent = '0:00'
   document.getElementById('audio-tijd-duur').textContent = '0:00'
-  if (window.Tonearm) window.Tonearm.reset()
+  if (window.Turntable) {
+    window.Turntable.stop()
+    window.Turntable.reset()
+  }
 
   const ytWrap = document.getElementById('youtube-speler-wrap')
   ytWrap.classList.remove('zichtbaar')
