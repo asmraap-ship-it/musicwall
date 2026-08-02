@@ -697,6 +697,11 @@ function speelIndex(i) {
     // (geen videoframe om te tekenen) - #speler blijft de speel-engine (spectrum-analyzer blijft eraan
     // hangen, zie initLokaleAnalyser), maar wordt visueel verborgen ten gunste van de albumhoes
     if (isAudioBestand(item.lokaal_pad)) {
+      // Het huidige nummer stopt meteen, ongeacht hoe lang toonVinyl() straks nog duurt vóórdat het
+      // volgende nummer daadwerkelijk start (op gebruikersverzoek gefixt - zonder deze regel bleef het
+      // vórige nummer gewoon doorspelen tijdens de hele plaat-wissel-animatie bij handmatig vorige/
+      // volgende, want speler.src wordt nu pas ná die animatie overschreven, zie startAfspelen() verderop).
+      speler.pause()
       speler.classList.remove('zichtbaar')
       document.getElementById('audio-track-info').innerHTML =
         '<div class="audio-track-artiest">' + (item.artiest || '') + '</div>'
