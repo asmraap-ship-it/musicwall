@@ -203,6 +203,14 @@ function toonVinyl(coverPad, klaar) {
   }
 
   const plaatsNieuw = () => {
+    // #vinyl's aankomstpad is een offset t.o.v. zijn eigen rustpositie, maar dat offset wordt toegepast
+    // ín #draaischijf's (mogelijk gepauzeerde-maar-niet-teruggezette) rotatie - stop() hierboven pauzeert
+    // de platter-rotatie namelijk op de hoek waar hij toevallig stond, niet terug naar 0. Zonder deze
+    // reset kwam de plaat daardoor telkens uit een andere schermhoek aanzweven (bug gemeld door de
+    // gebruiker tijdens live testen) en oogde de bevroren plaat scheef/"nog aan het draaien" i.p.v. recht
+    // stilstaand. Instant (geen tween) - de plaat is op dit moment nog onzichtbaar (opacity 0), dus alleen
+    // de kale platter-stipjes/wordmark springen even terug, wat niet opvalt.
+    if (draaischijfEl) gsap.set(draaischijfEl, { rotation: 0 })
     setAlbumCover(coverPad)
     huidigeCoverPad = coverPad
     vinylZichtbaar = true
