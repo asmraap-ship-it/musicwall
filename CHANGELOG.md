@@ -15,7 +15,10 @@ Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0
 - De jukebox toont bij muziekbestanden nu ook de verstreken tijd en lengte.
 - Losse afspeelvensters voor muziekbestanden zijn nu compacter.
 - De knoppen "Map importeren" en "YouTube zoeken" zijn verborgen op een albums-tabblad, waar ze toch niet werken.
+- De vinylplaat komt nu zelf ook in beeld: hij zweeft aan op de draaitafel vlak voor het starten van een nummer en verdwijnt weer bij het stoppen. Bij nummers van hetzelfde album blijft de plaat gewoon liggen; bij een ander album wordt de oude plaat eerst weggehaald voordat de nieuwe wordt neergelegd.
+- De pick-uparm beweegt rustiger, zet de naald bij het starten netjes aan het begin van de plaat neer, en tilt zichtbaar op als een nummer vanzelf is afgelopen of gestopt wordt.
 
 ### Fixed
 - Het venster om een album te bewerken was te klein, waardoor de Opslaan-knop buiten beeld viel.
 - Zoeken vanuit een muziek-tabblad liet de albums nog zichtbaar staan naast de zoekresultaten.
+- Bij handmatig naar een vorig of volgend nummer schakelen bleef het oude nummer soms nog even hoorbaar doorspelen tijdens het wisselen van de plaat.
