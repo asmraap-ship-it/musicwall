@@ -10,6 +10,7 @@ const ARM_ORIGIN = '863 142'
 const RUST_HOEK = -24
 const EIND_HOEK = 0
 const RPM_DEFAULT = 33
+const ARM_DROP_DUUR = 0.6
 
 let vinylEl = null
 let toonarmEl = null
@@ -17,6 +18,7 @@ let coverPlaceholderEl = null
 let coverIcoonEl = null
 let coverImageEl = null
 let vinylTween = null
+let laatsteProgressie = 0
 
 function hoekVoorProgressie(progressie) {
   const p = Math.min(1, Math.max(0, progressie))
@@ -64,13 +66,36 @@ function initTurntable() {
 
 function start() {
   if (vinylTween) vinylTween.play()
+  if (toonarmEl) {
+    // Needle drop: vanaf de ruststand naar de hoek die bij de laatst bekende trackvoortgang hoort - bij
+    // een vers nummer is dat gewoon rustHoek zelf (geen zichtbare sweep), bij hervatten na pauzeren
+    // landt de arm weer op de plek waar de muziek al was. overwrite:true/kill voorkomt dat een snelle
+    // pauze-hervat-opeenvolging animaties laat opstapelen.
+    gsap.killTweensOf(toonarmEl)
+    gsap.to(toonarmEl, {
+      rotation: hoekVoorProgressie(laatsteProgressie),
+      duration: ARM_DROP_DUUR,
+      ease: 'power2.out',
+      overwrite: true
+    })
+  }
 }
 
 function stop() {
   if (vinylTween) vinylTween.pause()
+  if (toonarmEl) {
+    gsap.killTweensOf(toonarmEl)
+    gsap.to(toonarmEl, {
+      rotation: RUST_HOEK,
+      duration: ARM_DROP_DUUR,
+      ease: 'power2.out',
+      overwrite: true
+    })
+  }
 }
 
 function reset() {
+  laatsteProgressie = 0
   if (toonarmEl) {
     gsap.killTweensOf(toonarmEl)
     gsap.set(toonarmEl, { rotation: RUST_HOEK })
@@ -79,11 +104,13 @@ function reset() {
 
 function bijwerken(currentTime, duration) {
   if (!toonarmEl || !duration) return
+  laatsteProgressie = Math.min(1, Math.max(0, currentTime / duration))
   // Korte "inhaal"-tween i.p.v. de rotatie direct te zetten - timeupdate vuurt maar een paar keer per
   // seconde, dus zonder deze tussenstap zou de arm merkbaar springen i.p.v. geloofwaardig mee te glijden.
-  // overwrite:true voorkomt dat opeenvolgende updates elkaar opstapelen.
+  // overwrite:true voorkomt dat opeenvolgende updates (of de needle-drop-tween van start()) elkaar
+  // opstapelen.
   gsap.to(toonarmEl, {
-    rotation: hoekVoorProgressie(currentTime / duration),
+    rotation: hoekVoorProgressie(laatsteProgressie),
     duration: 0.3,
     ease: 'sine.out',
     overwrite: true
