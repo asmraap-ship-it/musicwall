@@ -74,6 +74,10 @@
     <circle cx="600" cy="60" r="14" fill="none" stroke="#101012" stroke-width="6"/>
     <circle cx="600" cy="60" r="14" fill="none" stroke="#525356" stroke-width="1.5"/>
 
+    <!-- pivot-mechaniek (basisplaat, tick-markeringen, anti-skating-dial, lock/cueing-knop) - verschoven
+         dichter naar de platter-rand met translate(-49.95,26.72), gemeten aan een referentiefoto (de gap
+         stond 3,7x te groot: 0,231x platterstraal i.p.v. 0,062x) -->
+    <g transform="translate(-49.95,26.72)">
     <!-- pivot basisplaat (statisch, fotogetrouw geplaatst t.o.v. het origineel) -->
     <circle cx="863" cy="142" r="124" fill="#101012" stroke="#3a3b3e" stroke-width="2"/>
     <circle cx="863" cy="142" r="106" fill="none" stroke="#2c2d30" stroke-width="10"/>
@@ -135,6 +139,7 @@
     <!-- lock / cueing mechaniek knop -->
     <circle cx="898" cy="78" r="12" fill="#1c1d1f" stroke="#4a4b4e" stroke-width="1.5"/>
     <circle cx="898" cy="78" r="5.5" fill="#333437"/>
+    </g>
 
     <!-- tempo range indicatorlampjes + knop (ruim onder de pivotplaat) -->
     <rect x="858" y="292" width="94" height="20" rx="4" fill="#232427" stroke="#4a4b4e" stroke-width="1"/>
@@ -345,7 +350,12 @@
   <!-- 3) TOONARM - arm, contragewicht en headshell (ruststand) -->
   <!-- fotogetrouw nagetekend op basis van de originele foto    -->
   <!-- ======================================================= -->
-  <g id="toonarm">
+  <g id="toonarm" transform="translate(-49.95,26.72)">
+    <!-- toonarm-inner: draagt alle bestaande paden ongewijzigd - GSAP roteert straks dít element om de
+         lokale pivot (863,142), terwijl de buitenste #toonarm-groep alleen de statische verschuiving
+         regelt die hoort bij het verplaatste pivot-mechaniek in #behuizing (zie hierboven). Rotatie nooit
+         direct op de buitenste groep zetten, anders overschrijft GSAP deze translate. -->
+    <g id="toonarm-inner">
     <!-- korte verbindingsbuis tussen pivot en contragewicht (staart van de arm) -->
     <path d="M 863 142 L 897 105" fill="none" stroke="url(#metalGrad)" stroke-width="24" stroke-linecap="round"/>
 
@@ -378,6 +388,7 @@
       <circle cx="-4" cy="-9" r="2.2" fill="#3a3b3e"/>
       <circle cx="10" cy="-9" r="2.2" fill="#3a3b3e"/>
       <path d="M -14 -18 L -37 -18 L -37 -7" fill="none" stroke="url(#metalGradV)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
     </g>
   </g>
 </svg>

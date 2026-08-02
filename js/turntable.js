@@ -21,7 +21,7 @@ const RPM_DEFAULT = 33
 const ARM_DROP_DUUR = 1.3
 
 let draaischijfEl = null
-let toonarmEl = null
+let toonarmInnerEl = null
 let coverPlaceholderEl = null
 let coverIcoonEl = null
 let coverImageEl = null
@@ -48,17 +48,20 @@ function initTurntable() {
   }
 
   draaischijfEl = wrap.querySelector('#draaischijf')
-  toonarmEl = wrap.querySelector('#toonarm')
+  // #toonarm-inner, niet de buitenste #toonarm - die buitenste groep draagt sinds de pivot-positiecorrectie
+  // (zie #behuizing) een statische translate voor de verplaatste pivot; GSAP roteert alleen de binnenste
+  // groep, anders zou de rotatie-tween die translate overschrijven.
+  toonarmInnerEl = wrap.querySelector('#toonarm-inner')
   coverPlaceholderEl = wrap.querySelector('#album-cover-placeholder')
   coverIcoonEl = wrap.querySelector('#album-cover-icoon')
   coverImageEl = wrap.querySelector('#album-cover-image')
 
-  if (!draaischijfEl || !toonarmEl) {
-    console.error('Turntable: #draaischijf of #toonarm niet gevonden in de geïnjecteerde svg')
+  if (!draaischijfEl || !toonarmInnerEl) {
+    console.error('Turntable: #draaischijf of #toonarm-inner niet gevonden in de geïnjecteerde svg')
     return
   }
 
-  gsap.set(toonarmEl, { svgOrigin: ARM_ORIGIN, rotation: RUST_HOEK })
+  gsap.set(toonarmInnerEl, { svgOrigin: ARM_ORIGIN, rotation: RUST_HOEK })
 
   // Roteert #draaischijf, niet #vinyl rechtstreeks - #vinyl is een geneste child-groep van #draaischijf
   // in svg/pioneer-plx1000.svg (mechanisch: de motor drijft de platter aan, de vinyl draait daar via de
@@ -77,13 +80,13 @@ function initTurntable() {
 
 function start() {
   if (draaischijfTween) draaischijfTween.play()
-  if (toonarmEl) {
+  if (toonarmInnerEl) {
     // Needle drop: vanaf de ruststand naar de hoek die bij de laatst bekende trackvoortgang hoort - bij
     // een vers nummer is dat startHoek (het begin van de vinyl, niet de ruststand zelf), bij hervatten
     // na pauzeren landt de arm weer op de plek waar de muziek al was. overwrite:true/kill voorkomt dat
     // een snelle pauze-hervat-opeenvolging animaties laat opstapelen.
-    gsap.killTweensOf(toonarmEl)
-    gsap.to(toonarmEl, {
+    gsap.killTweensOf(toonarmInnerEl)
+    gsap.to(toonarmInnerEl, {
       rotation: hoekVoorProgressie(laatsteProgressie),
       duration: ARM_DROP_DUUR,
       ease: 'power2.out',
@@ -94,9 +97,9 @@ function start() {
 
 function stop() {
   if (draaischijfTween) draaischijfTween.pause()
-  if (toonarmEl) {
-    gsap.killTweensOf(toonarmEl)
-    gsap.to(toonarmEl, {
+  if (toonarmInnerEl) {
+    gsap.killTweensOf(toonarmInnerEl)
+    gsap.to(toonarmInnerEl, {
       rotation: RUST_HOEK,
       duration: ARM_DROP_DUUR,
       ease: 'power2.out',
@@ -107,20 +110,20 @@ function stop() {
 
 function reset() {
   laatsteProgressie = 0
-  if (toonarmEl) {
-    gsap.killTweensOf(toonarmEl)
-    gsap.set(toonarmEl, { rotation: RUST_HOEK })
+  if (toonarmInnerEl) {
+    gsap.killTweensOf(toonarmInnerEl)
+    gsap.set(toonarmInnerEl, { rotation: RUST_HOEK })
   }
 }
 
 function bijwerken(currentTime, duration) {
-  if (!toonarmEl || !duration) return
+  if (!toonarmInnerEl || !duration) return
   laatsteProgressie = Math.min(1, Math.max(0, currentTime / duration))
   // Korte "inhaal"-tween i.p.v. de rotatie direct te zetten - timeupdate vuurt maar een paar keer per
   // seconde, dus zonder deze tussenstap zou de arm merkbaar springen i.p.v. geloofwaardig mee te glijden.
   // overwrite:true voorkomt dat opeenvolgende updates (of de needle-drop-tween van start()) elkaar
   // opstapelen.
-  gsap.to(toonarmEl, {
+  gsap.to(toonarmInnerEl, {
     rotation: hoekVoorProgressie(laatsteProgressie),
     duration: 0.3,
     ease: 'sine.out',
