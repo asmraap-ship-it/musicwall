@@ -15,7 +15,9 @@ const RUST_HOEK = -26
 const START_HOEK = -20
 const EIND_HOEK = 0
 const RPM_DEFAULT = 33
-const ARM_DROP_DUUR = 0.6
+// Op gebruikersverzoek verruimd van 0.6s - zowel de needle-drop bij starten als de lift-terug-naar-rust
+// bij stoppen/pauzeren voelden te snel/abrupt aan. Geldt voor beide (start()/stop() delen deze constante).
+const ARM_DROP_DUUR = 1.3
 
 let vinylEl = null
 let toonarmEl = null

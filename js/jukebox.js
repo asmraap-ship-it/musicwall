@@ -771,13 +771,13 @@ function stop() {
   document.getElementById('audio-tijd-duur').textContent = '0:00'
   if (window.Turntable) window.Turntable.stop()
   // audio-cover-wrap (met de platenspeler erin) blijft nog even zichtbaar, anders zou de rustige
-  // tonearm-lift-terug-naar-ruststand-beweging die Turntable.stop() net startte (0.6s, zie
+  // tonearm-lift-terug-naar-ruststand-beweging die Turntable.stop() net startte (1.3s, zie
   // ARM_DROP_DUUR in js/turntable.js) meteen onzichtbaar worden. reset() (instant, geen tween) volgt
   // pas ná die beweging, zodat de arm exact op de ruststand komt te staan.
   stopOpruimTimer = setTimeout(() => {
     document.getElementById('audio-cover-wrap').classList.remove('zichtbaar')
     if (window.Turntable) window.Turntable.reset()
-  }, 650)
+  }, 1400)
 
   const ytWrap = document.getElementById('youtube-speler-wrap')
   ytWrap.classList.remove('zichtbaar')
