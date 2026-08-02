@@ -7,6 +7,7 @@ const { registreerAfspeling, getMeestGespeeld } = require('./db/afspeelstatistie
 
 let playlist = []
 let huidigeIndex = -1
+let stopOpruimTimer = null
 
 const AUDIO_EXTENSIES = ['.mp3', '.m4a', '.flac', '.wav']
 function isAudioBestand(pad) {
@@ -646,6 +647,10 @@ function speelIndex(i) {
   huidigeIndex = i
   const item = playlist[i]
 
+  // Annuleert een eventueel nog lopende opruimtimer van een eerdere stop() (zie aldaar) - anders zou die
+  // timer straks alsnog afgaan en de albumhoes van dít nieuwe nummer verbergen/de tonearm resetten.
+  clearTimeout(stopOpruimTimer)
+
   const speler = document.getElementById('speler')
   const ytWrap = document.getElementById('youtube-speler-wrap')
   const audioCoverWrap = document.getElementById('audio-cover-wrap')
@@ -755,18 +760,24 @@ function speelPauze() {
 }
 
 function stop() {
+  clearTimeout(stopOpruimTimer)
+
   const speler = document.getElementById('speler')
   speler.pause()
   speler.removeAttribute('src')
   speler.classList.remove('zichtbaar')
-  document.getElementById('audio-cover-wrap').classList.remove('zichtbaar')
   document.getElementById('audio-progress-vulling').style.width = '0%'
   document.getElementById('audio-tijd-huidig').textContent = '0:00'
   document.getElementById('audio-tijd-duur').textContent = '0:00'
-  if (window.Turntable) {
-    window.Turntable.stop()
-    window.Turntable.reset()
-  }
+  if (window.Turntable) window.Turntable.stop()
+  // audio-cover-wrap (met de platenspeler erin) blijft nog even zichtbaar, anders zou de rustige
+  // tonearm-lift-terug-naar-ruststand-beweging die Turntable.stop() net startte (0.6s, zie
+  // ARM_DROP_DUUR in js/turntable.js) meteen onzichtbaar worden. reset() (instant, geen tween) volgt
+  // pas ná die beweging, zodat de arm exact op de ruststand komt te staan.
+  stopOpruimTimer = setTimeout(() => {
+    document.getElementById('audio-cover-wrap').classList.remove('zichtbaar')
+    if (window.Turntable) window.Turntable.reset()
+  }, 650)
 
   const ytWrap = document.getElementById('youtube-speler-wrap')
   ytWrap.classList.remove('zichtbaar')

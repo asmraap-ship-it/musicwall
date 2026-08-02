@@ -5,9 +5,14 @@ const VINYL_ORIGIN = '390 395'
 const ARM_ORIGIN = '863 142'
 // Rotatie-deltas t.o.v. de as-getekende stand van #toonarm in svg/pioneer-plx1000.svg (rotatie 0),
 // berekend rond pivot (863,142): de naaldpunt staat in de brontekening zelf al vlak buiten het label
-// (r ≈ 103 t.o.v. vinylcentrum 390,395) - vandaar eindHoek = 0, geen rotatie nodig. rustHoek draait de
-// arm zo'n 24° naar buiten tot de naaldpunt net voorbij de vinylrand (r = 292) landt.
-const RUST_HOEK = -24
+// (r ≈ 103 t.o.v. vinylcentrum 390,395) - vandaar eindHoek = 0, geen rotatie nodig. Drie afzonderlijke
+// hoeken, geen twee: rustHoek is de geparkeerde stand ver van de plaat (r ≈ 341, duidelijk los van de
+// rand), startHoek is waar de naald een nummer daadwerkelijk oppikt op de buitenste groef (r ≈ 287, net
+// bínnen de vinylrand r = 292) - dat zijn bewust twee verschillende hoeken, anders zou de "needle drop"
+// bij het starten van een nummer nergens naartoe bewegen (rust ligt dan al op exact dezelfde plek als
+// het begin van de plaat).
+const RUST_HOEK = -26
+const START_HOEK = -20
 const EIND_HOEK = 0
 const RPM_DEFAULT = 33
 const ARM_DROP_DUUR = 0.6
@@ -22,7 +27,7 @@ let laatsteProgressie = 0
 
 function hoekVoorProgressie(progressie) {
   const p = Math.min(1, Math.max(0, progressie))
-  return RUST_HOEK + (EIND_HOEK - RUST_HOEK) * p
+  return START_HOEK + (EIND_HOEK - START_HOEK) * p
 }
 
 function initTurntable() {
@@ -68,9 +73,9 @@ function start() {
   if (vinylTween) vinylTween.play()
   if (toonarmEl) {
     // Needle drop: vanaf de ruststand naar de hoek die bij de laatst bekende trackvoortgang hoort - bij
-    // een vers nummer is dat gewoon rustHoek zelf (geen zichtbare sweep), bij hervatten na pauzeren
-    // landt de arm weer op de plek waar de muziek al was. overwrite:true/kill voorkomt dat een snelle
-    // pauze-hervat-opeenvolging animaties laat opstapelen.
+    // een vers nummer is dat startHoek (het begin van de vinyl, niet de ruststand zelf), bij hervatten
+    // na pauzeren landt de arm weer op de plek waar de muziek al was. overwrite:true/kill voorkomt dat
+    // een snelle pauze-hervat-opeenvolging animaties laat opstapelen.
     gsap.killTweensOf(toonarmEl)
     gsap.to(toonarmEl, {
       rotation: hoekVoorProgressie(laatsteProgressie),
