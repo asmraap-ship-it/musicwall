@@ -1,6 +1,6 @@
 # Musicwall
 
-Een persoonlijke Electron desktop-applicatie waarmee je YouTube-video's en lokale video's koppelt aan levensmomenten, georganiseerd in thematische "walls" en concertervaringen. Geïnspireerd op de Wurlitzer MediaPlayer (Flash/ActionScript, 2000–2020).
+Een persoonlijke Electron desktop-applicatie waarmee je eigen muziek, YouTube-video's en lokale video's koppelt aan levensmomenten, georganiseerd in thematische "walls" en concertervaringen. Geïnspireerd op de Wurlitzer MediaPlayer (Flash/ActionScript, 2010–2020).
 
 ![Musicwall — Mijn walls](screenshots/hoofd-scherm-nl.png)
 
@@ -9,7 +9,7 @@ Een persoonlijke Electron desktop-applicatie waarmee je YouTube-video's en lokal
 - **Walls** — groepeer video's (YouTube of lokaal) rond een thema, met een titel, artiest en persoonlijk verhaal per nummer
 - **Wall-groepen** — verdeel walls over eigen tabs (bijv. per thema of gelegenheid), aan te maken en te herordenen naast de vaste "Mijn walls"/"Mijn concerten"-tabs; alle tabs zijn te hernoemen
 - **Concertervaringen** — leg concerten vast met foto's, video's en YouTube-clips in een collage, inclusief verhaal, naam en datum, met een navigeerbare volledig-scherm viewer om doorheen te bladeren
-- **Jukebox** — speel je eigen playlist af, lokale video's én YouTube door elkaar, met shuffle, vorige/volgende en schermvullende weergave; een YouTube-nummer dat niet afspeelbaar is wordt automatisch overgeslagen met een melding
+- **Jukebox** — speel je eigen playlist af, lokale muziek video's én YouTube door elkaar, met shuffle, vorige/volgende en schermvullende weergave; een YouTube-nummer dat niet afspeelbaar is wordt automatisch overgeslagen met een melding, je muziek wordt in een geanimeerde Pioneer PLX1000 platenspeler afgespeeld
 - **YouTube zoeken & map importeren** — zoek video's of hele playlists (per artiest of genre) direct binnen Musicwall, of importeer een map met lokale bestanden; eerst een groepskeuze zodat je meteen de juiste wall uit de juiste groep kiest
 - **Zeven thema's** — Standaard, Metaal, Jukebox, Nacht, Raw, Natuur en Licht, elk met een eigen kleurpalet en achtergrondstijl
 - **Meertalig** — Nederlands/Engels, automatisch op basis van je systeemtaal, met handmatige wisselknop
@@ -25,7 +25,7 @@ Concerten vastleggen met foto's, video's en YouTube-clips, elk met een eigen ver
 
 ### Jukebox
 
-Eén playlist, lokale video's en YouTube door elkaar, met een schermvullende speler.
+Eén playlist, lokale muziek, video's en YouTube door elkaar, met een schermvullende speler.
 
 ![Jukebox](screenshots/jukebox-playlist.png)
 
