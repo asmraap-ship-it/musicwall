@@ -674,6 +674,10 @@ function speelIndex(i) {
     speler.removeAttribute('src')
     speler.classList.remove('zichtbaar')
     audioCoverWrap.classList.remove('zichtbaar')
+    // Instant (geen animatie) - #audio-cover-wrap verdwijnt hier toch al in dezelfde tick, dus een
+    // weghaal-animatie zou nooit te zien zijn. Voorkomt vooral dat een latere toonVinyl() denkt dat er nog
+    // een (inmiddels onzichtbare) plaat ligt.
+    if (window.Turntable) window.Turntable.verbergVinylInstant()
 
     ytWrap.classList.add('zichtbaar')
     const videoId = getYoutubeId(item.youtube_url)
@@ -689,9 +693,6 @@ function speelIndex(i) {
     }
     ytWrap.classList.remove('zichtbaar')
 
-    speler.src = 'file:///' + item.lokaal_pad.replace(/\\/g, '/')
-    speler.play()
-
     // audio-only lokale bestanden (mp3/m4a/flac/wav) tonen een lelijk zwart beeld in een <video>-element
     // (geen videoframe om te tekenen) - #speler blijft de speel-engine (spectrum-analyzer blijft eraan
     // hangen, zie initLokaleAnalyser), maar wordt visueel verborgen ten gunste van de albumhoes
@@ -706,10 +707,24 @@ function speelIndex(i) {
       if (window.Turntable) {
         window.Turntable.stop()
         window.Turntable.reset()
-        if (item.cover_pad) window.Turntable.setAlbumCover(item.cover_pad)
       }
       audioCoverWrap.classList.add('zichtbaar')
+
+      const startAfspelen = () => {
+        speler.src = 'file:///' + item.lokaal_pad.replace(/\\/g, '/')
+        speler.play()
+      }
+      if (window.Turntable) {
+        // toonVinyl() regelt zelf of de plaat blijft liggen (zelfde album) of eerst weg-en-dan-neer moet
+        // (ander album, op gebruikersverzoek) - het daadwerkelijke afspelen start pas zodra de juiste
+        // plaat definitief ligt, zodat de naald nooit op een lege/nog-bewegende platter lijkt te zakken.
+        window.Turntable.toonVinyl(item.cover_pad || null, startAfspelen)
+      } else {
+        startAfspelen()
+      }
     } else {
+      speler.src = 'file:///' + item.lokaal_pad.replace(/\\/g, '/')
+      speler.play()
       speler.classList.add('zichtbaar')
       audioCoverWrap.classList.remove('zichtbaar')
     }
@@ -779,11 +794,16 @@ function stop() {
   document.getElementById('audio-progress-vulling').style.width = '0%'
   document.getElementById('audio-tijd-huidig').textContent = '0:00'
   document.getElementById('audio-tijd-duur').textContent = '0:00'
-  if (window.Turntable) window.Turntable.stop()
-  // audio-cover-wrap (met de platenspeler erin) blijft nog even zichtbaar, anders zou de rustige
-  // tonearm-lift-terug-naar-ruststand-beweging die Turntable.stop() net startte (1.3s, zie
-  // ARM_DROP_DUUR in js/turntable.js) meteen onzichtbaar worden. reset() (instant, geen tween) volgt
-  // pas ná die beweging, zodat de arm exact op de ruststand komt te staan.
+  if (window.Turntable) {
+    window.Turntable.stop()
+    // Écht stoppen (i.t.t. pauzeren, dat alleen Turntable.stop() hierboven aanroept) haalt de plaat ook
+    // weg - op gebruikersverzoek: pauzeren laat de plaat gewoon liggen, alleen stoppen/einde playlist niet.
+    window.Turntable.verbergVinyl()
+  }
+  // audio-cover-wrap (met de platenspeler erin) blijft nog even zichtbaar, anders zouden de rustige
+  // tonearm-lift- en vinyl-weghaal-animaties die hierboven net gestart zijn (1.3s resp. 0.9s) meteen
+  // onzichtbaar worden. reset() (instant, geen tween) volgt pas ná die bewegingen, zodat de arm exact op
+  // de ruststand komt te staan.
   stopOpruimTimer = setTimeout(() => {
     document.getElementById('audio-cover-wrap').classList.remove('zichtbaar')
     if (window.Turntable) window.Turntable.reset()

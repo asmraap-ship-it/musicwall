@@ -1,9 +1,12 @@
 const fs = require('fs')
 const path = require('path')
+const { MotionPathPlugin } = require('gsap/MotionPathPlugin')
+
+gsap.registerPlugin(MotionPathPlugin)
 
 const DRAAISCHIJF_ORIGIN = '390 395'
 const ARM_ORIGIN = '863 142'
-// Rotatie-deltas t.o.v. de as-getekende stand van #toonarm in svg/pioneer-plx1000.svg (rotatie 0),
+// Rotatie-deltas t.o.v. de as-getekende stand van #toonarm-inner in svg/pioneer-plx1000.svg (rotatie 0),
 // berekend rond pivot (863,142): de naaldpunt staat in de brontekening zelf al vlak buiten het label
 // (r ≈ 103 t.o.v. vinylcentrum 390,395) - vandaar eindHoek = 0, geen rotatie nodig. Drie afzonderlijke
 // hoeken, geen twee: rustHoek is de geparkeerde stand ver van de plaat (r ≈ 377, duidelijk los van de
@@ -20,13 +23,32 @@ const RPM_DEFAULT = 33
 // bij stoppen/pauzeren voelden te snel/abrupt aan. Geldt voor beide (start()/stop() delen deze constante).
 const ARM_DROP_DUUR = 1.3
 
+// Vinyl-plaatsing (op gebruikersverzoek): de plaat komt aanzweven met een boogvormig pad de draaitafel
+// op, en verdwijnt weer diezelfde kant op. Coördinaten zijn offsets t.o.v. vinyl's eigen, correct
+// getekende rustpositie (0,0 = goed gecentreerd op de spindel) - dus onafhankelijk van de absolute
+// canvas-positie, en onafhankelijk van #vinyl's nesting in #draaischijf.
+// Bewust van LINKS i.p.v. rechts: #vinyl komt in de SVG vóór #toonarm te staan (dus #toonarm tekent er
+// als latere sibling overheen, correct voor de rust-/speelstand - de arm hoort zichtbaar boven de plaat
+// te liggen). Een pad van rechts kruiste het scherm-gebied van de toonarm/het pivot-mechaniek (rond
+// x=650-950, y=50-650), waardoor de aankomende plaat er zichtbaar "onderdoor" leek te schuiven. Links is
+// volledig vrij van de toonarm, dus geen paint-order-conflict mogelijk.
+const VINYL_AANKOMST_PAD = 'M -750,100 Q -350,-150 0,0'
+const VINYL_PLAATSING_DUUR = 0.9
+
 let draaischijfEl = null
+let vinylEl = null
 let toonarmInnerEl = null
 let coverPlaceholderEl = null
 let coverIcoonEl = null
 let coverImageEl = null
 let draaischijfTween = null
+let vinylTween = null
 let laatsteProgressie = 0
+// Onthoudt welk album (op cover_pad, dezelfde sleutel als elders in dit project voor "is dit dezelfde
+// plaat") momenteel op de platter ligt - null cover_pad telt bewust nooit als "hetzelfde album" (twee
+// losse mp3's zonder hoes zijn geen album), dus die geven altijd een wissel-animatie.
+let vinylZichtbaar = false
+let huidigeCoverPad = null
 
 function hoekVoorProgressie(progressie) {
   const p = Math.min(1, Math.max(0, progressie))
@@ -48,6 +70,7 @@ function initTurntable() {
   }
 
   draaischijfEl = wrap.querySelector('#draaischijf')
+  vinylEl = wrap.querySelector('#vinyl')
   // #toonarm-inner, niet de buitenste #toonarm - die buitenste groep draagt sinds de pivot-positiecorrectie
   // (zie #behuizing) een statische translate voor de verplaatste pivot; GSAP roteert alleen de binnenste
   // groep, anders zou de rotatie-tween die translate overschrijven.
@@ -56,8 +79,8 @@ function initTurntable() {
   coverIcoonEl = wrap.querySelector('#album-cover-icoon')
   coverImageEl = wrap.querySelector('#album-cover-image')
 
-  if (!draaischijfEl || !toonarmInnerEl) {
-    console.error('Turntable: #draaischijf of #toonarm-inner niet gevonden in de geïnjecteerde svg')
+  if (!draaischijfEl || !vinylEl || !toonarmInnerEl) {
+    console.error('Turntable: #draaischijf, #vinyl of #toonarm-inner niet gevonden in de geïnjecteerde svg')
     return
   }
 
@@ -74,6 +97,21 @@ function initTurntable() {
     repeat: -1,
     ease: 'none',
     svgOrigin: DRAAISCHIJF_ORIGIN,
+    paused: true
+  })
+
+  // Eén langlevende plaatsings-tween, net als draaischijfTween hierboven. motionPath's beginpunt (het
+  // eerste punt van VINYL_AANKOMST_PAD) wordt automatisch als startwaarde gebruikt (het pad zelf bepaalt
+  // "van"), maar dat geldt niet voor opacity: gsap.to() vangt daarvoor gewoon de huídige waarde (SVG-
+  // default 1) als "van" op, dus zonder deze losse gsap.set() zou opacity nooit echt animeren (1 -> 1,
+  // een no-op) - vandaar wél expliciet.
+  gsap.set(vinylEl, { opacity: 0 })
+  // play(0) = aankomst-animatie, reverse() = weghaal-animatie, beide op hetzelfde pad/dezelfde tween.
+  vinylTween = gsap.to(vinylEl, {
+    motionPath: { path: VINYL_AANKOMST_PAD },
+    opacity: 1,
+    duration: VINYL_PLAATSING_DUUR,
+    ease: 'power2.out',
     paused: true
   })
 }
@@ -139,6 +177,83 @@ function setAlbumCover(coverPad) {
   if (coverIcoonEl) coverIcoonEl.style.display = 'none'
 }
 
-window.Turntable = { start, stop, bijwerken, reset, setAlbumCover }
+// Toont de vinyl voor het gegeven album (cover_pad als albumsleutel, zie de toelichting bij de losse
+// variabelen hierboven). Slim genoeg om drie situaties te onderscheiden:
+// - nog geen plaat neer: aankomst-animatie.
+// - zelfde album al neer: blijft gewoon liggen, geen animatie (net als bij een echte platenspeler - je
+//   haalt de plaat niet van de tafel om alleen van nummer te wisselen).
+// - ander album al neer: eerst de oude plaat weghalen, dán pas de nieuwe neerleggen (nooit gelijktijdig).
+// klaar() vuurt zodra de juiste plaat definitief ligt (meteen bij "zelfde album", na de animatie(s) bij
+// de andere twee) - de aanroeper (js/jukebox.js) start het daadwerkelijke afspelen pas dan, zodat de
+// naald nooit op een lege of nog-in-beweging-zijnde platter lijkt te zakken.
+function toonVinyl(coverPad, klaar) {
+  const klaarMelden = () => { if (klaar) klaar() }
+
+  if (vinylZichtbaar && coverPad !== null && coverPad === huidigeCoverPad) {
+    // Zelfde album, maar de vorige aankomst-animatie kan nog bezig zijn (bv. snel na elkaar genavigeerd
+    // binnen hetzelfde album, vóórdat de plaat al helemaal geland was) - dan pas klaar melden zodra díe
+    // animatie écht afloopt, niet meteen. Anders zou de nog lopende tween later alsnog de originele
+    // (inmiddels verouderde) callback afvuren en de boel door elkaar halen.
+    if (vinylTween && vinylTween.isActive()) {
+      vinylTween.eventCallback('onComplete', klaarMelden)
+    } else {
+      klaarMelden()
+    }
+    return
+  }
+
+  const plaatsNieuw = () => {
+    setAlbumCover(coverPad)
+    huidigeCoverPad = coverPad
+    vinylZichtbaar = true
+    if (vinylTween) {
+      vinylTween.eventCallback('onComplete', klaarMelden)
+      vinylTween.play(0)
+    } else {
+      klaarMelden()
+    }
+  }
+
+  if (vinylZichtbaar) {
+    if (vinylTween) {
+      vinylTween.eventCallback('onReverseComplete', plaatsNieuw)
+      vinylTween.reverse()
+    } else {
+      plaatsNieuw()
+    }
+  } else {
+    plaatsNieuw()
+  }
+}
+
+// Haalt de vinyl weg (weghaal-animatie) - alleen bedoeld voor een écht stoppen (stop-knop/einde playlist),
+// niet voor pauzeren: pauzeren stopt alleen het draaien en tilt de arm (zie stop() hierboven), de plaat
+// blijft gewoon liggen, net als in het echt.
+function verbergVinyl(klaar) {
+  if (!vinylZichtbaar) {
+    if (klaar) klaar()
+    return
+  }
+  vinylZichtbaar = false
+  huidigeCoverPad = null
+  if (vinylTween) {
+    vinylTween.eventCallback('onReverseComplete', klaar || null)
+    vinylTween.reverse()
+  } else if (klaar) {
+    klaar()
+  }
+}
+
+// Instant (geen animatie) opruimen van de vinyl-status - voor situaties waarin de platenspeler toch al
+// in één keer onzichtbaar wordt (bv. overschakelen naar een YouTube-nummer, waar #audio-cover-wrap direct
+// verborgen wordt), zodat een latere toonVinyl() niet per ongeluk denkt dat er nog een (onzichtbare) plaat
+// ligt.
+function verbergVinylInstant() {
+  vinylZichtbaar = false
+  huidigeCoverPad = null
+  if (vinylTween) vinylTween.pause(0)
+}
+
+window.Turntable = { start, stop, bijwerken, reset, setAlbumCover, toonVinyl, verbergVinyl, verbergVinylInstant }
 
 initTurntable()
