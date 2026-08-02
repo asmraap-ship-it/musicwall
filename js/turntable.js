@@ -6,12 +6,13 @@ const ARM_ORIGIN = '863 142'
 // Rotatie-deltas t.o.v. de as-getekende stand van #toonarm in svg/pioneer-plx1000.svg (rotatie 0),
 // berekend rond pivot (863,142): de naaldpunt staat in de brontekening zelf al vlak buiten het label
 // (r ≈ 103 t.o.v. vinylcentrum 390,395) - vandaar eindHoek = 0, geen rotatie nodig. Drie afzonderlijke
-// hoeken, geen twee: rustHoek is de geparkeerde stand ver van de plaat (r ≈ 341, duidelijk los van de
-// rand), startHoek is waar de naald een nummer daadwerkelijk oppikt op de buitenste groef (r ≈ 287, net
-// bínnen de vinylrand r = 292) - dat zijn bewust twee verschillende hoeken, anders zou de "needle drop"
-// bij het starten van een nummer nergens naartoe bewegen (rust ligt dan al op exact dezelfde plek als
-// het begin van de plaat).
-const RUST_HOEK = -26
+// hoeken, geen twee: rustHoek is de geparkeerde stand ver van de plaat (r ≈ 377, duidelijk los van de
+// rand - hoe negatiever de hoek, hoe verder de arm naar rechts zwaait, op gebruikersverzoek verruimd van
+// -26° naar -30° voor een iets verdere ruststand), startHoek is waar de naald een nummer daadwerkelijk
+// oppikt op de buitenste groef (r ≈ 287, net bínnen de vinylrand r = 292) - dat zijn bewust twee
+// verschillende hoeken, anders zou de "needle drop" bij het starten van een nummer nergens naartoe
+// bewegen (rust ligt dan al op exact dezelfde plek als het begin van de plaat).
+const RUST_HOEK = -30
 const START_HOEK = -20
 const EIND_HOEK = 0
 const RPM_DEFAULT = 33
