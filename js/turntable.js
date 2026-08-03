@@ -9,13 +9,15 @@ const ARM_ORIGIN = '863 142'
 // Rotatie-deltas t.o.v. de as-getekende stand van #toonarm-inner in svg/pioneer-plx1000.svg (rotatie 0),
 // berekend rond pivot (863,142): de naaldpunt staat in de brontekening zelf al vlak buiten het label
 // (r ≈ 103 t.o.v. vinylcentrum 390,395) - vandaar eindHoek = 0, geen rotatie nodig. Drie afzonderlijke
-// hoeken, geen twee: rustHoek is de geparkeerde stand ver van de plaat (r ≈ 377, duidelijk los van de
-// rand - hoe negatiever de hoek, hoe verder de arm naar rechts zwaait, op gebruikersverzoek verruimd van
-// -26° naar -30° voor een iets verdere ruststand), startHoek is waar de naald een nummer daadwerkelijk
-// oppikt op de buitenste groef (r ≈ 287, net bínnen de vinylrand r = 292) - dat zijn bewust twee
-// verschillende hoeken, anders zou de "needle drop" bij het starten van een nummer nergens naartoe
-// bewegen (rust ligt dan al op exact dezelfde plek als het begin van de plaat).
-const RUST_HOEK = -30
+// hoeken, geen twee: rustHoek is de geparkeerde stand ver van de plaat, duidelijk los van de rand - hoe
+// negatiever de hoek, hoe verder de arm naar rechts zwaait, op gebruikersverzoek stapsgewijs verruimd
+// (-26° -> -30° -> -40°). Bij -40° geometrisch nagerekend (rotatie om pivot (813.05,168.72), de headshell
+// landt rond scherm-x ≈ 746) dat de arm nog ruim (>150px) vrij blijft van de pitch-fader (x 880-926) en de
+// tempo-range-behuizing (x 858-952) rechts van de pivot - geen aanraking. startHoek is waar de naald een
+// nummer daadwerkelijk oppikt op de buitenste groef (r ≈ 287, net bínnen de vinylrand r = 292) - dat zijn
+// bewust twee verschillende hoeken, anders zou de "needle drop" bij het starten van een nummer nergens
+// naartoe bewegen (rust ligt dan al op exact dezelfde plek als het begin van de plaat).
+const RUST_HOEK = -40
 const START_HOEK = -20
 const EIND_HOEK = 0
 const RPM_DEFAULT = 33
@@ -116,7 +118,10 @@ function initTurntable() {
   })
 }
 
-function start() {
+// klaar (optioneel) vuurt pas zodra de naald écht geland is (onComplete van de drop-tween) - js/jukebox.js
+// gebruikt dit om het daadwerkelijke afspelen van het audiobestand uit te stellen tot de arm zichtbaar op
+// de plaat ligt, i.p.v. het geluid al te laten horen terwijl de arm nog aan het zakken is.
+function start(klaar) {
   if (draaischijfTween) draaischijfTween.play()
   if (toonarmInnerEl) {
     // Needle drop: vanaf de ruststand naar de hoek die bij de laatst bekende trackvoortgang hoort - bij
@@ -128,8 +133,11 @@ function start() {
       rotation: hoekVoorProgressie(laatsteProgressie),
       duration: ARM_DROP_DUUR,
       ease: 'power2.out',
-      overwrite: true
+      overwrite: true,
+      onComplete: () => { if (klaar) klaar() }
     })
+  } else if (klaar) {
+    klaar()
   }
 }
 

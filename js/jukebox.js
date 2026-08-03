@@ -9,6 +9,14 @@ let playlist = []
 let huidigeIndex = -1
 let stopOpruimTimer = null
 let afgespeeldVertragingTimer = null
+// Onderdrukt precies één volgende 'pause'-event op #speler - gezet vlak vóór het interne speler.pause()
+// waarmee speelIndex() een vorig nummer meteen stopzet bij het wisselen van audio-track (zie aldaar).
+// Zonder deze guard kan die (asynchrone) 'pause'-event alsnog Turntable.stop() aanroepen nadat de nieuwe
+// needle-drop-animatie (Turntable.start(), getriggerd via toonVinyl()'s klaar-callback) al gestart is - de
+// arm zou dan zichtbaar terugspringen naar rust midden in de drop-beweging. Zelf-wissend (niet tijd-
+// gebaseerd): de eerstvolgende 'pause'-event die binnenkomt is altijd exact díe van deze speler.pause()-
+// aanroep, ongeacht of hij vóór of ná Turntable.start() binnenkomt.
+let volgendePauseNegeren = false
 
 // Iets langer dan ARM_DROP_DUUR in js/turntable.js (1.3s) - genoeg marge zodat de tonearm-lift-animatie
 // écht klaar is voordat de opruiming (stop()) resp. het volgende nummer (afgespeeldGaVerder()) start.
@@ -235,6 +243,10 @@ document.getElementById('speler').addEventListener('play', () => {
 })
 document.getElementById('speler').addEventListener('pause', () => {
   stopSpectrum()
+  if (volgendePauseNegeren) {
+    volgendePauseNegeren = false
+    return
+  }
   if (window.Turntable) window.Turntable.stop()
 })
 
@@ -701,6 +713,10 @@ function speelIndex(i) {
       // volgende nummer daadwerkelijk start (op gebruikersverzoek gefixt - zonder deze regel bleef het
       // vórige nummer gewoon doorspelen tijdens de hele plaat-wissel-animatie bij handmatig vorige/
       // volgende, want speler.src wordt nu pas ná die animatie overschreven, zie startAfspelen() verderop).
+      // volgendePauseNegeren alleen zetten als er ook echt een 'pause'-event gaat vuren (speler.paused kan
+      // hier al true zijn, bv. het allereerste nummer van de sessie) - anders zou de vlag onterecht blijven
+      // staan en de eerstvolgende, echte handmatige pauze per ongeluk onderdrukken.
+      if (!speler.paused) volgendePauseNegeren = true
       speler.pause()
       speler.classList.remove('zichtbaar')
       document.getElementById('audio-track-info').innerHTML =
@@ -721,9 +737,14 @@ function speelIndex(i) {
       }
       if (window.Turntable) {
         // toonVinyl() regelt zelf of de plaat blijft liggen (zelfde album) of eerst weg-en-dan-neer moet
-        // (ander album, op gebruikersverzoek) - het daadwerkelijke afspelen start pas zodra de juiste
-        // plaat definitief ligt, zodat de naald nooit op een lege/nog-bewegende platter lijkt te zakken.
-        window.Turntable.toonVinyl(item.cover_pad || null, startAfspelen)
+        // (ander album, op gebruikersverzoek) - pas zodra de juiste plaat definitief ligt, laten we ook de
+        // needle-drop (Turntable.start()) draaien, en pas ná díe animatie start het daadwerkelijke
+        // afspelen. Zonder deze extra stap begon het geluid al te spelen zodra Turntable.start() aan de
+        // 1,3s-drop begon (getriggerd door de 'play'-event hieronder), dus hoorbaar vóórdat de naald
+        // zichtbaar op de plaat lag - op gebruikersverzoek gefixt.
+        window.Turntable.toonVinyl(item.cover_pad || null, () => {
+          window.Turntable.start(startAfspelen)
+        })
       } else {
         startAfspelen()
       }
@@ -779,6 +800,16 @@ function speelPauze() {
   }
 
   const speler = document.getElementById('speler')
+  // Na stop() (de Stop-knop) staat #speler zonder bron (removeAttribute('src')), terwijl huidigeIndex
+  // gewoon blijft staan - speler.play() op een lege bron doet dan niets (geen 'play'-event, geen geluid,
+  // geen platenspeler-animatie), waardoor de jukebox na Stop gevolgd door Play "weg" leek te blijven en
+  // niet meer terugkwam. Herstart in dat geval het huidige nummer helemaal opnieuw i.p.v. enkel paused/
+  // afspelend te togglen op een element zonder bron.
+  if (item && !speler.src) {
+    speelIndex(huidigeIndex)
+    return
+  }
+
   if (speler.paused) {
     speler.play()
     document.getElementById('play-btn').textContent = '⏸'
