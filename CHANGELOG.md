@@ -22,3 +22,7 @@ Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0
 - Het venster om een album te bewerken was te klein, waardoor de Opslaan-knop buiten beeld viel.
 - Zoeken vanuit een muziek-tabblad liet de albums nog zichtbaar staan naast de zoekresultaten.
 - Bij handmatig naar een vorig of volgend nummer schakelen bleef het oude nummer soms nog even hoorbaar doorspelen tijdens het wisselen van de plaat.
+- Op Stop gevolgd door Play verdween de jukebox-weergave en kwam niet meer terug.
+- De pick-uparm in rust stond nog te dicht bij de tempo-schuifknop.
+- Een nummer kon al hoorbaar starten voordat de naald zichtbaar op de plaat lag.
+- Vorige/volgende bladeren tussen muzieknummers liet het nieuwe nummer soms muteloos aan het begin blijven staan in plaats van af te spelen.
