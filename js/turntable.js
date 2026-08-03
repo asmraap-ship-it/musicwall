@@ -46,6 +46,9 @@ let coverImageEl = null
 let draaischijfTween = null
 let vinylTween = null
 let laatsteProgressie = 0
+// True vanaf het begin van start()'s needle-drop-tween tot-en-met zijn onComplete - zie de uitgebreide
+// toelichting bij start() en bijwerken() hieronder (stale-timeupdate-race).
+let wachtOpStart = false
 // Onthoudt welk album (op cover_pad, dezelfde sleutel als elders in dit project voor "is dit dezelfde
 // plaat") momenteel op de platter ligt. Twee coverloze tracks (cover_pad null, bv. losse mp3's die niet
 // via de Albums-functie geïmporteerd zijn) tellen bewust ook als "hetzelfde" - zie de bug hieronder bij
@@ -122,7 +125,23 @@ function initTurntable() {
 // klaar (optioneel) vuurt pas zodra de naald écht geland is (onComplete van de drop-tween) - js/jukebox.js
 // gebruikt dit om het daadwerkelijke afspelen van het audiobestand uit te stellen tot de arm zichtbaar op
 // de plaat ligt, i.p.v. het geluid al te laten horen terwijl de arm nog aan het zakken is.
+// **Bug gevonden en gefixt (vorige/volgende bleef afwisselend op 0:00/0:03 staan, ook bij normaal tempo
+// doorklikken, niet alleen bij snel dubbelklikken)**: een `timeupdate`-event van het VORIGE (net gepauzeerde)
+// nummer kan al vóór `speler.pause()` door de browser in de wachtrij zijn gezet, en dan pas ná deze `start()`-
+// aanroep alsnog vuren - `bijwerken()` (hieronder) gebruikt `overwrite:true`, dus zo'n verlate, stale event
+// kapte de net-gestarte, callback-dragende needle-drop-tween af en verving 'm door een tween zónder
+// `onComplete` - `startAfspelen()` (in js/jukebox.js) werd dan nooit aangeroepen, het nummer bleef stil
+// staan. Bevestigd via CDP-trace: `bijwerken()` vuurde met exact de laatste `currentTime` van het vórige
+// nummer, vlak na `start()`'s tween-aanmaak, zonder dat `onComplete` ooit volgde. Verklaart ook waarom dit
+// afwisselend optrad: een mislukte overgang laat #speler stil (gepauzeerd, geen eigen `timeupdate`-ritme
+// meer) staan, dus de daaropvolgende overgang heeft niets storends meer te verwerken en lukt juist wél -
+// een geslaagde overgang laat #speler juist weer actief `timeupdate` produceren, wat de éérstvolgende
+// overgang weer kwetsbaar maakt. Opgelost met `wachtOpStart`: vanaf het moment dat deze drop-tween begint
+// tot-en-met zijn `onComplete`, negeert `bijwerken()` elke aanroep - een echte `timeupdate` van het NIEUWE
+// nummer kan sowieso nooit vóór deze `onComplete` binnenkomen (`startAfspelen()` draait pas ná `klaar()`),
+// dus elke `bijwerken()`-aanroep die hier binnenkomt is per definitie een stale event van het vorige nummer.
 function start(klaar) {
+  wachtOpStart = true
   if (draaischijfTween) draaischijfTween.play()
   if (toonarmInnerEl) {
     // Needle drop: vanaf de ruststand naar de hoek die bij de laatst bekende trackvoortgang hoort - bij
@@ -135,10 +154,11 @@ function start(klaar) {
       duration: ARM_DROP_DUUR,
       ease: 'power2.out',
       overwrite: true,
-      onComplete: () => { if (klaar) klaar() }
+      onComplete: () => { wachtOpStart = false; if (klaar) klaar() }
     })
-  } else if (klaar) {
-    klaar()
+  } else {
+    wachtOpStart = false
+    if (klaar) klaar()
   }
 }
 
@@ -163,8 +183,12 @@ function reset() {
   }
 }
 
+// Genegeerd zolang wachtOpStart aanstaat - zie de uitgebreide toelichting bij start() hierboven. Een
+// timeupdate van het NIEUWE nummer kan sowieso nooit binnenkomen vóór start()'s onComplete (startAfspelen()
+// draait pas daarna), dus alles wat hier binnenkomt tijdens die vlag is per definitie een stale event van
+// het vorige nummer.
 function bijwerken(currentTime, duration) {
-  if (!toonarmInnerEl || !duration) return
+  if (!toonarmInnerEl || !duration || wachtOpStart) return
   laatsteProgressie = Math.min(1, Math.max(0, currentTime / duration))
   // Korte "inhaal"-tween i.p.v. de rotatie direct te zetten - timeupdate vuurt maar een paar keer per
   // seconde, dus zonder deze tussenstap zou de arm merkbaar springen i.p.v. geloofwaardig mee te glijden.
