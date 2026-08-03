@@ -9,26 +9,6 @@ let playlist = []
 let huidigeIndex = -1
 let stopOpruimTimer = null
 let afgespeeldVertragingTimer = null
-// Onderdrukt precies één volgende 'pause'-event op #speler - gezet vlak vóór het interne speler.pause()
-// waarmee speelIndex() een vorig nummer meteen stopzet bij het wisselen van audio-track (zie aldaar).
-// Zonder deze guard kan die (asynchrone) 'pause'-event alsnog Turntable.stop() aanroepen nadat de nieuwe
-// needle-drop-animatie (Turntable.start(), getriggerd via toonVinyl()'s klaar-callback) al gestart is - de
-// arm zou dan zichtbaar terugspringen naar rust midden in de drop-beweging. Zelf-wissend (niet tijd-
-// gebaseerd): de eerstvolgende 'pause'-event die binnenkomt is altijd exact díe van deze speler.pause()-
-// aanroep, ongeacht of hij vóór of ná Turntable.start() binnenkomt.
-let volgendePauseNegeren = false
-// Zelfde soort zelf-wissende guard, maar dan voor 'play' - gezet vlak vóór het interne speler.play() in
-// startAfspelen() (zie speelIndex()'s audio-tak). Zonder deze guard riep de generieke 'play'-listener
-// hieronder bij élke afspeelstart (ook onze eigen, al door toonVinyl()/Turntable.start() afgehandelde
-// needle-drop) opnieuw het argumentloze window.Turntable.start() aan. Meestal onschadelijk (zelfde hoek,
-// geen zichtbaar verschil) - maar als een volgende navigatieklik (vorige/volgende) precies in het gaatje
-// tussen "startAfspelen() heeft speler.play() al aangeroepen" en "de browser vuurt de bijbehorende 'play'-
-// event pas nu af" viel, kaapte die argumentloze aanroep de inmiddels alwéér nieuwe, callback-dragende
-// needle-drop-tween van dié klik (killTweensOf + een tween zónder onComplete) - waardoor startAfspelen()
-// voor het nieuwe nummer nooit aangeroepen werd en het nummer stil aan het begin bleef staan zonder af te
-// spelen. Alleen relevant voor de interne, al-afgehandelde play() - een handmatige hervatting na pauzeren
-// (via speelPauze()) zet deze vlag niet, dus daar blijft de needle-drop-animatie via deze listener lopen.
-let volgendePlayNegeren = false
 
 // Iets langer dan ARM_DROP_DUUR in js/turntable.js (1.3s) - genoeg marge zodat de tonearm-lift-animatie
 // écht klaar is voordat de opruiming (stop()) resp. het volgende nummer (afgespeeldGaVerder()) start.
@@ -247,23 +227,22 @@ function toggleSpectrumZichtbaar() {
 bouwSpectrumAnalyzer()
 document.getElementById('spectrum-toggle-btn').classList.toggle('actief', spectrumZichtbaar)
 
+// Deze twee listeners regelen alleen nog de spectrum-analyzer/audiocontext - beide moeten reageren op écht
+// elke afspeelstart/-pauze, ongeacht wie die veroorzaakte (speelIndex(), speelPauze(), de native <video
+// controls>, of het uitspelen van het bestand zelf). Turntable.start()/stop() liepen hier vroeger ook
+// doorheen, maar zijn eruit gehaald: DOM play/pause-events vuren asynchroon, dus een generieke listener kon
+// een net-door-de-app-zelf-gestarte, callback-dragende needle-drop-tween ongemerkt kapen (zie git-historie/
+// eerdere CLAUDE.md-versie van deze sectie voor de bugreeks die dat veroorzaakte - o.a. "vorige/volgende
+// laat het nummer soms stil aan het begin staan"). Turntable.start()/stop() worden nu uitsluitend nog
+// expliciet aangeroepen vanuit speelIndex(), speelPauze() en stop() zelf - telkens precies één keer per
+// echte afspeel-transitie, nooit via een event-listener die met die aanroepen kan interfereren.
 document.getElementById('speler').addEventListener('play', () => {
   initLokaleAnalyser()
   if (audioCtx.state === 'suspended') audioCtx.resume()
   startSpectrum()
-  if (volgendePlayNegeren) {
-    volgendePlayNegeren = false
-    return
-  }
-  if (window.Turntable) window.Turntable.start()
 })
 document.getElementById('speler').addEventListener('pause', () => {
   stopSpectrum()
-  if (volgendePauseNegeren) {
-    volgendePauseNegeren = false
-    return
-  }
-  if (window.Turntable) window.Turntable.stop()
 })
 
 function formatTijd(seconden) {
@@ -729,10 +708,8 @@ function speelIndex(i) {
       // volgende nummer daadwerkelijk start (op gebruikersverzoek gefixt - zonder deze regel bleef het
       // vórige nummer gewoon doorspelen tijdens de hele plaat-wissel-animatie bij handmatig vorige/
       // volgende, want speler.src wordt nu pas ná die animatie overschreven, zie startAfspelen() verderop).
-      // volgendePauseNegeren alleen zetten als er ook echt een 'pause'-event gaat vuren (speler.paused kan
-      // hier al true zijn, bv. het allereerste nummer van de sessie) - anders zou de vlag onterecht blijven
-      // staan en de eerstvolgende, echte handmatige pauze per ongeluk onderdrukken.
-      if (!speler.paused) volgendePauseNegeren = true
+      // De 'pause'-listener op #speler raakt Turntable niet meer aan (zie hierboven), dus deze pause() kan
+      // niet meer interfereren met de needle-drop die we hieronder zelf starten.
       speler.pause()
       speler.classList.remove('zichtbaar')
       document.getElementById('audio-track-info').innerHTML =
@@ -749,17 +726,7 @@ function speelIndex(i) {
 
       const startAfspelen = () => {
         speler.src = 'file:///' + item.lokaal_pad.replace(/\\/g, '/')
-        // De needle-drop is op dit punt al zichtbaar afgerond (zie de toonVinyl()/Turntable.start()-keten
-        // hieronder) - onderdruk de bijbehorende native 'play'-event zodat die niet nogmaals (zonder
-        // callback) Turntable.start() aanroept, zie de toelichting bij volgendePlayNegeren hierboven.
-        // Terugvalgeval: als play() zelf mislukt (bv. bestand weg), vuurt er geen 'play'-event - reset de
-        // vlag dan expliciet, anders zou die een latere, échte hervatting na handmatig pauzeren blijven
-        // onderdrukken.
-        volgendePlayNegeren = true
-        const afspeelPromise = speler.play()
-        if (afspeelPromise && typeof afspeelPromise.catch === 'function') {
-          afspeelPromise.catch(() => { volgendePlayNegeren = false })
-        }
+        speler.play()
       }
       if (window.Turntable) {
         // toonVinyl() regelt zelf of de plaat blijft liggen (zelfde album) of eerst weg-en-dan-neer moet
@@ -836,11 +803,19 @@ function speelPauze() {
     return
   }
 
+  // Turntable.start()/stop() liepen vroeger via de generieke 'play'/'pause'-listeners op #speler - nu
+  // expliciet hier, want alleen bij een audio-only bestand ligt de plaat er en heeft de arm-animatie
+  // zichtbaar effect (bij een video-bestand blijft de platenspeler-UI toch verborgen). Geen needle-drop-
+  // vertraging nodig zoals bij speelIndex() (dat wacht op de naald vóórdat het geluid start) - hier is de
+  // plaat al neergelegd en het nummer al bezig, alleen de arm tilt op/zakt weer, gelijktijdig met het geluid.
+  const isTurntableAudio = item && isAudioBestand(item.lokaal_pad)
   if (speler.paused) {
     speler.play()
+    if (isTurntableAudio && window.Turntable) window.Turntable.start()
     document.getElementById('play-btn').textContent = '⏸'
   } else {
     speler.pause()
+    if (isTurntableAudio && window.Turntable) window.Turntable.stop()
     document.getElementById('play-btn').textContent = '▶'
   }
 }
