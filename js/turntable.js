@@ -47,8 +47,9 @@ let draaischijfTween = null
 let vinylTween = null
 let laatsteProgressie = 0
 // Onthoudt welk album (op cover_pad, dezelfde sleutel als elders in dit project voor "is dit dezelfde
-// plaat") momenteel op de platter ligt - null cover_pad telt bewust nooit als "hetzelfde album" (twee
-// losse mp3's zonder hoes zijn geen album), dus die geven altijd een wissel-animatie.
+// plaat") momenteel op de platter ligt. Twee coverloze tracks (cover_pad null, bv. losse mp3's die niet
+// via de Albums-functie geïmporteerd zijn) tellen bewust ook als "hetzelfde" - zie de bug hieronder bij
+// toonVinyl() voor waarom null vroeger juist expliciet uitgesloten was, en waarom dat averechts werkte.
 let vinylZichtbaar = false
 let huidigeCoverPad = null
 
@@ -194,10 +195,23 @@ function setAlbumCover(coverPad) {
 // klaar() vuurt zodra de juiste plaat definitief ligt (meteen bij "zelfde album", na de animatie(s) bij
 // de andere twee) - de aanroeper (js/jukebox.js) start het daadwerkelijke afspelen pas dan, zodat de
 // naald nooit op een lege of nog-in-beweging-zijnde platter lijkt te zakken.
+// **Bug gevonden en gefixt (vorige/volgende op lokale mp3's bleef op 0:00 staan)**: de "zelfde album"-check
+// sloot `coverPad === null` vroeger expliciet uit (zie de toelichting bij huidigeCoverPad hierboven) - elke
+// track zonder cover_pad (elke gewone, niet via de Albums-functie geïmporteerde mp3) werd dus altijd als
+// "ander album" behandeld, ook t.o.v. de vórige, eveneens coverloze track. Dat triggerde bij élke vorige/
+// volgende-klik de volledige weghaal+neerleg-animatie (0.9s + 0.9s) plus, ná toonVinyl()'s klaar()-callback,
+// nog eens de needle-drop (1.3s) - ruim 3s stilte per klik. Een volgende klik binnen die tijd (heel
+// gebruikelijk) annuleerde de hele keten via speelIndex()'s eigen Turntable.stop()/reset() (zie
+// js/jukebox.js), vóórdat startAfspelen() ooit werd aangeroepen - bij een gebruiker die in een tempo sneller
+// dan ~3s doorklikte, begon het geluid daardoor structureel nooit. Opgelost door coverPad === null ook als
+// "zelfde plaat" te behandelen: visueel verandert er toch niets (dezelfde generieke, coverloze hoes) tussen
+// twee coverloze tracks, dus hoeft de plaat niet weggehaald en teruggelegd te worden. Een overgang van/naar
+// een échte cover (wél/niet meer null) blijft wél een zichtbare wissel triggeren, want dat is een wel
+// degelijk zichtbaar andere hoes.
 function toonVinyl(coverPad, klaar) {
   const klaarMelden = () => { if (klaar) klaar() }
 
-  if (vinylZichtbaar && coverPad !== null && coverPad === huidigeCoverPad) {
+  if (vinylZichtbaar && coverPad === huidigeCoverPad) {
     // Zelfde album, maar de vorige aankomst-animatie kan nog bezig zijn (bv. snel na elkaar genavigeerd
     // binnen hetzelfde album, vóórdat de plaat al helemaal geland was) - dan pas klaar melden zodra díe
     // animatie écht afloopt, niet meteen. Anders zou de nog lopende tween later alsnog de originele
