@@ -218,7 +218,7 @@
   flex: 1;
   height: 6px;
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--achtergrond-3);
   cursor: pointer;
   overflow: hidden;
 }

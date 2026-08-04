@@ -66,7 +66,16 @@ function titelbalkOptiesVoorThema(thema) {
   }
 }
 
-const titelbalkOpties = titelbalkOptiesVoorThema('')
+// Bewust een functie i.p.v. een vaste constante: elk venster moet bij het AANMAKEN al de juiste kleur voor
+// het op dat moment actieve thema krijgen. De oude aanpak (altijd ...titelbalkOpties spreaden - een module-
+// constante berekend met thema '' bij opstart) liet elk venster eerst met de verkeerde (standaard-thema)
+// min/max/sluiten-knopkleur aanmaken, gecorrigeerd via de browser-window-created listener hieronder - maar
+// die correctie ná het aanmaken bleek in de praktijk niet altijd betrouwbaar te refreshen (bekende
+// Electron/Windows-eigenaardigheid met titleBarOverlay), gemeld door de gebruiker bij de jukebox in het
+// Licht-thema. Door meteen bij aanmaken de juiste kleur mee te geven is er niets meer te corrigeren.
+function huidigeTitelbalkOpties() {
+  return titelbalkOptiesVoorThema(huidigThema)
+}
 
 app.on('browser-window-created', (event, win) => {
   try { win.setTitleBarOverlay(titelbalkOptiesVoorThema(huidigThema).titleBarOverlay) } catch (e) {}
@@ -126,7 +135,7 @@ function createWindow() {
     width: 1200,
     height: 800,
     icon: path.join(__dirname, 'build', 'icon.ico'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -250,7 +259,7 @@ ipcMain.on('open-toevoegen', (event, wallId) => {
     width: 600,
     height: 700,
     title: t('toevoegen.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -279,7 +288,7 @@ ipcMain.on('open-nieuwe-wall', (event, groepId) => {
     width: 400,
     height: 320,
     title: t('nieuweWall.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -305,7 +314,7 @@ ipcMain.on('open-nieuwe-wallgroep', () => {
     width: 400,
     height: 390,
     title: t('nieuweWallGroep.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -320,7 +329,7 @@ ipcMain.on('open-hernoem-wallgroep', (event, { groepId, huidigeNaam }) => {
     width: 400,
     height: 320,
     title: t('nieuweWallGroep.hernoemenTitel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -339,7 +348,7 @@ ipcMain.on('open-hernoem-tab', (event, { type, huidigeNaam }) => {
     width: 400,
     height: 320,
     title: t('hernoemTab.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -428,7 +437,7 @@ ipcMain.on('open-bewerken', (event, video) => {
     width: 600,
     height: 580,
     title: t('bewerken.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -484,7 +493,7 @@ ipcMain.on('open-importeren', () => {
     width: 550,
     height: 760,
     title: t('importeren.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -513,7 +522,7 @@ ipcMain.on('open-album-import', (event, groepId) => {
     width: 550,
     height: 640,
     title: t('albumImport.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -634,7 +643,7 @@ ipcMain.on('open-bewerk-album', (event, album) => {
     width: 400,
     height: 420,
     title: t('albumBewerken.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -653,7 +662,7 @@ ipcMain.on('open-album-detail', (event, albumId) => {
     width: 900,
     height: 750,
     title: 'Album',
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -716,7 +725,7 @@ ipcMain.on('open-zoeken', () => {
     width: 600,
     height: 750,
     title: t('zoeken.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -735,7 +744,7 @@ ipcMain.on('open-kapotte-links', () => {
     width: 550,
     height: 700,
     title: t('kapotteLinks.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -761,7 +770,7 @@ ipcMain.on('open-jukebox', () => {
     width: 1100,
     height: 700,
     title: 'Musicwall Jukebox',
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -780,7 +789,7 @@ ipcMain.on('open-opslaan-playlist', () => {
     width: 400,
     height: 320,
     title: t('playlistOpslaan.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -834,7 +843,7 @@ ipcMain.on('open-help', () => {
     width: 650,
     height: 750,
     title: 'Musicwall — ' + t('help.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -889,7 +898,7 @@ ipcMain.on('open-whats-new', () => {
     width: 560,
     height: 620,
     title: 'Musicwall — ' + t('whatsNew.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -950,7 +959,7 @@ ipcMain.on('open-hernoem-wall', (event, { wallId, huidigeNaam }) => {
     width: 400,
     height: 320,
     title: t('nieuweWall.hernoemenTitel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -1076,7 +1085,7 @@ function openApiSleutelWindow(modus) {
     width: 480,
     height: 680,
     title: t(modus === 'wijzig' ? 'apiSleutelDialoog.titelWijzigen' : 'apiSleutelDialoog.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -1142,7 +1151,7 @@ ipcMain.on('open-nieuw-concert', () => {
     width: 550,
     height: 520,
     title: t('nieuwConcert.titel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -1162,7 +1171,7 @@ ipcMain.on('open-bewerk-concert', (event, concert) => {
     width: 550,
     height: 520,
     title: t('nieuwConcert.bewerkenTitel'),
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -1181,7 +1190,7 @@ ipcMain.on('open-concert-detail', (event, concertId) => {
     width: 1100,
     height: 750,
     title: 'Concert',
-    ...titelbalkOpties,
+    ...huidigeTitelbalkOpties(),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false

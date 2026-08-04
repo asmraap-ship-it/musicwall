@@ -707,10 +707,13 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   display: block;
 }
 
+/* thema-afhankelijk i.p.v. hardcoded zwart - anders dan #speler/.youtube-speler-wrap (echte video, waar
+   zwarte letterboxing altijd normaal is) toont dit vlak alleen de platenspeler-illustratie, geen video -
+   een zwart vlak klopte niet meer zodra het Licht-thema er verder overal licht uitziet */
 .audio-cover-wrap {
   width: 100%;
   height: 100%;
-  background: #000;
+  background: var(--achtergrond-2);
   display: none;
   flex-direction: column;
   position: relative;
@@ -752,13 +755,13 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
 
 .audio-track-artiest {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--tekst-dim);
 }
 
 .audio-track-titel {
   font-size: 20px;
   font-weight: 600;
-  color: #fff;
+  color: var(--tekst);
 }
 
 .audio-progress-rij {
@@ -773,7 +776,7 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   flex-shrink: 0;
   min-width: 32px;
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--tekst-donker);
   text-align: center;
   font-variant-numeric: tabular-nums;
 }
@@ -781,7 +784,7 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
 .audio-progress-balk {
   flex: 1;
   height: 6px;
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--achtergrond-3);
   border-radius: 3px;
   cursor: pointer;
   overflow: hidden;
