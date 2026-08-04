@@ -805,14 +805,23 @@ function speelPauze() {
 
   // Turntable.start()/stop() liepen vroeger via de generieke 'play'/'pause'-listeners op #speler - nu
   // expliciet hier, want alleen bij een audio-only bestand ligt de plaat er en heeft de arm-animatie
-  // zichtbaar effect (bij een video-bestand blijft de platenspeler-UI toch verborgen). Geen needle-drop-
-  // vertraging nodig zoals bij speelIndex() (dat wacht op de naald vóórdat het geluid start) - hier is de
-  // plaat al neergelegd en het nummer al bezig, alleen de arm tilt op/zakt weer, gelijktijdig met het geluid.
+  // zichtbaar effect (bij een video-bestand blijft de platenspeler-UI toch verborgen).
   const isTurntableAudio = item && isAudioBestand(item.lokaal_pad)
   if (speler.paused) {
-    speler.play()
-    if (isTurntableAudio && window.Turntable) window.Turntable.start()
     document.getElementById('play-btn').textContent = '⏸'
+    if (isTurntableAudio && window.Turntable) {
+      // **Bug gevonden en gefixt (na pauzeren begon het geluid meteen bij hervatten, terwijl de arm nog
+      // zichtbaar terugzakte)**: deze aanname dat er hier geen needle-drop-vertraging nodig was ("de plaat
+      // ligt al, alleen de arm tilt op/zakt weer, gelijktijdig met het geluid") bleek in de praktijk niet
+      // te kloppen - stop() (bij pauzeren) tilt de arm net zo goed naar de ruststand als bij een echte stop,
+      // dus hervatten moet 'm ook weer laten zakken (ARM_DROP_DUUR, 1.3s), zichtbaar net als bij een vers
+      // nummer starten. speler.play() liep hier synchroon, dus het geluid was allang bezig terwijl de arm
+      // nog aan het zakken was. Zelfde fix als speelIndex()'s needle-drop-vóór-geluid: pas afspelen zodra
+      // Turntable.start()'s onComplete (de arm geland is) vuurt.
+      window.Turntable.start(() => speler.play())
+    } else {
+      speler.play()
+    }
   } else {
     speler.pause()
     if (isTurntableAudio && window.Turntable) window.Turntable.stop()

@@ -20,6 +20,14 @@ body {
   color: var(--tekst);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   padding: 1.5rem;
+  /* Vult altijd exact het venster i.p.v. mee te groeien met #resultaten - anders kreeg de pagina zélf ook
+     een scrollbalk zodra er genoeg zoekresultaten waren (bevestigd via CDP: body.scrollHeight 841px bij een
+     window van 685px hoog), náást #resultaten's eigen (wél al gestylede) interne scrollbalk. Die buitenste
+     scrollbalk was Chromiums onopgemaakte standaard - vandaar "de scrollbar is niet gestyled". */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 html::before,
@@ -137,7 +145,11 @@ select {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-height: 480px;
+  /* flex:1 i.p.v. een vaste max-height - vult altijd precies de ruimte die de body (nu height:100vh) nog
+     overlaat, ongeacht vensterhoogte. min-height:0 is nodig omdat een flex-kind anders weigert kleiner te
+     worden dan zijn eigen inhoud (zelfde regel als #globale-zoek-resultaten op het hoofdscherm). */
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
 }
 

@@ -46,9 +46,11 @@ let coverImageEl = null
 let draaischijfTween = null
 let vinylTween = null
 let laatsteProgressie = 0
-// True vanaf het begin van start()'s needle-drop-tween tot-en-met zijn onComplete - zie de uitgebreide
-// toelichting bij start() en bijwerken() hieronder (stale-timeupdate-race).
-let wachtOpStart = false
+// True vanaf het begin van start()'s needle-drop- óf stop()'s lift-tween tot-en-met zijn onComplete - zie
+// de uitgebreide toelichting bij start()/stop() en bijwerken() hieronder (stale-timeupdate-race). Ooit
+// alleen voor start() (toen wachtOpStart geheten), later verbreed naar stop() nadat bleek dat dezelfde race
+// ook bij pauzeren optrad - zie de toelichting bij stop() hieronder.
+let armTransitieBezig = false
 // Onthoudt welk album (op cover_pad, dezelfde sleutel als elders in dit project voor "is dit dezelfde
 // plaat") momenteel op de platter ligt. Twee coverloze tracks (cover_pad null, bv. losse mp3's die niet
 // via de Albums-functie geïmporteerd zijn) tellen bewust ook als "hetzelfde" - zie de bug hieronder bij
@@ -141,7 +143,7 @@ function initTurntable() {
 // nummer kan sowieso nooit vóór deze `onComplete` binnenkomen (`startAfspelen()` draait pas ná `klaar()`),
 // dus elke `bijwerken()`-aanroep die hier binnenkomt is per definitie een stale event van het vorige nummer.
 function start(klaar) {
-  wachtOpStart = true
+  armTransitieBezig = true
   if (draaischijfTween) draaischijfTween.play()
   if (toonarmInnerEl) {
     // Needle drop: vanaf de ruststand naar de hoek die bij de laatst bekende trackvoortgang hoort - bij
@@ -154,15 +156,26 @@ function start(klaar) {
       duration: ARM_DROP_DUUR,
       ease: 'power2.out',
       overwrite: true,
-      onComplete: () => { wachtOpStart = false; if (klaar) klaar() }
+      onComplete: () => { armTransitieBezig = false; if (klaar) klaar() }
     })
   } else {
-    wachtOpStart = false
+    armTransitieBezig = false
     if (klaar) klaar()
   }
 }
 
+// **Bug gevonden en gefixt (bij pauzeren ging de toonarm niet naar de ruststand)**: dezelfde stale-
+// `timeupdate`-race als bij start() hierboven (zie de uitgebreide toelichting daar), maar dan op het pauze-
+// pad. `js/jukebox.js`'s `speelPauze()` roept bij pauzeren eerst `speler.pause()` aan en meteen daarna
+// `Turntable.stop()` - maar een `timeupdate`-event dat vlak vóór `speler.pause()` al in de wachtrij stond
+// kan alsnog ná deze aanroep vuren. `bijwerken()` (hieronder) gebruikt `overwrite:true`, dus zo'n stale
+// event doodde de net-gestarte rust-tween en verving 'm door een "inhaal"-tween terug naar de (bevroren)
+// afspeelpositie - de arm bleef daardoor op zijn afspeelplek staan i.p.v. naar rust te liften. Deze functie
+// had, in tegenstelling tot start(), nooit een guard tegen deze race. Opgelost door dezelfde
+// `armTransitieBezig`-vlag (voorheen `wachtOpStart`, puur voor start() bedoeld) ook hier te zetten/wissen -
+// bijwerken() genegeert nu elke aanroep tijdens zowel de needle-drop als de lift.
 function stop() {
+  armTransitieBezig = true
   if (draaischijfTween) draaischijfTween.pause()
   if (toonarmInnerEl) {
     gsap.killTweensOf(toonarmInnerEl)
@@ -170,25 +183,27 @@ function stop() {
       rotation: RUST_HOEK,
       duration: ARM_DROP_DUUR,
       ease: 'power2.out',
-      overwrite: true
+      overwrite: true,
+      onComplete: () => { armTransitieBezig = false }
     })
+  } else {
+    armTransitieBezig = false
   }
 }
 
 function reset() {
   laatsteProgressie = 0
+  armTransitieBezig = false
   if (toonarmInnerEl) {
     gsap.killTweensOf(toonarmInnerEl)
     gsap.set(toonarmInnerEl, { rotation: RUST_HOEK })
   }
 }
 
-// Genegeerd zolang wachtOpStart aanstaat - zie de uitgebreide toelichting bij start() hierboven. Een
-// timeupdate van het NIEUWE nummer kan sowieso nooit binnenkomen vóór start()'s onComplete (startAfspelen()
-// draait pas daarna), dus alles wat hier binnenkomt tijdens die vlag is per definitie een stale event van
-// het vorige nummer.
+// Genegeerd zolang armTransitieBezig aanstaat - zie de uitgebreide toelichting bij start()/stop()
+// hierboven. Een timeupdate van vóór díe overgang kan zo geen net-gestarte drop-/lift-tween meer kapen.
 function bijwerken(currentTime, duration) {
-  if (!toonarmInnerEl || !duration || wachtOpStart) return
+  if (!toonarmInnerEl || !duration || armTransitieBezig) return
   laatsteProgressie = Math.min(1, Math.max(0, currentTime / duration))
   // Korte "inhaal"-tween i.p.v. de rotatie direct te zetten - timeupdate vuurt maar een paar keer per
   // seconde, dus zonder deze tussenstap zou de arm merkbaar springen i.p.v. geloofwaardig mee te glijden.
