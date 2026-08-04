@@ -4,6 +4,13 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.2]
+### Changed
+- Het losse afspeelvenster voor een lokaal muzieknummer toont nu ook artiest en titel, en laat minder lege ruimte rond de albumhoes over.
+
+### Fixed
+- Het losse afspeelvenster voor een lokaal muzieknummer volgde het gekozen thema niet en toonde altijd een zwarte achtergrond.
+
 ## [1.2.1]
 ### Fixed
 - De platenspeler-achtergrond en tracknaam/tijd/voortgangsbalk in de jukebox waren hardcoded zwart/wit en onleesbaar in het Licht-thema.

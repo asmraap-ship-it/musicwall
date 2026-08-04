@@ -6,6 +6,13 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.2]
+### Changed
+- The standalone player window for a local music track now also shows the artist and title, and leaves less empty space around the album cover.
+
+### Fixed
+- The standalone player window for a local music track didn't follow the chosen theme and always showed a black background.
+
 ## [1.2.1]
 ### Fixed
 - The turntable background and track name/time/progress bar in the jukebox were hardcoded black/white and unreadable in the Light theme.
