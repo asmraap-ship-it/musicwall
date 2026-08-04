@@ -1,12 +1,13 @@
 const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
-const { getAlbum, getTracksVoorAlbum, verwijderTrack } = require('./db/albums.js')
+const { getAlbum, getAlbumsVoorGroep, getTracksVoorAlbum, verwijderTrack } = require('./db/albums.js')
 
 let huidigAlbumId = null
 let huidigAlbum = null
 let selectie = new Set()
 let huidigeTrackLijst = []
 let huidigSpeelTrackId = null
+let huidigeAlbumLijst = []
 const albumSpeler = document.getElementById('album-speler')
 
 async function laadAlbum(albumId) {
@@ -25,7 +26,33 @@ async function laadAlbum(albumId) {
   document.getElementById('detail-artiest').textContent = album.artiest || ''
   document.getElementById('detail-naam').textContent = album.naam
 
+  // dezelfde volgorde als het albums-grid (getAlbumsVoorGroep sorteert al op volgorde) - zo bladert
+  // vorig/volgend album in dezelfde volgorde als de gebruiker de albumkaarten ziet, inclusief een
+  // eventuele handmatig versleepte volgorde
+  huidigeAlbumLijst = getAlbumsVoorGroep(album.groep_id)
+  const meerdereAlbums = huidigeAlbumLijst.length > 1
+  document.getElementById('album-vorig-album-btn').classList.toggle('onzichtbaar', !meerdereAlbums)
+  document.getElementById('album-volgend-album-btn').classList.toggle('onzichtbaar', !meerdereAlbums)
+
   laadTrackLijst()
+}
+
+// Bladert tussen albums binnen dezelfde groep, met wrap-around (zelfde patroon als de ‹ ›-knoppen van de
+// concert-detail-lightbox). laadAlbum() zelf regelt via laadTrackLijst()'s bestaande "track niet meer in
+// de nieuwe lijst"-check al dat een eventueel spelend nummer van het oude album stopt, dus geen aparte
+// albumStop()-aanroep hier nodig.
+function vorigAlbum() {
+  if (huidigeAlbumLijst.length < 2) return
+  const i = huidigeAlbumLijst.findIndex(a => a.id === huidigAlbumId)
+  const vorige = huidigeAlbumLijst[(i - 1 + huidigeAlbumLijst.length) % huidigeAlbumLijst.length]
+  laadAlbum(vorige.id)
+}
+
+function volgendAlbum() {
+  if (huidigeAlbumLijst.length < 2) return
+  const i = huidigeAlbumLijst.findIndex(a => a.id === huidigAlbumId)
+  const volgende = huidigeAlbumLijst[(i + 1) % huidigeAlbumLijst.length]
+  laadAlbum(volgende.id)
 }
 
 function bewerkHuidigAlbum() {
@@ -350,6 +377,8 @@ window.trackKnopKlik = trackKnopKlik
 window.verwijderTrackItem = verwijderTrackItem
 window.bewerkHuidigAlbum = bewerkHuidigAlbum
 window.stuurNaarJukebox = stuurNaarJukebox
+window.vorigAlbum = vorigAlbum
+window.volgendAlbum = volgendAlbum
 window.verwijderSelectie = verwijderSelectie
 window.toggleSelecteerAlleInAlbum = toggleSelecteerAlleInAlbum
 window.albumSpeelPauze = albumSpeelPauze

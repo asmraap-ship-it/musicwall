@@ -7,6 +7,34 @@
   margin-bottom: 1.5rem;
 }
 
+/* vorig/volgend album, naast de cover - zelfde ronde knopvorm als .album-navigatie button (track-transport
+   onderin), maar los daarvan want dit blaadert tussen albums, niet tussen nummers binnen één album */
+.album-nav-pijl {
+  align-self: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--achtergrond);
+  border: 1px solid var(--rand-2);
+  color: var(--accent);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.album-nav-pijl:hover {
+  border-color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.1);
+}
+
+.album-nav-pijl.onzichtbaar {
+  visibility: hidden;
+}
+
 .album-cover-groot {
   width: 140px;
   height: 140px;
