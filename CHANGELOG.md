@@ -4,6 +4,11 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.1]
+### Fixed
+- De platenspeler-achtergrond en tracknaam/tijd/voortgangsbalk in de jukebox waren hardcoded zwart/wit en onleesbaar in het Licht-thema.
+- Nieuw geopende vensters (o.a. de jukebox) toonden de min/max/sluiten-knoppen soms nog in de kleur van het standaardthema in plaats van het actieve thema.
+
 ## [1.2.0]
 ### Added
 - Vorig/volgend-knoppen in het albumscherm om tussen albums te bladeren zonder terug te hoeven naar het overzicht — in dezelfde volgorde als het albums-grid, met wrap-around.

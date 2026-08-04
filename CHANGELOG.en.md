@@ -6,6 +6,11 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.1]
+### Fixed
+- The turntable background and track name/time/progress bar in the jukebox were hardcoded black/white and unreadable in the Light theme.
+- Newly opened windows (including the jukebox) sometimes still showed the minimize/maximize/close buttons in the default theme's color instead of the active theme's.
+
 ## [1.2.0]
 ### Added
 - Previous/next buttons in the album screen to browse between albums without returning to the overview — in the same order as the albums grid, with wrap-around.
