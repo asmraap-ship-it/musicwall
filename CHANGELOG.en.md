@@ -6,6 +6,10 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.0]
+### Added
+- Previous/next buttons in the album screen to browse between albums without returning to the overview — in the same order as the albums grid, with wrap-around.
+
 ## [1.1.1]
 ### Fixed
 - The "What's new" screen always showed the changes in Dutch, even with the app language set to English.

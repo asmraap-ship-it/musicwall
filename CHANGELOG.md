@@ -4,6 +4,10 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.0]
+### Added
+- Vorig/volgend-knoppen in het albumscherm om tussen albums te bladeren zonder terug te hoeven naar het overzicht — in dezelfde volgorde als het albums-grid, met wrap-around.
+
 ## [1.1.1]
 ### Fixed
 - Het "Wat is er nieuw"-scherm toonde de wijzigingen altijd in het Nederlands, ook bij een Engelse taalinstelling.
