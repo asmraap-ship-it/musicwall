@@ -14,7 +14,7 @@ function escapeHtml(tekst) {
 }
 
 async function laadWhatsNew() {
-  const { versie, secties } = await ipcRenderer.invoke('haal-whats-new-op')
+  const { versie, secties } = await ipcRenderer.invoke('haal-whats-new-op', huidigeTaalCode())
   const versieTekst = versie || require('./package.json').version
   document.getElementById('whats-new-versie').textContent = t('help.versieLabel', { versie: versieTekst })
 

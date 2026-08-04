@@ -844,12 +844,18 @@ ipcMain.on('open-help', () => {
   helpWin.setMenuBarVisibility(false)
 })
 
-// Leest het eerste ## [x.y.z]-blok van CHANGELOG.md en splitst het in secties (Added/Changed/Fixed,
-// telkens een array met bullet-regels) - puur regex-based, want het Keep a Changelog-formaat van dit
-// bestand is altijd strak dezelfde vorm (## [versie], dan ### Sectie, dan "- " bullets).
-ipcMain.handle('haal-whats-new-op', () => {
+// Leest het eerste ## [x.y.z]-blok van CHANGELOG.md (of CHANGELOG.en.md bij taal 'en') en splitst het
+// in secties (Added/Changed/Fixed, telkens een array met bullet-regels) - puur regex-based, want het
+// Keep a Changelog-formaat van deze bestanden is altijd strak dezelfde vorm (## [versie], dan
+// ### Sectie, dan "- " bullets). CHANGELOG.en.md bestaat pas vanaf de versie waarin dit scherm is
+// geintroduceerd (oudere versies zijn niet vertaald) - val terug op de Nederlandse versie als het
+// Engelse bestand om wat voor reden dan ook ontbreekt, in plaats van niets te tonen.
+ipcMain.handle('haal-whats-new-op', (event, taal) => {
   try {
-    const inhoud = fs.readFileSync(path.join(__dirname, 'CHANGELOG.md'), 'utf8')
+    const bestandsnaam = taal === 'en' && fs.existsSync(path.join(__dirname, 'CHANGELOG.en.md'))
+      ? 'CHANGELOG.en.md'
+      : 'CHANGELOG.md'
+    const inhoud = fs.readFileSync(path.join(__dirname, bestandsnaam), 'utf8')
     const versieMatch = inhoud.match(/##\s*\[([^\]]+)\]/)
     if (!versieMatch) return { versie: null, secties: {} }
 
