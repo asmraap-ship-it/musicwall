@@ -201,46 +201,45 @@ ipcMain.on('open-video', (event, url) => {
   })
 })
 
-ipcMain.on('open-lokaal', (event, pad, coverPad) => {
+ipcMain.on('open-lokaal', (event, pad, coverPad, artiest, titel) => {
   if (videoWindow && !videoWindow.isDestroyed()) {
     videoWindow.close()
   }
 
   const isAudio = AUDIO_EXTENSIES.includes(path.extname(pad).toLowerCase())
 
+  // audio-only bestanden (mp3/m4a/flac/wav) in een <video>-tag tonen gaf een lelijk zwart beeld (geen
+  // videoframe om te tekenen) - toont in plaats daarvan de albumhoes (indien bekend) met een <audio>-
+  // element. lokaal-speler.html is een "echte", thema-bewuste pagina (net als alle andere vensters) i.p.v.
+  // een dynamisch gegenereerd, altijd-zwart HTML-bestand zoals voorheen - anders bleef dit ene scherm
+  // hardcoded zwart en dus niet passend bij bv. het Licht-thema, terwijl de rest van de app dat inmiddels
+  // wel volgt (zie de gelijksoortige fix bij de jukebox-platenspeler hierboven). Bij video blijft de
+  // achtergrond bewust wel altijd zwart (normale letterboxing, zie css/lokaal-speler.css).
   const win = new BrowserWindow({
     width: isAudio ? 480 : 1280,
-    height: isAudio ? 560 : 720,
+    height: isAudio ? 480 : 720,
     title: 'Musicwall',
     frame: false,
-    backgroundColor: '#000000'
+    backgroundColor: (titelbalkKleuren[huidigThema] || titelbalkKleuren['']).color,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
   })
   videoWindow = win
 
-  const bestandUrl = pathToFileURL(pad).href
-
-  // audio-only bestanden (mp3/m4a/flac/wav) in een <video>-tag tonen gaf een lelijk zwart beeld (geen
-  // videoframe om te tekenen) - toont in plaats daarvan de albumhoes (indien bekend) met een <audio>-element
-  const spelerHtml = isAudio
-    ? '<!DOCTYPE html><html><head><style>'
-      + 'html,body{margin:0;background:#000;height:100%;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}'
-      + 'img{max-width:55%;max-height:70%;object-fit:cover;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}'
-      + '.placeholder{font-size:72px;color:#c8a87a;opacity:0.2}'
-      + 'audio{width:420px}'
-      + '</style></head><body>'
-      + (coverPad ? '<img src="' + pathToFileURL(coverPad).href + '">' : '<div class="placeholder">&#9835;</div>')
-      + '<audio src="' + bestandUrl + '" autoplay controls></audio>'
-      + '</body></html>'
-    : '<!DOCTYPE html><html><head><style>'
-      + 'html,body{margin:0;background:#000;height:100%;overflow:hidden}'
-      + 'video{width:100vw;height:100vh;object-fit:contain;background:#000}'
-      + '</style></head><body>'
-      + '<video src="' + bestandUrl + '" autoplay controls></video>'
-      + '</body></html>'
-  const spelerPad = path.join(userDataPath, 'video-speler.html')
-  fs.writeFileSync(spelerPad, spelerHtml)
-  win.loadFile(spelerPad)
+  win.loadFile('lokaal-speler.html')
   win.setMenuBarVisibility(false)
+
+  win.webContents.on('did-finish-load', () => {
+    win.webContents.send('stel-media-in', {
+      pad: pathToFileURL(pad).href,
+      coverPad: coverPad ? pathToFileURL(coverPad).href : null,
+      isAudio,
+      artiest: artiest || '',
+      titel: titel || ''
+    })
+  })
 
   win.webContents.on('before-input-event', (event, input) => {
     if (input.key === 'Escape') win.close()

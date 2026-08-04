@@ -1,0 +1,86 @@
+:root {
+  --achtergrond: #17150f;
+  --accent: #c8a87a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* audio-stand: thema-afhankelijke achtergrond - een audiobestand heeft geen videoframe, dus geen reden
+   om hier (anders dan bij video) altijd zwart te blijven tonen, zie #speler-body.video hieronder */
+#speler-body {
+  background: var(--achtergrond);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+/* video-stand: altijd zwart, ongeacht thema - normale letterboxing-conventie voor videocontent, zoals
+   #speler in de jukebox en .youtube-speler-wrap ook altijd zwart blijven */
+#speler-body.video {
+  background: #000;
+}
+
+/* width + aspect-ratio i.p.v. max-width/max-height: die laatste verkleinen alleen een te grote hoes,
+   ze vergroten een kleine nooit, wat bij bescheiden-resolutie hoezen (folder.jpg e.d.) veel lege
+   ruimte in het venster overliet - zelfde bug/fix als eerder bij de jukebox' eigen audio-cover */
+#cover-img {
+  width: 65%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.placeholder {
+  width: 65%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--tekst, #fff) 8%, transparent);
+  font-size: 72px;
+  color: var(--accent);
+  opacity: 0.4;
+}
+
+#track-info {
+  text-align: center;
+  max-width: 80%;
+}
+
+#track-artiest {
+  color: var(--tekst-dim, rgba(255, 255, 255, 0.55));
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#track-titel {
+  color: var(--tekst, #fff);
+  font-size: 17px;
+  font-weight: 600;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#audio-el {
+  width: 420px;
+}
+
+#video-el {
+  width: 100vw;
+  height: 100vh;
+  object-fit: contain;
+  background: #000;
+}

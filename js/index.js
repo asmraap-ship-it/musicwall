@@ -241,7 +241,7 @@ function speelAfIdx(idx) {
   if (video.type === 'youtube') {
     ipcRenderer.send('open-video', video.youtube_url)
   } else {
-    ipcRenderer.send('open-lokaal', video.lokaal_pad)
+    ipcRenderer.send('open-lokaal', video.lokaal_pad, null, video.artiest, video.titel)
   }
 }
 
@@ -453,7 +453,7 @@ function zoekKlikAfspelen(idx) {
   if (resultaat.soort === 'youtube') {
     ipcRenderer.send('open-video', resultaat.youtubeUrl)
   } else {
-    ipcRenderer.send('open-lokaal', resultaat.lokaalPad, resultaat.coverPad)
+    ipcRenderer.send('open-lokaal', resultaat.lokaalPad, resultaat.coverPad, resultaat.artiest, resultaat.titel)
   }
 }
 

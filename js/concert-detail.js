@@ -279,7 +279,7 @@ function renderViewer() {
       if (item.type === 'youtube') {
         ipcRenderer.send('open-video', item.bestand_pad)
       } else {
-        ipcRenderer.send('open-lokaal', item.bestand_pad)
+        ipcRenderer.send('open-lokaal', item.bestand_pad, null, huidigConcert.artiest, huidigConcert.naam)
       }
     }
     inhoud.appendChild(wrap)
