@@ -6,6 +6,10 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.1]
+### Fixed
+- The "What's new" screen always showed the changes in Dutch, even with the app language set to English.
+
 ## [1.1.0]
 ### Added
 - Music albums: import a folder of mp3/m4a/flac/wav files as an album, with cover art, artist and titles read automatically. Albums get their own kind of wall-group tab, with a tracklist screen to browse and play songs.

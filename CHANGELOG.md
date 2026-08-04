@@ -4,6 +4,10 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.1.1]
+### Fixed
+- Het "Wat is er nieuw"-scherm toonde de wijzigingen altijd in het Nederlands, ook bij een Engelse taalinstelling.
+
 ## [1.1.0]
 ### Added
 - Muziek-albums: importeer een map met mp3/m4a/flac/wav-bestanden als album, met hoes, artiest en titels automatisch uitgelezen. Albums krijgen een eigen soort wall-groepstab, met een tracklijst-scherm om nummers te bekijken en af te spelen.
