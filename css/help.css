@@ -54,6 +54,12 @@ header {
   -webkit-app-region: drag;
 }
 
+/* de header zelf is een sleepgebied (titelbalk-vervanging); knoppen erin moeten expliciet
+   uitgezonderd worden, anders vangt het slepen de klik weg */
+header button {
+  -webkit-app-region: no-drag;
+}
+
 .logo {
   font-size: 9px;
   letter-spacing: 0.4em;

@@ -297,9 +297,18 @@ Op verzoek van de gebruiker (een grote lokale MP3-verzameling, per album in een 
 - Gevuld door `js/help.js` via `require('./package.json').version` (root-relatief, net als `js/index.js`'s `require('./db/...')`) en de vertaalsleutel `help.versieLabel` (`"Versie {versie}"`/`"Version {versie}"`) — geen aparte IPC-aanroep nodig, en altijd gelijk aan de daadwerkelijk gebouwde versie
 
 ## Changelog-workflow
-`CHANGELOG.md` (root, [Keep a Changelog](https://keepachangelog.com/)-formaat, gegroepeerd onder het huidige versienummer met `Added`/`Changed`/`Fixed`-kopjes) is het enige brondocument voor een toekomstige in-app "What's new"-weergave — geen aparte database of losstaand format.
+`CHANGELOG.md` (root, [Keep a Changelog](https://keepachangelog.com/)-formaat, gegroepeerd onder het huidige versienummer met `Added`/`Changed`/`Fixed`-kopjes) is het brondocument voor zowel de GitHub-release-aantekeningen als het in-app "Wat is er nieuw"-scherm (zie hieronder) — geen aparte database of losstaand format.
 - Bij het afronden van een werksessie stelt Claude Code een korte, menselijk leesbare changelog-regel voor op basis van de gemaakte diff (geen technisch commit-jargon, maar een zin gericht op wat de gebruiker ervaart — bijv. "Lokale mp3/mp4/wav-bestanden werken nu ook in de Jukebox")
 - Dit voorstel wordt ter goedkeuring getoond; pas na expliciete bevestiging wordt het toegevoegd aan `CHANGELOG.md`. Eerdere entries worden nooit zelfstandig gewijzigd.
+
+## "Wat is er nieuw"-scherm
+Op verzoek van de gebruiker gebouwd bij de 1.1.0-release, om het gat te dichten dat `CHANGELOG.md` wél als brondocument voor een in-app weergave was aangemerkt (zie hierboven) maar die weergave nooit gebouwd was — een upgradende gebruiker kon tot dan toe alleen op GitHub zien wat er veranderd was.
+- **`whats-new.html`/`js/whats-new.js`** hergebruiken bewust `css/help.css` en het `header`/`.inhoud`/`.wijzig-sleutel-btn`-patroon van `help.html` 1-op-1 (zelfde thema-laadscript bovenaan, zelfde paginascroll i.p.v. een intern begrensd venster) — geen nieuw CSS-bestand nodig voor wat in de kern dezelfde soort lange, secties-met-bullets-pagina is als Help.
+- **`main.js`'s `haal-whats-new-op`** (handle) leest `CHANGELOG.md` en parseert puur met regex het éérste `## [versie]`-blok in secties (`### Added`/`### Changed`/`### Fixed` → een array met bullet-regels per sectie) — geen aparte JSON/database-representatie van de changelog nodig, `CHANGELOG.md` blijft de enige bron. Dit werkt betrouwbaar omdat het formaat van dit bestand altijd strak dezelfde Keep-a-Changelog-vorm heeft.
+- **`open-whats-new`** volgt het bekende singleton-vensterpatroon (`whatsNewWin`, zoals `jukeboxWin`/`importWin`) — focust een al open venster i.p.v. een tweede te openen.
+- **Automatisch tonen na een update**: `js/index.js`'s `controleerNieuweVersie()` (aangeroepen direct na `laadWalls()`/`laadOpgeslagenThema()` bij opstart) vergelijkt `require('./package.json').version` met `localStorage`'s `musicwall-laatst-geziene-versie` — bij een afwijking (inclusief de allereerste keer, wanneer die sleutel nog niet bestaat) wordt het scherm geopend en de sleutel bijgewerkt, zodat het daarna niet opnieuw verschijnt tot de volgende versiebump. Bewust ook getriggerd bij de allereerste opstart ooit (geen onderscheid mogelijk tussen "verse installatie" en "upgrade van vóór deze feature bestond", en een nieuwe gebruiker heeft ook niets aan het zien van de huidige changelog-sectie).
+- **Handmatig terug te vinden**: een nieuwe knop "🆕 Wat is er nieuw?" in de `header` van `help.html`, naast de titel. Omdat die `header` net als elders in de app een sleepgebied is (`-webkit-app-region: drag`, titelbalk-vervanging), kreeg `css/help.css` een `header button { -webkit-app-region: no-drag }`-regel — zonder die regel had een klik op de knop het venster alleen maar verschoven in plaats van de knop te activeren.
+- **`whatsNew.*`-vertaalsleutels** (titel, sluiten, lege-staat, sectiekoppen Nieuw/Gewijzigd/Opgelost) zijn toegevoegd aan `js/vertalingen.js` — de eigenlijke changelog-tekst zelf blijft, net als de rest van `CHANGELOG.md`, Nederlandstalig en dus niet vertaald; alleen de vaste schermchrome is bilingual zoals de rest van de app.
 
 ## ipcMain handlers aanwezig in main.js (selectie)
 - `open-nieuw-concert` → opent nieuw-concert.html
@@ -330,6 +339,8 @@ Op verzoek van de gebruiker (een grote lokale MP3-verzameling, per album in een 
 - `sla-album-volgorde-op` → herschikAlbums()
 - `bevestig-album-verwijderen` / `bevestig-album-tracks-verwijderen-meerdere` → bevestiging + verwijderAlbum() resp. bulk verwijderTrack()
 - `album-tracks-naar-playlist` → voegt geselecteerde tracks uit album-detail toe aan de jukebox-playlist
+- `haal-whats-new-op` (handle) → parseert het meest recente versieblok uit `CHANGELOG.md` (zie `## "Wat is er nieuw"-scherm`)
+- `open-whats-new` → opent whats-new.html (singleton, zoals jukeboxWin)
 
 ## Testinfrastructuur
 - `npm test` draait via `electron --test` met `ELECTRON_RUN_AS_NODE=1` (`package.json`), niet via kale `node --test`: `better-sqlite3` is gecompileerd tegen Electrons Node-ABI (`@electron/rebuild`), niet die van de systeem-Node, dus tests die `database.js` laden crashen onder kale `node` met een `NODE_MODULE_VERSION`-mismatch. `ELECTRON_RUN_AS_NODE=1` laat de Electron-executable als kale Node-runtime draaien (geen `app`/`BrowserWindow`), waardoor native modules met Electrons ABI wél laden.

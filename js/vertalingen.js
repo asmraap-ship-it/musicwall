@@ -274,6 +274,15 @@ const VERTALINGEN = {
     'validatie.geenWall': 'Geen wall geselecteerd.',
     'validatie.geenBestandenGeselecteerd': 'Geen bestanden geselecteerd.',
 
+    // Wat is er nieuw
+    'whatsNew.titel': 'Wat is er nieuw',
+    'whatsNew.sluiten': 'Sluiten',
+    'whatsNew.leeg': 'Geen wijzigingen gevonden.',
+    'whatsNew.sectieAdded': 'Nieuw',
+    'whatsNew.sectieChanged': 'Gewijzigd',
+    'whatsNew.sectieFixed': 'Opgelost',
+    'help.watsNieuwBtn': '🆕 Wat is er nieuw?',
+
     // Help
     'help.titel': 'Help',
     'help.versieLabel': 'Versie {versie}',
@@ -666,6 +675,14 @@ const VERTALINGEN = {
     'validatie.kiesVideobestand': 'Please choose a video file.',
     'validatie.geenWall': 'No wall selected.',
     'validatie.geenBestandenGeselecteerd': 'No files selected.',
+
+    'whatsNew.titel': "What's new",
+    'whatsNew.sluiten': 'Close',
+    'whatsNew.leeg': 'No changes found.',
+    'whatsNew.sectieAdded': 'Added',
+    'whatsNew.sectieChanged': 'Changed',
+    'whatsNew.sectieFixed': 'Fixed',
+    'help.watsNieuwBtn': "🆕 What's new?",
 
     'help.titel': 'Help',
     'help.versieLabel': 'Version {versie}',

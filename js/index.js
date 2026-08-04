@@ -1017,6 +1017,19 @@ async function laadWalls() {
 laadWalls()
 laadOpgeslagenThema()
 
+// Toont het "Wat is er nieuw"-scherm automatisch zodra de versie afwijkt van de laatst geziene versie
+// (ook bij de allereerste opstart, wanneer de sleutel nog niet bestaat - onschuldig, toont dan gewoon de
+// huidige changelog-sectie eenmalig).
+function controleerNieuweVersie() {
+  const huidigeVersie = require('./package.json').version
+  const laatstGezien = localStorage.getItem('musicwall-laatst-geziene-versie')
+  if (laatstGezien !== huidigeVersie) {
+    ipcRenderer.send('open-whats-new')
+    localStorage.setItem('musicwall-laatst-geziene-versie', huidigeVersie)
+  }
+}
+controleerNieuweVersie()
+
 document.addEventListener('taal-gewijzigd', () => {
   laadWalls()
   if (huidigeSectie === 'concerten' && typeof laadConcerten === 'function') laadConcerten()

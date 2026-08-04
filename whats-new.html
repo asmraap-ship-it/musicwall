@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Musicwall — Wat is er nieuw</title>
+  <link rel="stylesheet" href="css/help.css">
+  <script>
+    const thema = localStorage.getItem('musicwall-thema')
+    if (thema) document.documentElement.setAttribute('data-thema', thema)
+    require('electron').ipcRenderer.on('thema-toegepast', (event, t) => {
+      if (t) document.documentElement.setAttribute('data-thema', t)
+      else document.documentElement.removeAttribute('data-thema')
+    })
+  </script>
+  <link rel="stylesheet" href="css/themas/metaal.css">
+  <link rel="stylesheet" href="css/themas/jukebox.css">
+  <link rel="stylesheet" href="css/themas/nacht.css">
+  <link rel="stylesheet" href="css/themas/jr.css">
+  <link rel="stylesheet" href="css/themas/natuur.css">
+  <link rel="stylesheet" href="css/themas/licht.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">Musicwall <span id="whats-new-versie" class="versie"></span></div>
+  <h1 data-i18n="whatsNew.titel">Wat is er nieuw</h1>
+</header>
+
+<div class="inhoud">
+  <div id="whats-new-inhoud"></div>
+  <button class="wijzig-sleutel-btn" id="whats-new-sluiten-btn" data-i18n="whatsNew.sluiten">Sluiten</button>
+</div>
+
+<script src="js/vertalingen.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/whats-new.js"></script>
+</body>
+</html>

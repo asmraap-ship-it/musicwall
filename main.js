@@ -28,6 +28,7 @@ let videoWindow = null
 let jukeboxWin = null
 let importWin = null
 let albumImportWin = null
+let whatsNewWin = null
 let huidigThema = ''
 let huidigeTaal = 'nl'
 
@@ -841,6 +842,56 @@ ipcMain.on('open-help', () => {
   })
   helpWin.loadFile('help.html')
   helpWin.setMenuBarVisibility(false)
+})
+
+// Leest het eerste ## [x.y.z]-blok van CHANGELOG.md en splitst het in secties (Added/Changed/Fixed,
+// telkens een array met bullet-regels) - puur regex-based, want het Keep a Changelog-formaat van dit
+// bestand is altijd strak dezelfde vorm (## [versie], dan ### Sectie, dan "- " bullets).
+ipcMain.handle('haal-whats-new-op', () => {
+  try {
+    const inhoud = fs.readFileSync(path.join(__dirname, 'CHANGELOG.md'), 'utf8')
+    const versieMatch = inhoud.match(/##\s*\[([^\]]+)\]/)
+    if (!versieMatch) return { versie: null, secties: {} }
+
+    const vanaf = inhoud.indexOf(versieMatch[0]) + versieMatch[0].length
+    const volgendeKopIdx = inhoud.indexOf('\n## [', vanaf)
+    const blok = volgendeKopIdx === -1 ? inhoud.slice(vanaf) : inhoud.slice(vanaf, volgendeKopIdx)
+
+    const secties = {}
+    const sectieRegex = /###\s*(\w+)\n([\s\S]*?)(?=\n###\s*\w+|$)/g
+    let m
+    while ((m = sectieRegex.exec(blok))) {
+      const naam = m[1]
+      const regels = m[2].split('\n')
+        .map(r => r.trim())
+        .filter(r => r.startsWith('- '))
+        .map(r => r.slice(2).trim())
+      if (regels.length) secties[naam] = regels
+    }
+    return { versie: versieMatch[1], secties }
+  } catch (e) {
+    return { versie: null, secties: {} }
+  }
+})
+
+ipcMain.on('open-whats-new', () => {
+  if (whatsNewWin && !whatsNewWin.isDestroyed()) {
+    whatsNewWin.focus()
+    return
+  }
+  whatsNewWin = new BrowserWindow({
+    width: 560,
+    height: 620,
+    title: 'Musicwall — ' + t('whatsNew.titel'),
+    ...titelbalkOpties,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+  whatsNewWin.loadFile('whats-new.html')
+  whatsNewWin.setMenuBarVisibility(false)
+  whatsNewWin.on('closed', () => { whatsNewWin = null })
 })
 
 ipcMain.on('bevestig-wall-verwijderen', async (event, { wallId, wallNaam }) => {

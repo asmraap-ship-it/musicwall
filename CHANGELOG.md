@@ -4,12 +4,15 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
-## [1.0.21]
+## [1.1.0]
 ### Added
+- Muziek-albums: importeer een map met mp3/m4a/flac/wav-bestanden als album, met hoes, artiest en titels automatisch uitgelezen. Albums krijgen een eigen soort wall-groepstab, met een tracklijst-scherm om nummers te bekijken en af te spelen.
 - Navigatiebalk bij het afspelen van een album: vorige/volgende/eerste/laatste nummer, met een voortgangsbalk en verstreken tijd/lengte — nummers spelen nu binnen het albumscherm zelf af.
 - Nieuw filter in de header (naast de thema-keuze) om te kiezen welk soort tabblad je wilt zien: Alles, Concerten, Video's of Muziek.
+- Een "Wat is er nieuw"-scherm dat na een update automatisch de belangrijkste wijzigingen laat zien, ook terug te vinden via de Help.
 
 ### Changed
+- De platenspeler in de jukebox is grondig vernieuwd: een gedetailleerdere Pioneer-tekening met een stroboscoopband, verzilverde randen en een fraaiere afwerking rondom — dichter bij een echte platenspeler dan voorheen.
 - Bij het afspelen van muziek in de jukebox draait nu een vinylplaat met de hoes erop, in plaats van een los, vergroot hoesplaatje — met een meebewegende pick-uparm die tijdens het nummer geleidelijk richting het midden van de plaat beweegt.
 - De spelende track is nu beter te zien: in een album krijgt de spelende rij een pauze-icoon, en in de jukebox-playlist scrollt het spelende nummer automatisch in beeld.
 - De jukebox toont bij muziekbestanden nu ook de verstreken tijd en lengte.
@@ -26,3 +29,6 @@ Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0
 - De pick-uparm in rust stond nog te dicht bij de tempo-schuifknop.
 - Een nummer kon al hoorbaar starten voordat de naald zichtbaar op de plaat lag.
 - Vorige/volgende bladeren tussen muzieknummers liet het nieuwe nummer soms muteloos aan het begin blijven staan in plaats van af te spelen.
+- Pauzeren liet de pick-uparm soms niet meer terugkeren naar de ruststand.
+- Na pauzeren begon het geluid weer voordat de naald zichtbaar geland was.
+- YouTube zoeken kon bij veel resultaten een tweede, ongestylede scrollbalk krijgen.

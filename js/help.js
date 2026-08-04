@@ -8,6 +8,10 @@ function controleerKapotteLinks() {
   ipcRenderer.send('open-kapotte-links')
 }
 
+function openWhatsNew() {
+  ipcRenderer.send('open-whats-new')
+}
+
 async function maakBackup() {
   const meldingEl = document.getElementById('backup-melding')
   meldingEl.textContent = t('backup.bezigMetBackup')
@@ -43,3 +47,4 @@ window.wijzigApiSleutel = wijzigApiSleutel
 window.maakBackup = maakBackup
 window.herstelBackup = herstelBackup
 window.controleerKapotteLinks = controleerKapotteLinks
+window.openWhatsNew = openWhatsNew
