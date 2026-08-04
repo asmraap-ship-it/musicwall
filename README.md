@@ -9,7 +9,8 @@ Een persoonlijke Electron desktop-applicatie waarmee je eigen muziek, YouTube-vi
 - **Walls** — groepeer video's (YouTube of lokaal) rond een thema, met een titel, artiest en persoonlijk verhaal per nummer
 - **Wall-groepen** — verdeel walls over eigen tabs (bijv. per thema of gelegenheid), aan te maken en te herordenen naast de vaste "Mijn walls"/"Mijn concerten"-tabs; alle tabs zijn te hernoemen
 - **Concertervaringen** — leg concerten vast met foto's, video's en YouTube-clips in een collage, inclusief verhaal, naam en datum, met een navigeerbare volledig-scherm viewer om doorheen te bladeren
-- **Jukebox** — speel je eigen playlist af, lokale muziek video's én YouTube door elkaar, met shuffle, vorige/volgende en schermvullende weergave; een YouTube-nummer dat niet afspeelbaar is wordt automatisch overgeslagen met een melding, je muziek wordt in een geanimeerde Pioneer PLX1000 platenspeler afgespeeld
+- **Jukebox** — speel je eigen playlist af, lokale muziek video's én YouTube door elkaar, met shuffle, vorige/volgende en schermvullende weergave; een YouTube-nummer dat niet afspeelbaar is wordt automatisch overgeslagen met een melding, je muziek wordt in een geanimeerde Pioneer PLX1000 platenspeler afgespeeld; playlists zijn op te slaan onder een eigen naam en later weer te laden
+- **Muziek-albums** — importeer een map met mp3/m4a/flac/wav-bestanden in één keer als album; hoes, artiest en tracks worden automatisch herkend, met een eigen albumscherm om doorheen te bladeren en tracks af te spelen
 - **YouTube zoeken & map importeren** — zoek video's of hele playlists (per artiest of genre) direct binnen Musicwall, of importeer een map met lokale bestanden; eerst een groepskeuze zodat je meteen de juiste wall uit de juiste groep kiest
 - **Zeven thema's** — Standaard, Metaal, Jukebox, Nacht, Raw, Natuur en Licht, elk met een eigen kleurpalet en achtergrondstijl
 - **Meertalig** — Nederlands/Engels, automatisch op basis van je systeemtaal, met handmatige wisselknop
@@ -25,9 +26,20 @@ Concerten vastleggen met foto's, video's en YouTube-clips, elk met een eigen ver
 
 ### Jukebox
 
-Eén playlist, lokale muziek, video's en YouTube door elkaar, met een schermvullende speler.
+Eén playlist, lokale muziek, video's en YouTube door elkaar, met een schermvullende speler. Lokale muziek speelt af in een geanimeerde platenspeler; playlists zijn op te slaan en later weer te laden.
 
 ![Jukebox](screenshots/jukebox-playlist.png)
+![Jukebox met lokale muziek](screenshots/jukebox-music-playlist.png)
+![Playlist opslaan](screenshots/jukebox-save-playlist.png)
+![Opgeslagen playlist laden](screenshots/jukebox-select-playlist.png)
+
+### Muziek-albums
+
+Importeer een map met mp3/m4a/flac/wav-bestanden als album, met hoes, artiest en tracks automatisch herkend.
+
+![Albums](screenshots/albums.png)
+![Album importeren](screenshots/import-album.png)
+![Albumnummer afspelen](screenshots/play-album.png)
 
 ### YouTube zoeken en map importeren
 
@@ -35,7 +47,7 @@ Zoek direct binnen Musicwall naar video's of hele playlists, of importeer in é�
 
 ![YouTube zoeken](screenshots/youtube-search.png)
 ![YouTube playlists zoeken](screenshots/youtube-search-playlist.png)
-![Map importeren](screenshots/import-videos.png)
+![Map importeren](screenshots/import-videos-nl.png)
 
 ### Thema's en taal
 
