@@ -270,14 +270,6 @@
        rx="20"
        fill="url(#chassisSheen)"
        id="rect31" />
-    <circle
-       cx="42"
-       cy="42"
-       r="7"
-       fill="#0d0d0e"
-       stroke="#4a4b4e"
-       stroke-width="1.5"
-       id="circle31" />
     <!-- 45-toeren adapter: zelfde formaat als start/stop, zilverkleurig, met gaatje zoals in de vinylplaat -->
     <g
        transform="translate(100,100)"
@@ -288,29 +280,38 @@
          stroke="#6c6d70"
          stroke-width="1.5"
          id="circle32" />
+      <!-- decoratieve rand om het 45-toerenschijfje: dikkere zwarte rand binnen, grijze rand, dunne
+           zwarte rand buiten -->
+      <circle
+         r="45.5"
+         fill="none"
+         stroke="#1a1a1b"
+         stroke-width="2"
+         id="circle32-rand-zwart-binnen" />
+      <circle
+         r="47.5"
+         fill="none"
+         stroke="#8a8b8f"
+         stroke-width="2.8"
+         id="circle32-rand-grijs" />
+      <circle
+         r="49"
+         fill="none"
+         stroke="#1a1a1b"
+         stroke-width="0.75"
+         id="circle32-rand-zwart-buiten" />
       <circle
          r="6"
          fill="#050506"
          stroke="#000000"
          stroke-width="1"
          id="circle33" />
+      <!-- klein grijs rondje binnen het zwarte middengaatje -->
+      <circle
+         r="5"
+         fill="#8a8b8f"
+         id="circle33-grijs-midden" />
     </g>
-    <circle
-       cx="42"
-       cy="738"
-       r="7"
-       fill="#0d0d0e"
-       stroke="#4a4b4e"
-       stroke-width="1.5"
-       id="circle34" />
-    <circle
-       cx="958"
-       cy="738"
-       r="7"
-       fill="#0d0d0e"
-       stroke="#4a4b4e"
-       stroke-width="1.5"
-       id="circle35" />
     <circle
        cx="600"
        cy="60"
@@ -788,6 +789,16 @@
        stroke="#4a4b4e"
        stroke-width="1"
        id="rect89" />
+    <text
+       x="905"
+       y="306"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       font-family="Arial, sans-serif"
+       font-size="9"
+       font-weight="700"
+       fill="#d7d8da"
+       id="text-tempo-50">&#177;50</text>
     <rect
        x="858"
        y="318"
@@ -798,6 +809,16 @@
        stroke="#bdeeff"
        stroke-width="1"
        id="rect90" />
+    <text
+       x="905"
+       y="332"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       font-family="Arial, sans-serif"
+       font-size="9"
+       font-weight="700"
+       fill="#0c0c0d"
+       id="text-tempo-16">&#177;16</text>
     <rect
        x="858"
        y="344"
@@ -808,6 +829,16 @@
        stroke="#4a4b4e"
        stroke-width="1"
        id="rect91" />
+    <text
+       x="905"
+       y="358"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       font-family="Arial, sans-serif"
+       font-size="9"
+       font-weight="700"
+       fill="#d7d8da"
+       id="text-tempo-8">&#177;8</text>
     <rect
        x="858"
        y="372"
@@ -988,7 +1019,7 @@
     <circle
        cx="75"
        cy="715"
-       r="44"
+       r="37"
        fill="#0b0b0c"
        stroke="url(#ledGlow)"
        stroke-width="4"
@@ -1092,588 +1123,431 @@
        cy="395"
        r="335"
        fill="none"
-       stroke="#3f4044"
-       stroke-width="2"
+       stroke="silver"
+       stroke-width="2.5"
        id="circle113" />
-    <circle
-       cx="706.0"
-       cy="395.0"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle114" />
-    <circle
-       cx="705.3"
-       cy="416.6"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle115" />
-    <circle
-       cx="703.1"
-       cy="438.0"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle116" />
-    <circle
-       cx="699.4"
-       cy="459.3"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle117" />
-    <circle
-       cx="694.3"
-       cy="480.3"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle118" />
-    <circle
-       cx="687.8"
-       cy="500.8"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle119" />
-    <circle
-       cx="679.8"
-       cy="520.9"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle120" />
-    <circle
-       cx="670.6"
-       cy="540.4"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle121" />
-    <circle
-       cx="660.0"
-       cy="559.2"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle122" />
-    <circle
-       cx="648.2"
-       cy="577.2"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle123" />
-    <circle
-       cx="635.1"
-       cy="594.4"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle124" />
-    <circle
-       cx="620.9"
-       cy="610.7"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle125" />
-    <circle
-       cx="605.7"
-       cy="625.9"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle126" />
-    <circle
-       cx="589.4"
-       cy="640.1"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle127" />
-    <circle
-       cx="572.2"
-       cy="653.2"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle128" />
-    <circle
-       cx="554.2"
-       cy="665.0"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle129" />
-    <circle
-       cx="535.4"
-       cy="675.6"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle130" />
-    <circle
-       cx="515.9"
-       cy="684.8"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle131" />
-    <circle
-       cx="495.8"
-       cy="692.8"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle132" />
-    <circle
-       cx="475.3"
-       cy="699.3"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle133" />
-    <circle
-       cx="454.3"
-       cy="704.4"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle134" />
-    <circle
-       cx="433.0"
-       cy="708.1"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle135" />
-    <circle
-       cx="411.6"
-       cy="710.3"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle136" />
-    <circle
-       cx="390.0"
-       cy="711.0"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle137" />
-    <circle
-       cx="368.4"
-       cy="710.3"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle138" />
-    <circle
-       cx="347.0"
-       cy="708.1"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle139" />
-    <circle
-       cx="325.7"
-       cy="704.4"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle140" />
-    <circle
-       cx="304.7"
-       cy="699.3"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle141" />
-    <circle
-       cx="284.2"
-       cy="692.8"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle142" />
-    <circle
-       cx="264.1"
-       cy="684.8"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle143" />
-    <circle
-       cx="244.6"
-       cy="675.6"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle144" />
-    <circle
-       cx="225.8"
-       cy="665.0"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle145" />
-    <circle
-       cx="207.8"
-       cy="653.2"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle146" />
-    <circle
-       cx="190.6"
-       cy="640.1"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle147" />
-    <circle
-       cx="174.3"
-       cy="625.9"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle148" />
-    <circle
-       cx="159.1"
-       cy="610.7"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle149" />
-    <circle
-       cx="144.9"
-       cy="594.4"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle150" />
-    <circle
-       cx="131.8"
-       cy="577.2"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle151" />
-    <circle
-       cx="120.0"
-       cy="559.2"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle152" />
-    <circle
-       cx="109.4"
-       cy="540.4"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle153" />
-    <circle
-       cx="100.2"
-       cy="520.9"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle154" />
-    <circle
-       cx="92.2"
-       cy="500.8"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle155" />
-    <circle
-       cx="85.7"
-       cy="480.3"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle156" />
-    <circle
-       cx="80.6"
-       cy="459.3"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle157" />
-    <circle
-       cx="76.9"
-       cy="438.0"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle158" />
-    <circle
-       cx="74.7"
-       cy="416.6"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle159" />
-    <circle
-       cx="74.0"
-       cy="395.0"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle160" />
-    <circle
-       cx="74.7"
-       cy="373.4"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle161" />
-    <circle
-       cx="76.9"
-       cy="352.0"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle162" />
-    <circle
-       cx="80.6"
-       cy="330.7"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle163" />
-    <circle
-       cx="85.7"
-       cy="309.7"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle164" />
-    <circle
-       cx="92.2"
-       cy="289.2"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle165" />
-    <circle
-       cx="100.2"
-       cy="269.1"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle166" />
-    <circle
-       cx="109.4"
-       cy="249.6"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle167" />
-    <circle
-       cx="120.0"
-       cy="230.8"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle168" />
-    <circle
-       cx="131.8"
-       cy="212.8"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle169" />
-    <circle
-       cx="144.9"
-       cy="195.6"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle170" />
-    <circle
-       cx="159.1"
-       cy="179.3"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle171" />
-    <circle
-       cx="174.3"
-       cy="164.1"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle172" />
-    <circle
-       cx="190.6"
-       cy="149.9"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle173" />
-    <circle
-       cx="207.8"
-       cy="136.8"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle174" />
-    <circle
-       cx="225.8"
-       cy="125.0"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle175" />
-    <circle
-       cx="244.6"
-       cy="114.4"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle176" />
-    <circle
-       cx="264.1"
-       cy="105.2"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle177" />
-    <circle
-       cx="284.2"
-       cy="97.2"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle178" />
-    <circle
-       cx="304.7"
-       cy="90.7"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle179" />
-    <circle
-       cx="325.7"
-       cy="85.6"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle180" />
-    <circle
-       cx="347.0"
-       cy="81.9"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle181" />
-    <circle
-       cx="368.4"
-       cy="79.7"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle182" />
-    <circle
-       cx="390.0"
-       cy="79.0"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle183" />
-    <circle
-       cx="411.6"
-       cy="79.7"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle184" />
-    <circle
-       cx="433.0"
-       cy="81.9"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle185" />
-    <circle
-       cx="454.3"
-       cy="85.6"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle186" />
-    <circle
-       cx="475.3"
-       cy="90.7"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle187" />
-    <circle
-       cx="495.8"
-       cy="97.2"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle188" />
-    <circle
-       cx="515.9"
-       cy="105.2"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle189" />
-    <circle
-       cx="535.4"
-       cy="114.4"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle190" />
-    <circle
-       cx="554.2"
-       cy="125.0"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle191" />
-    <circle
-       cx="572.2"
-       cy="136.8"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle192" />
-    <circle
-       cx="589.4"
-       cy="149.9"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle193" />
-    <circle
-       cx="605.7"
-       cy="164.1"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle194" />
-    <circle
-       cx="620.9"
-       cy="179.3"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle195" />
-    <circle
-       cx="635.1"
-       cy="195.6"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle196" />
-    <circle
-       cx="648.2"
-       cy="212.8"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle197" />
-    <circle
-       cx="660.0"
-       cy="230.8"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle198" />
-    <circle
-       cx="670.6"
-       cy="249.6"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle199" />
-    <circle
-       cx="679.8"
-       cy="269.1"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle200" />
-    <circle
-       cx="687.8"
-       cy="289.2"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle201" />
-    <circle
-       cx="694.3"
-       cy="309.7"
-       r="5.2"
-       fill="url(#dotGrad)"
-       id="circle202" />
-    <circle
-       cx="699.4"
-       cy="330.7"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle203" />
-    <circle
-       cx="703.1"
-       cy="352.0"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle204" />
-    <circle
-       cx="705.3"
-       cy="373.4"
-       r="3.0"
-       fill="url(#dotGrad)"
-       id="circle205" />
+    <!-- Stroboscoopringen: vier ringen tangentieel georienteerde ellipsjes, dicht tegen de
+         platterrand. Ring 2 (groot, uniform) vervangt de oude losse circle114-205. Ring 4
+         (binnenste) staat een halve stap uit fase t.o.v. de andere drie, zodat de stippen
+         tussen ring 3 in vallen i.p.v. er recht onder te staan. -->
+    <!-- Stroboscoopringen: vier ringen tangentieel georienteerde ellipsjes, dicht tegen de
+         platterrand met iets minder tussenruimte (7px). Ring 2 (groot, uniform) vervangt de
+         oude losse circle114-205. Ring 4 (binnenste) staat een halve stap uit fase t.o.v. de
+         andere drie, zodat de stippen tussen ring 3 in vallen. -->
+    <g id="stroboscope-rings">
+      <g id="strobe-ring-1-outer">
+        <ellipse cx="717" cy="395" rx="3" ry="1.8" fill="silver" transform="rotate(90 717 395)" />
+        <ellipse cx="716.24" cy="417.32" rx="3" ry="1.8" fill="silver" transform="rotate(93.91 716.24 417.32)" />
+        <ellipse cx="713.95" cy="439.53" rx="3" ry="1.8" fill="silver" transform="rotate(97.83 713.95 439.53)" />
+        <ellipse cx="710.16" cy="461.53" rx="3" ry="1.8" fill="silver" transform="rotate(101.74 710.16 461.53)" />
+        <ellipse cx="704.87" cy="483.22" rx="3" ry="1.8" fill="silver" transform="rotate(105.65 704.87 483.22)" />
+        <ellipse cx="698.12" cy="504.51" rx="3" ry="1.8" fill="silver" transform="rotate(109.57 698.12 504.51)" />
+        <ellipse cx="689.93" cy="525.28" rx="3" ry="1.8" fill="silver" transform="rotate(113.48 689.93 525.28)" />
+        <ellipse cx="680.34" cy="545.44" rx="3" ry="1.8" fill="silver" transform="rotate(117.39 680.34 545.44)" />
+        <ellipse cx="669.4" cy="564.9" rx="3" ry="1.8" fill="silver" transform="rotate(121.3 669.4 564.9)" />
+        <ellipse cx="657.15" cy="583.57" rx="3" ry="1.8" fill="silver" transform="rotate(125.22 657.15 583.57)" />
+        <ellipse cx="643.66" cy="601.37" rx="3" ry="1.8" fill="silver" transform="rotate(129.13 643.66 601.37)" />
+        <ellipse cx="628.98" cy="618.19" rx="3" ry="1.8" fill="silver" transform="rotate(133.04 628.98 618.19)" />
+        <ellipse cx="613.19" cy="633.98" rx="3" ry="1.8" fill="silver" transform="rotate(136.96 613.19 633.98)" />
+        <ellipse cx="596.37" cy="648.66" rx="3" ry="1.8" fill="silver" transform="rotate(140.87 596.37 648.66)" />
+        <ellipse cx="578.57" cy="662.15" rx="3" ry="1.8" fill="silver" transform="rotate(144.78 578.57 662.15)" />
+        <ellipse cx="559.9" cy="674.4" rx="3" ry="1.8" fill="silver" transform="rotate(148.7 559.9 674.4)" />
+        <ellipse cx="540.44" cy="685.34" rx="3" ry="1.8" fill="silver" transform="rotate(152.61 540.44 685.34)" />
+        <ellipse cx="520.28" cy="694.93" rx="3" ry="1.8" fill="silver" transform="rotate(156.52 520.28 694.93)" />
+        <ellipse cx="499.51" cy="703.12" rx="3" ry="1.8" fill="silver" transform="rotate(160.43 499.51 703.12)" />
+        <ellipse cx="478.22" cy="709.87" rx="3" ry="1.8" fill="silver" transform="rotate(164.35 478.22 709.87)" />
+        <ellipse cx="456.53" cy="715.16" rx="3" ry="1.8" fill="silver" transform="rotate(168.26 456.53 715.16)" />
+        <ellipse cx="434.53" cy="718.95" rx="3" ry="1.8" fill="silver" transform="rotate(172.17 434.53 718.95)" />
+        <ellipse cx="412.32" cy="721.24" rx="3" ry="1.8" fill="silver" transform="rotate(176.09 412.32 721.24)" />
+        <ellipse cx="390" cy="722" rx="3" ry="1.8" fill="silver" transform="rotate(180 390 722)" />
+        <ellipse cx="367.68" cy="721.24" rx="3" ry="1.8" fill="silver" transform="rotate(183.91 367.68 721.24)" />
+        <ellipse cx="345.47" cy="718.95" rx="3" ry="1.8" fill="silver" transform="rotate(187.83 345.47 718.95)" />
+        <ellipse cx="323.47" cy="715.16" rx="3" ry="1.8" fill="silver" transform="rotate(191.74 323.47 715.16)" />
+        <ellipse cx="301.78" cy="709.87" rx="3" ry="1.8" fill="silver" transform="rotate(195.65 301.78 709.87)" />
+        <ellipse cx="280.49" cy="703.12" rx="3" ry="1.8" fill="silver" transform="rotate(199.57 280.49 703.12)" />
+        <ellipse cx="259.72" cy="694.93" rx="3" ry="1.8" fill="silver" transform="rotate(203.48 259.72 694.93)" />
+        <ellipse cx="239.56" cy="685.34" rx="3" ry="1.8" fill="silver" transform="rotate(207.39 239.56 685.34)" />
+        <ellipse cx="220.1" cy="674.4" rx="3" ry="1.8" fill="silver" transform="rotate(211.3 220.1 674.4)" />
+        <ellipse cx="201.43" cy="662.15" rx="3" ry="1.8" fill="silver" transform="rotate(215.22 201.43 662.15)" />
+        <ellipse cx="183.63" cy="648.66" rx="3" ry="1.8" fill="silver" transform="rotate(219.13 183.63 648.66)" />
+        <ellipse cx="166.81" cy="633.98" rx="3" ry="1.8" fill="silver" transform="rotate(223.04 166.81 633.98)" />
+        <ellipse cx="151.02" cy="618.19" rx="3" ry="1.8" fill="silver" transform="rotate(226.96 151.02 618.19)" />
+        <ellipse cx="136.34" cy="601.37" rx="3" ry="1.8" fill="silver" transform="rotate(230.87 136.34 601.37)" />
+        <ellipse cx="122.85" cy="583.57" rx="3" ry="1.8" fill="silver" transform="rotate(234.78 122.85 583.57)" />
+        <ellipse cx="110.6" cy="564.9" rx="3" ry="1.8" fill="silver" transform="rotate(238.7 110.6 564.9)" />
+        <ellipse cx="99.66" cy="545.44" rx="3" ry="1.8" fill="silver" transform="rotate(242.61 99.66 545.44)" />
+        <ellipse cx="90.07" cy="525.28" rx="3" ry="1.8" fill="silver" transform="rotate(246.52 90.07 525.28)" />
+        <ellipse cx="81.88" cy="504.51" rx="3" ry="1.8" fill="silver" transform="rotate(250.43 81.88 504.51)" />
+        <ellipse cx="75.13" cy="483.22" rx="3" ry="1.8" fill="silver" transform="rotate(254.35 75.13 483.22)" />
+        <ellipse cx="69.84" cy="461.53" rx="3" ry="1.8" fill="silver" transform="rotate(258.26 69.84 461.53)" />
+        <ellipse cx="66.05" cy="439.53" rx="3" ry="1.8" fill="silver" transform="rotate(262.17 66.05 439.53)" />
+        <ellipse cx="63.76" cy="417.32" rx="3" ry="1.8" fill="silver" transform="rotate(266.09 63.76 417.32)" />
+        <ellipse cx="63" cy="395" rx="3" ry="1.8" fill="silver" transform="rotate(270 63 395)" />
+        <ellipse cx="63.76" cy="372.68" rx="3" ry="1.8" fill="silver" transform="rotate(273.91 63.76 372.68)" />
+        <ellipse cx="66.05" cy="350.47" rx="3" ry="1.8" fill="silver" transform="rotate(277.83 66.05 350.47)" />
+        <ellipse cx="69.84" cy="328.47" rx="3" ry="1.8" fill="silver" transform="rotate(281.74 69.84 328.47)" />
+        <ellipse cx="75.13" cy="306.78" rx="3" ry="1.8" fill="silver" transform="rotate(285.65 75.13 306.78)" />
+        <ellipse cx="81.88" cy="285.49" rx="3" ry="1.8" fill="silver" transform="rotate(289.57 81.88 285.49)" />
+        <ellipse cx="90.07" cy="264.72" rx="3" ry="1.8" fill="silver" transform="rotate(293.48 90.07 264.72)" />
+        <ellipse cx="99.66" cy="244.56" rx="3" ry="1.8" fill="silver" transform="rotate(297.39 99.66 244.56)" />
+        <ellipse cx="110.6" cy="225.1" rx="3" ry="1.8" fill="silver" transform="rotate(301.3 110.6 225.1)" />
+        <ellipse cx="122.85" cy="206.43" rx="3" ry="1.8" fill="silver" transform="rotate(305.22 122.85 206.43)" />
+        <ellipse cx="136.34" cy="188.63" rx="3" ry="1.8" fill="silver" transform="rotate(309.13 136.34 188.63)" />
+        <ellipse cx="151.02" cy="171.81" rx="3" ry="1.8" fill="silver" transform="rotate(313.04 151.02 171.81)" />
+        <ellipse cx="166.81" cy="156.02" rx="3" ry="1.8" fill="silver" transform="rotate(316.96 166.81 156.02)" />
+        <ellipse cx="183.63" cy="141.34" rx="3" ry="1.8" fill="silver" transform="rotate(320.87 183.63 141.34)" />
+        <ellipse cx="201.43" cy="127.85" rx="3" ry="1.8" fill="silver" transform="rotate(324.78 201.43 127.85)" />
+        <ellipse cx="220.1" cy="115.6" rx="3" ry="1.8" fill="silver" transform="rotate(328.7 220.1 115.6)" />
+        <ellipse cx="239.56" cy="104.66" rx="3" ry="1.8" fill="silver" transform="rotate(332.61 239.56 104.66)" />
+        <ellipse cx="259.72" cy="95.07" rx="3" ry="1.8" fill="silver" transform="rotate(336.52 259.72 95.07)" />
+        <ellipse cx="280.49" cy="86.88" rx="3" ry="1.8" fill="silver" transform="rotate(340.43 280.49 86.88)" />
+        <ellipse cx="301.78" cy="80.13" rx="3" ry="1.8" fill="silver" transform="rotate(344.35 301.78 80.13)" />
+        <ellipse cx="323.47" cy="74.84" rx="3" ry="1.8" fill="silver" transform="rotate(348.26 323.47 74.84)" />
+        <ellipse cx="345.47" cy="71.05" rx="3" ry="1.8" fill="silver" transform="rotate(352.17 345.47 71.05)" />
+        <ellipse cx="367.68" cy="68.76" rx="3" ry="1.8" fill="silver" transform="rotate(356.09 367.68 68.76)" />
+        <ellipse cx="390" cy="68" rx="3" ry="1.8" fill="silver" transform="rotate(360 390 68)" />
+        <ellipse cx="412.32" cy="68.76" rx="3" ry="1.8" fill="silver" transform="rotate(363.91 412.32 68.76)" />
+        <ellipse cx="434.53" cy="71.05" rx="3" ry="1.8" fill="silver" transform="rotate(367.83 434.53 71.05)" />
+        <ellipse cx="456.53" cy="74.84" rx="3" ry="1.8" fill="silver" transform="rotate(371.74 456.53 74.84)" />
+        <ellipse cx="478.22" cy="80.13" rx="3" ry="1.8" fill="silver" transform="rotate(375.65 478.22 80.13)" />
+        <ellipse cx="499.51" cy="86.88" rx="3" ry="1.8" fill="silver" transform="rotate(379.57 499.51 86.88)" />
+        <ellipse cx="520.28" cy="95.07" rx="3" ry="1.8" fill="silver" transform="rotate(383.48 520.28 95.07)" />
+        <ellipse cx="540.44" cy="104.66" rx="3" ry="1.8" fill="silver" transform="rotate(387.39 540.44 104.66)" />
+        <ellipse cx="559.9" cy="115.6" rx="3" ry="1.8" fill="silver" transform="rotate(391.3 559.9 115.6)" />
+        <ellipse cx="578.57" cy="127.85" rx="3" ry="1.8" fill="silver" transform="rotate(395.22 578.57 127.85)" />
+        <ellipse cx="596.37" cy="141.34" rx="3" ry="1.8" fill="silver" transform="rotate(399.13 596.37 141.34)" />
+        <ellipse cx="613.19" cy="156.02" rx="3" ry="1.8" fill="silver" transform="rotate(403.04 613.19 156.02)" />
+        <ellipse cx="628.98" cy="171.81" rx="3" ry="1.8" fill="silver" transform="rotate(406.96 628.98 171.81)" />
+        <ellipse cx="643.66" cy="188.63" rx="3" ry="1.8" fill="silver" transform="rotate(410.87 643.66 188.63)" />
+        <ellipse cx="657.15" cy="206.43" rx="3" ry="1.8" fill="silver" transform="rotate(414.78 657.15 206.43)" />
+        <ellipse cx="669.4" cy="225.1" rx="3" ry="1.8" fill="silver" transform="rotate(418.7 669.4 225.1)" />
+        <ellipse cx="680.34" cy="244.56" rx="3" ry="1.8" fill="silver" transform="rotate(422.61 680.34 244.56)" />
+        <ellipse cx="689.93" cy="264.72" rx="3" ry="1.8" fill="silver" transform="rotate(426.52 689.93 264.72)" />
+        <ellipse cx="698.12" cy="285.49" rx="3" ry="1.8" fill="silver" transform="rotate(430.43 698.12 285.49)" />
+        <ellipse cx="704.87" cy="306.78" rx="3" ry="1.8" fill="silver" transform="rotate(434.35 704.87 306.78)" />
+        <ellipse cx="710.16" cy="328.47" rx="3" ry="1.8" fill="silver" transform="rotate(438.26 710.16 328.47)" />
+        <ellipse cx="713.95" cy="350.47" rx="3" ry="1.8" fill="silver" transform="rotate(442.17 713.95 350.47)" />
+        <ellipse cx="716.24" cy="372.68" rx="3" ry="1.8" fill="silver" transform="rotate(446.09 716.24 372.68)" />
+      </g>
+      <g id="strobe-ring-2-primary">
+        <ellipse cx="710" cy="395" rx="4.5" ry="2.8" fill="silver" transform="rotate(90 710 395)" />
+        <ellipse cx="709.25" cy="416.84" rx="4.5" ry="2.8" fill="silver" transform="rotate(93.91 709.25 416.84)" />
+        <ellipse cx="707.02" cy="438.57" rx="4.5" ry="2.8" fill="silver" transform="rotate(97.83 707.02 438.57)" />
+        <ellipse cx="703.31" cy="460.11" rx="4.5" ry="2.8" fill="silver" transform="rotate(101.74 703.31 460.11)" />
+        <ellipse cx="698.13" cy="481.33" rx="4.5" ry="2.8" fill="silver" transform="rotate(105.65 698.13 481.33)" />
+        <ellipse cx="691.52" cy="502.16" rx="4.5" ry="2.8" fill="silver" transform="rotate(109.57 691.52 502.16)" />
+        <ellipse cx="683.51" cy="522.49" rx="4.5" ry="2.8" fill="silver" transform="rotate(113.48 683.51 522.49)" />
+        <ellipse cx="674.12" cy="542.22" rx="4.5" ry="2.8" fill="silver" transform="rotate(117.39 674.12 542.22)" />
+        <ellipse cx="663.41" cy="561.27" rx="4.5" ry="2.8" fill="silver" transform="rotate(121.3 663.41 561.27)" />
+        <ellipse cx="651.43" cy="579.54" rx="4.5" ry="2.8" fill="silver" transform="rotate(125.22 651.43 579.54)" />
+        <ellipse cx="638.23" cy="596.95" rx="4.5" ry="2.8" fill="silver" transform="rotate(129.13 638.23 596.95)" />
+        <ellipse cx="623.87" cy="613.42" rx="4.5" ry="2.8" fill="silver" transform="rotate(133.04 623.87 613.42)" />
+        <ellipse cx="608.42" cy="628.87" rx="4.5" ry="2.8" fill="silver" transform="rotate(136.96 608.42 628.87)" />
+        <ellipse cx="591.95" cy="643.23" rx="4.5" ry="2.8" fill="silver" transform="rotate(140.87 591.95 643.23)" />
+        <ellipse cx="574.54" cy="656.43" rx="4.5" ry="2.8" fill="silver" transform="rotate(144.78 574.54 656.43)" />
+        <ellipse cx="556.27" cy="668.41" rx="4.5" ry="2.8" fill="silver" transform="rotate(148.7 556.27 668.41)" />
+        <ellipse cx="537.22" cy="679.12" rx="4.5" ry="2.8" fill="silver" transform="rotate(152.61 537.22 679.12)" />
+        <ellipse cx="517.49" cy="688.51" rx="4.5" ry="2.8" fill="silver" transform="rotate(156.52 517.49 688.51)" />
+        <ellipse cx="497.16" cy="696.52" rx="4.5" ry="2.8" fill="silver" transform="rotate(160.43 497.16 696.52)" />
+        <ellipse cx="476.33" cy="703.13" rx="4.5" ry="2.8" fill="silver" transform="rotate(164.35 476.33 703.13)" />
+        <ellipse cx="455.11" cy="708.31" rx="4.5" ry="2.8" fill="silver" transform="rotate(168.26 455.11 708.31)" />
+        <ellipse cx="433.57" cy="712.02" rx="4.5" ry="2.8" fill="silver" transform="rotate(172.17 433.57 712.02)" />
+        <ellipse cx="411.84" cy="714.25" rx="4.5" ry="2.8" fill="silver" transform="rotate(176.09 411.84 714.25)" />
+        <ellipse cx="390" cy="715" rx="4.5" ry="2.8" fill="silver" transform="rotate(180 390 715)" />
+        <ellipse cx="368.16" cy="714.25" rx="4.5" ry="2.8" fill="silver" transform="rotate(183.91 368.16 714.25)" />
+        <ellipse cx="346.43" cy="712.02" rx="4.5" ry="2.8" fill="silver" transform="rotate(187.83 346.43 712.02)" />
+        <ellipse cx="324.89" cy="708.31" rx="4.5" ry="2.8" fill="silver" transform="rotate(191.74 324.89 708.31)" />
+        <ellipse cx="303.67" cy="703.13" rx="4.5" ry="2.8" fill="silver" transform="rotate(195.65 303.67 703.13)" />
+        <ellipse cx="282.84" cy="696.52" rx="4.5" ry="2.8" fill="silver" transform="rotate(199.57 282.84 696.52)" />
+        <ellipse cx="262.51" cy="688.51" rx="4.5" ry="2.8" fill="silver" transform="rotate(203.48 262.51 688.51)" />
+        <ellipse cx="242.78" cy="679.12" rx="4.5" ry="2.8" fill="silver" transform="rotate(207.39 242.78 679.12)" />
+        <ellipse cx="223.73" cy="668.41" rx="4.5" ry="2.8" fill="silver" transform="rotate(211.3 223.73 668.41)" />
+        <ellipse cx="205.46" cy="656.43" rx="4.5" ry="2.8" fill="silver" transform="rotate(215.22 205.46 656.43)" />
+        <ellipse cx="188.05" cy="643.23" rx="4.5" ry="2.8" fill="silver" transform="rotate(219.13 188.05 643.23)" />
+        <ellipse cx="171.58" cy="628.87" rx="4.5" ry="2.8" fill="silver" transform="rotate(223.04 171.58 628.87)" />
+        <ellipse cx="156.13" cy="613.42" rx="4.5" ry="2.8" fill="silver" transform="rotate(226.96 156.13 613.42)" />
+        <ellipse cx="141.77" cy="596.95" rx="4.5" ry="2.8" fill="silver" transform="rotate(230.87 141.77 596.95)" />
+        <ellipse cx="128.57" cy="579.54" rx="4.5" ry="2.8" fill="silver" transform="rotate(234.78 128.57 579.54)" />
+        <ellipse cx="116.59" cy="561.27" rx="4.5" ry="2.8" fill="silver" transform="rotate(238.7 116.59 561.27)" />
+        <ellipse cx="105.88" cy="542.22" rx="4.5" ry="2.8" fill="silver" transform="rotate(242.61 105.88 542.22)" />
+        <ellipse cx="96.49" cy="522.49" rx="4.5" ry="2.8" fill="silver" transform="rotate(246.52 96.49 522.49)" />
+        <ellipse cx="88.48" cy="502.16" rx="4.5" ry="2.8" fill="silver" transform="rotate(250.43 88.48 502.16)" />
+        <ellipse cx="81.87" cy="481.33" rx="4.5" ry="2.8" fill="silver" transform="rotate(254.35 81.87 481.33)" />
+        <ellipse cx="76.69" cy="460.11" rx="4.5" ry="2.8" fill="silver" transform="rotate(258.26 76.69 460.11)" />
+        <ellipse cx="72.98" cy="438.57" rx="4.5" ry="2.8" fill="silver" transform="rotate(262.17 72.98 438.57)" />
+        <ellipse cx="70.75" cy="416.84" rx="4.5" ry="2.8" fill="silver" transform="rotate(266.09 70.75 416.84)" />
+        <ellipse cx="70" cy="395" rx="4.5" ry="2.8" fill="silver" transform="rotate(270 70 395)" />
+        <ellipse cx="70.75" cy="373.16" rx="4.5" ry="2.8" fill="silver" transform="rotate(273.91 70.75 373.16)" />
+        <ellipse cx="72.98" cy="351.43" rx="4.5" ry="2.8" fill="silver" transform="rotate(277.83 72.98 351.43)" />
+        <ellipse cx="76.69" cy="329.89" rx="4.5" ry="2.8" fill="silver" transform="rotate(281.74 76.69 329.89)" />
+        <ellipse cx="81.87" cy="308.67" rx="4.5" ry="2.8" fill="silver" transform="rotate(285.65 81.87 308.67)" />
+        <ellipse cx="88.48" cy="287.84" rx="4.5" ry="2.8" fill="silver" transform="rotate(289.57 88.48 287.84)" />
+        <ellipse cx="96.49" cy="267.51" rx="4.5" ry="2.8" fill="silver" transform="rotate(293.48 96.49 267.51)" />
+        <ellipse cx="105.88" cy="247.78" rx="4.5" ry="2.8" fill="silver" transform="rotate(297.39 105.88 247.78)" />
+        <ellipse cx="116.59" cy="228.73" rx="4.5" ry="2.8" fill="silver" transform="rotate(301.3 116.59 228.73)" />
+        <ellipse cx="128.57" cy="210.46" rx="4.5" ry="2.8" fill="silver" transform="rotate(305.22 128.57 210.46)" />
+        <ellipse cx="141.77" cy="193.05" rx="4.5" ry="2.8" fill="silver" transform="rotate(309.13 141.77 193.05)" />
+        <ellipse cx="156.13" cy="176.58" rx="4.5" ry="2.8" fill="silver" transform="rotate(313.04 156.13 176.58)" />
+        <ellipse cx="171.58" cy="161.13" rx="4.5" ry="2.8" fill="silver" transform="rotate(316.96 171.58 161.13)" />
+        <ellipse cx="188.05" cy="146.77" rx="4.5" ry="2.8" fill="silver" transform="rotate(320.87 188.05 146.77)" />
+        <ellipse cx="205.46" cy="133.57" rx="4.5" ry="2.8" fill="silver" transform="rotate(324.78 205.46 133.57)" />
+        <ellipse cx="223.73" cy="121.59" rx="4.5" ry="2.8" fill="silver" transform="rotate(328.7 223.73 121.59)" />
+        <ellipse cx="242.78" cy="110.88" rx="4.5" ry="2.8" fill="silver" transform="rotate(332.61 242.78 110.88)" />
+        <ellipse cx="262.51" cy="101.49" rx="4.5" ry="2.8" fill="silver" transform="rotate(336.52 262.51 101.49)" />
+        <ellipse cx="282.84" cy="93.48" rx="4.5" ry="2.8" fill="silver" transform="rotate(340.43 282.84 93.48)" />
+        <ellipse cx="303.67" cy="86.87" rx="4.5" ry="2.8" fill="silver" transform="rotate(344.35 303.67 86.87)" />
+        <ellipse cx="324.89" cy="81.69" rx="4.5" ry="2.8" fill="silver" transform="rotate(348.26 324.89 81.69)" />
+        <ellipse cx="346.43" cy="77.98" rx="4.5" ry="2.8" fill="silver" transform="rotate(352.17 346.43 77.98)" />
+        <ellipse cx="368.16" cy="75.75" rx="4.5" ry="2.8" fill="silver" transform="rotate(356.09 368.16 75.75)" />
+        <ellipse cx="390" cy="75" rx="4.5" ry="2.8" fill="silver" transform="rotate(360 390 75)" />
+        <ellipse cx="411.84" cy="75.75" rx="4.5" ry="2.8" fill="silver" transform="rotate(363.91 411.84 75.75)" />
+        <ellipse cx="433.57" cy="77.98" rx="4.5" ry="2.8" fill="silver" transform="rotate(367.83 433.57 77.98)" />
+        <ellipse cx="455.11" cy="81.69" rx="4.5" ry="2.8" fill="silver" transform="rotate(371.74 455.11 81.69)" />
+        <ellipse cx="476.33" cy="86.87" rx="4.5" ry="2.8" fill="silver" transform="rotate(375.65 476.33 86.87)" />
+        <ellipse cx="497.16" cy="93.48" rx="4.5" ry="2.8" fill="silver" transform="rotate(379.57 497.16 93.48)" />
+        <ellipse cx="517.49" cy="101.49" rx="4.5" ry="2.8" fill="silver" transform="rotate(383.48 517.49 101.49)" />
+        <ellipse cx="537.22" cy="110.88" rx="4.5" ry="2.8" fill="silver" transform="rotate(387.39 537.22 110.88)" />
+        <ellipse cx="556.27" cy="121.59" rx="4.5" ry="2.8" fill="silver" transform="rotate(391.3 556.27 121.59)" />
+        <ellipse cx="574.54" cy="133.57" rx="4.5" ry="2.8" fill="silver" transform="rotate(395.22 574.54 133.57)" />
+        <ellipse cx="591.95" cy="146.77" rx="4.5" ry="2.8" fill="silver" transform="rotate(399.13 591.95 146.77)" />
+        <ellipse cx="608.42" cy="161.13" rx="4.5" ry="2.8" fill="silver" transform="rotate(403.04 608.42 161.13)" />
+        <ellipse cx="623.87" cy="176.58" rx="4.5" ry="2.8" fill="silver" transform="rotate(406.96 623.87 176.58)" />
+        <ellipse cx="638.23" cy="193.05" rx="4.5" ry="2.8" fill="silver" transform="rotate(410.87 638.23 193.05)" />
+        <ellipse cx="651.43" cy="210.46" rx="4.5" ry="2.8" fill="silver" transform="rotate(414.78 651.43 210.46)" />
+        <ellipse cx="663.41" cy="228.73" rx="4.5" ry="2.8" fill="silver" transform="rotate(418.7 663.41 228.73)" />
+        <ellipse cx="674.12" cy="247.78" rx="4.5" ry="2.8" fill="silver" transform="rotate(422.61 674.12 247.78)" />
+        <ellipse cx="683.51" cy="267.51" rx="4.5" ry="2.8" fill="silver" transform="rotate(426.52 683.51 267.51)" />
+        <ellipse cx="691.52" cy="287.84" rx="4.5" ry="2.8" fill="silver" transform="rotate(430.43 691.52 287.84)" />
+        <ellipse cx="698.13" cy="308.67" rx="4.5" ry="2.8" fill="silver" transform="rotate(434.35 698.13 308.67)" />
+        <ellipse cx="703.31" cy="329.89" rx="4.5" ry="2.8" fill="silver" transform="rotate(438.26 703.31 329.89)" />
+        <ellipse cx="707.02" cy="351.43" rx="4.5" ry="2.8" fill="silver" transform="rotate(442.17 707.02 351.43)" />
+        <ellipse cx="709.25" cy="373.16" rx="4.5" ry="2.8" fill="silver" transform="rotate(446.09 709.25 373.16)" />
+      </g>
+      <g id="strobe-ring-3">
+        <ellipse cx="703" cy="395" rx="3" ry="1.8" fill="silver" transform="rotate(90 703 395)" />
+        <ellipse cx="702.27" cy="416.36" rx="3" ry="1.8" fill="silver" transform="rotate(93.91 702.27 416.36)" />
+        <ellipse cx="700.08" cy="437.62" rx="3" ry="1.8" fill="silver" transform="rotate(97.83 700.08 437.62)" />
+        <ellipse cx="696.45" cy="458.68" rx="3" ry="1.8" fill="silver" transform="rotate(101.74 696.45 458.68)" />
+        <ellipse cx="691.39" cy="479.45" rx="3" ry="1.8" fill="silver" transform="rotate(105.65 691.39 479.45)" />
+        <ellipse cx="684.93" cy="499.82" rx="3" ry="1.8" fill="silver" transform="rotate(109.57 684.93 499.82)" />
+        <ellipse cx="677.09" cy="519.7" rx="3" ry="1.8" fill="silver" transform="rotate(113.48 677.09 519.7)" />
+        <ellipse cx="667.91" cy="539" rx="3" ry="1.8" fill="silver" transform="rotate(117.39 667.91 539)" />
+        <ellipse cx="657.43" cy="557.63" rx="3" ry="1.8" fill="silver" transform="rotate(121.3 657.43 557.63)" />
+        <ellipse cx="645.71" cy="575.5" rx="3" ry="1.8" fill="silver" transform="rotate(125.22 645.71 575.5)" />
+        <ellipse cx="632.8" cy="592.53" rx="3" ry="1.8" fill="silver" transform="rotate(129.13 632.8 592.53)" />
+        <ellipse cx="618.75" cy="608.64" rx="3" ry="1.8" fill="silver" transform="rotate(133.04 618.75 608.64)" />
+        <ellipse cx="603.64" cy="623.75" rx="3" ry="1.8" fill="silver" transform="rotate(136.96 603.64 623.75)" />
+        <ellipse cx="587.53" cy="637.8" rx="3" ry="1.8" fill="silver" transform="rotate(140.87 587.53 637.8)" />
+        <ellipse cx="570.5" cy="650.71" rx="3" ry="1.8" fill="silver" transform="rotate(144.78 570.5 650.71)" />
+        <ellipse cx="552.63" cy="662.43" rx="3" ry="1.8" fill="silver" transform="rotate(148.7 552.63 662.43)" />
+        <ellipse cx="534" cy="672.91" rx="3" ry="1.8" fill="silver" transform="rotate(152.61 534 672.91)" />
+        <ellipse cx="514.7" cy="682.09" rx="3" ry="1.8" fill="silver" transform="rotate(156.52 514.7 682.09)" />
+        <ellipse cx="494.82" cy="689.93" rx="3" ry="1.8" fill="silver" transform="rotate(160.43 494.82 689.93)" />
+        <ellipse cx="474.45" cy="696.39" rx="3" ry="1.8" fill="silver" transform="rotate(164.35 474.45 696.39)" />
+        <ellipse cx="453.68" cy="701.45" rx="3" ry="1.8" fill="silver" transform="rotate(168.26 453.68 701.45)" />
+        <ellipse cx="432.62" cy="705.08" rx="3" ry="1.8" fill="silver" transform="rotate(172.17 432.62 705.08)" />
+        <ellipse cx="411.36" cy="707.27" rx="3" ry="1.8" fill="silver" transform="rotate(176.09 411.36 707.27)" />
+        <ellipse cx="390" cy="708" rx="3" ry="1.8" fill="silver" transform="rotate(180 390 708)" />
+        <ellipse cx="368.64" cy="707.27" rx="3" ry="1.8" fill="silver" transform="rotate(183.91 368.64 707.27)" />
+        <ellipse cx="347.38" cy="705.08" rx="3" ry="1.8" fill="silver" transform="rotate(187.83 347.38 705.08)" />
+        <ellipse cx="326.32" cy="701.45" rx="3" ry="1.8" fill="silver" transform="rotate(191.74 326.32 701.45)" />
+        <ellipse cx="305.55" cy="696.39" rx="3" ry="1.8" fill="silver" transform="rotate(195.65 305.55 696.39)" />
+        <ellipse cx="285.18" cy="689.93" rx="3" ry="1.8" fill="silver" transform="rotate(199.57 285.18 689.93)" />
+        <ellipse cx="265.3" cy="682.09" rx="3" ry="1.8" fill="silver" transform="rotate(203.48 265.3 682.09)" />
+        <ellipse cx="246" cy="672.91" rx="3" ry="1.8" fill="silver" transform="rotate(207.39 246 672.91)" />
+        <ellipse cx="227.37" cy="662.43" rx="3" ry="1.8" fill="silver" transform="rotate(211.3 227.37 662.43)" />
+        <ellipse cx="209.5" cy="650.71" rx="3" ry="1.8" fill="silver" transform="rotate(215.22 209.5 650.71)" />
+        <ellipse cx="192.47" cy="637.8" rx="3" ry="1.8" fill="silver" transform="rotate(219.13 192.47 637.8)" />
+        <ellipse cx="176.36" cy="623.75" rx="3" ry="1.8" fill="silver" transform="rotate(223.04 176.36 623.75)" />
+        <ellipse cx="161.25" cy="608.64" rx="3" ry="1.8" fill="silver" transform="rotate(226.96 161.25 608.64)" />
+        <ellipse cx="147.2" cy="592.53" rx="3" ry="1.8" fill="silver" transform="rotate(230.87 147.2 592.53)" />
+        <ellipse cx="134.29" cy="575.5" rx="3" ry="1.8" fill="silver" transform="rotate(234.78 134.29 575.5)" />
+        <ellipse cx="122.57" cy="557.63" rx="3" ry="1.8" fill="silver" transform="rotate(238.7 122.57 557.63)" />
+        <ellipse cx="112.09" cy="539" rx="3" ry="1.8" fill="silver" transform="rotate(242.61 112.09 539)" />
+        <ellipse cx="102.91" cy="519.7" rx="3" ry="1.8" fill="silver" transform="rotate(246.52 102.91 519.7)" />
+        <ellipse cx="95.07" cy="499.82" rx="3" ry="1.8" fill="silver" transform="rotate(250.43 95.07 499.82)" />
+        <ellipse cx="88.61" cy="479.45" rx="3" ry="1.8" fill="silver" transform="rotate(254.35 88.61 479.45)" />
+        <ellipse cx="83.55" cy="458.68" rx="3" ry="1.8" fill="silver" transform="rotate(258.26 83.55 458.68)" />
+        <ellipse cx="79.92" cy="437.62" rx="3" ry="1.8" fill="silver" transform="rotate(262.17 79.92 437.62)" />
+        <ellipse cx="77.73" cy="416.36" rx="3" ry="1.8" fill="silver" transform="rotate(266.09 77.73 416.36)" />
+        <ellipse cx="77" cy="395" rx="3" ry="1.8" fill="silver" transform="rotate(270 77 395)" />
+        <ellipse cx="77.73" cy="373.64" rx="3" ry="1.8" fill="silver" transform="rotate(273.91 77.73 373.64)" />
+        <ellipse cx="79.92" cy="352.38" rx="3" ry="1.8" fill="silver" transform="rotate(277.83 79.92 352.38)" />
+        <ellipse cx="83.55" cy="331.32" rx="3" ry="1.8" fill="silver" transform="rotate(281.74 83.55 331.32)" />
+        <ellipse cx="88.61" cy="310.55" rx="3" ry="1.8" fill="silver" transform="rotate(285.65 88.61 310.55)" />
+        <ellipse cx="95.07" cy="290.18" rx="3" ry="1.8" fill="silver" transform="rotate(289.57 95.07 290.18)" />
+        <ellipse cx="102.91" cy="270.3" rx="3" ry="1.8" fill="silver" transform="rotate(293.48 102.91 270.3)" />
+        <ellipse cx="112.09" cy="251" rx="3" ry="1.8" fill="silver" transform="rotate(297.39 112.09 251)" />
+        <ellipse cx="122.57" cy="232.37" rx="3" ry="1.8" fill="silver" transform="rotate(301.3 122.57 232.37)" />
+        <ellipse cx="134.29" cy="214.5" rx="3" ry="1.8" fill="silver" transform="rotate(305.22 134.29 214.5)" />
+        <ellipse cx="147.2" cy="197.47" rx="3" ry="1.8" fill="silver" transform="rotate(309.13 147.2 197.47)" />
+        <ellipse cx="161.25" cy="181.36" rx="3" ry="1.8" fill="silver" transform="rotate(313.04 161.25 181.36)" />
+        <ellipse cx="176.36" cy="166.25" rx="3" ry="1.8" fill="silver" transform="rotate(316.96 176.36 166.25)" />
+        <ellipse cx="192.47" cy="152.2" rx="3" ry="1.8" fill="silver" transform="rotate(320.87 192.47 152.2)" />
+        <ellipse cx="209.5" cy="139.29" rx="3" ry="1.8" fill="silver" transform="rotate(324.78 209.5 139.29)" />
+        <ellipse cx="227.37" cy="127.57" rx="3" ry="1.8" fill="silver" transform="rotate(328.7 227.37 127.57)" />
+        <ellipse cx="246" cy="117.09" rx="3" ry="1.8" fill="silver" transform="rotate(332.61 246 117.09)" />
+        <ellipse cx="265.3" cy="107.91" rx="3" ry="1.8" fill="silver" transform="rotate(336.52 265.3 107.91)" />
+        <ellipse cx="285.18" cy="100.07" rx="3" ry="1.8" fill="silver" transform="rotate(340.43 285.18 100.07)" />
+        <ellipse cx="305.55" cy="93.61" rx="3" ry="1.8" fill="silver" transform="rotate(344.35 305.55 93.61)" />
+        <ellipse cx="326.32" cy="88.55" rx="3" ry="1.8" fill="silver" transform="rotate(348.26 326.32 88.55)" />
+        <ellipse cx="347.38" cy="84.92" rx="3" ry="1.8" fill="silver" transform="rotate(352.17 347.38 84.92)" />
+        <ellipse cx="368.64" cy="82.73" rx="3" ry="1.8" fill="silver" transform="rotate(356.09 368.64 82.73)" />
+        <ellipse cx="390" cy="82" rx="3" ry="1.8" fill="silver" transform="rotate(360 390 82)" />
+        <ellipse cx="411.36" cy="82.73" rx="3" ry="1.8" fill="silver" transform="rotate(363.91 411.36 82.73)" />
+        <ellipse cx="432.62" cy="84.92" rx="3" ry="1.8" fill="silver" transform="rotate(367.83 432.62 84.92)" />
+        <ellipse cx="453.68" cy="88.55" rx="3" ry="1.8" fill="silver" transform="rotate(371.74 453.68 88.55)" />
+        <ellipse cx="474.45" cy="93.61" rx="3" ry="1.8" fill="silver" transform="rotate(375.65 474.45 93.61)" />
+        <ellipse cx="494.82" cy="100.07" rx="3" ry="1.8" fill="silver" transform="rotate(379.57 494.82 100.07)" />
+        <ellipse cx="514.7" cy="107.91" rx="3" ry="1.8" fill="silver" transform="rotate(383.48 514.7 107.91)" />
+        <ellipse cx="534" cy="117.09" rx="3" ry="1.8" fill="silver" transform="rotate(387.39 534 117.09)" />
+        <ellipse cx="552.63" cy="127.57" rx="3" ry="1.8" fill="silver" transform="rotate(391.3 552.63 127.57)" />
+        <ellipse cx="570.5" cy="139.29" rx="3" ry="1.8" fill="silver" transform="rotate(395.22 570.5 139.29)" />
+        <ellipse cx="587.53" cy="152.2" rx="3" ry="1.8" fill="silver" transform="rotate(399.13 587.53 152.2)" />
+        <ellipse cx="603.64" cy="166.25" rx="3" ry="1.8" fill="silver" transform="rotate(403.04 603.64 166.25)" />
+        <ellipse cx="618.75" cy="181.36" rx="3" ry="1.8" fill="silver" transform="rotate(406.96 618.75 181.36)" />
+        <ellipse cx="632.8" cy="197.47" rx="3" ry="1.8" fill="silver" transform="rotate(410.87 632.8 197.47)" />
+        <ellipse cx="645.71" cy="214.5" rx="3" ry="1.8" fill="silver" transform="rotate(414.78 645.71 214.5)" />
+        <ellipse cx="657.43" cy="232.37" rx="3" ry="1.8" fill="silver" transform="rotate(418.7 657.43 232.37)" />
+        <ellipse cx="667.91" cy="251" rx="3" ry="1.8" fill="silver" transform="rotate(422.61 667.91 251)" />
+        <ellipse cx="677.09" cy="270.3" rx="3" ry="1.8" fill="silver" transform="rotate(426.52 677.09 270.3)" />
+        <ellipse cx="684.93" cy="290.18" rx="3" ry="1.8" fill="silver" transform="rotate(430.43 684.93 290.18)" />
+        <ellipse cx="691.39" cy="310.55" rx="3" ry="1.8" fill="silver" transform="rotate(434.35 691.39 310.55)" />
+        <ellipse cx="696.45" cy="331.32" rx="3" ry="1.8" fill="silver" transform="rotate(438.26 696.45 331.32)" />
+        <ellipse cx="700.08" cy="352.38" rx="3" ry="1.8" fill="silver" transform="rotate(442.17 700.08 352.38)" />
+        <ellipse cx="702.27" cy="373.64" rx="3" ry="1.8" fill="silver" transform="rotate(446.09 702.27 373.64)" />
+      </g>
+      <g id="strobe-ring-4-inner">
+        <ellipse cx="695.82" cy="405.45" rx="3" ry="1.8" fill="silver" transform="rotate(91.96 695.82 405.45)" />
+        <ellipse cx="694.4" cy="426.29" rx="3" ry="1.8" fill="silver" transform="rotate(95.87 694.4 426.29)" />
+        <ellipse cx="691.55" cy="446.99" rx="3" ry="1.8" fill="silver" transform="rotate(99.78 691.55 446.99)" />
+        <ellipse cx="687.3" cy="467.45" rx="3" ry="1.8" fill="silver" transform="rotate(103.7 687.3 467.45)" />
+        <ellipse cx="681.66" cy="487.57" rx="3" ry="1.8" fill="silver" transform="rotate(107.61 681.66 487.57)" />
+        <ellipse cx="674.67" cy="507.26" rx="3" ry="1.8" fill="silver" transform="rotate(111.52 674.67 507.26)" />
+        <ellipse cx="666.34" cy="526.42" rx="3" ry="1.8" fill="silver" transform="rotate(115.43 666.34 526.42)" />
+        <ellipse cx="656.73" cy="544.97" rx="3" ry="1.8" fill="silver" transform="rotate(119.35 656.73 544.97)" />
+        <ellipse cx="645.87" cy="562.83" rx="3" ry="1.8" fill="silver" transform="rotate(123.26 645.87 562.83)" />
+        <ellipse cx="633.82" cy="579.9" rx="3" ry="1.8" fill="silver" transform="rotate(127.17 633.82 579.9)" />
+        <ellipse cx="620.64" cy="596.1" rx="3" ry="1.8" fill="silver" transform="rotate(131.09 620.64 596.1)" />
+        <ellipse cx="606.37" cy="611.37" rx="3" ry="1.8" fill="silver" transform="rotate(135 606.37 611.37)" />
+        <ellipse cx="591.1" cy="625.64" rx="3" ry="1.8" fill="silver" transform="rotate(138.91 591.1 625.64)" />
+        <ellipse cx="574.9" cy="638.82" rx="3" ry="1.8" fill="silver" transform="rotate(142.83 574.9 638.82)" />
+        <ellipse cx="557.83" cy="650.87" rx="3" ry="1.8" fill="silver" transform="rotate(146.74 557.83 650.87)" />
+        <ellipse cx="539.97" cy="661.73" rx="3" ry="1.8" fill="silver" transform="rotate(150.65 539.97 661.73)" />
+        <ellipse cx="521.42" cy="671.34" rx="3" ry="1.8" fill="silver" transform="rotate(154.57 521.42 671.34)" />
+        <ellipse cx="502.26" cy="679.67" rx="3" ry="1.8" fill="silver" transform="rotate(158.48 502.26 679.67)" />
+        <ellipse cx="482.57" cy="686.66" rx="3" ry="1.8" fill="silver" transform="rotate(162.39 482.57 686.66)" />
+        <ellipse cx="462.45" cy="692.3" rx="3" ry="1.8" fill="silver" transform="rotate(166.3 462.45 692.3)" />
+        <ellipse cx="441.99" cy="696.55" rx="3" ry="1.8" fill="silver" transform="rotate(170.22 441.99 696.55)" />
+        <ellipse cx="421.29" cy="699.4" rx="3" ry="1.8" fill="silver" transform="rotate(174.13 421.29 699.4)" />
+        <ellipse cx="400.45" cy="700.82" rx="3" ry="1.8" fill="silver" transform="rotate(178.04 400.45 700.82)" />
+        <ellipse cx="379.55" cy="700.82" rx="3" ry="1.8" fill="silver" transform="rotate(181.96 379.55 700.82)" />
+        <ellipse cx="358.71" cy="699.4" rx="3" ry="1.8" fill="silver" transform="rotate(185.87 358.71 699.4)" />
+        <ellipse cx="338.01" cy="696.55" rx="3" ry="1.8" fill="silver" transform="rotate(189.78 338.01 696.55)" />
+        <ellipse cx="317.55" cy="692.3" rx="3" ry="1.8" fill="silver" transform="rotate(193.7 317.55 692.3)" />
+        <ellipse cx="297.43" cy="686.66" rx="3" ry="1.8" fill="silver" transform="rotate(197.61 297.43 686.66)" />
+        <ellipse cx="277.74" cy="679.67" rx="3" ry="1.8" fill="silver" transform="rotate(201.52 277.74 679.67)" />
+        <ellipse cx="258.58" cy="671.34" rx="3" ry="1.8" fill="silver" transform="rotate(205.43 258.58 671.34)" />
+        <ellipse cx="240.03" cy="661.73" rx="3" ry="1.8" fill="silver" transform="rotate(209.35 240.03 661.73)" />
+        <ellipse cx="222.17" cy="650.87" rx="3" ry="1.8" fill="silver" transform="rotate(213.26 222.17 650.87)" />
+        <ellipse cx="205.1" cy="638.82" rx="3" ry="1.8" fill="silver" transform="rotate(217.17 205.1 638.82)" />
+        <ellipse cx="188.9" cy="625.64" rx="3" ry="1.8" fill="silver" transform="rotate(221.09 188.9 625.64)" />
+        <ellipse cx="173.63" cy="611.37" rx="3" ry="1.8" fill="silver" transform="rotate(225 173.63 611.37)" />
+        <ellipse cx="159.36" cy="596.1" rx="3" ry="1.8" fill="silver" transform="rotate(228.91 159.36 596.1)" />
+        <ellipse cx="146.18" cy="579.9" rx="3" ry="1.8" fill="silver" transform="rotate(232.83 146.18 579.9)" />
+        <ellipse cx="134.13" cy="562.83" rx="3" ry="1.8" fill="silver" transform="rotate(236.74 134.13 562.83)" />
+        <ellipse cx="123.27" cy="544.97" rx="3" ry="1.8" fill="silver" transform="rotate(240.65 123.27 544.97)" />
+        <ellipse cx="113.66" cy="526.42" rx="3" ry="1.8" fill="silver" transform="rotate(244.57 113.66 526.42)" />
+        <ellipse cx="105.33" cy="507.26" rx="3" ry="1.8" fill="silver" transform="rotate(248.48 105.33 507.26)" />
+        <ellipse cx="98.34" cy="487.57" rx="3" ry="1.8" fill="silver" transform="rotate(252.39 98.34 487.57)" />
+        <ellipse cx="92.7" cy="467.45" rx="3" ry="1.8" fill="silver" transform="rotate(256.3 92.7 467.45)" />
+        <ellipse cx="88.45" cy="446.99" rx="3" ry="1.8" fill="silver" transform="rotate(260.22 88.45 446.99)" />
+        <ellipse cx="85.6" cy="426.29" rx="3" ry="1.8" fill="silver" transform="rotate(264.13 85.6 426.29)" />
+        <ellipse cx="84.18" cy="405.45" rx="3" ry="1.8" fill="silver" transform="rotate(268.04 84.18 405.45)" />
+        <ellipse cx="84.18" cy="384.55" rx="3" ry="1.8" fill="silver" transform="rotate(271.96 84.18 384.55)" />
+        <ellipse cx="85.6" cy="363.71" rx="3" ry="1.8" fill="silver" transform="rotate(275.87 85.6 363.71)" />
+        <ellipse cx="88.45" cy="343.01" rx="3" ry="1.8" fill="silver" transform="rotate(279.78 88.45 343.01)" />
+        <ellipse cx="92.7" cy="322.55" rx="3" ry="1.8" fill="silver" transform="rotate(283.7 92.7 322.55)" />
+        <ellipse cx="98.34" cy="302.43" rx="3" ry="1.8" fill="silver" transform="rotate(287.61 98.34 302.43)" />
+        <ellipse cx="105.33" cy="282.74" rx="3" ry="1.8" fill="silver" transform="rotate(291.52 105.33 282.74)" />
+        <ellipse cx="113.66" cy="263.58" rx="3" ry="1.8" fill="silver" transform="rotate(295.43 113.66 263.58)" />
+        <ellipse cx="123.27" cy="245.03" rx="3" ry="1.8" fill="silver" transform="rotate(299.35 123.27 245.03)" />
+        <ellipse cx="134.13" cy="227.17" rx="3" ry="1.8" fill="silver" transform="rotate(303.26 134.13 227.17)" />
+        <ellipse cx="146.18" cy="210.1" rx="3" ry="1.8" fill="silver" transform="rotate(307.17 146.18 210.1)" />
+        <ellipse cx="159.36" cy="193.9" rx="3" ry="1.8" fill="silver" transform="rotate(311.09 159.36 193.9)" />
+        <ellipse cx="173.63" cy="178.63" rx="3" ry="1.8" fill="silver" transform="rotate(315 173.63 178.63)" />
+        <ellipse cx="188.9" cy="164.36" rx="3" ry="1.8" fill="silver" transform="rotate(318.91 188.9 164.36)" />
+        <ellipse cx="205.1" cy="151.18" rx="3" ry="1.8" fill="silver" transform="rotate(322.83 205.1 151.18)" />
+        <ellipse cx="222.17" cy="139.13" rx="3" ry="1.8" fill="silver" transform="rotate(326.74 222.17 139.13)" />
+        <ellipse cx="240.03" cy="128.27" rx="3" ry="1.8" fill="silver" transform="rotate(330.65 240.03 128.27)" />
+        <ellipse cx="258.58" cy="118.66" rx="3" ry="1.8" fill="silver" transform="rotate(334.57 258.58 118.66)" />
+        <ellipse cx="277.74" cy="110.33" rx="3" ry="1.8" fill="silver" transform="rotate(338.48 277.74 110.33)" />
+        <ellipse cx="297.43" cy="103.34" rx="3" ry="1.8" fill="silver" transform="rotate(342.39 297.43 103.34)" />
+        <ellipse cx="317.55" cy="97.7" rx="3" ry="1.8" fill="silver" transform="rotate(346.3 317.55 97.7)" />
+        <ellipse cx="338.01" cy="93.45" rx="3" ry="1.8" fill="silver" transform="rotate(350.22 338.01 93.45)" />
+        <ellipse cx="358.71" cy="90.6" rx="3" ry="1.8" fill="silver" transform="rotate(354.13 358.71 90.6)" />
+        <ellipse cx="379.55" cy="89.18" rx="3" ry="1.8" fill="silver" transform="rotate(358.04 379.55 89.18)" />
+        <ellipse cx="400.45" cy="89.18" rx="3" ry="1.8" fill="silver" transform="rotate(361.96 400.45 89.18)" />
+        <ellipse cx="421.29" cy="90.6" rx="3" ry="1.8" fill="silver" transform="rotate(365.87 421.29 90.6)" />
+        <ellipse cx="441.99" cy="93.45" rx="3" ry="1.8" fill="silver" transform="rotate(369.78 441.99 93.45)" />
+        <ellipse cx="462.45" cy="97.7" rx="3" ry="1.8" fill="silver" transform="rotate(373.7 462.45 97.7)" />
+        <ellipse cx="482.57" cy="103.34" rx="3" ry="1.8" fill="silver" transform="rotate(377.61 482.57 103.34)" />
+        <ellipse cx="502.26" cy="110.33" rx="3" ry="1.8" fill="silver" transform="rotate(381.52 502.26 110.33)" />
+        <ellipse cx="521.42" cy="118.66" rx="3" ry="1.8" fill="silver" transform="rotate(385.43 521.42 118.66)" />
+        <ellipse cx="539.97" cy="128.27" rx="3" ry="1.8" fill="silver" transform="rotate(389.35 539.97 128.27)" />
+        <ellipse cx="557.83" cy="139.13" rx="3" ry="1.8" fill="silver" transform="rotate(393.26 557.83 139.13)" />
+        <ellipse cx="574.9" cy="151.18" rx="3" ry="1.8" fill="silver" transform="rotate(397.17 574.9 151.18)" />
+        <ellipse cx="591.1" cy="164.36" rx="3" ry="1.8" fill="silver" transform="rotate(401.09 591.1 164.36)" />
+        <ellipse cx="606.37" cy="178.63" rx="3" ry="1.8" fill="silver" transform="rotate(405 606.37 178.63)" />
+        <ellipse cx="620.64" cy="193.9" rx="3" ry="1.8" fill="silver" transform="rotate(408.91 620.64 193.9)" />
+        <ellipse cx="633.82" cy="210.1" rx="3" ry="1.8" fill="silver" transform="rotate(412.83 633.82 210.1)" />
+        <ellipse cx="645.87" cy="227.17" rx="3" ry="1.8" fill="silver" transform="rotate(416.74 645.87 227.17)" />
+        <ellipse cx="656.73" cy="245.03" rx="3" ry="1.8" fill="silver" transform="rotate(420.65 656.73 245.03)" />
+        <ellipse cx="666.34" cy="263.58" rx="3" ry="1.8" fill="silver" transform="rotate(424.57 666.34 263.58)" />
+        <ellipse cx="674.67" cy="282.74" rx="3" ry="1.8" fill="silver" transform="rotate(428.48 674.67 282.74)" />
+        <ellipse cx="681.66" cy="302.43" rx="3" ry="1.8" fill="silver" transform="rotate(432.39 681.66 302.43)" />
+        <ellipse cx="687.3" cy="322.55" rx="3" ry="1.8" fill="silver" transform="rotate(436.3 687.3 322.55)" />
+        <ellipse cx="691.55" cy="343.01" rx="3" ry="1.8" fill="silver" transform="rotate(440.22 691.55 343.01)" />
+        <ellipse cx="694.4" cy="363.71" rx="3" ry="1.8" fill="silver" transform="rotate(444.13 694.4 363.71)" />
+        <ellipse cx="695.82" cy="384.55" rx="3" ry="1.8" fill="silver" transform="rotate(448.04 695.82 384.55)" />
+      </g>
+    </g>
     <circle
        cx="390"
        cy="395"
        r="298"
        fill="none"
-       stroke="#3a3b3e"
-       stroke-width="2"
+       stroke="silver"
+       stroke-width="3"
        id="circle206" />
     <circle
        cx="390"
        cy="395"
-       r="285"
+       r="295"
        fill="none"
-       stroke="#232427"
-       stroke-width="1"
+       stroke="#ffffff"
+       stroke-width="3"
        id="circle207" />
-    <!-- wordmark op de mat: gecentreerd links van de spindel, geen overlap meer -->
+    <circle
+       cx="390"
+       cy="395"
+       r="270"
+       fill="none"
+       stroke="#808080"
+       stroke-width="3.5"
+       id="circle207-grijs" />
+    <!-- wordmark op de mat: links, tussen de grijze rand (r=270) en het middelpunt, op dezelfde hoogte
+         als het middelpunt -->
     <text
-       x="290"
-       y="382"
+       x="220"
+       y="395"
        text-anchor="middle"
        font-family="Arial, sans-serif"
-       font-size="20"
+       font-size="28"
        font-style="italic"
        font-weight="700"
        fill="#4d4e52"
-       id="text207">Pioneer DJ</text>
+       id="text207">Pioneer Dj</text>
     <circle
        cx="390"
        cy="395"
@@ -2035,6 +1909,13 @@
        stroke="#000000"
        stroke-width="1"
        id="circle244" />
+    <!-- spindel-pin, zichtbaar door het gaatje van de vinylplaat -->
+    <circle
+       cx="390"
+       cy="395"
+       r="4.5"
+       fill="#8a8b8f"
+       id="circle244-pin" />
   </g>
   <!-- ======================================================= -->
   <!-- 3) TOONARM - arm, contragewicht en headshell (ruststand) -->
