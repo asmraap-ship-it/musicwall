@@ -103,6 +103,132 @@
       border: 1px dashed var(--rand-2);
       margin-bottom: 0.75rem;
     }
+
+    .sectie { display: none; }
+    .sectie.zichtbaar { display: block; }
+
+    .bulk-uitleg {
+      font-size: 12px;
+      color: var(--tekst-dim);
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+
+    .bestand-lijst-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .bestand-lijst-header label {
+      font-size: 12px;
+      color: var(--tekst-dim);
+    }
+
+    .bestand-selecteer-alles-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.65rem;
+      background: transparent;
+      border: 1px solid var(--rand-2);
+      border-radius: 3px;
+      color: var(--tekst-donker);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .bestand-selecteer-alles-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .bulk-lijst {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid var(--rand-2);
+      border-radius: 3px;
+      padding: 0.5rem;
+    }
+
+    .bulk-album-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.4rem 0.2rem;
+      border-bottom: 1px solid var(--rand);
+      font-size: 12px;
+      color: var(--tekst-dim);
+    }
+
+    .bulk-album-item:last-child { border-bottom: none; }
+
+    .bulk-album-item.klaar { color: var(--accent); }
+    .bulk-album-item.actief { color: var(--tekst); }
+
+    .bulk-album-item:not(.geselecteerd) {
+      opacity: 0.45;
+    }
+
+    .bulk-album-cover {
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      object-fit: cover;
+      border-radius: 2px;
+      border: 1px solid var(--rand-2);
+    }
+
+    .bulk-album-cover-leeg {
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      opacity: 0.25;
+      border-radius: 2px;
+      border: 1px dashed var(--rand-2);
+    }
+
+    .bulk-album-velden {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .bulk-album-velden input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid transparent;
+      color: var(--tekst);
+      font-size: 12px;
+      padding: 0.1rem 0;
+    }
+
+    .bulk-album-velden input:focus {
+      outline: none;
+      border-bottom-color: var(--accent);
+    }
+
+    .bulk-album-velden input.bulk-album-artiest {
+      color: var(--tekst-dim);
+      font-size: 11px;
+    }
+
+    .bulk-album-aantal {
+      flex-shrink: 0;
+      font-size: 10px;
+      color: var(--accent);
+      opacity: 0.6;
+      white-space: nowrap;
+    }
   </style>
 </head>
 <body>
@@ -111,31 +237,68 @@
 
 <h2 data-i18n="albumImport.titel">Album importeren</h2>
 
-<div id="voor-map">
-  <button class="opslaan-btn" id="kies-map-btn" onclick="kiesMap()" data-i18n="albumImport.kiesMapBtn">Kies map</button>
+<div class="type-keuze" id="modus-keuze">
+  <div class="type-btn actief" id="btn-modus-een" onclick="stelModusIn('een')" data-i18n="albumImport.modusEenAlbum">Eén album</div>
+  <div class="type-btn" id="btn-modus-bulk" onclick="stelModusIn('bulk')" data-i18n="albumImport.modusMeerdereAlbums">Meerdere mappen</div>
 </div>
 
-<div id="na-map" style="display:none">
-  <div id="cover-container"></div>
-
-  <div class="veld">
-    <label data-i18n="albumImport.naamLabel">Albumnaam</label>
-    <input type="text" id="album-naam" autofocus>
+<div class="sectie zichtbaar" id="sectie-een">
+  <div id="voor-map">
+    <button class="opslaan-btn" id="kies-map-btn" onclick="kiesMap()" data-i18n="albumImport.kiesMapBtn">Kies map</button>
   </div>
 
-  <div class="veld">
-    <label data-i18n="albumImport.artiestLabel">Artiest</label>
-    <input type="text" id="album-artiest">
+  <div id="na-map" style="display:none">
+    <div id="cover-container"></div>
+
+    <div class="veld">
+      <label data-i18n="albumImport.naamLabel">Albumnaam</label>
+      <input type="text" id="album-naam" autofocus>
+    </div>
+
+    <div class="veld">
+      <label data-i18n="albumImport.artiestLabel">Artiest</label>
+      <input type="text" id="album-artiest">
+    </div>
+
+    <div class="veld">
+      <label data-i18n="albumImport.genreLabel">Genre</label>
+      <input type="text" id="album-genre" list="genre-lijst">
+      <datalist id="genre-lijst"></datalist>
+    </div>
+
+    <div class="bestand-lijst" id="bestand-lijst"></div>
+
+    <div class="voortgang" id="voortgang-tekst"></div>
+    <div class="voortgang-balk">
+      <div class="voortgang-vulling" id="voortgang-vulling"></div>
+    </div>
+
+    <button class="opslaan-btn" id="importeer-btn" onclick="importeer()" style="margin-top:1rem" data-i18n="albumImport.importerenBtn">Importeren</button>
+  </div>
+</div>
+
+<div class="sectie" id="sectie-bulk">
+  <p class="bulk-uitleg" data-i18n="albumImport.bulkUitleg">Kies een map — elke submap daarin wordt als apart album geïmporteerd (bijvoorbeeld een artiestenmap met een submap per album).</p>
+
+  <div id="bulk-voor-map">
+    <button class="opslaan-btn" onclick="kiesBulkMap()" data-i18n="albumImport.kiesBovenliggendeMapBtn">Kies map</button>
   </div>
 
-  <div class="bestand-lijst" id="bestand-lijst"></div>
+  <div id="bulk-na-map" style="display:none">
+    <div class="bestand-lijst-header">
+      <label id="bulk-label"></label>
+      <button type="button" class="bestand-selecteer-alles-btn" onclick="toggleSelecteerAlleBulk()" data-i18n="importeren.selecteerAlles">☑ Selecteer alles</button>
+    </div>
 
-  <div class="voortgang" id="voortgang-tekst"></div>
-  <div class="voortgang-balk">
-    <div class="voortgang-vulling" id="voortgang-vulling"></div>
+    <div class="bulk-lijst" id="bulk-lijst"></div>
+
+    <div class="voortgang" id="bulk-voortgang-tekst"></div>
+    <div class="voortgang-balk">
+      <div class="voortgang-vulling" id="bulk-voortgang-vulling"></div>
+    </div>
+
+    <button class="opslaan-btn" id="bulk-importeer-btn" onclick="importeerBulk()" style="margin-top:1rem" data-i18n="albumImport.bulkImporterenBtn">Geselecteerde albums importeren</button>
   </div>
-
-  <button class="opslaan-btn" id="importeer-btn" onclick="importeer()" style="margin-top:1rem" data-i18n="albumImport.importerenBtn">Importeren</button>
 </div>
 
 <div class="melding" id="melding"></div>

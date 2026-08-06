@@ -5,7 +5,7 @@ const assert = require('node:assert/strict')
 
 const db = require('../database.js')
 const { maakWall } = require('../db/walls.js')
-const { voegVideoToe, getVideosVoorWall, getVideo, verwijderVideo, updateVideo, verplaatsVideo, slaVolgordeOp } = require('../db/videos.js')
+const { voegVideoToe, getVideosVoorWall, getVideo, bestaatVideoInWall, verwijderVideo, updateVideo, verplaatsVideo, slaVolgordeOp } = require('../db/videos.js')
 
 let wallA, wallB
 
@@ -36,6 +36,18 @@ test('getVideosVoorWall geeft alleen video\'s van die wall, gesorteerd op volgor
 
   const videos = getVideosVoorWall(wallA)
   assert.deepEqual(videos.map(v => v.titel), ['A1', 'A2'])
+})
+
+test('bestaatVideoInWall matcht op lokaal_pad of youtube_url, alleen binnen dezelfde wall', () => {
+  voegVideoToe({ wallId: wallA, type: 'lokaal', artiest: 'X', titel: 'Lokaal', verhaal: null, tag: null, lokaalPad: 'C:/muziek/track.mp3' })
+  voegVideoToe({ wallId: wallA, type: 'youtube', artiest: 'X', titel: 'YT', verhaal: null, tag: null, youtubeUrl: 'https://youtube.com/watch?v=1' })
+
+  assert.equal(bestaatVideoInWall(wallA, { lokaalPad: 'C:/muziek/track.mp3' }), true)
+  assert.equal(bestaatVideoInWall(wallA, { youtubeUrl: 'https://youtube.com/watch?v=1' }), true)
+  assert.equal(bestaatVideoInWall(wallA, { lokaalPad: 'C:/muziek/anders.mp3' }), false)
+  // zelfde bestand/url in een ANDERE wall telt niet als duplicaat - bewust legitiem
+  assert.equal(bestaatVideoInWall(wallB, { lokaalPad: 'C:/muziek/track.mp3' }), false)
+  assert.equal(bestaatVideoInWall(wallB, { youtubeUrl: 'https://youtube.com/watch?v=1' }), false)
 })
 
 test('updateVideo wijzigt artiest/titel/verhaal/tag', () => {

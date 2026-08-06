@@ -1,6 +1,6 @@
   const { ipcRenderer, shell } = require('electron')
   const { getAlleWalls } = require('./db/walls.js')
-  const { voegVideoToe } = require('./db/videos.js')
+  const { voegVideoToe, bestaatVideoInWall } = require('./db/videos.js')
   
   let huidigType = 'youtube'
   let gekozenPad = ''
@@ -29,7 +29,7 @@
     document.getElementById('lokaal-pad').value = pad
   })
 
-  function slaOp() {
+  async function slaOp() {
     if (!huidigWallId) {
       document.getElementById('melding').textContent = t('validatie.geenWall')
       return
@@ -52,11 +52,27 @@
         document.getElementById('melding').textContent = t('validatie.vulYoutubeUrlIn')
         return
       }
+      if (bestaatVideoInWall(wallId, { youtubeUrl: url })) {
+        const akkoord = await ipcRenderer.invoke('vraag-bevestiging', {
+          titel: t('validatie.dubbeleBestandenTitel'),
+          bericht: t('validatie.dubbelItemBericht'),
+          knopTekst: t('algemeen.tochToevoegenBtn')
+        })
+        if (!akkoord) return
+      }
       voegVideoToe({ wallId, type: 'youtube', artiest, titel, verhaal, tag, youtubeUrl: url })
     } else {
       if (!gekozenPad) {
         document.getElementById('melding').textContent = t('validatie.kiesVideobestand')
         return
+      }
+      if (bestaatVideoInWall(wallId, { lokaalPad: gekozenPad })) {
+        const akkoord = await ipcRenderer.invoke('vraag-bevestiging', {
+          titel: t('validatie.dubbeleBestandenTitel'),
+          bericht: t('validatie.dubbelItemBericht'),
+          knopTekst: t('algemeen.tochToevoegenBtn')
+        })
+        if (!akkoord) return
       }
       voegVideoToe({ wallId, type: 'lokaal', artiest, titel, verhaal, tag, lokaalPad: gekozenPad })
     }

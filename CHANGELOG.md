@@ -4,6 +4,24 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.3]
+### Added
+- Muziek-albums: genre-veld met suggesties op basis van je eigen collectie.
+- Muziek-albums: meerdere albums tegelijk importeren vanuit één bovenliggende map (bijv. een hele schijf met muziek).
+- Muziek-albums: albums selecteren (Ctrl+klik) om ze in één keer te verwijderen of aan de jukebox-playlist toe te voegen.
+- Muziek-albums: sorteerknop om albums op artiest en naam te ordenen, en een filterveld om te zoeken op artiest of naam.
+- Waarschuwing bij het opnieuw importeren van een bestand, YouTube-video of album dat al op dezelfde plek staat.
+- Bevestiging bij het sluiten van het hoofdscherm terwijl er nog andere vensters (zoals de jukebox) open staan.
+
+### Changed
+- Artiest en albumnaam worden bij het importeren van één album nu automatisch voorgesteld op basis van de nummers zelf.
+
+### Fixed
+- Nummers in een geïmporteerd album stonden soms in een willekeurige volgorde in plaats van de juiste tracklijst-volgorde.
+- Het sluiten van het hoofdscherm liet andere open vensters (jukebox, help, etc.) onterecht open staan.
+- De bevestigingsknop bij een waarschuwing over dubbele import toonde per ongeluk "Verwijderen" in plaats van een duidelijke "toch doorgaan"-tekst.
+- Handmatig een los bestand toevoegen aan een wall controleerde niet op duplicaten, in tegenstelling tot de andere manieren om iets toe te voegen.
+
 ## [1.2.2]
 ### Changed
 - Het losse afspeelvenster voor een lokaal muzieknummer toont nu ook artiest en titel, en laat minder lege ruimte rond de albumhoes over.

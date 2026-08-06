@@ -12,16 +12,29 @@ function getAlbum(id) {
   return db.prepare('SELECT * FROM albums WHERE id = ?').get(id)
 }
 
-function maakAlbum({ naam, artiest, coverPad, groepId }) {
+function maakAlbum({ naam, artiest, coverPad, groepId, genre, bronMap }) {
   const hoogste = db.prepare('SELECT COALESCE(MAX(volgorde), 0) as max FROM albums').get()
   return db.prepare(`
-    INSERT INTO albums (groep_id, naam, artiest, cover_pad, volgorde)
-    VALUES (?, ?, ?, ?, ?)
-  `).run(groepId || null, naam, artiest || null, coverPad || null, hoogste.max + 1)
+    INSERT INTO albums (groep_id, naam, artiest, cover_pad, genre, bron_map, volgorde)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(groepId || null, naam, artiest || null, coverPad || null, genre || null, bronMap || null, hoogste.max + 1)
 }
 
-function updateAlbum({ id, naam, artiest }) {
-  return db.prepare('UPDATE albums SET naam = ?, artiest = ? WHERE id = ?').run(naam, artiest || null, id)
+// Duplicaat-check voor album-import: dezelfde map twee keer importeren maakte tot nu toe stilzwijgend een
+// tweede, dubbel album aan. Gescoped tot dezelfde groep (net als de video-/media-duplicaat-checks) - bewust
+// niet globaal, een gebruiker zou dezelfde map bewust in twee verschillende groepen kunnen willen hebben.
+// Geeft de bestaande rij terug (niet enkel een boolean) zodat de bevestigingsmelding de naam van dat album
+// kan tonen.
+function vindAlbumVoorMap(groepId, bronMap) {
+  return db.prepare('SELECT * FROM albums WHERE groep_id IS ? AND bron_map = ?').get(groepId || null, bronMap)
+}
+
+function updateAlbum({ id, naam, artiest, genre }) {
+  return db.prepare('UPDATE albums SET naam = ?, artiest = ?, genre = ? WHERE id = ?').run(naam, artiest || null, genre || null, id)
+}
+
+function getAlleGenres() {
+  return db.prepare("SELECT DISTINCT genre FROM albums WHERE genre IS NOT NULL AND genre <> '' ORDER BY genre COLLATE NOCASE").all().map(r => r.genre)
 }
 
 function verwijderAlbum(id) {
@@ -39,6 +52,20 @@ function herschikAlbums(volgordeArray) {
   volgordeArray.forEach((id, index) => {
     update.run(index + 1, id)
   })
+}
+
+// Eenmalige, expliciete sortering (op artiest, dan albumnaam - de gangbare muziekbibliotheek-volgorde),
+// géén doorlopende regel: nieuwe albums blijven gewoon achteraan toegevoegd (zelfde "nieuw = onderaan"-
+// gedrag als walls/concerten), de gebruiker roept dit desgewenst opnieuw aan na een nieuwe import. Schrijft
+// via de bestaande herschikAlbums() weg, dus identiek resultaat als handmatig naar deze volgorde slepen.
+function sorteerAlbums(groepId) {
+  const albums = getAlbumsVoorGroep(groepId)
+  const gesorteerd = albums.slice().sort((a, b) => {
+    const opArtiest = (a.artiest || '').localeCompare(b.artiest || '', undefined, { sensitivity: 'base', numeric: true })
+    if (opArtiest !== 0) return opArtiest
+    return (a.naam || '').localeCompare(b.naam || '', undefined, { sensitivity: 'base', numeric: true })
+  })
+  herschikAlbums(gesorteerd.map(a => a.id))
 }
 
 function getTracksVoorAlbum(albumId) {
@@ -69,10 +96,13 @@ module.exports = {
   getAlbumsVoorGroep,
   getAlbum,
   maakAlbum,
+  vindAlbumVoorMap,
   updateAlbum,
+  getAlleGenres,
   verwijderAlbum,
   verwijderAlbumsVoorGroep,
   herschikAlbums,
+  sorteerAlbums,
   getTracksVoorAlbum,
   voegTrackToe,
   verwijderTrack,

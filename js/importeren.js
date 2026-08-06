@@ -2,7 +2,7 @@ const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
 const { getAlleWalls } = require('./db/walls.js')
 const { getAlleWallGroepen } = require('./db/wallgroepen.js')
-const { voegVideoToe } = require('./db/videos.js')
+const { voegVideoToe, bestaatVideoInWall } = require('./db/videos.js')
 const path = require('path')
 
 let bestanden = []
@@ -172,6 +172,19 @@ async function importeer() {
   }
 
   const teImporteren = bestanden.map((_, i) => i).filter(i => bestandenSelectie.has(i))
+
+  // duplicaat-check gescoped tot déze wall (hetzelfde bestand in een andere wall is een bewuste, legitieme
+  // keuze - alleen twee keer in dezelfde wall is bijna altijd een vergissing) - één gedeelde bevestiging
+  // voor de hele selectie i.p.v. een pop-up per bestand
+  const aantalDubbel = teImporteren.filter(i => bestaatVideoInWall(wallId, { lokaalPad: bestanden[i] })).length
+  if (aantalDubbel > 0) {
+    const akkoord = await ipcRenderer.invoke('vraag-bevestiging', {
+      titel: t('validatie.dubbeleBestandenTitel'),
+      bericht: t('validatie.dubbeleBestandenBericht', { n: aantalDubbel, m: teImporteren.length }),
+      knopTekst: t('algemeen.tochDoorgaanBtn')
+    })
+    if (!akkoord) return
+  }
 
   bezig = true
   const btn = document.getElementById('import-btn')

@@ -2,7 +2,7 @@ const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
 const { getAlleWalls } = require('./db/walls.js')
 const { getAlleWallGroepen } = require('./db/wallgroepen.js')
-const { voegVideoToe } = require('./db/videos.js')
+const { voegVideoToe, bestaatVideoInWall } = require('./db/videos.js')
 
 let apiKey = ''
 let resultatenData = {}
@@ -463,9 +463,23 @@ function deselecteerAlles() {
   updateSelectieInfo()
 }
 
-function voegGeselecteerdeToe() {
+async function voegGeselecteerdeToe() {
   const wallId = parseInt(document.getElementById('wall-keuze').value)
   if (!wallId || selectie.size === 0) return
+
+  // duplicaat-check gescoped tot déze wall - zelfde redenering als bij het importeren van lokale bestanden
+  const dubbeleAantal = Array.from(selectie).filter(videoId => {
+    const data = resultatenData[videoId]
+    return data && bestaatVideoInWall(wallId, { youtubeUrl: 'https://www.youtube.com/watch?v=' + videoId })
+  }).length
+  if (dubbeleAantal > 0) {
+    const akkoord = await ipcRenderer.invoke('vraag-bevestiging', {
+      titel: t('validatie.dubbeleBestandenTitel'),
+      bericht: t('validatie.dubbeleBestandenBericht', { n: dubbeleAantal, m: selectie.size }),
+      knopTekst: t('algemeen.tochDoorgaanBtn')
+    })
+    if (!akkoord) return
+  }
 
   selectie.forEach(videoId => {
     const data = resultatenData[videoId]

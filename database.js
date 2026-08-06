@@ -103,6 +103,14 @@ if (!wallGroepenKolommen.includes('type')) {
   db.exec("ALTER TABLE wall_groepen ADD COLUMN type TEXT NOT NULL DEFAULT 'walls'")
 }
 
+const albumsKolommen = db.prepare("PRAGMA table_info(albums)").all().map(k => k.name)
+if (!albumsKolommen.includes('genre')) {
+  db.exec('ALTER TABLE albums ADD COLUMN genre TEXT')
+}
+if (!albumsKolommen.includes('bron_map')) {
+  db.exec('ALTER TABLE albums ADD COLUMN bron_map TEXT')
+}
+
 const playlistVideosTabel = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='playlist_videos'").get()
 if (playlistVideosTabel && playlistVideosTabel.sql.includes('FOREIGN KEY')) {
   // vroegere versie had FOREIGN KEY ... ON DELETE CASCADE op video_id, wat opgeslagen playlist-items

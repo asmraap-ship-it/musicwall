@@ -69,7 +69,10 @@ function schakelSectie(sectie, groepId) {
     concertenContainer.style.display = 'none'
     btnWalls.classList.remove('actief')
     btnConcerten.classList.remove('actief')
-    if (selectieInfo) selectieInfo.style.display = 'none'
+    // géén 'none' meer: albums heeft sinds kort ook een Ctrl+klik-selectie (zie js/albums.js), die dezelfde
+    // gedeelde #selectie-info-balk gebruikt als walls - style.display leeg laten (net als de walls-tak
+    // hierboven) zodat de .zichtbaar-klasse (updateSelectieInfo()) de zichtbaarheid weer zelf bepaalt
+    if (selectieInfo) selectieInfo.style.display = ''
     if (prullenbak) prullenbak.style.display = 'none'
     const tabEl = document.querySelector('.tab-btn[data-groep-id="' + groepId + '"]')
     if (tabEl) tabEl.classList.add('actief')

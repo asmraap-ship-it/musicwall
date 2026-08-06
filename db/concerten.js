@@ -45,6 +45,12 @@ function voegMediaToe({ concertId, type, bestandPad }) {
   `).run(concertId, type, bestandPad, aantal.n + 1)
 }
 
+// Zelfde soort scoping als db/videos.js's bestaatVideoInWall - alleen binnen hetzelfde concert telt als
+// duplicaat, hetzelfde bestand/dezelfde url in een ander concert is een legitieme, bewuste keuze.
+function bestaatMediaInConcert(concertId, bestandPad) {
+  return !!db.prepare('SELECT 1 FROM concert_media WHERE concert_id = ? AND bestand_pad = ?').get(concertId, bestandPad)
+}
+
 function verwijderMedia(id) {
   return db.prepare('DELETE FROM concert_media WHERE id = ?').run(id)
 }
@@ -65,6 +71,7 @@ module.exports = {
   herschikConcerten,
   getMediaVoorConcert,
   voegMediaToe,
+  bestaatMediaInConcert,
   verwijderMedia,
   slaMediaVolgordeOp
 }

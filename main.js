@@ -130,6 +130,8 @@ function startJukeboxServer() {
   })
 }
 
+let hoofdschermSluitenBevestigd = false
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -143,6 +145,43 @@ function createWindow() {
   })
   mainWindow.loadFile('index.html')
   mainWindow.maximize()
+  hoofdschermSluitenBevestigd = false
+
+  // Sluiten van het hoofdscherm sluit (via 'closed' hieronder) altijd ook alle nog open subvensters - een
+  // gebruiker die per ongeluk op het kruisje klikt terwijl bijv. de jukebox nog speelt of een importvenster
+  // nog open staat, verliest dat dan zonder waarschuwing. 'close' (i.t.t. 'closed') is nog annuleerbaar via
+  // preventDefault(), dus alleen als er daadwerkelijk andere vensters open zijn wordt het sluiten hier één
+  // keer onderbroken voor een bevestiging; bij akkoord zet de guard-vlag zich vast zodat de daaropvolgende
+  // mainWindow.close() dit keer niet opnieuw onderbroken wordt (voorkomt een oneindige preventDefault-lus).
+  mainWindow.on('close', (event) => {
+    if (hoofdschermSluitenBevestigd) return
+
+    const andereVensters = BrowserWindow.getAllWindows().filter(win => win !== mainWindow && !win.isDestroyed())
+    if (andereVensters.length === 0) return
+
+    event.preventDefault()
+    vraagBevestiging(
+      t('hoofdscherm.sluitenTitel'),
+      t('hoofdscherm.sluitenBericht', { n: andereVensters.length }),
+      t('hoofdscherm.sluitenKnop')
+    ).then(akkoord => {
+      if (akkoord) {
+        hoofdschermSluitenBevestigd = true
+        mainWindow.close()
+      }
+    })
+  })
+
+  // Zonder dit bleven losse vensters (jukebox, help, importeren, formuliervensters, ...) gewoon openstaan
+  // nadat het hoofdscherm gesloten was - onlogisch (het hoofdscherm is de enige plek vanwaaruit je bij die
+  // vensters kunt komen) en zonder een window-all-closed-handler (zie onderaan dit bestand) bleef het hele
+  // app-proces zelfs na het sluiten van álle vensters op de achtergrond hangen.
+  mainWindow.on('closed', () => {
+    BrowserWindow.getAllWindows().forEach(win => {
+      if (!win.isDestroyed()) win.close()
+    })
+    mainWindow = null
+  })
 }
 
 ipcMain.on('open-video', (event, url) => {
@@ -519,7 +558,7 @@ ipcMain.on('open-album-import', (event, groepId) => {
 
   albumImportWin = new BrowserWindow({
     width: 550,
-    height: 640,
+    height: 880,
     title: t('albumImport.titel'),
     ...huidigeTitelbalkOpties(),
     webPreferences: {
@@ -539,30 +578,27 @@ ipcMain.on('open-album-import', (event, groepId) => {
   })
 })
 
-ipcMain.on('kies-album-map', async (event) => {
-  const result = await dialog.showOpenDialog({
-    properties: ['openDirectory'],
-    title: t('albumImport.mapKiezenTitel')
-  })
-
-  if (result.canceled || result.filePaths.length === 0) return
-
-  const mapPad = result.filePaths[0]
+// Scant één map als één album: audiobestanden, hoesdetectie, ID3-tags (artiest/titel/genre per track,
+// plus een album-brede genre-suggestie en - alleen relevant voor de bulk-import hieronder - een
+// gemeenschappelijke-artiest-suggestie als alle tracks toevallig dezelfde artiest-tag delen).
+// Losgetrokken uit de oorspronkelijke kies-album-map-handler zodat kies-meerdere-albums-map 'm per
+// submap kan hergebruiken zonder de scanlogica te dupliceren.
+async function scanAlbumMap(mapPad) {
   const afbeeldingExtensies = ['.jpg', '.jpeg', '.png']
 
   const alleBestanden = fs.readdirSync(mapPad)
+  // fs.readdirSync geeft geen gegarandeerde (laat staan alfabetische) volgorde terug - op NTFS bijvoorbeeld
+  // vaak de volgorde waarin bestanden ooit zijn aangemaakt, wat bij een torrent-download geregeld niets met
+  // de tracklijst-volgorde te maken heeft. Natuurlijke sortering (numeriek-bewust: "2" vóór "10", niet
+  // "10" vóór "2" zoals een kale lexicografische sort zou doen) op bestandsnaam is de eerste, altijd
+  // toepasbare aanname - de meeste tracks heten toch al "01 - Titel.mp3"/"1. Titel.mp3". Wordt hieronder,
+  // ná het uitlezen van ID3-tags, nog verfijnd met het echte tracknummer als dat overal aanwezig blijkt.
   const audioBestanden = alleBestanden
     .filter(f => AUDIO_EXTENSIES.includes(path.extname(f).toLowerCase()))
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }))
     .map(f => path.join(mapPad, f))
 
-  if (audioBestanden.length === 0) {
-    dialog.showMessageBoxSync({
-      type: 'info',
-      title: t('albumImport.geenBestandenTitel'),
-      message: t('albumImport.geenBestandenBericht')
-    })
-    return
-  }
+  if (audioBestanden.length === 0) return null
 
   // Hoesbestand-detectie: prioriteitenlijst folder.* -> cover.* -> albumart.* -> eerste afbeelding in de map
   // (bestandsnaam wisselt per map bij deze gebruiker, dus geen vaste naam aannemen)
@@ -590,24 +626,37 @@ ipcMain.on('kies-album-map', async (event) => {
     mm = await import('music-metadata')
   } catch (e) {
     console.error('music-metadata kon niet geladen worden:', e.message)
-    event.sender.send('album-map-gekozen', {
-      mapPad,
+    return {
       coverPad,
+      genre: null,
+      artiest: null,
+      albumTitel: null,
       tracks: audioBestanden.map(pad => ({ lokaalPad: pad, artiest: '', titel: path.basename(pad, path.extname(pad)) }))
-    })
-    return
+    }
   }
 
   const tracks = []
+  // eerste gevonden TCON-genre in de map geldt als voorstel voor het hele album - ID3-genre-tags zijn
+  // vaak per-track gezet (kan intern tegenstrijdig zijn), maar één representatieve suggestie is beter
+  // dan niets; blijft altijd handmatig aan te passen/leeg te maken in het formulier
+  let genre = null
+  const artiesten = new Set()
+  const albumTitels = new Set()
   for (const pad of audioBestanden) {
     const bestandsnaam = path.basename(pad, path.extname(pad))
     let artiest = ''
     let titel = bestandsnaam
+    let trackNummer = null
 
     try {
       const metadata = await mm.parseFile(pad)
       if (metadata.common.artist) artiest = metadata.common.artist
       if (metadata.common.title) titel = metadata.common.title
+      if (!genre && metadata.common.genre && metadata.common.genre.length > 0) genre = metadata.common.genre[0]
+      if (metadata.common.album) albumTitels.add(metadata.common.album)
+      if (metadata.common.track && Number.isInteger(metadata.common.track.no) && metadata.common.track.no > 0) {
+        trackNummer = metadata.common.track.no
+      }
 
       // geen los hoesbestand in de map gevonden -> terugval op de embedded ID3-hoes van het eerste
       // bestand dat er een heeft (eenmalig, alleen zolang coverPad nog leeg is)
@@ -624,10 +673,165 @@ ipcMain.on('kies-album-map', async (event) => {
       // ontbrekende/beschadigde tags: gewoon terugvallen op de bestandsnaam
     }
 
-    tracks.push({ lokaalPad: pad, artiest, titel })
+    if (artiest) artiesten.add(artiest)
+    tracks.push({ lokaalPad: pad, artiest, titel, trackNummer })
   }
 
-  event.sender.send('album-map-gekozen', { mapPad, coverPad, tracks })
+  // het ID3-tracknummer (TRCK) is, wanneer aanwezig, betrouwbaarder dan de bestandsnaam-sortering hierboven
+  // (immuun voor rare/ontbrekende naamgevingsconventies) - maar alleen bruikbaar als ECHT elk bestand er een
+  // heeft; anders zou een missend tracknummer (sorteert als "geen positie") de volgorde alsnog verstoren, en
+  // is de eerdere naam-sortering de veiligere keuze
+  if (tracks.length > 0 && tracks.every(t => t.trackNummer !== null)) {
+    tracks.sort((a, b) => a.trackNummer - b.trackNummer)
+  }
+  tracks.forEach(t => delete t.trackNummer)
+
+  return {
+    coverPad,
+    genre,
+    artiest: artiesten.size === 1 ? [...artiesten][0] : null,
+    // alleen als bron voor het losse-album-formulier (zie kies-album-map hieronder) - bulk-import blijft
+    // bewust de submapnaam/relatieve-pad-naam gebruiken (zie vindAlbumMappen hierboven), want een ID3-
+    // albumtitel die voor meerdere submappen identiek is (bv. hetzelfde jaar in meerdere "Volume N"-mappen)
+    // zou daar precies de naamgevings-botsing terugbrengen die de relatieve-padnaam juist moest oplossen
+    albumTitel: albumTitels.size === 1 ? [...albumTitels][0] : null,
+    tracks
+  }
+}
+
+ipcMain.on('kies-album-map', async (event) => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+    title: t('albumImport.mapKiezenTitel')
+  })
+
+  if (result.canceled || result.filePaths.length === 0) return
+
+  const mapPad = result.filePaths[0]
+  const scan = await scanAlbumMap(mapPad)
+
+  if (!scan) {
+    dialog.showMessageBoxSync({
+      type: 'info',
+      title: t('albumImport.geenBestandenTitel'),
+      message: t('albumImport.geenBestandenBericht')
+    })
+    return
+  }
+
+  event.sender.send('album-map-gekozen', {
+    mapPad,
+    coverPad: scan.coverPad,
+    genre: scan.genre,
+    artiest: scan.artiest,
+    albumTitel: scan.albumTitel,
+    tracks: scan.tracks
+  })
+})
+
+// Zoekt album-kandidaat-mappen onder mapPad: niet zomaar "elke directe submap", want verzamelingen blijken
+// in de praktijk ongelijk diep genest te zijn (bv. Jaar/Album direct naast Jaar/Volume-N/Album in dezelfde
+// verzameling - hetzelfde jukebox-thema, andere bron). Een map die zelf al audiobestanden bevat is een album
+// (en wordt niet verder afgedaald - een album heeft geen albums in zich); een map zonder audio maar mét
+// submappen wordt beschouwd als een tussenliggende ordeningslaag (jaar/artiest/...) en één niveau verder
+// verkend, tot MAX_DIEPTE. MAX_BEZOCHTE_MAPPEN is een harde noodrem tegen het per ongeluk kiezen van een
+// veel te grote map (bv. een hele schijf) - de bulk-import is bedoeld voor "een map met meerdere albums",
+// geen recursieve hele-schijf-scan.
+const BULK_MAX_DIEPTE = 4
+const BULK_MAX_BEZOCHTE_MAPPEN = 3000
+
+async function vindAlbumMappen(ouderMapPad) {
+  const gevonden = []
+  let bezocht = 0
+  let afgebroken = false
+
+  async function verken(mapPad, diepte) {
+    if (afgebroken) return
+    bezocht++
+    if (bezocht > BULK_MAX_BEZOCHTE_MAPPEN) { afgebroken = true; return }
+
+    let entries
+    try {
+      entries = fs.readdirSync(mapPad, { withFileTypes: true })
+    } catch (e) {
+      return
+    }
+
+    const heeftAudio = entries.some(e => e.isFile() && AUDIO_EXTENSIES.includes(path.extname(e.name).toLowerCase()))
+    if (heeftAudio) {
+      gevonden.push(mapPad)
+      return
+    }
+
+    if (diepte >= BULK_MAX_DIEPTE) return
+
+    const subMappen = entries.filter(e => e.isDirectory()).map(e => path.join(mapPad, e.name)).sort()
+    for (const sub of subMappen) {
+      await verken(sub, diepte + 1)
+    }
+  }
+
+  const topSubMappen = fs.readdirSync(ouderMapPad, { withFileTypes: true })
+    .filter(d => d.isDirectory())
+    .map(d => path.join(ouderMapPad, d.name))
+    .sort()
+
+  for (const sub of topSubMappen) {
+    await verken(sub, 1)
+  }
+
+  return { mappen: gevonden, afgebroken }
+}
+
+ipcMain.on('kies-meerdere-albums-map', async (event) => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+    title: t('albumImport.bovenliggendeMapKiezenTitel')
+  })
+
+  if (result.canceled || result.filePaths.length === 0) return
+
+  const ouderMapPad = result.filePaths[0]
+  const { mappen: albumMappen, afgebroken } = await vindAlbumMappen(ouderMapPad)
+
+  // seriële scan (niet Promise.all): scanAlbumMap doet zware, niet-parallelliseerbare I/O (ID3 per bestand),
+  // en tientallen mappen tegelijk laten scannen zou het main-process alsnog met evenveel werk belasten,
+  // alleen dan zonder de voortgang die een seriële aanpak later eventueel zichtbaar kan maken
+  const albums = []
+  for (const albumMapPad of albumMappen) {
+    let scan
+    try {
+      scan = await scanAlbumMap(albumMapPad)
+    } catch (e) {
+      scan = null
+    }
+    if (!scan) continue // onleesbare map: stil overgeslagen, geen album om te tonen
+
+    // padnaam t.o.v. de gekozen map, segmenten aan elkaar geplakt - een kale basename zou bij een geneste
+    // structuur (bv. "Volume 1" onder meerdere jaarmappen) tot identieke, onderling niet te onderscheiden
+    // albumnamen leiden
+    const naam = path.relative(ouderMapPad, albumMapPad).split(path.sep).join(' - ')
+
+    albums.push({
+      naam,
+      artiest: scan.artiest,
+      coverPad: scan.coverPad,
+      genre: scan.genre,
+      bronMap: albumMapPad,
+      tracks: scan.tracks
+    })
+  }
+
+  if (albums.length === 0) {
+    dialog.showMessageBoxSync({
+      type: 'info',
+      title: t('albumImport.geenAlbumsGevondenTitel'),
+      message: t('albumImport.geenAlbumsGevondenBericht')
+    })
+    return
+  }
+
+  event.sender.send('meerdere-albums-gekozen', { ouderMapPad, albums, afgebroken })
 })
 
 ipcMain.on('album-toegevoegd', () => {
@@ -640,7 +844,7 @@ ipcMain.on('album-toegevoegd', () => {
 ipcMain.on('open-bewerk-album', (event, album) => {
   const bewerkWin = new BrowserWindow({
     width: 400,
-    height: 420,
+    height: 520,
     title: t('albumBewerken.titel'),
     ...huidigeTitelbalkOpties(),
     webPreferences: {
@@ -689,6 +893,15 @@ ipcMain.on('bevestig-album-verwijderen', async (event, { albumId, albumNaam }) =
   const akkoord = await vraagBevestiging(t('albums.verwijderen.titel'), bericht)
   if (akkoord) {
     verwijderAlbum(albumId)
+    BrowserWindow.getAllWindows().forEach(win => win.webContents.send('herlaad-albums'))
+  }
+})
+
+ipcMain.on('bevestig-albums-verwijderen-meerdere', async (event, { ids, namen }) => {
+  const akkoord = await vraagBevestiging(t('albums.meerdereVerwijderen.titel', { n: ids.length }), namen)
+  if (akkoord) {
+    const { verwijderAlbum } = require('./db/albums.js')
+    ids.forEach(id => verwijderAlbum(id))
     BrowserWindow.getAllWindows().forEach(win => win.webContents.send('herlaad-albums'))
   }
 })
@@ -1246,4 +1459,11 @@ app.whenReady().then(() => {
   startJukeboxServer()
   createWindow()
   controleerApiSleutel()
+})
+
+// er was hiervoor nergens een window-all-closed-handler - het app-proces bleef daardoor altijd op de
+// achtergrond draaien nadat alle vensters (incl. het hoofdscherm) gesloten waren, ongeacht de cascade
+// hierboven, want niets riep ooit app.quit() aan
+app.on('window-all-closed', () => {
+  app.quit()
 })

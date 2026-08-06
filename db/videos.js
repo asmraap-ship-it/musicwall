@@ -16,6 +16,19 @@ function voegVideoToe({ wallId, type, artiest, titel, verhaal, tag, youtubeUrl, 
   `).run(wallId, type, artiest, titel, verhaal, tag, youtubeUrl || null, lokaalPad || null, aantal.n + 1)
 }
 
+// Duplicaat-check is bewust gescoped tot dezelfde wall, niet globaal: hetzelfde nummer kan legitiem in
+// meerdere walls staan (ander levensmoment, ander verhaal) - alleen twéé keer in dezelfde wall is bijna
+// altijd een vergissing. Match op het exacte pad/de exacte url, geen titel-fuzzy-matching.
+function bestaatVideoInWall(wallId, { lokaalPad, youtubeUrl }) {
+  if (lokaalPad) {
+    return !!db.prepare('SELECT 1 FROM videos WHERE wall_id = ? AND lokaal_pad = ?').get(wallId, lokaalPad)
+  }
+  if (youtubeUrl) {
+    return !!db.prepare('SELECT 1 FROM videos WHERE wall_id = ? AND youtube_url = ?').get(wallId, youtubeUrl)
+  }
+  return false
+}
+
 function verwijderVideo(id) {
   return db.prepare('DELETE FROM videos WHERE id = ?').run(id)
 }
@@ -37,4 +50,4 @@ function slaVolgordeOp(volgordeArray) {
   })
 }
 
-module.exports = { getVideosVoorWall, getVideo, voegVideoToe, verwijderVideo, updateVideo, verplaatsVideo, slaVolgordeOp }
+module.exports = { getVideosVoorWall, getVideo, voegVideoToe, bestaatVideoInWall, verwijderVideo, updateVideo, verplaatsVideo, slaVolgordeOp }

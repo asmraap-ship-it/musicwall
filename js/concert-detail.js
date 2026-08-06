@@ -1,6 +1,6 @@
 const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
-const { getConcert, getMediaVoorConcert, voegMediaToe, verwijderMedia } = require('./db/concerten.js')
+const { getConcert, getMediaVoorConcert, voegMediaToe, bestaatMediaInConcert, verwijderMedia } = require('./db/concerten.js')
 
 let huidigConcertId = null
 let huidigConcert = null
@@ -120,7 +120,18 @@ function kiesMedia() {
   ipcRenderer.send('kies-concert-media')
 }
 
-ipcRenderer.on('concert-media-gekozen', (event, paths) => {
+ipcRenderer.on('concert-media-gekozen', async (event, paths) => {
+  // duplicaat-check gescoped tot dit concert - zelfde redenering als bij wall-video-import
+  const aantalDubbel = paths.filter(pad => bestaatMediaInConcert(huidigConcertId, pad)).length
+  if (aantalDubbel > 0) {
+    const akkoord = await ipcRenderer.invoke('vraag-bevestiging', {
+      titel: t('validatie.dubbeleBestandenTitel'),
+      bericht: t('validatie.dubbeleBestandenBericht', { n: aantalDubbel, m: paths.length }),
+      knopTekst: t('algemeen.tochDoorgaanBtn')
+    })
+    if (!akkoord) return
+  }
+
   const fotoExtensies = ['.jpg', '.jpeg', '.png', '.heic']
   paths.forEach(pad => {
     const ext = pad.slice(pad.lastIndexOf('.')).toLowerCase()
@@ -131,12 +142,21 @@ ipcRenderer.on('concert-media-gekozen', (event, paths) => {
   laadMediaGrid()
 })
 
-function voegYoutubeToe() {
+async function voegYoutubeToe() {
   const input = document.getElementById('youtube-url-input')
   const url = input.value.trim()
   if (!url || !getYoutubeId(url)) {
     input.focus()
     return
+  }
+
+  if (bestaatMediaInConcert(huidigConcertId, url)) {
+    const akkoord = await ipcRenderer.invoke('vraag-bevestiging', {
+      titel: t('validatie.dubbeleBestandenTitel'),
+      bericht: t('validatie.dubbeleVideoBericht'),
+      knopTekst: t('algemeen.tochToevoegenBtn')
+    })
+    if (!akkoord) return
   }
 
   voegMediaToe({ concertId: huidigConcertId, type: 'youtube', bestandPad: url })

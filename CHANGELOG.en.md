@@ -6,6 +6,24 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.3]
+### Added
+- Music albums: genre field with suggestions based on your own collection.
+- Music albums: import multiple albums at once from one parent folder (e.g. an entire music drive).
+- Music albums: select albums (Ctrl+click) to delete them or add them to the jukebox playlist all at once.
+- Music albums: sort button to order albums by artist and name, and a filter field to search by artist or name.
+- Warning when re-importing a file, YouTube video, or album that's already in the same place.
+- Confirmation when closing the main screen while other windows (like the jukebox) are still open.
+
+### Changed
+- Artist and album name are now automatically suggested when importing a single album, based on the tracks themselves.
+
+### Fixed
+- Tracks in an imported album sometimes ended up in a random order instead of the correct track list order.
+- Closing the main screen incorrectly left other open windows (jukebox, help, etc.) open.
+- The confirm button on a duplicate-import warning mistakenly said "Delete" instead of a clear "continue anyway" label.
+- Manually adding a single file to a wall didn't check for duplicates, unlike the other ways to add something.
+
 ## [1.2.2]
 ### Changed
 - The standalone player window for a local music track now also shows the artist and title, and leaves less empty space around the album cover.

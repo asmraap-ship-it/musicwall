@@ -12,6 +12,7 @@ const {
   herschikConcerten,
   getMediaVoorConcert,
   voegMediaToe,
+  bestaatMediaInConcert,
   verwijderMedia,
   slaMediaVolgordeOp
 } = require('../db/concerten.js')
@@ -60,6 +61,16 @@ test('media-CRUD: toevoegen, ophalen, herordenen en verwijderen', () => {
 
   verwijderMedia(m1)
   assert.deepEqual(getMediaVoorConcert(concertId).map(m => m.id), [m2])
+})
+
+test('bestaatMediaInConcert matcht op bestand_pad/url, alleen binnen hetzelfde concert', () => {
+  const concertA = maakConcert({ naam: 'Concert A', artiest: 'X', datum: '2024-01-01', verhaal: null }).lastInsertRowid
+  const concertB = maakConcert({ naam: 'Concert B', artiest: 'X', datum: '2024-01-01', verhaal: null }).lastInsertRowid
+  voegMediaToe({ concertId: concertA, type: 'foto', bestandPad: 'foto1.jpg' })
+
+  assert.equal(bestaatMediaInConcert(concertA, 'foto1.jpg'), true)
+  assert.equal(bestaatMediaInConcert(concertA, 'foto2.jpg'), false)
+  assert.equal(bestaatMediaInConcert(concertB, 'foto1.jpg'), false)
 })
 
 test('verwijderConcert cascadeert naar zijn concert_media (FK ON DELETE CASCADE)', () => {

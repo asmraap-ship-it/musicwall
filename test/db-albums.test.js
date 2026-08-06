@@ -10,10 +10,13 @@ const {
   getAlbumsVoorGroep,
   getAlbum,
   maakAlbum,
+  vindAlbumVoorMap,
   updateAlbum,
+  getAlleGenres,
   verwijderAlbum,
   verwijderAlbumsVoorGroep,
   herschikAlbums,
+  sorteerAlbums,
   getTracksVoorAlbum,
   voegTrackToe,
   verwijderTrack,
@@ -61,6 +64,44 @@ test('herschikAlbums herordent volgens de meegegeven id-volgorde', () => {
   assert.deepEqual(albums.map(al => al.id), [b, a])
 })
 
+test('vindAlbumVoorMap vindt een album op bron_map, alleen binnen dezelfde groep (incl. ongegroepeerd = null)', () => {
+  const groepA = maakWallGroep('Groep A', 'albums').lastInsertRowid
+  const groepB = maakWallGroep('Groep B', 'albums').lastInsertRowid
+  maakAlbum({ naam: 'Album', artiest: 'X', coverPad: null, groepId: groepA, bronMap: 'C:/muziek/album1' })
+  maakAlbum({ naam: 'Ongegroepeerd album', artiest: 'X', coverPad: null, groepId: null, bronMap: 'C:/muziek/album2' })
+
+  assert.equal(vindAlbumVoorMap(groepA, 'C:/muziek/album1').naam, 'Album')
+  assert.equal(vindAlbumVoorMap(groepA, 'C:/muziek/nietbestaand'), undefined)
+  assert.equal(vindAlbumVoorMap(groepB, 'C:/muziek/album1'), undefined)
+  assert.equal(vindAlbumVoorMap(null, 'C:/muziek/album2').naam, 'Ongegroepeerd album')
+})
+
+test('sorteerAlbums sorteert op artiest, dan albumnaam, alfabetisch en niet hoofdlettergevoelig', () => {
+  const groepId = maakWallGroep('Sorteertest', 'albums').lastInsertRowid
+  const zenyatta = maakAlbum({ naam: 'Zenyatta Mondatta', artiest: 'the police', coverPad: null, groepId }).lastInsertRowid
+  const ahead = maakAlbum({ naam: 'A Head Full Of Dreams', artiest: 'Coldplay', coverPad: null, groepId }).lastInsertRowid
+  const outlandos = maakAlbum({ naam: 'Outlandos d\'Amour', artiest: 'The Police', coverPad: null, groepId }).lastInsertRowid
+  const zonderArtiest = maakAlbum({ naam: 'Onbekend album', artiest: null, coverPad: null, groepId }).lastInsertRowid
+
+  sorteerAlbums(groepId)
+
+  const volgorde = getAlbumsVoorGroep(groepId).map(a => a.id)
+  assert.deepEqual(volgorde, [zonderArtiest, ahead, outlandos, zenyatta])
+})
+
+test('sorteerAlbums raakt andere groepen niet aan', () => {
+  const groepA = maakWallGroep('Groep A', 'albums').lastInsertRowid
+  const groepB = maakWallGroep('Groep B', 'albums').lastInsertRowid
+  const b = maakAlbum({ naam: 'B album', artiest: null, coverPad: null, groepId: groepA }).lastInsertRowid
+  const a = maakAlbum({ naam: 'A album', artiest: null, coverPad: null, groepId: groepA }).lastInsertRowid
+  const andereGroep = maakAlbum({ naam: 'Z album', artiest: null, coverPad: null, groepId: groepB }).lastInsertRowid
+
+  sorteerAlbums(groepA)
+
+  assert.deepEqual(getAlbumsVoorGroep(groepA).map(al => al.id), [a, b])
+  assert.deepEqual(getAlbumsVoorGroep(groepB).map(al => al.id), [andereGroep])
+})
+
 test('track-CRUD: toevoegen (volgorde = aantal + 1), ophalen, herordenen en verwijderen', () => {
   const albumId = maakAlbum({ naam: 'Album', artiest: null, coverPad: null, groepId: null }).lastInsertRowid
   const t1 = voegTrackToe({ albumId, artiest: 'X', titel: 'Track 1', lokaalPad: 'track1.mp3' }).lastInsertRowid
@@ -96,6 +137,26 @@ test('updateAlbum wijzigt naam en artiest', () => {
   const album = getAlbum(albumId)
   assert.equal(album.naam, 'Nieuwe naam')
   assert.equal(album.artiest, 'Nieuwe artiest')
+})
+
+test('maakAlbum slaat genre op, updateAlbum kan het wijzigen of leegmaken', () => {
+  const albumId = maakAlbum({ naam: 'Album', artiest: null, coverPad: null, groepId: null, genre: 'Rock' }).lastInsertRowid
+  assert.equal(getAlbum(albumId).genre, 'Rock')
+
+  updateAlbum({ id: albumId, naam: 'Album', artiest: null, genre: 'Metal' })
+  assert.equal(getAlbum(albumId).genre, 'Metal')
+
+  updateAlbum({ id: albumId, naam: 'Album', artiest: null, genre: '' })
+  assert.equal(getAlbum(albumId).genre, null)
+})
+
+test('getAlleGenres geeft unieke, alfabetisch gesorteerde genres terug, zonder lege waarden', () => {
+  maakAlbum({ naam: 'A', artiest: null, coverPad: null, groepId: null, genre: 'Rock' })
+  maakAlbum({ naam: 'B', artiest: null, coverPad: null, groepId: null, genre: 'Jazz' })
+  maakAlbum({ naam: 'C', artiest: null, coverPad: null, groepId: null, genre: 'Rock' })
+  maakAlbum({ naam: 'D', artiest: null, coverPad: null, groepId: null, genre: null })
+
+  assert.deepEqual(getAlleGenres(), ['Jazz', 'Rock'])
 })
 
 test('verwijderAlbumsVoorGroep verwijdert alle albums (en hun tracks) van die groep, andere groepen blijven ongemoeid', () => {

@@ -95,6 +95,11 @@ function openJukebox() {
   ipcRenderer.send('open-jukebox')
 }
 
+function albumsModusActief() {
+  const el = document.getElementById('albums-container')
+  return !!el && el.style.display === 'flex'
+}
+
 function stuurNaarJukebox() {
   if (zoekModusActief()) {
     if (zoekSelectie.size === 0) {
@@ -112,6 +117,11 @@ function stuurNaarJukebox() {
     return
   }
 
+  if (albumsModusActief()) {
+    if (typeof stuurAlbumsNaarJukebox === 'function') stuurAlbumsNaarJukebox()
+    return
+  }
+
   if (selectie.size === 0) {
     alert(t('jukebox.geenSelectie'))
     return
@@ -122,6 +132,11 @@ function stuurNaarJukebox() {
 }
 
 function verwijderSelectie() {
+  if (albumsModusActief()) {
+    if (typeof verwijderAlbumSelectie === 'function') verwijderAlbumSelectie()
+    return
+  }
+
   if (selectie.size === 0) return
 
   const idArray = Array.from(selectie)
@@ -281,8 +296,10 @@ function verbergZoekResultaten() {
   if (albumsContainer) albumsContainer.style.display = isAlbumGroep ? 'flex' : 'none'
   const prullenbak = document.getElementById('prullenbak')
   if (prullenbak) prullenbak.style.display = isWalls ? '' : 'none'
+  // selectie-info hoort ook bij albums te blijven werken (Ctrl+klik-selectie op albumkaarten, zie
+  // js/albums.js) - alleen de concerten-overzichtspagina zelf heeft geen selectiemechanisme
   const selectieInfo = document.getElementById('selectie-info')
-  if (selectieInfo) selectieInfo.style.display = isWalls ? '' : 'none'
+  if (selectieInfo) selectieInfo.style.display = (isWalls || isAlbumGroep) ? '' : 'none'
 }
 
 function zoekSleutel(resultaat) {
@@ -530,7 +547,9 @@ function updateSelectieInfo() {
   const tekst = document.getElementById('selectie-tekst')
   const verwijderBtn = document.getElementById('verwijder-selectie-btn')
   const zoekActief = zoekModusActief()
-  const actieveSelectie = zoekActief ? zoekSelectie : selectie
+  const actieveSelectie = zoekActief
+    ? zoekSelectie
+    : (albumsModusActief() && typeof albumSelectie !== 'undefined' ? albumSelectie : selectie)
 
   if (actieveSelectie.size === 0) {
     info.classList.remove('zichtbaar')
