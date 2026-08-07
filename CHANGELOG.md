@@ -4,6 +4,10 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.4]
+### Changed
+- Walls met veel lokale muziek en video's laden merkbaar sneller: kaarten verschijnen meteen, thumbnails worden daarna op de achtergrond ingevuld.
+
 ## [1.2.3]
 ### Added
 - Muziek-albums: genre-veld met suggesties op basis van je eigen collectie.

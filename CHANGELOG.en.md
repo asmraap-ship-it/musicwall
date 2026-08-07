@@ -6,6 +6,10 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.4]
+### Changed
+- Walls with a lot of local music and videos now load noticeably faster: cards appear immediately, thumbnails are filled in the background afterward.
+
 ## [1.2.3]
 ### Added
 - Music albums: genre field with suggestions based on your own collection.

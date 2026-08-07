@@ -33,7 +33,7 @@ function getYoutubeId(url) {
   return match ? match[1] : null
 }
 
-async function getThumbnail(video, idx) {
+function getThumbnail(video, idx) {
   const playIcon = '<div class="card-thumb-play">'
     + '<svg viewBox="0 0 24 24" fill="#c8a87a"><polygon points="5,3 19,12 5,21"/></svg>'
     + '</div>'
@@ -59,20 +59,51 @@ async function getThumbnail(video, idx) {
     }
   }
 
+  // De thumbnail zelf wordt hier bewust NIET opgehaald (dat was voorheen een await ipcRenderer.invoke(...) per
+  // kaart, serieel in de render-lus van laadWalls()/toonAlleKaarten() - bij een grote lokale verzameling telde
+  // dat op tot een merkbare vertraging v\u00f3\u00f3rdat de walls zichtbaar werden). In plaats daarvan verschijnt de kaart
+  // meteen met een placeholder en vult vulLokaleThumbnails() de echte thumbnail later, parallel, asynchroon in.
   if (video.type === 'lokaal' && video.lokaal_pad) {
-    const pad = await ipcRenderer.invoke('maak-thumbnail', video.lokaal_pad)
-    if (pad) {
-      return '<div class="card-thumb-wrap" onclick="if(!event.ctrlKey)speelAfIdx(' + idx + ')">'
-        + '<img class="card-thumbnail" loading="lazy" src="file:///' + pad.replace(/\\/g, '/') + '">'
-        + playIcon + deleteKnop + bewerkKnop + bronLabel
-        + '</div>'
-    }
+    return '<div class="card-thumb-wrap" data-thumb-pad="' + video.lokaal_pad + '" onclick="if(!event.ctrlKey)speelAfIdx(' + idx + ')">'
+      + '<div class="card-thumbnail-placeholder">\u25b6</div>'
+      + playIcon + deleteKnop + bewerkKnop + bronLabel
+      + '</div>'
   }
 
   return '<div class="card-thumb-wrap" onclick="if(!event.ctrlKey)speelAfIdx(' + idx + ')">'
     + '<div class="card-thumbnail-placeholder">\u25b6</div>'
     + deleteKnop + bronLabel
     + '</div>'
+}
+
+// Vult lokale-videokaarten (herkenbaar aan data-thumb-pad, zie getThumbnail hierboven) achteraf in met hun echte
+// thumbnail, met een beperkt aantal gelijktijdige IPC-aanvragen - onbeperkt parallel zou bij een grote, nog niet
+// eerder gecachete verzameling te veel ffmpeg-processen tegelijk kunnen starten.
+const THUMBNAIL_CONCURRENTIE = 6
+
+async function vulLokaleThumbnails(container) {
+  const wraps = Array.from(container.querySelectorAll('.card-thumb-wrap[data-thumb-pad]'))
+  let volgende = 0
+
+  async function werker() {
+    while (volgende < wraps.length) {
+      const wrap = wraps[volgende++]
+      const pad = wrap.getAttribute('data-thumb-pad')
+      wrap.removeAttribute('data-thumb-pad')
+      const thumbPad = await ipcRenderer.invoke('maak-thumbnail', pad)
+      if (!thumbPad || !wrap.isConnected) continue
+      const placeholder = wrap.querySelector('.card-thumbnail-placeholder')
+      if (!placeholder) continue
+      const img = document.createElement('img')
+      img.className = 'card-thumbnail'
+      img.loading = 'lazy'
+      img.src = 'file:///' + thumbPad.replace(/\\/g, '/')
+      placeholder.replaceWith(img)
+    }
+  }
+
+  const werkers = Array.from({ length: Math.min(THUMBNAIL_CONCURRENTIE, wraps.length) }, () => werker())
+  await Promise.all(werkers)
 }
 
 function openToevoegen(wallId) {
@@ -886,8 +917,8 @@ window.addEventListener('mousemove', (e) => {
 
 const KAART_RENDER_LIMIT = 150
 
-async function bouwKaartHtml(video, wallId, idx, n) {
-  const thumbnail = await getThumbnail(video, idx)
+function bouwKaartHtml(video, wallId, idx, n) {
+  const thumbnail = getThumbnail(video, idx)
   const geselecteerdClass = selectie.has(video.id) ? ' geselecteerd' : ''
 
   return '<div class="card' + geselecteerdClass + '" id="c' + wallId + '-' + n + '" data-video-id="' + video.id + '" data-flip-id="video-' + video.id + '"'
@@ -931,7 +962,7 @@ async function toonAlleKaarten(wallId) {
 
   let toegevoegd = ''
   for (let index = alGerenderd; index < videos.length; index++) {
-    toegevoegd += await bouwKaartHtml(videos[index], wallId, startIdx + index, index + 1)
+    toegevoegd += bouwKaartHtml(videos[index], wallId, startIdx + index, index + 1)
   }
 
   const tijdelijk = document.createElement('div')
@@ -945,6 +976,7 @@ async function toonAlleKaarten(wallId) {
   }
   startKaartAdemhaling(nieuweKaarten)
   controleerKaartenInContainer(wallVideosEl)
+  vulLokaleThumbnails(wallVideosEl)
 }
 
 async function laadWalls() {
@@ -970,7 +1002,7 @@ async function laadWalls() {
     const renderAantal = Math.min(videos.length, KAART_RENDER_LIMIT)
 
     for (let index = 0; index < renderAantal; index++) {
-      kaarten += await bouwKaartHtml(videos[index], wall.id, wallStartIdx + index, index + 1)
+      kaarten += bouwKaartHtml(videos[index], wall.id, wallStartIdx + index, index + 1)
     }
 
     const verborgenAantal = videos.length - renderAantal
@@ -1031,6 +1063,7 @@ async function laadWalls() {
   }
 
   controleerKaartenInContainer(container)
+  vulLokaleThumbnails(container)
 }
 
 laadWalls()
