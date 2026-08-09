@@ -191,9 +191,22 @@ function stop() {
   }
 }
 
+// **Bug gevonden en gefixt (bij een albumwissel via vorige/volgende bleef de toonarm boven de draaischijf
+// hangen i.p.v. eerst naar rust te gaan)**: speelIndex() (js/jukebox.js) roept bij elke handmatige
+// navigatie Turntable.stop() gevolgd door deze reset() aan, om de arm instant (zonder animatie) naar rust
+// te zetten vóórdat toonVinyl() de plaatwissel start. reset() zette armTransitieBezig voorheen zelf ook
+// terug op false - dat is precies dezelfde stale-timeupdate-race die hierboven bij start()/stop() al is
+// gefixt (zie de toelichting daar), maar dan met een veel groter tijdvenster: bij een albumwissel duurt
+// toonVinyl()'s weghaal+neerleg-animatie zo'n 1,8s vóórdat Turntable.start() weer wordt aangeroepen, en in
+// die hele tussentijd stond bijwerken() dus gewoon weer open - een timeupdate-event van het net-gepauzeerde
+// vorige nummer (met de eigen bereikte currentTime/duration van dát nummer) kon de arm dan alsnog naar een
+// middenpositie boven de plaat trekken. Bij een gewone track binnen hetzelfde album viel dit nauwelijks op,
+// omdat toonVinyl() daar vrijwel synchroon doorloopt (geen animatie nodig) en het venster dus verwaarloosbaar
+// kort is. Opgelost door hier armTransitieBezig niet meer aan te raken - stop()/start() blijven de enige
+// plekken die 'm zetten/wissen (zie de toelichting daar), reset() regelt alleen nog de instante visuele
+// stand; de guard blijft zo doorlopend actief vanaf stop() tot aan start()'s onComplete.
 function reset() {
   laatsteProgressie = 0
-  armTransitieBezig = false
   if (toonarmInnerEl) {
     gsap.killTweensOf(toonarmInnerEl)
     gsap.set(toonarmInnerEl, { rotation: RUST_HOEK })

@@ -829,11 +829,22 @@ function speelPauze() {
   }
 }
 
-function stop() {
+// behoudTurntable: alleen true vanuit de echte Stop-knop (zie jukebox.html) - op gebruikersverzoek blijft
+// de Pioneer daarbij gewoon in beeld staan (alleen de plaat verdwijnt, zie verbergVinyl() hieronder) i.p.v.
+// het hele scherm leeg te maken voor de "Kies een nummer"-placeholder. De andere aanroepers van stop()
+// hieronder (item verwijderen, playlist leegmaken, andere playlist laden) wijzigen de speellijst zelf al
+// fundamenteel, dus daar blijft het oude gedrag (meteen verbergen) van toepassing.
+function stop(behoudTurntable) {
   clearTimeout(stopOpruimTimer)
   clearTimeout(afgespeeldVertragingTimer)
 
   const speler = document.getElementById('speler')
+  const audioCoverWrap = document.getElementById('audio-cover-wrap')
+  // audio-cover-wrap draagt .zichtbaar alleen tijdens een lokaal audio-only nummer (zie speelIndex()) - bij
+  // een gestopte video/YouTube-nummer, of wanneer er nog nooit iets gespeeld is, is er dus sowieso niets
+  // te behouden.
+  const wasTurntableActief = behoudTurntable && audioCoverWrap.classList.contains('zichtbaar')
+
   speler.pause()
   speler.removeAttribute('src')
   speler.classList.remove('zichtbaar')
@@ -846,14 +857,19 @@ function stop() {
     // weg - op gebruikersverzoek: pauzeren laat de plaat gewoon liggen, alleen stoppen/einde playlist niet.
     window.Turntable.verbergVinyl()
   }
-  // audio-cover-wrap (met de platenspeler erin) blijft nog even zichtbaar, anders zouden de rustige
-  // tonearm-lift- en vinyl-weghaal-animaties die hierboven net gestart zijn (1.3s resp. 0.9s) meteen
-  // onzichtbaar worden. reset() (instant, geen tween) volgt pas ná die bewegingen, zodat de arm exact op
-  // de ruststand komt te staan.
-  stopOpruimTimer = setTimeout(() => {
-    document.getElementById('audio-cover-wrap').classList.remove('zichtbaar')
-    if (window.Turntable) window.Turntable.reset()
-  }, TONEARM_LIFT_MS)
+
+  if (wasTurntableActief) {
+    // reset() (instant, geen tween) volgt pas ná de tonearm-lift-/vinyl-weghaal-animaties hierboven (1.3s
+    // resp. 0.9s), zodat de arm exact op de ruststand komt te staan - audio-cover-wrap zelf blijft nu
+    // gewoon zichtbaar, dus hier hoeft (i.t.t. voorheen) niets meer verborgen te worden.
+    stopOpruimTimer = setTimeout(() => {
+      if (window.Turntable) window.Turntable.reset()
+    }, TONEARM_LIFT_MS)
+  } else {
+    audioCoverWrap.classList.remove('zichtbaar')
+    document.getElementById('speel-placeholder').style.display = 'block'
+    document.getElementById('fullscreen-btn').classList.remove('zichtbaar')
+  }
 
   const ytWrap = document.getElementById('youtube-speler-wrap')
   ytWrap.classList.remove('zichtbaar')
@@ -866,8 +882,6 @@ function stop() {
   ytIsPlaying = false
   stopSpectrum()
 
-  document.getElementById('speel-placeholder').style.display = 'block'
-  document.getElementById('fullscreen-btn').classList.remove('zichtbaar')
   document.getElementById('play-btn').textContent = '▶'
 }
 

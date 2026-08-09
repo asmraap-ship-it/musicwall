@@ -154,6 +154,25 @@
          stop-color="#c9cacd"
          id="stop19" />
     </linearGradient>
+    <!-- Toegewijd verloop voor de toonarmbuis (v2): userSpaceOnUse, smalle
+         band loodrecht op de gemiddelde armrichting (863,142)->(509,459),
+         zodat de highlight de buisdoorsnede volgt i.p.v. de volledige
+         diagonale bounding box van het pad (metalGrad gaf hier een vlak wit
+         lint). Losstaand van metalGrad, dat elders correct blijft werken
+         (fader-knop, contragewicht, headshell - kleinere lokale bboxen). -->
+    <linearGradient
+       id="armTubeGrad"
+       gradientUnits="userSpaceOnUse"
+       x1="696.0"
+       y1="311.7"
+       x2="676.0"
+       y2="289.3">
+      <stop offset="0%" stop-color="#c7c8cb" />
+      <stop offset="18%" stop-color="#f4f5f6" />
+      <stop offset="45%" stop-color="#9fa0a4" />
+      <stop offset="70%" stop-color="#e4e5e7" />
+      <stop offset="100%" stop-color="#8a8b8f" />
+    </linearGradient>
     <radialGradient
        id="knobGrad"
        cx="35%"
@@ -252,24 +271,39 @@
   <!-- ======================================================= -->
   <g
      id="behuizing">
+    <!-- Buitenrand van de PLX-1000 zelf: dikke zwarte rand. -->
     <rect
        x="8"
        y="8"
        width="984"
        height="764"
-       rx="20"
+       rx="3"
        fill="url(#chassisGrad)"
        stroke="#0a0a0b"
-       stroke-width="2"
+       stroke-width="5"
        id="rect30" />
     <rect
        x="8"
        y="8"
        width="984"
        height="764"
-       rx="20"
+       rx="3"
        fill="url(#chassisSheen)"
        id="rect31" />
+    <!-- Kleine tussenruimte (chassisGrad-kleur zichtbaar) en dunne zwarte
+       binnenrand, evenwijdig aan de buitenrand - dichter tegen de dikke
+       buitenrand aan dan voorheen. -->
+    <rect
+       x="13"
+       y="13"
+       width="974"
+       height="754"
+       rx="2"
+       fill="none"
+       stroke="#0a0a0b"
+       stroke-opacity="0.85"
+       stroke-width="1.5"
+       id="rect30-binnenrand" />
     <!-- 45-toeren adapter: zelfde formaat als start/stop, zilverkleurig, met gaatje zoals in de vinylplaat -->
     <g
        transform="translate(100,100)"
@@ -762,7 +796,9 @@
          r="4.5"
          fill="#26272a"
          id="circle87" />
-      <!-- lock / cueing mechaniek knop -->
+      <!-- lock / cueing-lift hendel (v2): was een vlakke statische knop,
+           nu een scharnierende hendel-vorm zoals een echte cueing-lift
+           die je met de vingertop optilt. Basissokkel behouden. -->
       <circle
          cx="898"
          cy="78"
@@ -774,9 +810,26 @@
       <circle
          cx="898"
          cy="78"
-         r="5.5"
-         fill="#333437"
+         r="4"
+         fill="#26272a"
          id="circle89" />
+      <line
+         x1="898"
+         y1="78"
+         x2="912"
+         y2="64"
+         stroke="url(#metalGrad)"
+         stroke-width="3.5"
+         stroke-linecap="round"
+         id="cueing-lever-arm" />
+      <circle
+         cx="912"
+         cy="64"
+         r="3.5"
+         fill="url(#metalGrad)"
+         stroke="#000000"
+         stroke-width="0.5"
+         id="cueing-lever-tip" />
     </g>
     <!-- tempo range indicatorlampjes + knop (ruim onder de pivotplaat) -->
     <rect
@@ -1926,11 +1979,29 @@
      transform="translate(-49.95,26.72)">
     <g
        id="toonarm-inner">
+      <!-- flexibele signaalkabel (v2): korte lus tussen het lagerhuis en de
+           armbuis, nodig om de rotatie van de gimbal-ophanging op te vangen.
+           Ontbrak volledig in v1. -->
+      <path
+         d="M 840 126 C 826 138, 826 158, 846 162 C 856 164, 850 174, 856 180"
+         fill="none"
+         stroke="#0f1115"
+         stroke-width="3"
+         stroke-linecap="round"
+         id="lead-wire-core" />
+      <path
+         d="M 840 126 C 826 138, 826 158, 846 162 C 856 164, 850 174, 856 180"
+         fill="none"
+         stroke="#64748b"
+         stroke-width="1"
+         stroke-linecap="round"
+         stroke-opacity="0.55"
+         id="lead-wire-highlight" />
       <!-- korte verbindingsbuis tussen pivot en contragewicht (staart van de arm) -->
       <path
          d="M 863 142 L 897 105"
          fill="none"
-         stroke="url(#metalGrad)"
+         stroke="url(#armTubeGrad)"
          stroke-width="24"
          stroke-linecap="round"
          id="path244" />
@@ -1973,11 +2044,13 @@
            stroke-width="1"
            id="line246" />
       </g>
-      <!-- S-vormige armbuis, 1-op-1 nagetekend uit de brongrafiek (Catmull-Rom spline) -->
+      <!-- S-vormige armbuis: geometrie teruggezet naar de originele,
+           1-op-1 nagetekende vorm (op verzoek de v2-S-curve-wijziging
+           teruggedraaid). Materiaal blijft armTubeGrad (v2-fix). -->
       <path
          d="M 863.0 142.0 L 786.7 224.7 Q 756.2 257.8 733.7 296.8 L 699.5 356.2 Q 672.0 403.9 619.9 421.5 L 509.0 459.0"
          fill="none"
-         stroke="url(#metalGrad)"
+         stroke="url(#armTubeGrad)"
          stroke-width="13"
          stroke-linecap="round"
          stroke-linejoin="round"
@@ -1994,7 +2067,7 @@
       <path
          d="M 863 142 L 825.7 182.4"
          fill="none"
-         stroke="url(#metalGrad)"
+         stroke="url(#armTubeGrad)"
          stroke-width="24"
          stroke-linecap="round"
          id="path248" />
