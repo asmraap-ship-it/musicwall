@@ -28,6 +28,7 @@ let videoWindow = null
 let jukeboxWin = null
 let importWin = null
 let albumImportWin = null
+let albumDetailWin = null
 let whatsNewWin = null
 let huidigThema = ''
 let huidigeTaal = 'nl'
@@ -860,8 +861,25 @@ ipcMain.on('open-bewerk-album', (event, album) => {
   })
 })
 
+// Eén albumscherm tegelijk (zelfde singleton-patroon als jukeboxWin/importWin) - op gebruikersverzoek: met
+// twee of meer open albumschermen kon je per ongeluk meerdere albums tegelijk laten afspelen, elk met zijn
+// eigen <audio>-element. Een al open venster focust en laadt gewoon het nieuw gekozen album (hergebruikt
+// dezelfde 'laad-album'-IPC als de eerste keer openen), i.p.v. een tweede venster ernaast te openen -
+// vorig/volgend-album blijft daarnaast gewoon werken om tussen albums te bladeren zonder dit scherm te sluiten.
 ipcMain.on('open-album-detail', (event, albumId) => {
-  const detailWin = new BrowserWindow({
+  if (albumDetailWin && !albumDetailWin.isDestroyed()) {
+    // Een rechtstreekse webContents.send('laad-album', ...) naar het al-geladen venster bleek onbetrouwbaar
+    // (het bericht kwam soms niet aan, ook na een lange wachttijd) - opnieuw laden en dezelfde beproefde
+    // did-finish-load-aanpak als de eerste keer openen hergebruiken werkt wél consistent.
+    albumDetailWin.focus()
+    albumDetailWin.webContents.once('did-finish-load', () => {
+      albumDetailWin.webContents.send('laad-album', albumId)
+    })
+    albumDetailWin.loadFile('album-detail.html')
+    return
+  }
+
+  albumDetailWin = new BrowserWindow({
     width: 900,
     height: 750,
     title: 'Album',
@@ -871,11 +889,18 @@ ipcMain.on('open-album-detail', (event, albumId) => {
       contextIsolation: false
     }
   })
-  detailWin.loadFile('album-detail.html')
-  detailWin.setMenuBarVisibility(false)
+  albumDetailWin.loadFile('album-detail.html')
+  albumDetailWin.setMenuBarVisibility(false)
 
-  detailWin.webContents.on('did-finish-load', () => {
-    detailWin.webContents.send('laad-album', albumId)
+  // .once (niet .on) - dit is uitsluitend voor de allereerste load bedoeld, anders zou deze listener bij een
+  // latere loadFile()-hergebruik (zie hierboven) blijven hangen en een stale, verouderde albumId opnieuw
+  // versturen bovenop de nieuwe .once()-listener die dié hergebruik-aanroep zelf al registreert.
+  albumDetailWin.webContents.once('did-finish-load', () => {
+    albumDetailWin.webContents.send('laad-album', albumId)
+  })
+
+  albumDetailWin.on('closed', () => {
+    albumDetailWin = null
   })
 })
 

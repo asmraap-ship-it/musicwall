@@ -9,6 +9,11 @@ let huidigeTrackLijst = []
 let huidigSpeelTrackId = null
 let huidigeAlbumLijst = []
 const albumSpeler = document.getElementById('album-speler')
+// Op gebruikersverzoek: optioneel de platenspeler-animatie tonen tijdens het afspelen van een album, met
+// hetzelfde js/turntable.js-component als de jukebox - bewust een losse, onthouden voorkeur i.p.v. altijd
+// aan, want dit scherm is compacter dan de jukebox en niet iedereen wil de vertraging van de needle-drop-
+// animatie vóór elk nummer.
+let draaitafelZichtbaar = localStorage.getItem('musicwall-album-draaitafel-zichtbaar') === 'ja'
 
 async function laadAlbum(albumId) {
   huidigAlbumId = albumId
@@ -145,10 +150,12 @@ function bijwerkenSpeelUI() {
   document.querySelectorAll('.track-rij.speelt').forEach(el => el.classList.remove('speelt'))
 
   const label = document.getElementById('album-navigatie-track')
+  const draaitafelInfo = document.getElementById('album-draaitafel-track-info')
   const track = huidigSpeelTrackId !== null ? huidigeTrackLijst.find(t => t.id === huidigSpeelTrackId) : null
 
   if (!track) {
     if (label) label.textContent = ''
+    if (draaitafelInfo) draaitafelInfo.innerHTML = ''
     bijwerkenTrackKnoppen()
     return
   }
@@ -156,9 +163,22 @@ function bijwerkenSpeelUI() {
   const rij = document.querySelector('.track-rij[data-track-id="' + track.id + '"]')
   if (rij) {
     rij.classList.add('speelt')
-    rij.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    // Alleen scrollen als de tracklijst ook daadwerkelijk zichtbaar is (niet in speler-modus, zie
+    // bijwerkenWeergave() - de tracklijst is dan verborgen) - anders scrolde de hele pagina, inclusief het
+    // draaitafel-paneel zelf, mee omhoog bij elke navigatie. block:'nearest' (i.p.v. 'center') scrollt
+    // daarnaast alleen als de rij niet al zichtbaar is, zelfde patroon als de jukebox' eigen playlist-scroll.
+    if (!spelerModusActief()) rij.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }
-  if (label) label.textContent = (track.artiest || (huidigAlbum && huidigAlbum.artiest) || '') + ' - ' + track.titel
+
+  const artiest = track.artiest || (huidigAlbum && huidigAlbum.artiest) || ''
+  // Trackinfo staat óf in de navigatiebalk, óf (op gebruikersverzoek, net als bij de jukebox) prominent
+  // onder de draaitafel zelf als die actief is - niet allebei tegelijk, dat is dubbelop.
+  if (label) label.textContent = draaitafelZichtbaar ? '' : artiest + ' - ' + track.titel
+  if (draaitafelInfo) {
+    draaitafelInfo.innerHTML = draaitafelZichtbaar
+      ? '<div class="album-draaitafel-track-artiest">' + artiest + '</div><div class="album-draaitafel-track-titel">' + track.titel + '</div>'
+      : ''
+  }
   bijwerkenTrackKnoppen()
 }
 
@@ -166,15 +186,89 @@ function huidigSpeelIndex() {
   return huidigeTrackLijst.findIndex(t => t.id === huidigSpeelTrackId)
 }
 
-function laadTrack(track) {
-  huidigSpeelTrackId = track.id
-  albumSpeler.src = 'file:///' + track.lokaal_pad.replace(/\\/g, '/')
-  albumSpeler.play()
-  document.getElementById('album-play-btn').textContent = '⏸'
+function spelerModusActief() {
+  return draaitafelZichtbaar && huidigSpeelTrackId !== null
+}
+
+// Op gebruikersverzoek: óf de draaitafel, óf de tracklijst - nooit allebei tegelijk. De draaitafel is
+// alleen zichtbaar zolang er ook echt een track geladen is (spelend of gepauzeerd), anders zou het paneel
+// een leeg/stilstaand plaatje tonen zonder track. Toen beide nog tegelijk zichtbaar konden zijn, scrolde
+// bijwerkenSpeelUI()'s scrollIntoView (zie aldaar) de hele pagina - dus ook de draaitafel zelf - mee omhoog
+// bij elke navigatie, wat de speler zelf uit beeld liet lopen. Door de tracklijst nu volledig te verbergen
+// zolang de speler actief is, is er niets meer om naartoe te scrollen.
+function bijwerkenWeergave() {
+  const actief = spelerModusActief()
+  const wrap = document.getElementById('album-draaitafel-wrap')
+  if (wrap) wrap.classList.toggle('zichtbaar', actief)
+  document.getElementById('track-lijst').classList.toggle('verborgen', actief)
+  document.querySelector('.track-acties-balk').classList.toggle('verborgen', actief)
+}
+
+function toggleDraaitafelZichtbaar() {
+  draaitafelZichtbaar = !draaitafelZichtbaar
+  localStorage.setItem('musicwall-album-draaitafel-zichtbaar', draaitafelZichtbaar ? 'ja' : 'nee')
+  document.getElementById('draaitafel-toggle-btn').classList.toggle('actief', draaitafelZichtbaar)
+  bijwerkenWeergave()
+  // Verplaatst de trackinfo meteen tussen navigatiebalk en onder-de-draaitafel (zie bijwerkenSpeelUI())
+  bijwerkenSpeelUI()
+
+  if (!window.Turntable) return
+
+  if (draaitafelZichtbaar && huidigSpeelTrackId !== null) {
+    // Middenin een nummer aangezet - het paneel zichtbaar maken simuleert geen "plaat opleggen"/"naald
+    // laten zakken" (dat hoort alleen bij een echte start, zie laadTrack()), dus instant naar de huidige
+    // afspeelstand i.p.v. de aankomst-/needle-drop-animaties opnieuw af te spelen.
+    const progressie = albumSpeler.duration ? albumSpeler.currentTime / albumSpeler.duration : 0
+    window.Turntable.toonHuidigeStandInstant(huidigAlbum.cover_pad || null, progressie, !albumSpeler.paused)
+  } else if (!draaitafelZichtbaar) {
+    // Uitgezet - opruimen zodat een latere heraanzet niet denkt dat er nog een (inmiddels onzichtbare)
+    // plaat ligt.
+    window.Turntable.verbergVinylInstant()
+  }
+}
+
+// Gedeeld door laadTrack() en albumStop() - allebei zetten de voortgangsweergave terug naar 0, of omdat er
+// een nieuw nummer begint of omdat er niets meer speelt.
+function resetVoortgangsUI() {
   document.getElementById('album-progress-vulling').style.width = '0%'
   document.getElementById('album-tijd-huidig').textContent = '0:00'
   document.getElementById('album-tijd-duur').textContent = '0:00'
+}
+
+function laadTrack(track) {
+  // Het vorige nummer stopt meteen, ongeacht hoe lang toonVinyl()/start() straks nog duurt vóórdat het
+  // nieuwe geluid daadwerkelijk start (zelfde bug/fix als speelIndex() in js/jukebox.js) - zonder deze
+  // regel bleef het vorige nummer gewoon doorspelen tijdens de hele needle-drop/plaatwissel-animatie, want
+  // albumSpeler.src wordt nu pas ná die animatie overschreven (zie startAfspelen() hieronder).
+  albumSpeler.pause()
+
+  huidigSpeelTrackId = track.id
+  resetVoortgangsUI()
   bijwerkenSpeelUI()
+  bijwerkenWeergave()
+
+  // #album-play-btn's icoon/actief-status wordt niet hier gezet, maar door de native 'play'/'pause'-
+  // listeners op albumSpeler hieronder - dat gebeurt dan vanzelf pas zodra het geluid écht start (na de
+  // needle-drop-animatie bij "draaitafel aan"), i.p.v. optimistisch al bij het laden. bijwerkenTrackKnoppen()
+  // (het ▶/⏸-icoontje ván de trackrij zelf) volgt dezelfde route via de 'play'-listener.
+  const startAfspelen = () => {
+    albumSpeler.src = 'file:///' + track.lokaal_pad.replace(/\\/g, '/')
+    albumSpeler.play()
+  }
+
+  if (draaitafelZichtbaar && window.Turntable) {
+    // Zelfde patroon als de jukebox (speelIndex() in js/jukebox.js): arm eerst instant naar rust, dan de
+    // plaat wisselen (of laten liggen bij hetzelfde album - toonVinyl() herkent dat zelf via cover_pad) en
+    // pas ná de needle-drop het geluid starten, zodat je nooit geluid hoort vóórdat de naald zichtbaar
+    // landt.
+    window.Turntable.stop()
+    window.Turntable.reset()
+    window.Turntable.toonVinyl(huidigAlbum.cover_pad || null, () => {
+      window.Turntable.start(startAfspelen)
+    })
+  } else {
+    startAfspelen()
+  }
 }
 
 function formatTijd(seconden) {
@@ -188,10 +282,28 @@ albumSpeler.addEventListener('timeupdate', () => {
   const pct = albumSpeler.duration ? (albumSpeler.currentTime / albumSpeler.duration) * 100 : 0
   document.getElementById('album-progress-vulling').style.width = pct + '%'
   document.getElementById('album-tijd-huidig').textContent = formatTijd(albumSpeler.currentTime)
+  if (draaitafelZichtbaar && window.Turntable) window.Turntable.bijwerken(albumSpeler.currentTime, albumSpeler.duration)
 })
 
 albumSpeler.addEventListener('loadedmetadata', () => {
   document.getElementById('album-tijd-duur').textContent = formatTijd(albumSpeler.duration)
+})
+
+// Eén plek voor alles wat van de daadwerkelijke afspeel/pauze-status van albumSpeler afhangt (icoon, groene
+// "actief"-indicator, rij-icoontje) - native 'play'/'pause'-events i.p.v. dit los per functie te zetten
+// (laadTrack()/albumSpeelPauze()/albumStop()/de 'ended'-handler riepen dit vroeger allemaal zelf aan, wat
+// zowel dubbel werk was als een keer daadwerkelijk uit de pas liep, zie bijwerkenTrackKnoppen()). Deze
+// events vuren betrouwbaar ongeacht via welk pad het geluid start/stopt (inclusief de door de draaitafel
+// vertraagde start), dus blijft alles hier altijd synchroon met de werkelijke afspeelstatus.
+albumSpeler.addEventListener('play', () => {
+  document.getElementById('album-play-btn').textContent = '⏸'
+  document.getElementById('album-play-btn').classList.add('speelt-actief')
+  bijwerkenTrackKnoppen()
+})
+albumSpeler.addEventListener('pause', () => {
+  document.getElementById('album-play-btn').textContent = '▶'
+  document.getElementById('album-play-btn').classList.remove('speelt-actief')
+  bijwerkenTrackKnoppen()
 })
 
 function zoekInAlbumSpeler(event) {
@@ -208,25 +320,33 @@ function albumSpeelPauze() {
     return
   }
 
+  // #album-play-btn's icoon/actief-status en het rij-icoontje volgen hier niet handmatig, maar via de
+  // native 'play'/'pause'-listeners op albumSpeler (zie aldaar).
   if (albumSpeler.paused) {
-    albumSpeler.play()
-    document.getElementById('album-play-btn').textContent = '⏸'
+    if (draaitafelZichtbaar && window.Turntable) {
+      window.Turntable.start(() => albumSpeler.play())
+    } else {
+      albumSpeler.play()
+    }
   } else {
     albumSpeler.pause()
-    document.getElementById('album-play-btn').textContent = '▶'
+    // Pauzeren tilt alleen de arm - de plaat blijft liggen (zelfde gedrag als de jukebox, zie
+    // js/turntable.js's stop()/verbergVinyl()-onderscheid)
+    if (draaitafelZichtbaar && window.Turntable) window.Turntable.stop()
   }
-  bijwerkenTrackKnoppen()
 }
 
 function albumStop() {
   albumSpeler.pause()
   albumSpeler.removeAttribute('src')
+  if (draaitafelZichtbaar && window.Turntable) {
+    window.Turntable.stop()
+    window.Turntable.verbergVinyl()
+  }
   huidigSpeelTrackId = null
-  document.getElementById('album-play-btn').textContent = '▶'
-  document.getElementById('album-progress-vulling').style.width = '0%'
-  document.getElementById('album-tijd-huidig').textContent = '0:00'
-  document.getElementById('album-tijd-duur').textContent = '0:00'
+  resetVoortgangsUI()
   bijwerkenSpeelUI()
+  bijwerkenWeergave()
 }
 
 function albumVorige() {
@@ -255,9 +375,10 @@ albumSpeler.addEventListener('ended', () => {
   const i = huidigSpeelIndex()
   if (i !== -1 && i < huidigeTrackLijst.length - 1) {
     albumVolgende()
-  } else {
-    document.getElementById('album-play-btn').textContent = '▶'
   }
+  // Anders: laatste track van het album afgespeeld, gewoon stil blijven staan - de browser pauzeert het
+  // element zelf al bij 'ended' (vuurt ook 'pause'), dus #album-play-btn's icoon/actief-status klopt via
+  // de native listener hierboven vanzelf al.
 })
 
 function toggleSelecteerAlleInAlbum() {
@@ -388,3 +509,6 @@ window.albumVolgende = albumVolgende
 window.albumEerste = albumEerste
 window.albumLaatste = albumLaatste
 window.zoekInAlbumSpeler = zoekInAlbumSpeler
+window.toggleDraaitafelZichtbaar = toggleDraaitafelZichtbaar
+
+document.getElementById('draaitafel-toggle-btn').classList.toggle('actief', draaitafelZichtbaar)

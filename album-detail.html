@@ -43,6 +43,11 @@
   <button class="album-nav-pijl" id="album-volgend-album-btn" onclick="volgendAlbum()" data-i18n-title="albumDetail.volgendAlbumTooltip" title="Volgend album">&#10095;</button>
 </div>
 
+<div class="album-draaitafel-wrap" id="album-draaitafel-wrap">
+  <div id="turntable-svg-wrap"></div>
+  <div class="album-draaitafel-track-info" id="album-draaitafel-track-info"></div>
+</div>
+
 <div class="track-acties-balk">
   <button class="bestand-btn" id="selecteer-alles-btn" onclick="toggleSelecteerAlleInAlbum()" data-i18n="concertDetail.selecteerAllesBtn" style="display:none">☑ Selecteer alles</button>
 </div>
@@ -67,11 +72,13 @@
     <button onclick="albumVolgende()" data-i18n-title="jukebox.volgende" title="Volgende">&#9654;</button>
     <button onclick="albumLaatste()" data-i18n-title="jukebox.laatste" title="Laatste">&#9197;</button>
     <span class="album-navigatie-track" id="album-navigatie-track"></span>
+    <button onclick="toggleDraaitafelZichtbaar()" id="draaitafel-toggle-btn" data-i18n-title="albumDetail.draaitafelTooltip" title="Draaitafel tonen/verbergen">&#128191;</button>
   </div>
 </div>
 
 <script src="js/vertalingen.js"></script>
 <script src="js/i18n.js"></script>
+<script src="js/turntable.js"></script>
 <script src="js/album-detail.js"></script>
 </body>
 </html>

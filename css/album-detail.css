@@ -71,6 +71,62 @@
   margin-bottom: 0.75rem;
 }
 
+/* Platenspeler-weergave tijdens het afspelen (js/turntable.js, zelfde SVG/GSAP-component als de jukebox) -
+   optioneel/togglebaar (zie #draaitafel-toggle-btn). Op gebruikersverzoek toont dit scherm óf de draaitafel
+   óf de tracklijst, nooit allebei tegelijk (zie bijwerkenWeergave() in js/album-detail.js, die naast dit
+   paneel ook .track-acties-balk/.track-lijst verbergt) - anders scrollde de hele pagina (dus ook dit paneel
+   zelf) mee omhoog zodra bijwerkenSpeelUI() de spelende trackrij in beeld probeerde te scrollen. Nu er geen
+   tracklijst meer naast staat, mag dit paneel ook de resterende ruimte vullen i.p.v. compact te blijven -
+   min-height vult de ruimte tussen de vaste header en de vaste navigatiebalk onderin (zie die twee secties
+   verderop in dit bestand voor hun geschatte hoogtes), en de svg-breedte is nu op vh (i.p.v. een vast
+   px-maximum) gebaseerd zodat een groter venster ook een grotere platenspeler laat zien - zelfde soort
+   vh-gebaseerde aanpak als de jukebox' eigen #turntable-svg-wrap. */
+.album-draaitafel-wrap {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: calc(100vh - 340px);
+}
+
+.album-draaitafel-wrap.zichtbaar {
+  display: flex;
+}
+
+#turntable-svg-wrap {
+  width: min(58vh, 90%);
+  aspect-ratio: 1.282;
+}
+
+#turntable-svg-wrap svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Trackinfo onder de draaitafel i.p.v. (of, on toggle uit, in plaats van) in de navigatiebalk - zelfde
+   opzet als de jukebox' .audio-track-artiest/.audio-track-titel onder zijn eigen platenspeler. */
+.album-draaitafel-track-info {
+  text-align: center;
+}
+
+.album-draaitafel-track-artiest {
+  font-size: 12px;
+  color: var(--tekst-dim);
+}
+
+.album-draaitafel-track-titel {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--tekst);
+}
+
+#draaitafel-toggle-btn.actief {
+  color: #34d058;
+  border-color: #34d058;
+}
+
 .track-acties-balk {
   display: flex;
   justify-content: flex-end;
@@ -80,6 +136,15 @@
 .track-lijst {
   display: flex;
   flex-direction: column;
+}
+
+/* .verborgen (css/concert-detail.css, display:none) heeft dezelfde specificiteit als de losse-klasse-regels
+   hierboven, en dit bestand laadt ná concert-detail.css - zonder deze specifiekere override zou .verborgen
+   dus gewoon verliezen (latere bronvolgorde wint bij een gelijkspel) en bleven .track-acties-balk/.track-
+   lijst in werkelijkheid gewoon zichtbaar/display:flex ondanks de correct toegevoegde klasse. */
+.track-acties-balk.verborgen,
+.track-lijst.verborgen {
+  display: none;
 }
 
 .track-rij {
@@ -263,6 +328,15 @@
   width: 46px;
   height: 46px;
   font-size: 15px;
+}
+
+/* Op gebruikersverzoek: duidelijk zichtbaar dat er daadwerkelijk iets speelt, niet alleen af te leiden uit
+   het kleine ▶/⏸-icoontje - zelfde groene "actief"-taal als #draaitafel-toggle-btn.actief. Wordt gezet/
+   gewist door de native 'play'/'pause'-events op albumSpeler (zie js/album-detail.js), niet handmatig per
+   functie - zo blijft dit ook synchroon als het geluid via een ander pad start/stopt dan verwacht. */
+#album-play-btn.speelt-actief {
+  color: #34d058;
+  border-color: #34d058;
 }
 
 /* .selectie-info (bulk-verwijderen/toevoegen-aan-playlist-balk, uit css/concert-detail.css) staat daar

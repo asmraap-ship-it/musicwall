@@ -260,6 +260,14 @@ function setAlbumCover(coverPad) {
 // twee coverloze tracks, dus hoeft de plaat niet weggehaald en teruggelegd te worden. Een overgang van/naar
 // een échte cover (wél/niet meer null) blijft wél een zichtbare wissel triggeren, want dat is een wel
 // degelijk zichtbaar andere hoes.
+// Gedeeld door plaatsNieuw() (toonVinyl(), hieronder) en toonHuidigeStandInstant() - beide markeren de plaat
+// als "ligt er" en zetten de hoes, alleen de manier waaróp (geanimeerd vs instant) verschilt.
+function plaatsCover(coverPad) {
+  setAlbumCover(coverPad)
+  huidigeCoverPad = coverPad
+  vinylZichtbaar = true
+}
+
 function toonVinyl(coverPad, klaar) {
   const klaarMelden = () => { if (klaar) klaar() }
 
@@ -285,9 +293,7 @@ function toonVinyl(coverPad, klaar) {
     // stilstaand. Instant (geen tween) - de plaat is op dit moment nog onzichtbaar (opacity 0), dus alleen
     // de kale platter-stipjes/wordmark springen even terug, wat niet opvalt.
     if (draaischijfEl) gsap.set(draaischijfEl, { rotation: 0 })
-    setAlbumCover(coverPad)
-    huidigeCoverPad = coverPad
-    vinylZichtbaar = true
+    plaatsCover(coverPad)
     if (vinylTween) {
       vinylTween.eventCallback('onComplete', klaarMelden)
       vinylTween.play(0)
@@ -336,6 +342,32 @@ function verbergVinylInstant() {
   if (vinylTween) vinylTween.pause(0)
 }
 
-window.Turntable = { start, stop, bijwerken, reset, setAlbumCover, toonVinyl, verbergVinyl, verbergVinylInstant }
+// **Bug gevonden en gefixt (album-detail.html: draaitafel-paneel tonen liet de plaat opnieuw "opleggen")**:
+// toggleDraaitafelZichtbaar() (js/album-detail.js) riep bij het aanzetten gewoon toonVinyl()+start() aan,
+// dezelfde functies als een echte tracklaunch - maar het paneel zichtbaar maken simuleert geen fysieke
+// handeling (er wordt geen plaat opgelegd, geen naald neergezet), het toont alleen een al lopende sessie.
+// Op gebruikersverzoek: de aankomst-/needle-drop-animaties horen uitsluitend bij een echte start (laadTrack()
+// in album-detail.html, resp. speelIndex() in de jukebox), nooit bij het puur zichtbaar maken van een paneel.
+// Deze functie zet de plaat/hoes/naald/platter-rotatie in één keer, instant, op de staat die bij de huidige
+// afspeelpositie hoort - geen enkele tween, dus geen "opnieuw opgelegd"-illusie.
+function toonHuidigeStandInstant(coverPad, progressie, spelend) {
+  plaatsCover(coverPad)
+  laatsteProgressie = Math.min(1, Math.max(0, progressie))
+
+  if (vinylTween) {
+    vinylTween.pause()
+    vinylTween.progress(1)
+  }
+  if (toonarmInnerEl) {
+    gsap.killTweensOf(toonarmInnerEl)
+    gsap.set(toonarmInnerEl, { rotation: hoekVoorProgressie(laatsteProgressie) })
+  }
+  if (draaischijfTween) {
+    if (spelend) draaischijfTween.play()
+    else draaischijfTween.pause()
+  }
+}
+
+window.Turntable = { start, stop, bijwerken, reset, setAlbumCover, toonVinyl, verbergVinyl, verbergVinylInstant, toonHuidigeStandInstant }
 
 initTurntable()
