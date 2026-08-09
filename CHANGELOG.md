@@ -4,6 +4,14 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.6]
+### Added
+- Album-schermen: optioneel de platenspeler tonen tijdens het afspelen (💿-knop), met dezelfde draaitafel-animatie als de jukebox.
+
+### Fixed
+- Twee of meer albumschermen tegelijk konden onafhankelijk van elkaar afspelen.
+- Het vorige nummer bleef soms even doorspelen tijdens het wisselen naar een volgend nummer.
+
 ## [1.2.5]
 ### Changed
 - De platenspeler-tekening in de jukebox is verder verfijnd: een gedetailleerdere toonarmbuis, een scharnierende cueing-lift-hendel, een zichtbare signaalkabel en een strakkere behuizingsrand.

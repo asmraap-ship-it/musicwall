@@ -6,6 +6,14 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.6]
+### Added
+- Album screens: optionally show the turntable while playing (💿 button), with the same turntable animation as the jukebox.
+
+### Fixed
+- Two or more album screens could play independently of each other at the same time.
+- The previous track sometimes kept playing briefly while switching to the next track.
+
 ## [1.2.5]
 ### Changed
 - The turntable drawing in the jukebox has been refined further: a more detailed tonearm tube, a hinged cueing-lift lever, a visible signal cable, and a tighter chassis edge.
