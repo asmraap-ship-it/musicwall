@@ -6,6 +6,14 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.5]
+### Changed
+- The turntable drawing in the jukebox has been refined further: a more detailed tonearm tube, a hinged cueing-lift lever, a visible signal cable, and a tighter chassis edge.
+- Pressing Stop now leaves the turntable itself on screen (only the record disappears) instead of clearing the whole screen.
+
+### Fixed
+- Switching to a track from a different album via previous/next sometimes left the tonearm hovering over the platter instead of returning to rest first.
+
 ## [1.2.4]
 ### Changed
 - Walls with a lot of local music and videos now load noticeably faster: cards appear immediately, thumbnails are filled in the background afterward.

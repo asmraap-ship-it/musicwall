@@ -4,6 +4,14 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.5]
+### Changed
+- De platenspeler-tekening in de jukebox is verder verfijnd: een gedetailleerdere toonarmbuis, een scharnierende cueing-lift-hendel, een zichtbare signaalkabel en een strakkere behuizingsrand.
+- Op Stop blijft de platenspeler nu gewoon in beeld staan (alleen de plaat verdwijnt) in plaats van het hele scherm leeg te maken.
+
+### Fixed
+- Bij het wisselen naar een nummer van een ander album via vorige/volgende bleef de toonarm soms boven de draaischijf hangen in plaats van eerst naar rust te gaan.
+
 ## [1.2.4]
 ### Changed
 - Walls met veel lokale muziek en video's laden merkbaar sneller: kaarten verschijnen meteen, thumbnails worden daarna op de achtergrond ingevuld.
