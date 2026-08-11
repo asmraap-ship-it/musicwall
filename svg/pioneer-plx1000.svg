@@ -366,6 +366,14 @@
     <g
        transform="translate(-49.95,26.72)"
        id="g89">
+      <!-- Hele pivot-cluster iets vergroot rond zijn eigen (vaste) middelpunt (863,142) - trekt 'm
+           dichter tegen de platterrand aan zoals op de referentiefoto, zonder het pivotpunt zelf
+           te verschuiven (dat zou de zorgvuldig afgestemde toonarm-rotatie/headshell-rustpositie
+           breken). Bewust een kleine marge overgelaten (±14 eenheden, gemeten): de platter-groep
+           staat later in het document (dus bovenop de pivot-bezel) - bij een te grote schaal
+           (1.113 gaf nog maar ~3px kloof) knipt de platter zichtbaar een stukje van de pivot-cirkel
+           af zodra afrondingen/anti-aliasing de kloof naar nul duwen. -->
+      <g transform="translate(863,142) scale(1.05) translate(-863,-142)" id="g89-schaal">
       <!-- pivot basisplaat (statisch, fotogetrouw geplaatst t.o.v. het origineel) -->
       <circle
          cx="863"
@@ -709,6 +717,40 @@
          r="78"
          fill="#0b0b0c"
          id="circle78" />
+      <!-- hoogte-afstelring ("6mm HEIGHT ADJUST"): gekartelde kraag rond de voet van de arm, met
+           een kort schaalboogje (0-4) eronder, zoals op de referentiefoto. Concentrisch met het
+           pivotpunt (863,142). De draaiende pivot-dop (circle248 in de toonarm-groep, r=18,
+           dezelfde knobGrad-vulling) tekent er later overheen - de kraag moet daarom ruim buiten
+           r=18 beginnen, anders verdwijnt hij er vrijwel volledig achter (eerdere versie met
+           r=19 bleek zo goed als onzichtbaar). -->
+      <circle cx="863" cy="142" r="26" fill="url(#knobGrad)" stroke="#1a1a1b" stroke-width="1" id="hoogtering-basis" />
+      <circle cx="863" cy="142" r="32" fill="none" stroke="#3a3b3e" stroke-width="1" id="hoogtering-rand" />
+      <g stroke="#6c6d70" stroke-width="1.2" id="hoogtering-kartel">
+        <line x1="889.0" y1="142.0" x2="895.0" y2="142.0" />
+        <line x1="887.0" y1="151.95" x2="892.6" y2="154.25" />
+        <line x1="881.4" y1="160.4" x2="885.6" y2="164.6" />
+        <line x1="872.95" y1="166.0" x2="875.25" y2="171.6" />
+        <line x1="863.0" y1="168.0" x2="863.0" y2="174.0" />
+        <line x1="853.05" y1="166.0" x2="850.75" y2="171.6" />
+        <line x1="844.6" y1="160.4" x2="840.4" y2="164.6" />
+        <line x1="838.98" y1="151.95" x2="833.4" y2="154.25" />
+        <line x1="837.0" y1="142.0" x2="831.0" y2="142.0" />
+        <line x1="838.98" y1="132.05" x2="833.4" y2="129.75" />
+        <line x1="844.6" y1="123.6" x2="840.4" y2="119.4" />
+        <line x1="853.05" y1="118.0" x2="850.75" y2="112.4" />
+        <line x1="863.0" y1="116.0" x2="863.0" y2="110.0" />
+        <line x1="872.95" y1="118.0" x2="875.25" y2="112.4" />
+        <line x1="881.4" y1="123.6" x2="885.6" y2="119.4" />
+        <line x1="887.0" y1="132.05" x2="892.6" y2="129.75" />
+      </g>
+      <!-- schaalboogje "0-4" onder de kraag, zelfde tick-stijl als de anti-skating-dial -->
+      <g stroke="#8a8b8f" stroke-width="1.4" id="hoogtering-schaal">
+        <line x1="881.0" y1="173.18" x2="884.0" y2="178.37" />
+        <line x1="872.32" y1="176.77" x2="873.87" y2="182.57" />
+        <line x1="863.0" y1="178.0" x2="863.0" y2="184.0" />
+        <line x1="853.68" y1="176.77" x2="852.13" y2="182.57" />
+        <line x1="845.0" y1="173.18" x2="842.0" y2="178.37" />
+      </g>
       <!-- anti-skating dial -->
       <circle
          cx="946"
@@ -830,6 +872,7 @@
          stroke="#000000"
          stroke-width="0.5"
          id="cueing-lever-tip" />
+      </g>
     </g>
     <!-- tempo range indicatorlampjes + knop (ruim onder de pivotplaat) -->
     <rect
@@ -2086,58 +2129,76 @@
          r="6.5"
          fill="#3a3b3e"
          id="circle249" />
-      <!-- headshell + cartridge + naald, uitgelijnd met de eindraaklijn van de buis -->
+      <!-- headshell + cartridge + naald, uitgelijnd met de eindraaklijn van de buis (v5, fotogetrouw
+           nagetekend naar een tweede, scherpere referentiefoto - geïsoleerde headshell op witte achtergrond).
+           Gespiegeld t.o.v. de eerste versie van v5 (x -> -x) - de naald bleek aan de verkeerde kant te
+           zitten (bij de toonarmbuis i.p.v. los ervan): rechthoekige plaat met een schuine afgesneden hoek
+           bij de naald (rechts, hoge x, los van de buis), kabelvenster dicht bij de nek, twee grote
+           bevestigingsschroeven + zichtgaatje dichter bij de naald, een klein tabje aan de rand, dan een
+           zwarte rubberen ring naar een geribbelde metalen aansluitbuis (links, lage x, vlak bij waar de
+           toonarmbuis eindigt) die in de toonarmbuis klikt. Eén doorlopende omtrek (geen losse rechthoeken) -
+           dat gaf bij deze rotatiehoek eerder een geknikte overgang. metalGrad (objectBoundingBox) i.p.v.
+           armTubeGrad (userSpaceOnUse) - die laatste is vastgeklonken aan vaste scherm-coördinaten en zou
+           hier, diep genest in translate+rotate, zinloos uitvallen. -->
       <g
          transform="translate(509,459) rotate(161)"
          id="g251">
-        <line
-           x1="46.974342"
-           y1="-0.57335383"
-           x2="62.530193"
-           y2="2.5088499"
-           stroke="#3a3b3e"
-           stroke-width="1.8806"
-           stroke-linecap="round"
-           id="line249" />
-        <line
-           x1="18.367083"
-           y1="-9.9145031"
-           x2="17.317526"
-           y2="-25.71697"
-           stroke="#3a3b3e"
-           stroke-width="3.06267"
-           stroke-linecap="round"
-           id="line249-9"
-           style="fill:none;stroke:#9e9ea2;stroke-opacity:1" />
-        <rect
-           x="20.27589"
-           y="-13.149326"
-           width="38"
-           height="26"
-           rx="5"
-           fill="url(#metalGrad)"
-           stroke="#6c6d70"
-           stroke-width="1.2"
-           id="rect249"
-           style="fill:url(#linearGradient251)" />
         <path
-           d="M 22.081667,11.930804 -10.379946,6.0252826 -10.803239,-6.6483319 21.305632,-11.304155 Z"
-           fill="#e9e5da"
-           stroke="#6c6d70"
-           stroke-width="1.03192"
-           id="path249" />
-        <circle
-           cx="47.558228"
-           cy="5.4722991"
-           r="2.2"
-           fill="#3a3b3e"
-           id="circle250" />
-        <circle
-           cx="47.188938"
-           cy="-6.4171772"
-           r="2.2"
-           fill="#3a3b3e"
-           id="circle251" />
+           d="M 14,-3 L 10,-11 L -20,-11 Q -32,-11 -40,-8 Q -50,-5.5 -56,-4.7 Q -59,-4.5 -59,0 Q -59,4.5 -56,4.7 Q -50,5.5 -40,8 Q -32,11 -20,11 L 10,11 L 14,3 Z"
+           fill="url(#metalGrad)"
+           stroke="#5a5b5e"
+           stroke-width="1"
+           id="headshell-plaat" />
+        <!-- steunbeugel ("haakje") aan de rand ter hoogte van het kabelvenster, haaks op de
+             lengterichting van de plaat, versmallend naar een klein plat uiteinde (geen scherpe
+             punt) - zoals op de referentiefoto -->
+        <path
+           d="M -24,-11 L -17,-11 L -19.7,-31 L -21.3,-31 Z"
+           fill="url(#metalGrad)"
+           stroke="#4a4b4e"
+           stroke-width="0.6"
+           id="headshell-steunbeugel" />
+        <!-- kabelvenster met kleurcodering (wit/blauw/rood/groen, standaard 4-pins headshell-bedrading) -
+             dicht bij de nek, zoals op de foto -->
+        <rect
+           x="-23" y="-6" width="16" height="12" rx="2"
+           fill="#111216"
+           stroke="#000000"
+           stroke-width="0.6"
+           id="headshell-venster" />
+        <line x1="-9" y1="-4" x2="-21" y2="-4" stroke="#e8e6df" stroke-width="1" stroke-linecap="round" id="headshell-draad-wit" />
+        <line x1="-9" y1="-1.3" x2="-21" y2="-1.3" stroke="#3f6fd6" stroke-width="1" stroke-linecap="round" id="headshell-draad-blauw" />
+        <line x1="-9" y1="1.3" x2="-21" y2="1.3" stroke="#d64545" stroke-width="1" stroke-linecap="round" id="headshell-draad-rood" />
+        <line x1="-9" y1="4" x2="-21" y2="4" stroke="#4c9a52" stroke-width="1" stroke-linecap="round" id="headshell-draad-groen" />
+        <!-- twee losse langwerpige montagesleuven (schuifbaar voor azimuth-afstelling), elk als eigen
+             blokje boven zijn schroef - niet één doorlopende strook, zoals op de referentiefoto -->
+        <rect x="-2" y="-9.3" width="10" height="4" rx="2" fill="#87888b" stroke="#5a5b5e" stroke-width="0.4" id="headshell-sleuf-1" />
+        <rect x="-2" y="5.3" width="10" height="4" rx="2" fill="#87888b" stroke="#5a5b5e" stroke-width="0.4" id="headshell-sleuf-2" />
+        <!-- twee grote bevestigingsschroeven + zichtgaatje, dichter bij de naald dan het venster -->
+        <circle cx="3" cy="-7.3" r="2.5" fill="#2a2b2e" stroke="#0a0a0b" stroke-width="0.5" id="headshell-schroef-1" />
+        <line x1="1.5" y1="-7.3" x2="4.5" y2="-7.3" stroke="#6c6d70" stroke-width="0.6" id="headshell-schroef-1-slot" />
+        <line x1="3" y1="-8.8" x2="3" y2="-5.8" stroke="#6c6d70" stroke-width="0.6" id="headshell-schroef-1-slot-v" />
+        <circle cx="3" cy="7.3" r="2.5" fill="#2a2b2e" stroke="#0a0a0b" stroke-width="0.5" id="headshell-schroef-2" />
+        <line x1="1.5" y1="7.3" x2="4.5" y2="7.3" stroke="#6c6d70" stroke-width="0.6" id="headshell-schroef-2-slot" />
+        <line x1="3" y1="5.8" x2="3" y2="8.8" stroke="#6c6d70" stroke-width="0.6" id="headshell-schroef-2-slot-v" />
+        <circle cx="3" cy="0" r="1.1" fill="#0a0a0b" id="headshell-zichtgaatje" />
+        <!-- twee zwarte rubberen ringen (met een dun metalen streepje ertussen) tussen de
+             nek-vernauwing en de geribbelde aansluitbuis - elk overal dezelfde breedte -->
+        <rect x="-46.5" y="-9.3" width="1.8" height="18.6" fill="#0a0a0b" id="headshell-ring-1" />
+        <rect x="-44" y="-9.3" width="1.8" height="18.6" fill="#0a0a0b" id="headshell-ring-2" />
+        <!-- ronde hals met geribbelde grip vlak bij het toonarm-uiteinde, als bredere geblokte
+             banden i.p.v. dunne lijnen zodat de ribbels op deze kleine schaal ook echt zichtbaar zijn -->
+        <rect x="-51.5" y="-5" width="1.3" height="10" fill="#9a9b9e" id="headshell-ribbel-1" />
+        <rect x="-53.6" y="-5" width="1.3" height="10" fill="#9a9b9e" id="headshell-ribbel-2" />
+        <rect x="-55.7" y="-5" width="1.3" height="10" fill="#9a9b9e" id="headshell-ribbel-3" />
+        <rect x="-57.8" y="-5" width="1.3" height="10" fill="#9a9b9e" id="headshell-ribbel-4" />
+        <!-- open eindvlak van de aansluitbuis -->
+        <ellipse cx="-58.7" cy="0" rx="1.1" ry="4" fill="#1a1b1e" id="headshell-buiseinde" />
+        <g transform="rotate(-161, -11, 9.6)">
+          <text x="-11" y="9.6" text-anchor="middle" font-family="Arial, Helvetica, sans-serif"
+                font-weight="700" font-style="italic" font-size="4" fill="#2b2c2f"
+                textLength="19" lengthAdjust="spacingAndGlyphs" id="headshell-logo">Pioneer DJ</text>
+        </g>
       </g>
     </g>
   </g>
