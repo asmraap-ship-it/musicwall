@@ -8,17 +8,25 @@ const DRAAISCHIJF_ORIGIN = '390 395'
 const ARM_ORIGIN = '863 142'
 // Rotatie-deltas t.o.v. de as-getekende stand van #toonarm-inner in svg/pioneer-plx1000.svg (rotatie 0),
 // berekend rond pivot (863,142): de naaldpunt staat in de brontekening zelf al vlak buiten het label
-// (r ≈ 103 t.o.v. vinylcentrum 390,395) - vandaar eindHoek = 0, geen rotatie nodig. Drie afzonderlijke
+// (r ≈ 110 t.o.v. vinylcentrum 390,395) - vandaar eindHoek = 0, geen rotatie nodig. Drie afzonderlijke
 // hoeken, geen twee: rustHoek is de geparkeerde stand ver van de plaat, duidelijk los van de rand - hoe
-// negatiever de hoek, hoe verder de arm naar rechts zwaait, op gebruikersverzoek stapsgewijs verruimd
-// (-26° -> -30° -> -40°). Bij -40° geometrisch nagerekend (rotatie om pivot (813.05,168.72), de headshell
-// landt rond scherm-x ≈ 746) dat de arm nog ruim (>150px) vrij blijft van de pitch-fader (x 880-926) en de
-// tempo-range-behuizing (x 858-952) rechts van de pivot - geen aanraking. startHoek is waar de naald een
-// nummer daadwerkelijk oppikt op de buitenste groef (r ≈ 287, net bínnen de vinylrand r = 292) - dat zijn
-// bewust twee verschillende hoeken, anders zou de "needle drop" bij het starten van een nummer nergens
-// naartoe bewegen (rust ligt dan al op exact dezelfde plek als het begin van de plaat).
+// negatiever de hoek, hoe verder de arm naar rechts zwaait. startHoek is waar de naald een nummer
+// daadwerkelijk oppikt op de buitenste groef (r ≈ 285, net bínnen de vinylrand r = 292, tussen de rand
+// zelf en de eerste groefring op r = 278) - dat zijn bewust twee verschillende hoeken, anders zou de
+// "needle drop" bij het starten van een nummer nergens naartoe bewegen (rust ligt dan al op exact
+// dezelfde plek als het begin van de plaat).
+// Herijkt nadat de gebruiker de toonarm/pivot-positie in de svg zelf handmatig verschoven heeft
+// (translate van #toonarm/#g89 van (-49.95,26.72) naar (-88.22,~42) - de pivot staat nu dichter bij/
+// anders t.o.v. de platter). #toonarm-inner's eigen lokale geometrie (armbuis-pad, headshell-rotatie,
+// pivot-cirkel op (863,142)) is ongewijzigd, dus ARM_ORIGIN/DRAAISCHIJF_ORIGIN blijven kloppen - alleen
+// de rotatie-uitkomst (waar de naald tov de platter landt) verschoof mee met de nieuwe pivot-positie.
+// Opnieuw geometrisch bepaald via CDP (getCTM() van #g251 op een reeks testhoeken, i.p.v. losse
+// schermmetingen - dat geeft de naaldpositie direct in dezelfde canvas-eenheden als het platter-
+// middelpunt, zonder schaalfactor-omrekening nodig). startHoek verschoof van -20 naar -23 (bij -20 landt
+// de naald nu op r ≈ 262, te ver naar binnen). rustHoek (-40) bleek toevallig nog steeds ruim vrij te
+// blijven van de pitch-fader (x 880-926) - gemeten marge ~113 canvas-eenheden, geen aanpassing nodig.
 const RUST_HOEK = -40
-const START_HOEK = -20
+const START_HOEK = -23
 const EIND_HOEK = 0
 const RPM_DEFAULT = 33
 // Op gebruikersverzoek verruimd van 0.6s - zowel de needle-drop bij starten als de lift-terug-naar-rust
