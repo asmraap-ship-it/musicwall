@@ -396,6 +396,16 @@
        y2="-19.119363"
        gradientTransform="scale(0.61084228,1.6370838)"
        gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#metalGrad"
+       id="linearGradient1"
+       x1="716.97058"
+       y1="682.31885"
+       x2="750.44653"
+       y2="682.31885"
+       gradientTransform="matrix(1.9240116,0,0,0.81122563,-507.05532,0.91969112)"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <!-- ======================================================= -->
   <!-- 1) BEHUIZING - basis, fader, knoppen, lampjes, logo      -->
@@ -601,6 +611,15 @@
            stroke="#55565a"
            stroke-width="1"
            id="line46" />
+        <!-- gewichtschaal-cijfers (0-4) op vijf van de bestaande schaalstreepjes, o.b.v. de
+             referentiefoto: 0 boven, dan met de klok mee 1-2-3-4 langs de linkerzijde naar onder.
+             Binnen de streepjes geplaatst (dichter naar het midden toe), niet erbuiten - zoals op
+             de referentiefoto. -->
+        <text x="849.2" y="55.1" text-anchor="middle" font-family="Arial, sans-serif" font-size="11px" fill="#9a9b9e" id="text-gewicht-0">0</text>
+        <text x="791.8" y="90.2" text-anchor="middle" font-family="Arial, sans-serif" font-size="11px" fill="#9a9b9e" id="text-gewicht-1">1</text>
+        <text x="775.0" y="146" text-anchor="middle" font-family="Arial, sans-serif" font-size="11px" fill="#9a9b9e" id="text-gewicht-2">2</text>
+        <text x="800.8" y="208" text-anchor="middle" font-family="Arial, sans-serif" font-size="11px" fill="#9a9b9e" id="text-gewicht-3">3</text>
+        <text x="849.2" y="233" text-anchor="middle" font-family="Arial, sans-serif" font-size="11px" fill="#9a9b9e" id="text-gewicht-4">4</text>
         <line
            x1="894.5"
            y1="239"
@@ -631,7 +650,7 @@
            x2="846.40002"
            y2="246.7"
            stroke="#55565a"
-           stroke-width="1"
+           stroke-width="2"
            id="line50" />
         <line
            x1="831.5"
@@ -663,7 +682,7 @@
            x2="788"
            y2="217"
            stroke="#55565a"
-           stroke-width="1"
+           stroke-width="2"
            id="line54" />
         <line
            x1="780.5"
@@ -703,7 +722,7 @@
            x2="757"
            y2="142"
            stroke="#55565a"
-           stroke-width="1"
+           stroke-width="2"
            id="line59" />
         <line
            x1="762.29999"
@@ -735,7 +754,7 @@
            x2="777.20001"
            y2="79.699997"
            stroke="#55565a"
-           stroke-width="1"
+           stroke-width="2"
            id="line63" />
         <line
            x1="790.90002"
@@ -775,7 +794,7 @@
            x2="846.40002"
            y2="37.299999"
            stroke="#55565a"
-           stroke-width="1"
+           stroke-width="2"
            id="line68" />
         <line
            x1="863"
@@ -863,6 +882,35 @@
            r="78"
            fill="#0b0b0c"
            id="circle78" />
+        <!-- statische hendel-cradle (arm-lift/rust-beugel) linksonder in de pivotplaat, zoals op de
+             referentiefoto - een dikke afgeronde gebogen band met een schroef erop. Puur decoratief/
+             statisch (onderdeel van behuizing, niet van de roterende toonarm-groep). -->
+        <path
+           d="M 835,178 C 800,182 780,205 792,224"
+           fill="none"
+           stroke="#1a1b1e"
+           stroke-width="13"
+           stroke-linecap="round"
+           id="arm-rust-beugel" />
+        <path
+           d="M 835,178 C 800,182 780,205 792,224"
+           fill="none"
+           stroke="#3a3b3e"
+           stroke-width="13"
+           stroke-linecap="round"
+           opacity="0.25"
+           id="arm-rust-beugel-sheen"
+           transform="translate(-1,-1.5)" />
+        <circle
+           cx="803"
+           cy="196"
+           r="4"
+           fill="#2a2b2e"
+           stroke="#0a0a0b"
+           stroke-width="0.6"
+           id="arm-rust-beugel-schroef" />
+        <line x1="801.5" y1="196" x2="804.5" y2="196" stroke="#6c6d70" stroke-width="0.6" id="arm-rust-beugel-schroef-slot" />
+        <line x1="803" y1="194.5" x2="803" y2="197.5" stroke="#6c6d70" stroke-width="0.6" id="arm-rust-beugel-schroef-slot-v" />
         <!-- hoogte-afstelring ("6mm HEIGHT ADJUST"): gekartelde kraag rond de voet van de arm, met
            een kort schaalboogje (0-4) eronder, zoals op de referentiefoto. Concentrisch met het
            pivotpunt (863,142). De draaiende pivot-dop (circle248 in de toonarm-groep, r=18,
@@ -1023,94 +1071,66 @@
              y2="178.37"
              id="line95" />
         </g>
-        <!-- anti-skating dial -->
+        <!-- "6mm HEIGHT ADJUST" rondlopend naast de "4" van de gewichtschaal, zoals op de
+             referentiefoto - een onzichtbaar boogpad waar de tekst overheen wordt gelegd -->
+        <path
+           d="M 848.61,232.87 A 92,92 0 0,0 942.67,188"
+           fill="none"
+           stroke="none"
+           id="hoogte-tekst-pad" />
+        <text font-family="Arial, sans-serif" font-size="6px" fill="#8a8b8f" id="text-height-adjust">
+          <textPath xlink:href="#hoogte-tekst-pad" startOffset="6">6mm HEIGHT ADJUST</textPath>
+        </text>
+        <!-- anti-skating dial: zwarte schijf (i.p.v. de lichte metalen knobGrad) zodat de witte
+             schaalcijfers erop leesbaar zijn, zoals op de referentiefoto -->
         <circle
            cx="946"
            cy="189"
            r="20"
-           fill="url(#knobGrad)"
+           fill="#141416"
            stroke="#1a1a1b"
            stroke-width="2"
-           id="circle79"
-           style="fill:url(#radialGradient481)" />
-        <line
-           x1="932.20001"
-           y1="177.39999"
-           x2="927.59998"
-           y2="173.60001"
-           stroke="#c9cacd"
-           stroke-width="1.2"
-           id="line96" />
-        <line
-           x1="941.29999"
-           y1="171.60001"
-           x2="939.79999"
-           y2="165.8"
-           stroke="#c9cacd"
-           stroke-width="1.2"
-           id="line97" />
-        <line
-           x1="952.20001"
-           y1="172.10001"
-           x2="954.20001"
-           y2="166.39999"
-           stroke="#c9cacd"
-           stroke-width="1.2"
-           id="line98" />
-        <line
-           x1="960.70001"
-           y1="178.7"
-           x2="965.70001"
-           y2="175.2"
-           stroke="#c9cacd"
-           stroke-width="1.2"
-           id="line99" />
-        <line
-           x1="964"
-           y1="189"
-           x2="970"
-           y2="189"
-           stroke="#c9cacd"
-           stroke-width="1.2"
-           id="line100" />
-        <line
-           x1="960.70001"
-           y1="199.3"
-           x2="965.70001"
-           y2="202.8"
-           stroke="#c9cacd"
-           stroke-width="1.2"
-           id="line101" />
-        <line
-           x1="952.20001"
-           y1="205.89999"
-           x2="954.20001"
-           y2="211.60001"
-           stroke="#c9cacd"
-           stroke-width="1.2"
-           id="line102" />
-        <line
-           x1="941.29999"
-           y1="206.39999"
-           x2="939.79999"
-           y2="212.2"
-           stroke="#c9cacd"
-           stroke-width="1.2"
-           id="line103" />
-        <line
-           x1="932.20001"
-           y1="200.60001"
-           x2="927.59998"
-           y2="204.39999"
-           stroke="#c9cacd"
-           stroke-width="1.2"
-           id="line104" />
+           id="circle79" />
+        <!-- dichter op elkaar staande schaalstreepjes (15 i.p.v. 9), alleen onder de gebogen
+             ANTI-SKATING-tekst (die een gat van 64 graden bovenaan vrijhoudt) - o.b.v.
+             gebruikersfeedback dat de streepjes op de referentiefoto veel dichter opeen staan -->
+        <g stroke="#c9cacd" stroke-width="1" id="antiskate-streepjes">
+          <line x1="956.40" y1="179.63" x2="960.12" y2="176.29" id="askt-0" />
+          <line x1="959.16" y1="184.21" x2="963.85" y2="182.50" id="askt-1" />
+          <line x1="959.99" y1="189.49" x2="964.99" y2="189.66" id="askt-2" />
+          <line x1="958.79" y1="194.69" x2="963.36" y2="196.73" id="askt-3" />
+          <line x1="955.73" y1="199.07" x2="959.20" y2="202.67" id="askt-4" />
+          <line x1="951.24" y1="201.98" x2="953.12" y2="206.62" id="askt-5" />
+          <line x1="946.00" y1="203.00" x2="946.00" y2="208.00" id="askt-6" />
+          <line x1="940.76" y1="201.98" x2="938.88" y2="206.62" id="askt-7" />
+          <line x1="936.27" y1="199.07" x2="932.80" y2="202.67" id="askt-8" />
+          <line x1="933.21" y1="194.69" x2="928.64" y2="196.73" id="askt-9" />
+          <line x1="932.01" y1="189.49" x2="927.01" y2="189.66" id="askt-10" />
+          <line x1="932.84" y1="184.21" x2="928.15" y2="182.50" id="askt-11" />
+          <line x1="935.60" y1="179.63" x2="931.88" y2="176.29" id="askt-12" />
+        </g>
         <circle
            cx="946"
            cy="189"
            r="4.5"
            fill="#26272a"
            id="circle87" />
+        <!-- ANTI-SKATING label + schaalcijfers, o.b.v. de referentiefoto (0 links, verder cijfers
+             o.b.v. best-effort afgelezen posities op de foto) -->
+        <!-- ANTI-SKATING rondlopend boven in de cirkel, zoals op de referentiefoto - een breder
+             boogje (90 graden) dan de eerste poging, anders paste de tekst niet en werd hij
+             afgekapt tot enkel het middelste stuk -->
+        <path
+           d="M 935.39,178.39 A 15,15 0 0,1 956.61,178.39"
+           fill="none"
+           stroke="none"
+           id="antiskate-tekst-pad" />
+        <text text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="3.2px" fill="#e6e4de" id="text-anti-skating">
+          <textPath xlink:href="#antiskate-tekst-pad" startOffset="50%">ANTI-SKATING</textPath>
+        </text>
+        <text x="940.1" y="185.1" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5px" fill="#e6e4de" id="text-antiskate-0">0</text>
+        <text x="951.9" y="185.1" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5px" fill="#e6e4de" id="text-antiskate-9">9</text>
+        <text x="946" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5px" fill="#e6e4de" id="text-antiskate-4">4</text>
         <!-- lock / cueing-lift hendel (v2): was een vlakke statische knop,
            nu een scharnierende hendel-vorm zoals een echte cueing-lift
            die je met de vingertop optilt. Basissokkel behouden. -->
@@ -1147,6 +1167,7 @@
            stroke-width="0.5"
            id="cueing-lever-tip"
            style="fill:url(#linearGradient482)" />
+        <text x="900" y="100" text-anchor="start" font-family="Arial, sans-serif" font-weight="700" font-size="6px" fill="#9a9b9e" id="text-lock">LOCK</text>
       </g>
     </g>
     <!-- tempo range indicatorlampjes + knop (ruim onder de pivotplaat) -->
@@ -1156,17 +1177,17 @@
        width="75.799904"
        height="20.025284"
        rx="3.2255278"
-       fill="#232427"
-       stroke="#4a4b4e"
+       fill="#4a4b4e"
+       stroke="#6c6d70"
        stroke-width="0.898555"
        id="rect89" />
     <text
        x="1006.8565"
-       y="281.9238"
+       y="278.29"
        text-anchor="middle"
        dominant-baseline="middle"
        font-family="Arial, sans-serif"
-       font-size="8.087px"
+       font-size="10.5px"
        font-weight="700"
        fill="#d7d8da"
        id="text-tempo-50"
@@ -1185,11 +1206,11 @@
        style="fill:url(#radialGradient482)" />
     <text
        x="1006.8565"
-       y="305.28622"
+       y="301.66"
        text-anchor="middle"
        dominant-baseline="middle"
        font-family="Arial, sans-serif"
-       font-size="8.087px"
+       font-size="10.5px"
        font-weight="700"
        fill="#0c0c0d"
        id="text-tempo-16"
@@ -1201,17 +1222,17 @@
        width="75.799904"
        height="20.025284"
        rx="3.2255278"
-       fill="#232427"
-       stroke="#4a4b4e"
+       fill="#4a4b4e"
+       stroke="#6c6d70"
        stroke-width="0.898555"
        id="rect91" />
     <text
        x="1006.8565"
-       y="328.64865"
+       y="325.03"
        text-anchor="middle"
        dominant-baseline="middle"
        font-family="Arial, sans-serif"
-       font-size="8.087px"
+       font-size="10.5px"
        font-weight="700"
        fill="#d7d8da"
        id="text-tempo-8"
@@ -1229,7 +1250,7 @@
        id="rect92" />
     <text
        x="1006.8565"
-       y="358.30096"
+       y="352.22919"
        text-anchor="middle"
        font-family="Arial, sans-serif"
        font-size="8.087px"
@@ -1237,118 +1258,174 @@
        fill="#d7d8da"
        id="text92"
        transform="scale(0.89742061,1.1143047)"
-       style="stroke-width:0.898555">TEMPO RANGE</text>
+       style="stroke-width:0.898555"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         x="1006.8565"
+         y="352.22919">TEMPO</tspan><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         x="1006.8565"
+         y="362.33795">RANGE</tspan></text>
     <!-- pitch fader -->
     <rect
-       x="880"
-       y="432"
-       width="46"
-       height="270"
-       rx="8"
+       x="868.65253"
+       y="432.22974"
+       width="71.91201"
+       height="269.56876"
+       rx="12.506435"
        fill="#0b0b0c"
        stroke="#3a3b3e"
-       stroke-width="2"
+       stroke-width="2.49864"
        id="rect93" />
     <rect
-       x="891"
-       y="444"
-       width="10"
-       height="246"
-       rx="4"
+       x="900.56989"
+       y="444.21048"
+       width="6.6892052"
+       height="232.07585"
+       rx="2.6756821"
        fill="#000000"
-       id="rect94" />
+       id="rect94"
+       style="stroke-width:0.794391"
+       sodipodi:insensitive="true" />
     <line
-       x1="893"
-       y1="472"
-       x2="901"
-       y2="472"
+       x1="861.31299"
+       y1="478.35791"
+       x2="866.66431"
+       y2="478.35791"
        stroke="#8a8b8e"
-       stroke-width="1.4"
+       stroke-width="1.11214"
        id="line105" />
     <line
-       x1="893"
-       y1="503"
-       x2="901"
-       y2="503"
+       x1="861.31299"
+       y1="507.6033"
+       x2="866.66431"
+       y2="507.6033"
        stroke="#8a8b8e"
-       stroke-width="1.4"
+       stroke-width="1.11214"
        id="line106" />
     <line
-       x1="893"
-       y1="534"
-       x2="901"
-       y2="534"
+       x1="861.31299"
+       y1="536.84863"
+       x2="866.66431"
+       y2="536.84863"
        stroke="#8a8b8e"
-       stroke-width="1.4"
+       stroke-width="1.11214"
        id="line107" />
     <line
-       x1="893"
-       y1="565"
-       x2="901"
-       y2="565"
+       x1="861.31299"
+       y1="566.09399"
+       x2="866.66431"
+       y2="566.09399"
        stroke="#8a8b8e"
-       stroke-width="1.4"
+       stroke-width="1.11214"
        id="line108" />
+    <!-- los geel blokje naast het middelste (nulpunt-)streepje, ongeveer even breed als een
+         gewoon schaalstreepje (5.35) maar dan als blok i.p.v. dunne lijn -->
+    <rect
+       x="845"
+       y="563.99399"
+       width="10.8"
+       height="4.2"
+       fill="#f2d43d"
+       id="rect-tempo-nulpunt" />
     <line
-       x1="893"
-       y1="596"
-       x2="901"
-       y2="596"
+       x1="861"
+       y1="451.95386"
+       x2="866.35132"
+       y2="451.95386"
        stroke="#8a8b8e"
-       stroke-width="1.4"
+       stroke-width="1.11214"
+       id="line108-9" />
+    <line
+       x1="861.31299"
+       y1="595.33929"
+       x2="866.66431"
+       y2="595.33929"
+       stroke="#8a8b8e"
+       stroke-width="1.11214"
        id="line109" />
     <line
-       x1="893"
-       y1="627"
-       x2="901"
-       y2="627"
+       x1="861.31299"
+       y1="624.58466"
+       x2="866.66431"
+       y2="624.58466"
        stroke="#8a8b8e"
-       stroke-width="1.4"
+       stroke-width="1.11214"
        id="line110" />
     <line
-       x1="893"
-       y1="658"
-       x2="901"
-       y2="658"
+       x1="861.31299"
+       y1="653.82996"
+       x2="866.66431"
+       y2="653.82996"
        stroke="#8a8b8e"
-       stroke-width="1.4"
+       stroke-width="1.11214"
        id="line111" />
     <line
-       x1="893"
-       y1="689"
-       x2="901"
-       y2="689"
+       x1="861.31299"
+       y1="683.07532"
+       x2="866.66431"
+       y2="683.07532"
        stroke="#8a8b8e"
-       stroke-width="1.4"
+       stroke-width="1.11214"
        id="line112" />
-    <line
-       x1="893"
-       y1="720"
-       x2="901"
-       y2="720"
-       stroke="#8a8b8e"
+    <!-- reset-knopje links van de tempo-schaal, op dezelfde hoogte als het gele nulpunt-streepje,
+         zoals op de referentiefoto -->
+    <circle
+       cx="818"
+       cy="566.09399"
+       r="10"
+       fill="#141416"
+       stroke="#4a4b4e"
        stroke-width="1.4"
-       id="line113" />
+       id="reset-knop" />
+    <circle
+       cx="814.5"
+       cy="562.2"
+       r="3"
+       fill="#3a3b3e"
+       opacity="0.5"
+       id="reset-knop-highlight" />
+    <text
+       x="818"
+       y="587"
+       text-anchor="middle"
+       font-family="Arial, sans-serif"
+       font-weight="700"
+       font-size="7px"
+       fill="#c9cacd"
+       id="text-reset">RESET</text>
+    <!-- schaalcijfers naast de streepjes, van boven naar beneden -8..+8 (geel streepje = midden/nul) -->
+    <text x="858" y="454.4" text-anchor="end" font-family="Arial, sans-serif" font-size="7px" fill="#9a9b9e" id="text-tempo-min8">-8</text>
+    <text x="858" y="480.8" text-anchor="end" font-family="Arial, sans-serif" font-size="7px" fill="#9a9b9e" id="text-tempo-min6">6</text>
+    <text x="858" y="510.1" text-anchor="end" font-family="Arial, sans-serif" font-size="7px" fill="#9a9b9e" id="text-tempo-min4">4</text>
+    <text x="858" y="539.3" text-anchor="end" font-family="Arial, sans-serif" font-size="7px" fill="#9a9b9e" id="text-tempo-min2">2</text>
+    <text x="858" y="598.3" text-anchor="end" font-family="Arial, sans-serif" font-size="7px" fill="#9a9b9e" id="text-tempo-plus2">2</text>
+    <text x="858" y="627.5" text-anchor="end" font-family="Arial, sans-serif" font-size="7px" fill="#9a9b9e" id="text-tempo-plus4">4</text>
+    <text x="858" y="656.8" text-anchor="end" font-family="Arial, sans-serif" font-size="7px" fill="#9a9b9e" id="text-tempo-plus6">6</text>
+    <text x="858" y="686" text-anchor="end" font-family="Arial, sans-serif" font-size="7px" fill="#9a9b9e" id="text-tempo-plus8">+8</text>
     <rect
-       x="883"
-       y="555"
-       width="40"
-       height="26"
-       rx="5"
+       x="873.34253"
+       y="555.03333"
+       width="62.532173"
+       height="25.958475"
+       rx="7.8165216"
        fill="url(#metalGrad)"
        stroke="#6c6d70"
-       stroke-width="1.2"
-       id="rect102" />
+       stroke-width="1.49918"
+       id="rect102"
+       style="fill:url(#linearGradient1)" />
     <rect
-       x="883"
-       y="564"
-       width="40"
-       height="3"
+       x="873.34253"
+       y="564.01892"
+       width="62.532173"
+       height="2.9952087"
        fill="#3a3b3e"
-       id="rect103" />
+       id="rect103"
+       style="stroke-width:1.24932" />
     <text
-       x="903"
-       y="722"
+       x="905.89966"
+       y="691.55389"
        text-anchor="middle"
        font-family="Arial, sans-serif"
        font-size="11px"
@@ -4916,9 +4993,9 @@
          transform="rotate(43,315.22099,1191.0836)"
          id="g246">
         <rect
-           x="-14"
+           x="-23"
            y="-20"
-           width="28"
+           width="46"
            height="40"
            rx="7"
            fill="url(#metalGrad)"
@@ -4926,30 +5003,47 @@
            stroke-width="1.5"
            id="rect244"
            style="fill:url(#linearGradient484)" />
-        <line
-           x1="-14"
-           y1="-10"
-           x2="14"
-           y2="-10"
-           stroke="#6c6d70"
-           stroke-width="1"
-           id="line244" />
-        <line
-           x1="-14"
-           y1="0"
-           x2="14"
-           y2="0"
-           stroke="#6c6d70"
-           stroke-width="1"
-           id="line245" />
-        <line
-           x1="-14"
-           y1="10"
-           x2="14"
-           y2="10"
-           stroke="#6c6d70"
-           stroke-width="1"
-           id="line246" />
+        <!-- glad cilinderlichaam (geen verticale ribbels over het hele lichaam, zoals op de
+             referentiefoto) - alleen twee smalle geribbelde grip-banden, één net onder de dop
+             bovenaan en één net boven de markeerring onderaan. Plus een afgeronde dop bovenaan.
+             Bewust duidelijk breder dan de dunne armbuis (op gebruikersfeedback) - dat is ook zo
+             op de referentiefoto. -->
+        <g stroke="#6c6d70" stroke-width="0.7" id="contragewicht-kartel-boven">
+          <line x1="-20" y1="-13" x2="-20" y2="-8" />
+          <line x1="-16.7" y1="-13" x2="-16.7" y2="-8" />
+          <line x1="-13.4" y1="-13" x2="-13.4" y2="-8" />
+          <line x1="-10.1" y1="-13" x2="-10.1" y2="-8" />
+          <line x1="-6.8" y1="-13" x2="-6.8" y2="-8" />
+          <line x1="-3.5" y1="-13" x2="-3.5" y2="-8" />
+          <line x1="-0.2" y1="-13" x2="-0.2" y2="-8" />
+          <line x1="3.1" y1="-13" x2="3.1" y2="-8" />
+          <line x1="6.4" y1="-13" x2="6.4" y2="-8" />
+          <line x1="9.7" y1="-13" x2="9.7" y2="-8" />
+          <line x1="13" y1="-13" x2="13" y2="-8" />
+          <line x1="16.3" y1="-13" x2="16.3" y2="-8" />
+          <line x1="19.6" y1="-13" x2="19.6" y2="-8" />
+        </g>
+        <g stroke="#6c6d70" stroke-width="0.7" id="contragewicht-kartel-onder">
+          <line x1="-20" y1="4" x2="-20" y2="9" />
+          <line x1="-16.7" y1="4" x2="-16.7" y2="9" />
+          <line x1="-13.4" y1="4" x2="-13.4" y2="9" />
+          <line x1="-10.1" y1="4" x2="-10.1" y2="9" />
+          <line x1="-6.8" y1="4" x2="-6.8" y2="9" />
+          <line x1="-3.5" y1="4" x2="-3.5" y2="9" />
+          <line x1="-0.2" y1="4" x2="-0.2" y2="9" />
+          <line x1="3.1" y1="4" x2="3.1" y2="9" />
+          <line x1="6.4" y1="4" x2="6.4" y2="9" />
+          <line x1="9.7" y1="4" x2="9.7" y2="9" />
+          <line x1="13" y1="4" x2="13" y2="9" />
+          <line x1="16.3" y1="4" x2="16.3" y2="9" />
+          <line x1="19.6" y1="4" x2="19.6" y2="9" />
+        </g>
+        <ellipse cx="0" cy="-17" rx="21" ry="4" fill="url(#knobGrad)" stroke="#4a4b4e" stroke-width="1" id="contragewicht-dop" />
+        <rect x="-23" y="12" width="46" height="4.5" fill="#1a1a1c" id="contragewicht-markeerring" />
+        <!-- stukje van de achterste staaf van de toonarm, voorbij de dop van het contragewicht -
+             zelfde breedte als de rest van de toonarmbuis, zoals op de referentiefoto (het
+             gewicht schroeft niet helemaal tot het uiteinde) -->
+        <rect x="-10.5" y="-38" width="21" height="21" rx="3.5" fill="url(#metalGrad)" stroke="#6c6d70" stroke-width="0.6" id="contragewicht-staaf-uiteinde" />
       </g>
       <!-- S-vormige armbuis: geometrie teruggezet naar de originele,
            1-op-1 nagetekende vorm (op verzoek de v2-S-curve-wijziging
@@ -5011,17 +5105,36 @@
          transform="rotate(161.41075,219.51141,270.44155)"
          id="g251">
         <path
-           d="m 14,-3 -4,-8 h -30 q -12,0 -20,3 -10,2.5 -16,3.3 -3,0.2 -3,4.7 0,4.5 3,4.7 6,0.8 16,3.3 8,3 20,3 h 30 l 4,-8 z"
+           d="M 8,-11 Q 10,-11 10,-9 L 10,9 Q 10,11 8,11 L -20,11 Q -32,11 -40,8 Q -50,5.5 -56,4.7 Q -59,4.5 -59,0 Q -59,-4.5 -56,-4.7 Q -50,-5.5 -40,-8 Q -32,-11 -20,-11 Z"
            fill="url(#metalGrad)"
            stroke="#5a5b5e"
            stroke-width="1"
            id="headshell-plaat"
            style="fill:url(#linearGradient487)" />
+        <!-- zwarte cartridge-body (los onderdeel t.o.v. de zilveren montageplaat, zoals op de
+             referentiefoto) - een afgeronde vorm die net zo ver reikt als de oude scherpe punt
+             (rechterrand x=14) zodat de eerder geijkte naaldpositie/toonarm-hoeken in
+             js/turntable.js niet hoeven te verschuiven. Bewust een simpele rx-rect i.p.v. een
+             handgetekend pad - dit onderdeel is grotendeels bolvormig/onopvallend gedetailleerd
+             op de referentiefoto. -->
+        <rect
+           x="-1"
+           y="-6.5"
+           width="15"
+           height="13"
+           rx="4.5"
+           fill="#16171a"
+           stroke="#000000"
+           stroke-width="0.5"
+           id="headshell-cartridge-body" />
         <!-- steunbeugel ("haakje") aan de rand ter hoogte van het kabelvenster, haaks op de
-             lengterichting van de plaat, versmallend naar een klein plat uiteinde (geen scherpe
-             punt) - zoals op de referentiefoto -->
+             lengterichting van de plaat - kort en met een vlak uiteinde (geen taps toelopende
+             punt) zoals op de referentiefoto. Was eerder een 20 lang toelopende wig tot een punt
+             van 1.6 breed - dat las bij deze rotatiehoek als een scherpe vin/spike i.p.v. een
+             klein lipje, vooral opvallender nu de plaat zelf een afgeronde neus heeft gekregen.
+             Daarna even te kort (8 lang) op gebruikersfeedback - 14 lang is de huidige lengte. -->
         <path
-           d="m -24,-11 h 7 l -2.7,-20 h -1.6 z"
+           d="m -24,-11 h 7 l -1.8,-14 h -3.4 z"
            fill="url(#metalGrad)"
            stroke="#4a4b4e"
            stroke-width="0.6"
@@ -5082,7 +5195,7 @@
         <rect
            x="-2"
            y="-9.3000002"
-           width="10"
+           width="6"
            height="4"
            rx="2"
            fill="#87888b"
@@ -5092,16 +5205,17 @@
         <rect
            x="-2"
            y="5.3000002"
-           width="10"
+           width="6"
            height="4"
            rx="2"
            fill="#87888b"
            stroke="#5a5b5e"
            stroke-width="0.4"
            id="headshell-sleuf-2" />
-        <!-- twee grote bevestigingsschroeven + zichtgaatje, dichter bij de naald dan het venster -->
+        <!-- twee grote bevestigingsschroeven + zichtgaatje, op de zilveren plaat vlak vóór de
+             zwarte cartridge-body (die begint bij x=5) -->
         <circle
-           cx="3"
+           cx="1"
            cy="-7.3000002"
            r="2.5"
            fill="#2a2b2e"
@@ -5109,23 +5223,23 @@
            stroke-width="0.5"
            id="headshell-schroef-1" />
         <line
-           x1="1.5"
+           x1="-0.5"
            y1="-7.3000002"
-           x2="4.5"
+           x2="2.5"
            y2="-7.3000002"
            stroke="#6c6d70"
            stroke-width="0.6"
            id="headshell-schroef-1-slot" />
         <line
-           x1="3"
+           x1="1"
            y1="-8.8000002"
-           x2="3"
+           x2="1"
            y2="-5.8000002"
            stroke="#6c6d70"
            stroke-width="0.6"
            id="headshell-schroef-1-slot-v" />
         <circle
-           cx="3"
+           cx="1"
            cy="7.3000002"
            r="2.5"
            fill="#2a2b2e"
@@ -5133,23 +5247,23 @@
            stroke-width="0.5"
            id="headshell-schroef-2" />
         <line
-           x1="1.5"
+           x1="-0.5"
            y1="7.3000002"
-           x2="4.5"
+           x2="2.5"
            y2="7.3000002"
            stroke="#6c6d70"
            stroke-width="0.6"
            id="headshell-schroef-2-slot" />
         <line
-           x1="3"
+           x1="1"
            y1="5.8000002"
-           x2="3"
+           x2="1"
            y2="8.8000002"
            stroke="#6c6d70"
            stroke-width="0.6"
            id="headshell-schroef-2-slot-v" />
         <circle
-           cx="3"
+           cx="1"
            cy="0"
            r="1.1"
            fill="#0a0a0b"
@@ -5208,22 +5322,21 @@
            ry="4"
            fill="#1a1b1e"
            id="headshell-buiseinde" />
-        <g
-           transform="matrix(0.02208285,-0.83189181,0.72056542,-0.09181754,18.041358,-10.904887)"
-           id="g480">
-          <text
-             x="-11"
-             y="-9.6000004"
-             text-anchor="middle"
-             font-family="Arial, Helvetica, sans-serif"
-             font-weight="700"
-             font-style="italic"
-             font-size="4px"
-             fill="#2b2c2f"
-             textLength="19"
-             lengthAdjust="spacingAndGlyphs"
-             id="headshell-logo">Pioneer DJ</text>
-        </g>
+        <!-- logo wit-op-zwart op de cartridge-body i.p.v. donker-op-zilver op de plaat zelf,
+             zoals op de referentiefoto - geen matrix-transform meer nodig nu de ondergrond een
+             simpele rx-rect is i.p.v. de schuine plaatrand -->
+        <text
+           x="6.5"
+           y="1.6"
+           text-anchor="middle"
+           font-family="Arial, Helvetica, sans-serif"
+           font-weight="700"
+           font-style="italic"
+           font-size="2.8px"
+           fill="#e6e4de"
+           textLength="11"
+           lengthAdjust="spacingAndGlyphs"
+           id="headshell-logo">Pioneer DJ</text>
       </g>
     </g>
   </g>
