@@ -51,8 +51,10 @@ let toonarmInnerEl = null
 let coverPlaceholderEl = null
 let coverIcoonEl = null
 let coverImageEl = null
+let stroboscoopEl = null
 let draaischijfTween = null
 let vinylTween = null
+let strobeTween = null
 let laatsteProgressie = 0
 // True vanaf het begin van start()'s needle-drop- óf stop()'s lift-tween tot-en-met zijn onComplete - zie
 // de uitgebreide toelichting bij start()/stop() en bijwerken() hieronder (stale-timeupdate-race). Ooit
@@ -69,6 +71,31 @@ let huidigeCoverPad = null
 function hoekVoorProgressie(progressie) {
   const p = Math.min(1, Math.max(0, progressie))
   return START_HOEK + (EIND_HOEK - START_HOEK) * p
+}
+
+// Blauw stroboscooplicht op de platterrand-stipjes (#stroboscope-rings, svg/pioneer-plx1000.svg), aan/uit
+// gekoppeld aan exact dezelfde plekken die de platter-rotatie zelf al starten/stoppen (start()/stop()/
+// toonHuidigeStandInstant() hieronder) - geen nieuw, los aanroeppad vanuit js/jukebox.js of
+// js/album-detail.js nodig. De kleurwissel zelf (zilver -> blauw) gaat via de .strobe-actief-CSS-klasse
+// in de svg zelf (#strobe-stijl); hier alleen de klasse togglen plus een zachte knipper-tween op de
+// groep-opacity. Eén langlevende tween, net als draaischijfTween/vinylTween hierboven - alleen
+// play()/pause(), niet steeds opnieuw aanmaken.
+function strobeAan() {
+  if (!stroboscoopEl) return
+  stroboscoopEl.classList.add('strobe-actief')
+  if (!strobeTween) {
+    strobeTween = gsap.fromTo(stroboscoopEl,
+      { opacity: 0.55 },
+      { opacity: 1, duration: 0.45, repeat: -1, yoyo: true, ease: 'sine.inOut', paused: true })
+  }
+  strobeTween.play()
+}
+
+function strobeUit() {
+  if (!stroboscoopEl) return
+  stroboscoopEl.classList.remove('strobe-actief')
+  if (strobeTween) strobeTween.pause()
+  gsap.set(stroboscoopEl, { opacity: 1 })
 }
 
 function initTurntable() {
@@ -94,6 +121,7 @@ function initTurntable() {
   coverPlaceholderEl = wrap.querySelector('#album-cover-placeholder')
   coverIcoonEl = wrap.querySelector('#album-cover-icoon')
   coverImageEl = wrap.querySelector('#album-cover-image')
+  stroboscoopEl = wrap.querySelector('#stroboscope-rings')
 
   if (!draaischijfEl || !vinylEl || !toonarmInnerEl) {
     console.error('Turntable: #draaischijf, #vinyl of #toonarm-inner niet gevonden in de geïnjecteerde svg')
@@ -153,6 +181,7 @@ function initTurntable() {
 function start(klaar) {
   armTransitieBezig = true
   if (draaischijfTween) draaischijfTween.play()
+  strobeAan()
   if (toonarmInnerEl) {
     // Needle drop: vanaf de ruststand naar de hoek die bij de laatst bekende trackvoortgang hoort - bij
     // een vers nummer is dat startHoek (het begin van de vinyl, niet de ruststand zelf), bij hervatten
@@ -185,6 +214,7 @@ function start(klaar) {
 function stop() {
   armTransitieBezig = true
   if (draaischijfTween) draaischijfTween.pause()
+  strobeUit()
   if (toonarmInnerEl) {
     gsap.killTweensOf(toonarmInnerEl)
     gsap.to(toonarmInnerEl, {
@@ -374,6 +404,8 @@ function toonHuidigeStandInstant(coverPad, progressie, spelend) {
     if (spelend) draaischijfTween.play()
     else draaischijfTween.pause()
   }
+  if (spelend) strobeAan()
+  else strobeUit()
 }
 
 window.Turntable = { start, stop, bijwerken, reset, setAlbumCover, toonVinyl, verbergVinyl, verbergVinylInstant, toonHuidigeStandInstant }

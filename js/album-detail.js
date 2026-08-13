@@ -512,3 +512,17 @@ window.zoekInAlbumSpeler = zoekInAlbumSpeler
 window.toggleDraaitafelZichtbaar = toggleDraaitafelZichtbaar
 
 document.getElementById('draaitafel-toggle-btn').classList.toggle('actief', draaitafelZichtbaar)
+
+// Platenspeler vergroten/verkleinen - zelfde --platenspeler-schaal-mechanisme en gedeelde localStorage-
+// sleutel als js/jukebox.js, zie de toelichting daar.
+const PLATENSPELER_SCHAAL_KEY = 'musicwall-platenspeler-schaal'
+function stelPlatenspelerSchaalIn(waarde) {
+  const pct = Math.min(150, Math.max(50, parseInt(waarde, 10) || 100))
+  document.documentElement.style.setProperty('--platenspeler-schaal', pct / 100)
+  localStorage.setItem(PLATENSPELER_SCHAAL_KEY, String(pct))
+}
+const opgeslagenPlatenspelerSchaal = parseInt(localStorage.getItem(PLATENSPELER_SCHAAL_KEY), 10) || 100
+document.documentElement.style.setProperty('--platenspeler-schaal', opgeslagenPlatenspelerSchaal / 100)
+const platenspelerSchaalSlider = document.getElementById('platenspeler-schaal-slider')
+if (platenspelerSchaalSlider) platenspelerSchaalSlider.value = opgeslagenPlatenspelerSchaal
+window.stelPlatenspelerSchaalIn = stelPlatenspelerSchaalIn

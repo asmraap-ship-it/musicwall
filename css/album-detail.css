@@ -88,14 +88,17 @@
   justify-content: center;
   gap: 1rem;
   min-height: calc(100vh - 340px);
+  position: relative;
 }
 
 .album-draaitafel-wrap.zichtbaar {
   display: flex;
 }
 
+/* --platenspeler-schaal (js/album-detail.js's stelPlatenspelerSchaalIn(), 0.5-1.5, gedeelde
+   localStorage-sleutel met de jukebox) vermenigvuldigt de bestaande vh-gebaseerde breedte. */
 #turntable-svg-wrap {
-  width: min(58vh, 90%);
+  width: calc(min(58vh, 90%) * var(--platenspeler-schaal, 1));
   aspect-ratio: 1.282;
 }
 
@@ -103,6 +106,32 @@
   width: 100%;
   height: 100%;
   display: block;
+}
+
+.platenspeler-schaal-rij {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid var(--rand-2);
+  border-radius: 4px;
+  padding: 0.35rem 0.7rem;
+  z-index: 5;
+}
+
+.platenspeler-schaal-icoon {
+  font-size: 13px;
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+.platenspeler-schaal-rij input[type="range"] {
+  width: 90px;
+  accent-color: var(--accent);
+  cursor: pointer;
 }
 
 /* Trackinfo onder de draaitafel i.p.v. (of, on toggle uit, in plaats van) in de navigatiebalk - zelfde

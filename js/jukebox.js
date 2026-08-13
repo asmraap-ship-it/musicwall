@@ -227,6 +227,21 @@ function toggleSpectrumZichtbaar() {
 bouwSpectrumAnalyzer()
 document.getElementById('spectrum-toggle-btn').classList.toggle('actief', spectrumZichtbaar)
 
+// Platenspeler vergroten/verkleinen (schuifje in .audio-cover-wrap): --platenspeler-schaal
+// vermenigvuldigt #turntable-svg-wrap's bestaande vh-gebaseerde breedte (css/jukebox.css). Gedeelde
+// localStorage-sleutel met album-detail.js (js/album-detail.js) - elk venster leest 'm alleen bij
+// het laden, geen live sync tussen open vensters nodig (net als musicwall-thema e.d.).
+const PLATENSPELER_SCHAAL_KEY = 'musicwall-platenspeler-schaal'
+function stelPlatenspelerSchaalIn(waarde) {
+  const pct = Math.min(150, Math.max(50, parseInt(waarde, 10) || 100))
+  document.documentElement.style.setProperty('--platenspeler-schaal', pct / 100)
+  localStorage.setItem(PLATENSPELER_SCHAAL_KEY, String(pct))
+}
+const opgeslagenPlatenspelerSchaal = parseInt(localStorage.getItem(PLATENSPELER_SCHAAL_KEY), 10) || 100
+document.documentElement.style.setProperty('--platenspeler-schaal', opgeslagenPlatenspelerSchaal / 100)
+const platenspelerSchaalSlider = document.getElementById('platenspeler-schaal-slider')
+if (platenspelerSchaalSlider) platenspelerSchaalSlider.value = opgeslagenPlatenspelerSchaal
+
 // Deze twee listeners regelen alleen nog de spectrum-analyzer/audiocontext - beide moeten reageren op écht
 // elke afspeelstart/-pauze, ongeacht wie die veroorzaakte (speelIndex(), speelPauze(), de native <video
 // controls>, of het uitspelen van het bestand zelf). Turntable.start()/stop() liepen hier vroeger ook
@@ -1071,6 +1086,7 @@ window.sluitMeestGespeeld = sluitMeestGespeeld
 window.toonOpgeslagenPlaylists = toonOpgeslagenPlaylists
 window.sluitOpgeslagenPlaylists = sluitOpgeslagenPlaylists
 window.toggleSpectrumZichtbaar = toggleSpectrumZichtbaar
+window.stelPlatenspelerSchaalIn = stelPlatenspelerSchaalIn
 
 
 laadPlaylist()

@@ -106,6 +106,7 @@ const VERTALINGEN = {
     'albumDetail.trackVerwijderenTooltip': 'Nummer verwijderen',
     'albumDetail.meerdereVerwijderen.titel': '{n} nummers verwijderen',
     'albumDetail.draaitafelTooltip': 'Draaitafel tonen/verbergen',
+    'albumDetail.platenspelerSchaalTooltip': 'Platenspeler vergroten/verkleinen',
     'albumImport.titel': 'Album importeren',
     'albumImport.kiesMapBtn': 'Kies map',
     'albumImport.naamLabel': 'Albumnaam',
@@ -277,6 +278,7 @@ const VERTALINGEN = {
     'jukebox.geenMeestGespeeld': 'Nog niets afgespeeld.',
     'jukebox.keerAfgespeeld': '{n}× afgespeeld',
     'jukebox.spectrumTooltip': 'Equalizer tonen/verbergen',
+    'jukebox.platenspelerSchaalTooltip': 'Platenspeler vergroten/verkleinen',
 
     // Kapotte links
     'kapotteLinks.titel': 'Kapotte YouTube-links',
@@ -556,6 +558,7 @@ const VERTALINGEN = {
     'albumDetail.trackVerwijderenTooltip': 'Delete track',
     'albumDetail.meerdereVerwijderen.titel': 'Delete {n} tracks',
     'albumDetail.draaitafelTooltip': 'Show/hide turntable',
+    'albumDetail.platenspelerSchaalTooltip': 'Resize turntable',
     'albumImport.titel': 'Import album',
     'albumImport.kiesMapBtn': 'Choose folder',
     'albumImport.naamLabel': 'Album name',
@@ -720,6 +723,7 @@ const VERTALINGEN = {
     'jukebox.geenMeestGespeeld': 'Nothing played yet.',
     'jukebox.keerAfgespeeld': 'Played {n}×',
     'jukebox.spectrumTooltip': 'Show/hide equalizer',
+    'jukebox.platenspelerSchaalTooltip': 'Resize turntable',
 
     // Broken links
     'kapotteLinks.titel': 'Broken YouTube links',

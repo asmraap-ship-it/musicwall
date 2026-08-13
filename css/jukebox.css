@@ -737,8 +737,10 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
 /* Platenspeler (js/turntable.js): SVG uit svg/pioneer-plx1000.svg wordt hier bij het laden van de
    jukebox in geïnjecteerd (innerHTML), zodat GSAP rechtstreeks op de #vinyl/#toonarm-groepen kan
    tweenen. viewBox 1000x780 (aspect-ratio 1000/780 ≈ 1.282) schaalt via width:100%/height:auto mee. */
+/* --platenspeler-schaal (js/jukebox.js's stelPlatenspelerSchaalIn(), 0.5-1.5) vermenigvuldigt de
+   bestaande vh-gebaseerde breedte - schuifje zelf in .platenspeler-schaal-rij hieronder. */
 #turntable-svg-wrap {
-  width: min(72vh, 92%);
+  width: calc(min(72vh, 92%) * var(--platenspeler-schaal, 1));
   aspect-ratio: 1.282;
   flex-shrink: 0;
 }
@@ -747,6 +749,32 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   width: 100%;
   height: 100%;
   display: block;
+}
+
+.platenspeler-schaal-rij {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid var(--rand-2);
+  border-radius: 4px;
+  padding: 0.35rem 0.7rem;
+  z-index: 5;
+}
+
+.platenspeler-schaal-icoon {
+  font-size: 13px;
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+.platenspeler-schaal-rij input[type="range"] {
+  width: 90px;
+  accent-color: var(--accent);
+  cursor: pointer;
 }
 
 .audio-track-info {

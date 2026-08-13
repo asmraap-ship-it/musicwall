@@ -270,6 +270,32 @@
          flood-color="#000000"
          flood-opacity="0.45" />
     </filter>
+    <!-- Blauw stroboscooplicht (js/turntable.js's strobeAan()/strobeUit(), gekoppeld aan exact dezelfde
+         start()/stop()/toonHuidigeStandInstant()-aanroepen als de platter-rotatie zelf, geen los
+         aanroeppad): één filter op de hele #stroboscope-rings-groep (niet per losse ellipsje - dat zou
+         op 368 elementen tegelijk een blur-herberekening geven, zie CLAUDE.md's performance-invariant bij
+         de spectrum-analyzer over dure box-shadow/blur op veel elementen). De kleurwissel zelf gaat via
+         de losse .strobe-actief-CSS-regel hieronder (fill overschrijft het presentatie-attribuut
+         fill="#c0c0c0" op elk ellipsje) i.p.v. via deze filter. -->
+    <filter
+       id="strobeGloed"
+       x="-60%"
+       y="-60%"
+       width="220%"
+       height="220%">
+      <feGaussianBlur
+         stdDeviation="2.2"
+         result="strobeBlur" />
+      <feMerge>
+        <feMergeNode in="strobeBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <style id="strobe-stijl">
+      #stroboscope-rings ellipse { transition: fill 0.4s ease; }
+      #stroboscope-rings.strobe-actief ellipse { fill: #5ecbff; }
+      #stroboscope-rings.strobe-actief { filter: url(#strobeGloed); }
+    </style>
     <linearGradient
        inkscape:collect="always"
        xlink:href="#metalGrad"
