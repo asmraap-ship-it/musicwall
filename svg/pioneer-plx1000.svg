@@ -1091,23 +1091,50 @@
            stroke="#1a1a1b"
            stroke-width="2"
            id="circle79" />
-        <!-- dichter op elkaar staande schaalstreepjes (15 i.p.v. 9), alleen onder de gebogen
-             ANTI-SKATING-tekst (die een gat van 64 graden bovenaan vrijhoudt) - o.b.v.
-             gebruikersfeedback dat de streepjes op de referentiefoto veel dichter opeen staan -->
+        <!-- dichter op elkaar staande schaalstreepjes (38 i.p.v. 13), alleen onder de gebogen
+             ANTI-SKATING-tekst (die een gat van 110 graden bovenaan vrijhoudt) - hoekwaarden
+             herijkt o.b.v. close-up meting op de referentiefoto (plx-1000_1-bovenkant.png):
+             streepjes lopen van -35 graden (net na het tekstgat, bij "9") rechtsom via
+             0/33("4")/180("0") tot -145 graden (andere kant van het tekstgat) -->
         <g stroke="#c9cacd" stroke-width="1" id="antiskate-streepjes">
-          <line x1="956.40" y1="179.63" x2="960.12" y2="176.29" id="askt-0" />
-          <line x1="959.16" y1="184.21" x2="963.85" y2="182.50" id="askt-1" />
-          <line x1="959.99" y1="189.49" x2="964.99" y2="189.66" id="askt-2" />
-          <line x1="958.79" y1="194.69" x2="963.36" y2="196.73" id="askt-3" />
-          <line x1="955.73" y1="199.07" x2="959.20" y2="202.67" id="askt-4" />
-          <line x1="951.24" y1="201.98" x2="953.12" y2="206.62" id="askt-5" />
-          <line x1="946.00" y1="203.00" x2="946.00" y2="208.00" id="askt-6" />
-          <line x1="940.76" y1="201.98" x2="938.88" y2="206.62" id="askt-7" />
-          <line x1="936.27" y1="199.07" x2="932.80" y2="202.67" id="askt-8" />
-          <line x1="933.21" y1="194.69" x2="928.64" y2="196.73" id="askt-9" />
-          <line x1="932.01" y1="189.49" x2="927.01" y2="189.66" id="askt-10" />
-          <line x1="932.84" y1="184.21" x2="928.15" y2="182.50" id="askt-11" />
-          <line x1="935.60" y1="179.63" x2="931.88" y2="176.29" id="askt-12" />
+          <line x1="957.47" y1="180.97" x2="961.56" y2="178.10" id="askt-0" />
+          <line x1="958.33" y1="182.37" x2="962.74" y2="180.01" id="askt-1" />
+          <line x1="959.03" y1="183.87" x2="963.68" y2="182.04" id="askt-2" />
+          <line x1="959.54" y1="185.44" x2="964.38" y2="184.17" id="askt-3" />
+          <line x1="959.86" y1="187.06" x2="964.82" y2="186.36" id="askt-4" />
+          <line x1="960.00" y1="188.70" x2="965.00" y2="188.60" id="askt-5" />
+          <line x1="959.93" y1="190.35" x2="964.91" y2="190.83" id="askt-6" />
+          <line x1="959.68" y1="191.98" x2="964.56" y2="193.05" id="askt-7" />
+          <line x1="959.23" y1="193.57" x2="963.96" y2="195.20" id="askt-8" />
+          <line x1="958.60" y1="195.10" x2="963.10" y2="197.27" id="askt-9" />
+          <line x1="957.80" y1="196.54" x2="962.01" y2="199.23" id="askt-10" />
+          <line x1="956.83" y1="197.87" x2="960.70" y2="201.04" id="askt-11" />
+          <line x1="955.71" y1="199.08" x2="959.18" y2="202.69" id="askt-12" />
+          <line x1="954.46" y1="200.16" x2="957.48" y2="204.14" id="askt-13" />
+          <line x1="953.09" y1="201.07" x2="955.62" y2="205.39" id="askt-14" />
+          <line x1="951.62" y1="201.82" x2="953.62" y2="206.40" id="askt-15" />
+          <line x1="950.07" y1="202.40" x2="951.52" y2="207.18" id="askt-16" />
+          <line x1="948.46" y1="202.78" x2="949.34" y2="207.70" id="askt-17" />
+          <line x1="946.83" y1="202.98" x2="947.12" y2="207.97" id="askt-18" />
+          <line x1="945.17" y1="202.98" x2="944.88" y2="207.97" id="askt-19" />
+          <line x1="943.54" y1="202.78" x2="942.66" y2="207.70" id="askt-20" />
+          <line x1="941.93" y1="202.40" x2="940.48" y2="207.18" id="askt-21" />
+          <line x1="940.38" y1="201.82" x2="938.38" y2="206.40" id="askt-22" />
+          <line x1="938.91" y1="201.07" x2="936.38" y2="205.39" id="askt-23" />
+          <line x1="937.54" y1="200.16" x2="934.52" y2="204.14" id="askt-24" />
+          <line x1="936.29" y1="199.08" x2="932.82" y2="202.69" id="askt-25" />
+          <line x1="935.17" y1="197.87" x2="931.30" y2="201.04" id="askt-26" />
+          <line x1="934.20" y1="196.54" x2="929.99" y2="199.23" id="askt-27" />
+          <line x1="933.40" y1="195.10" x2="928.90" y2="197.27" id="askt-28" />
+          <line x1="932.77" y1="193.57" x2="928.04" y2="195.20" id="askt-29" />
+          <line x1="932.32" y1="191.98" x2="927.44" y2="193.05" id="askt-30" />
+          <line x1="932.07" y1="190.35" x2="927.09" y2="190.83" id="askt-31" />
+          <line x1="932.00" y1="188.70" x2="927.00" y2="188.60" id="askt-32" />
+          <line x1="932.14" y1="187.06" x2="927.18" y2="186.36" id="askt-33" />
+          <line x1="932.46" y1="185.44" x2="927.62" y2="184.17" id="askt-34" />
+          <line x1="932.97" y1="183.87" x2="928.32" y2="182.04" id="askt-35" />
+          <line x1="933.67" y1="182.37" x2="929.26" y2="180.01" id="askt-36" />
+          <line x1="934.53" y1="180.97" x2="930.44" y2="178.10" id="askt-37" />
         </g>
         <circle
            cx="946"
@@ -1121,16 +1148,16 @@
              boogje (90 graden) dan de eerste poging, anders paste de tekst niet en werd hij
              afgekapt tot enkel het middelste stuk -->
         <path
-           d="M 935.39,178.39 A 15,15 0 0,1 956.61,178.39"
+           d="M 933.7,180.4 A 15,15 0 0,1 958.3,180.4"
            fill="none"
            stroke="none"
            id="antiskate-tekst-pad" />
         <text text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="3.2px" fill="#e6e4de" id="text-anti-skating">
           <textPath xlink:href="#antiskate-tekst-pad" startOffset="50%">ANTI-SKATING</textPath>
         </text>
-        <text x="940.1" y="185.1" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5px" fill="#e6e4de" id="text-antiskate-0">0</text>
-        <text x="951.9" y="185.1" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5px" fill="#e6e4de" id="text-antiskate-9">9</text>
-        <text x="946" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5px" fill="#e6e4de" id="text-antiskate-4">4</text>
+        <text x="938.0" y="191.2" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5px" fill="#e6e4de" id="text-antiskate-0">0</text>
+        <text x="952.7" y="186.8" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5px" fill="#e6e4de" id="text-antiskate-9">9</text>
+        <text x="952.7" y="195.6" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5px" fill="#e6e4de" id="text-antiskate-4">4</text>
         <!-- lock / cueing-lift hendel (v2): was een vlakke statische knop,
            nu een scharnierende hendel-vorm zoals een echte cueing-lift
            die je met de vingertop optilt. Basissokkel behouden. -->
