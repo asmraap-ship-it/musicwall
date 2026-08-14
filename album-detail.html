@@ -44,11 +44,13 @@
 </div>
 
 <div class="album-draaitafel-wrap" id="album-draaitafel-wrap">
-  <div class="platenspeler-schaal-rij" id="platenspeler-schaal-rij" data-i18n-title="albumDetail.platenspelerSchaalTooltip" title="Platenspeler vergroten/verkleinen">
-    <span class="platenspeler-schaal-icoon">&#128269;</span>
-    <input type="range" id="platenspeler-schaal-slider" min="50" max="150" step="5" value="100" oninput="stelPlatenspelerSchaalIn(this.value)">
+  <div class="turntable-anchor">
+    <div id="turntable-svg-wrap"></div>
+    <div class="platenspeler-schaal-rij" id="platenspeler-schaal-rij" data-i18n-title="albumDetail.platenspelerSchaalTooltip" title="Platenspeler vergroten/verkleinen">
+      <span class="platenspeler-schaal-icoon">&#128269;</span>
+      <input type="range" id="platenspeler-schaal-slider" min="50" max="150" step="5" value="100" oninput="stelPlatenspelerSchaalIn(this.value)">
+    </div>
   </div>
-  <div id="turntable-svg-wrap"></div>
   <div class="album-draaitafel-track-info" id="album-draaitafel-track-info"></div>
 </div>
 

@@ -108,9 +108,15 @@
   display: block;
 }
 
+/* .turntable-anchor omhult alleen #turntable-svg-wrap, zie css/jukebox.css voor de volledige toelichting -
+   dezelfde kopie-aanpak als de rest van de platenspeler-schaal-styling in dit bestand. */
+.turntable-anchor {
+  position: relative;
+}
+
 .platenspeler-schaal-rij {
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 0;
   display: flex;
   align-items: center;

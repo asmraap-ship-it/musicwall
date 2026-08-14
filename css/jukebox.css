@@ -751,9 +751,18 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   display: block;
 }
 
+/* .turntable-anchor omhult alleen #turntable-svg-wrap (position:relative, ongestyled qua breedte/hoogte -
+   als flex-item van .audio-cover-content, dat align-items:center heeft, hugt hij vanzelf de eigen
+   breedte/hoogte van de platenspeler-svg), zodat dit schuifje altijd exact aan de platenspeler zelf
+   vastzit i.p.v. aan de hele (grotere, deels lege) .audio-cover-wrap - op gebruikersverzoek verplaatst
+   van linksboven naar linksonder. */
+.turntable-anchor {
+  position: relative;
+}
+
 .platenspeler-schaal-rij {
   position: absolute;
-  top: 1rem;
+  bottom: 1rem;
   left: 1rem;
   display: flex;
   align-items: center;

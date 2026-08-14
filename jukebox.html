@@ -59,12 +59,14 @@
 	    <iframe id="youtube-speler-frame" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media"></iframe>
 	  </div>
 	  <div class="audio-cover-wrap" id="audio-cover-wrap">
-	    <div class="platenspeler-schaal-rij" id="platenspeler-schaal-rij" data-i18n-title="jukebox.platenspelerSchaalTooltip" title="Platenspeler vergroten/verkleinen">
-	      <span class="platenspeler-schaal-icoon">&#128269;</span>
-	      <input type="range" id="platenspeler-schaal-slider" min="50" max="150" step="5" value="100" oninput="stelPlatenspelerSchaalIn(this.value)">
-	    </div>
 	    <div class="audio-cover-content" id="audio-cover-content">
-	      <div id="turntable-svg-wrap"></div>
+	      <div class="turntable-anchor">
+	        <div id="turntable-svg-wrap"></div>
+	        <div class="platenspeler-schaal-rij" id="platenspeler-schaal-rij" data-i18n-title="jukebox.platenspelerSchaalTooltip" title="Platenspeler vergroten/verkleinen">
+	          <span class="platenspeler-schaal-icoon">&#128269;</span>
+	          <input type="range" id="platenspeler-schaal-slider" min="50" max="150" step="5" value="100" oninput="stelPlatenspelerSchaalIn(this.value)">
+	        </div>
+	      </div>
 	      <div class="audio-track-info" id="audio-track-info"></div>
 	    </div>
 	    <div class="audio-progress-rij">
