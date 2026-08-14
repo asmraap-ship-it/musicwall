@@ -73,13 +73,16 @@ function hoekVoorProgressie(progressie) {
   return START_HOEK + (EIND_HOEK - START_HOEK) * p
 }
 
-// Blauw stroboscooplicht op de platterrand-stipjes (#stroboscope-rings, svg/pioneer-plx1000.svg), aan/uit
-// gekoppeld aan exact dezelfde plekken die de platter-rotatie zelf al starten/stoppen (start()/stop()/
-// toonHuidigeStandInstant() hieronder) - geen nieuw, los aanroeppad vanuit js/jukebox.js of
-// js/album-detail.js nodig. De kleurwissel zelf (zilver -> blauw) gaat via de .strobe-actief-CSS-klasse
-// in de svg zelf (#strobe-stijl); hier alleen de klasse togglen plus een zachte knipper-tween op de
-// groep-opacity. Eén langlevende tween, net als draaischijfTween/vinylTween hierboven - alleen
-// play()/pause(), niet steeds opnieuw aanmaken.
+// Blauw stroboscooplicht: een vaste, niet-roterende LED-unit náást de platter (#strobe-lamp, in
+// #behuizing van svg/pioneer-plx1000.svg) die op de platterrand-stipjes (#stroboscope-rings, in
+// #draaischijf) schijnt - net als op een echte platenspeler. Eerdere versie kleurde in plaats daarvan de
+// hele #stroboscope-rings-groep blauw, wat er verkeerd uitzag (het hele draaiende plateau licht dan op,
+// i.p.v. een vast lampje ernaast). Aan/uit gekoppeld aan exact dezelfde plekken die de platter-rotatie
+// zelf al starten/stoppen (start()/stop()/toonHuidigeStandInstant() hieronder) - geen nieuw, los
+// aanroeppad vanuit js/jukebox.js of js/album-detail.js nodig. De kleurwissel zelf (donker -> blauw) gaat
+// via de .strobe-actief-CSS-klasse in de svg zelf (#strobe-stijl); hier alleen de klasse togglen plus een
+// zachte knipper-tween op de lamp-opacity. Eén langlevende tween, net als draaischijfTween/vinylTween
+// hierboven - alleen play()/pause(), niet steeds opnieuw aanmaken.
 function strobeAan() {
   if (!stroboscoopEl) return
   stroboscoopEl.classList.add('strobe-actief')
@@ -121,7 +124,7 @@ function initTurntable() {
   coverPlaceholderEl = wrap.querySelector('#album-cover-placeholder')
   coverIcoonEl = wrap.querySelector('#album-cover-icoon')
   coverImageEl = wrap.querySelector('#album-cover-image')
-  stroboscoopEl = wrap.querySelector('#stroboscope-rings')
+  stroboscoopEl = wrap.querySelector('#strobe-lamp')
 
   if (!draaischijfEl || !vinylEl || !toonarmInnerEl) {
     console.error('Turntable: #draaischijf, #vinyl of #toonarm-inner niet gevonden in de geïnjecteerde svg')

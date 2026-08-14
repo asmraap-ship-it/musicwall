@@ -236,11 +236,17 @@ function stelPlatenspelerSchaalIn(waarde) {
   const pct = Math.min(150, Math.max(50, parseInt(waarde, 10) || 100))
   document.documentElement.style.setProperty('--platenspeler-schaal', pct / 100)
   localStorage.setItem(PLATENSPELER_SCHAAL_KEY, String(pct))
+  // Vult de custom-gestylede track (css/jukebox.css) tot aan de duim - het schuifje loopt van 50 tot
+  // 150, dus pct-50 valt direct samen met het gevulde percentage van die reeks.
+  if (platenspelerSchaalSlider) platenspelerSchaalSlider.style.setProperty('--platenspeler-schaal-fill', (pct - 50) + '%')
 }
 const opgeslagenPlatenspelerSchaal = parseInt(localStorage.getItem(PLATENSPELER_SCHAAL_KEY), 10) || 100
 document.documentElement.style.setProperty('--platenspeler-schaal', opgeslagenPlatenspelerSchaal / 100)
 const platenspelerSchaalSlider = document.getElementById('platenspeler-schaal-slider')
-if (platenspelerSchaalSlider) platenspelerSchaalSlider.value = opgeslagenPlatenspelerSchaal
+if (platenspelerSchaalSlider) {
+  platenspelerSchaalSlider.value = opgeslagenPlatenspelerSchaal
+  platenspelerSchaalSlider.style.setProperty('--platenspeler-schaal-fill', (opgeslagenPlatenspelerSchaal - 50) + '%')
+}
 
 // Deze twee listeners regelen alleen nog de spectrum-analyzer/audiocontext - beide moeten reageren op écht
 // elke afspeelstart/-pauze, ongeacht wie die veroorzaakte (speelIndex(), speelPauze(), de native <video

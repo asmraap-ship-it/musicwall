@@ -272,11 +272,11 @@
     </filter>
     <!-- Blauw stroboscooplicht (js/turntable.js's strobeAan()/strobeUit(), gekoppeld aan exact dezelfde
          start()/stop()/toonHuidigeStandInstant()-aanroepen als de platter-rotatie zelf, geen los
-         aanroeppad): één filter op de hele #stroboscope-rings-groep (niet per losse ellipsje - dat zou
-         op 368 elementen tegelijk een blur-herberekening geven, zie CLAUDE.md's performance-invariant bij
-         de spectrum-analyzer over dure box-shadow/blur op veel elementen). De kleurwissel zelf gaat via
-         de losse .strobe-actief-CSS-regel hieronder (fill overschrijft het presentatie-attribuut
-         fill="#c0c0c0" op elk ellipsje) i.p.v. via deze filter. -->
+         aanroeppad): filter voor de gloed van #strobe-lamp-lens (zie #strobe-lamp in #behuizing
+         hieronder) - een vaste, niet-roterende LED-unit náást de platter, niet de 368
+         platter-stipjes zelf. Eerdere opzet kleurde de hele #stroboscope-rings-groep blauw, wat er
+         verkeerd uitzag: op een echte platenspeler zit de lamp los van/naast het draaiende plateau,
+         niet erop. -->
     <filter
        id="strobeGloed"
        x="-60%"
@@ -292,9 +292,8 @@
       </feMerge>
     </filter>
     <style id="strobe-stijl">
-      #stroboscope-rings ellipse { transition: fill 0.4s ease; }
-      #stroboscope-rings.strobe-actief ellipse { fill: #5ecbff; }
-      #stroboscope-rings.strobe-actief { filter: url(#strobeGloed); }
+      #strobe-lamp-lens { transition: fill 0.4s ease; }
+      #strobe-lamp.strobe-actief #strobe-lamp-lens { fill: #5ecbff; filter: url(#strobeGloed); }
     </style>
     <linearGradient
        inkscape:collect="always"
@@ -1558,6 +1557,34 @@
        font-weight="700"
        fill="#26272a"
        id="text108">STOP</text>
+    <!-- Stroboscooplamp: een vaste, niet-roterende LED-unit die op de stroboscoop-stipjes
+         (#stroboscope-rings, in #draaischijf) schijnt - op een echte platenspeler lijken die stipjes
+         stil te staan zodra het knipperritme van deze lamp precies bij de rotatiesnelheid past.
+         Bewust hier in #behuizing (niet in #draaischijf, dat zou meedraaien). Positie (178,692) zit
+         in de vrije ruimte tussen de start/stop-knop (eindigt bij x=112) en de 33/45-knoppen
+         (beginnen bij y=734), net buiten de platterrand (afstand tot platter-middelpunt 390,395 is
+         ~365, platterradius is 335) - lijkt zo net naast de plaat gemonteerd, zoals in het echt. -->
+    <g
+       id="strobe-lamp"
+       transform="translate(178,692)">
+      <rect
+         x="-15"
+         y="-10"
+         width="30"
+         height="20"
+         rx="4"
+         fill="#1a1b1d"
+         stroke="#4a4b4e"
+         stroke-width="1.5"
+         id="strobe-lamp-behuizing" />
+      <ellipse
+         id="strobe-lamp-lens"
+         cx="0"
+         cy="0"
+         rx="8"
+         ry="5"
+         fill="#2c3a42" />
+    </g>
     <!-- 33/45 snelheidskeuze: verder naar onderen, los van start/stop -->
     <rect
        x="160"

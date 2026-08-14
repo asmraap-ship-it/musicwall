@@ -128,10 +128,46 @@
   flex-shrink: 0;
 }
 
+/* Zelfde aangepaste range-styling als css/jukebox.css (op gebruikersverzoek "mooier gestyled") - eigen
+   kopie, geen gedeeld stylesheet tussen de twee vensters (zelfde afweging als bij Turntable zelf, zie
+   CLAUDE.md). */
 .platenspeler-schaal-rij input[type="range"] {
   width: 90px;
-  accent-color: var(--accent);
+  height: 14px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
   cursor: pointer;
+}
+
+.platenspeler-schaal-rij input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right,
+    var(--accent) 0%, var(--accent) var(--platenspeler-schaal-fill, 50%),
+    rgba(255, 255, 255, 0.15) var(--platenspeler-schaal-fill, 50%), rgba(255, 255, 255, 0.15) 100%);
+}
+
+.platenspeler-schaal-rij input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  margin-top: -4.5px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 4px rgba(var(--accent-rgb), 0.6);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.platenspeler-schaal-rij input[type="range"]:hover::-webkit-slider-thumb {
+  transform: scale(1.15);
+  box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.9);
+}
+
+.platenspeler-schaal-rij input[type="range"]:active::-webkit-slider-thumb {
+  transform: scale(1.05);
 }
 
 /* Trackinfo onder de draaitafel i.p.v. (of, on toggle uit, in plaats van) in de navigatiebalk - zelfde
