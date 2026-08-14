@@ -648,8 +648,19 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   border-color: #34d058;
 }
 
+#strobo-toggle-btn.actief {
+  color: #34d058;
+  border-color: #34d058;
+}
+
+/* flex-wrap:wrap is een bewuste noodrem: zonder deze regel kroop het schuifje (toegevoegd op
+   gebruikersverzoek, zie css hieronder) de rij te breed voor smallere venstergroottes, en omdat geen enkel
+   kind hier expliciet flex-shrink:0 had verdrongen de knoppen elkaar tot ze feitelijk buiten het zichtbare
+   venster vielen ("de knoppen vallen weg") i.p.v. gewoon iets kleiner te worden. Nu wordt de hele rij bij
+   plaatsgebrek een tweede regel i.p.v. dat er iets onzichtbaar wordt. */
 .navigatie {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
@@ -661,6 +672,7 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
 .navigatie button {
   width: 44px;
   height: 44px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: var(--achtergrond-3);
   border: 1px solid var(--rand-2);
@@ -738,9 +750,12 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
    jukebox in geïnjecteerd (innerHTML), zodat GSAP rechtstreeks op de #vinyl/#toonarm-groepen kan
    tweenen. viewBox 1000x780 (aspect-ratio 1000/780 ≈ 1.282) schaalt via width:100%/height:auto mee. */
 /* --platenspeler-schaal (js/jukebox.js's stelPlatenspelerSchaalIn(), 0.5-1.5) vermenigvuldigt de
-   bestaande vh-gebaseerde breedte - schuifje zelf in .platenspeler-schaal-rij hieronder. */
+   bestaande vh-gebaseerde breedte - schuifje zelf in .platenspeler-schaal-rij hieronder. De 92%-grens
+   staat in dezelfde min() als de schaal-vermenigvuldiging (niet erbuiten) - anders blijft de breedte bij
+   een schaal > 100% alsnog buiten het scherm vallen, want "min(72vh,92%) * schaal" kan de 92%-grens zelf
+   weer overschrijden (zie css/album-detail.css voor dezelfde fix). */
 #turntable-svg-wrap {
-  width: calc(min(72vh, 92%) * var(--platenspeler-schaal, 1));
+  width: min(calc(72vh * var(--platenspeler-schaal, 1)), 92%);
   aspect-ratio: 1.282;
   flex-shrink: 0;
 }
@@ -751,27 +766,25 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   display: block;
 }
 
-/* .turntable-anchor omhult alleen #turntable-svg-wrap (position:relative, ongestyled qua breedte/hoogte -
-   als flex-item van .audio-cover-content, dat align-items:center heeft, hugt hij vanzelf de eigen
-   breedte/hoogte van de platenspeler-svg), zodat dit schuifje altijd exact aan de platenspeler zelf
-   vastzit i.p.v. aan de hele (grotere, deels lege) .audio-cover-wrap - op gebruikersverzoek verplaatst
-   van linksboven naar linksonder. */
 .turntable-anchor {
   position: relative;
 }
 
+/* Het schuifje stond eerst absoluut gepositioneerd linksonder ín de platenspeler-tekening zelf (zie
+   git-historie), maar overlapte daar deels met de POWER-knop - op gebruikersverzoek verplaatst naar
+   dezelfde rij als de transporttoetsen onderin (.navigatie), helemaal rechts. margin-left:auto duwt 'm
+   als laatste flex-item naar de rechterrand ondanks .navigatie's justify-content:center. Niet langer
+   absoluut gepositioneerd, dus geen .turntable-anchor-ankerpunt meer nodig voor dit element. */
 .platenspeler-schaal-rij {
-  position: absolute;
-  bottom: 1rem;
-  left: 1rem;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 0.5rem;
   background: rgba(0,0,0,0.6);
   border: 1px solid var(--rand-2);
   border-radius: 4px;
   padding: 0.35rem 0.7rem;
-  z-index: 5;
+  margin-left: auto;
 }
 
 .platenspeler-schaal-icoon {

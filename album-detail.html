@@ -46,10 +46,6 @@
 <div class="album-draaitafel-wrap" id="album-draaitafel-wrap">
   <div class="turntable-anchor">
     <div id="turntable-svg-wrap"></div>
-    <div class="platenspeler-schaal-rij" id="platenspeler-schaal-rij" data-i18n-title="albumDetail.platenspelerSchaalTooltip" title="Platenspeler vergroten/verkleinen">
-      <span class="platenspeler-schaal-icoon">&#128269;</span>
-      <input type="range" id="platenspeler-schaal-slider" min="50" max="150" step="5" value="100" oninput="stelPlatenspelerSchaalIn(this.value)">
-    </div>
   </div>
   <div class="album-draaitafel-track-info" id="album-draaitafel-track-info"></div>
 </div>
@@ -79,6 +75,11 @@
     <button onclick="albumLaatste()" data-i18n-title="jukebox.laatste" title="Laatste">&#9197;</button>
     <span class="album-navigatie-track" id="album-navigatie-track"></span>
     <button onclick="toggleDraaitafelZichtbaar()" id="draaitafel-toggle-btn" data-i18n-title="albumDetail.draaitafelTooltip" title="Draaitafel tonen/verbergen">&#128191;</button>
+    <button onclick="toggleStroboZichtbaar()" id="strobo-toggle-btn" data-i18n-title="jukebox.stroboTooltip" title="Stroboscooplicht tonen/verbergen">&#128161;</button>
+    <div class="platenspeler-schaal-rij" id="platenspeler-schaal-rij" data-i18n-title="albumDetail.platenspelerSchaalTooltip" title="Platenspeler vergroten/verkleinen">
+      <span class="platenspeler-schaal-icoon">&#128269;</span>
+      <input type="range" id="platenspeler-schaal-slider" min="50" max="150" step="5" value="100" oninput="stelPlatenspelerSchaalIn(this.value)">
+    </div>
   </div>
 </div>
 

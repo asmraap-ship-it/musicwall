@@ -75,6 +75,18 @@ let spectrumPieken = []
 let ytSimWaarden = new Array(SPECTRUM_BALKEN).fill(0)
 let spectrumPiekWaarden = new Array(SPECTRUM_BALKEN).fill(0)
 let spectrumZichtbaar = localStorage.getItem('musicwall-spectrum-zichtbaar') !== 'nee'
+// Stroboscoop-gloed aan/uit (js/turntable.js's setStroboZichtbaar()) - decoratieve toggle, zelfde
+// localStorage-precedent als spectrumZichtbaar hierboven, gedeelde sleutel met album-detail.
+let stroboLichtVoorkeur = localStorage.getItem('musicwall-strobo-zichtbaar') !== 'nee'
+function toggleStroboZichtbaar() {
+  stroboLichtVoorkeur = !stroboLichtVoorkeur
+  localStorage.setItem('musicwall-strobo-zichtbaar', stroboLichtVoorkeur ? 'ja' : 'nee')
+  document.getElementById('strobo-toggle-btn').classList.toggle('actief', stroboLichtVoorkeur)
+  if (window.Turntable) window.Turntable.setStroboZichtbaar(stroboLichtVoorkeur)
+}
+window.toggleStroboZichtbaar = toggleStroboZichtbaar
+document.getElementById('strobo-toggle-btn').classList.toggle('actief', stroboLichtVoorkeur)
+if (window.Turntable) window.Turntable.setStroboZichtbaar(stroboLichtVoorkeur)
 
 // Versterkt het contrast tussen stil en luid (exponent > 1 duwt lage waarden verder omlaag terwijl hoge
 // waarden relatief hoog blijven) - zonder deze curve oogde de analyzer vlak/gedempt, met een grillige

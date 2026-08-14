@@ -14,6 +14,16 @@ const albumSpeler = document.getElementById('album-speler')
 // aan, want dit scherm is compacter dan de jukebox en niet iedereen wil de vertraging van de needle-drop-
 // animatie vóór elk nummer.
 let draaitafelZichtbaar = localStorage.getItem('musicwall-album-draaitafel-zichtbaar') === 'ja'
+// Stroboscoop-gloed aan/uit (js/turntable.js's setStroboZichtbaar()) - decoratieve toggle, zelfde
+// localStorage-sleutel als js/jukebox.js (gedeeld, net als musicwall-platenspeler-schaal).
+let stroboLichtVoorkeur = localStorage.getItem('musicwall-strobo-zichtbaar') !== 'nee'
+function toggleStroboZichtbaar() {
+  stroboLichtVoorkeur = !stroboLichtVoorkeur
+  localStorage.setItem('musicwall-strobo-zichtbaar', stroboLichtVoorkeur ? 'ja' : 'nee')
+  document.getElementById('strobo-toggle-btn').classList.toggle('actief', stroboLichtVoorkeur)
+  if (window.Turntable) window.Turntable.setStroboZichtbaar(stroboLichtVoorkeur)
+}
+window.toggleStroboZichtbaar = toggleStroboZichtbaar
 
 async function laadAlbum(albumId) {
   huidigAlbumId = albumId
@@ -512,6 +522,8 @@ window.zoekInAlbumSpeler = zoekInAlbumSpeler
 window.toggleDraaitafelZichtbaar = toggleDraaitafelZichtbaar
 
 document.getElementById('draaitafel-toggle-btn').classList.toggle('actief', draaitafelZichtbaar)
+document.getElementById('strobo-toggle-btn').classList.toggle('actief', stroboLichtVoorkeur)
+if (window.Turntable) window.Turntable.setStroboZichtbaar(stroboLichtVoorkeur)
 
 // Platenspeler vergroten/verkleinen - zelfde --platenspeler-schaal-mechanisme en gedeelde localStorage-
 // sleutel als js/jukebox.js, zie de toelichting daar.

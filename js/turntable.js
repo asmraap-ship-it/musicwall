@@ -86,22 +86,47 @@ function hoekVoorProgressie(progressie) {
 //     aanmaken.
 // (2) De vier ringen zelf (#strobo-rings, setStroboPitch() verderop) - draaien NIET mee met
 //     strobeAan/strobeUit, die volgen uitsluitend de geselecteerde snelheid + pitch.
-function strobeAan() {
+//
+// Aan/uit-knop voor de gloed (decoratieve UI-toggle, op een echt apparaat zit hier geen schakelaar op - de
+// LED gaat gewoon mee met de motor/voeding). strobeAan()/strobeUit() blijven het enige aanroeppad vanuit
+// start()/stop()/toonHuidigeStandInstant() - geen nieuw aanroeppad daar. In plaats daarvan onthoudt
+// laatstSpelend hier alleen "speelt de plaat op dit moment af", en pasStrobeGloedToe() combineert dat met
+// de losse stroboZichtbaar-voorkeur (gezet via setStroboZichtbaar(), aangeroepen vanuit js/jukebox.js/
+// js/album-detail.js op basis van hun eigen localStorage-voorkeur) - de gloed is alleen daadwerkelijk aan
+// als beide waar zijn.
+let laatstSpelend = false
+let stroboZichtbaar = true
+
+function pasStrobeGloedToe() {
   if (!strobeGloedEl) return
-  strobeGloedEl.classList.add('strobe-actief')
-  if (!strobeTween) {
-    strobeTween = gsap.fromTo(strobeGloedEl,
-      { opacity: 0.55 },
-      { opacity: 1, duration: 0.45, repeat: -1, yoyo: true, ease: 'sine.inOut', paused: true })
+  if (laatstSpelend && stroboZichtbaar) {
+    strobeGloedEl.classList.add('strobe-actief')
+    if (!strobeTween) {
+      strobeTween = gsap.fromTo(strobeGloedEl,
+        { opacity: 0.55 },
+        { opacity: 1, duration: 0.45, repeat: -1, yoyo: true, ease: 'sine.inOut', paused: true })
+    }
+    strobeTween.play()
+  } else {
+    strobeGloedEl.classList.remove('strobe-actief')
+    if (strobeTween) strobeTween.pause()
+    gsap.set(strobeGloedEl, { opacity: 1 })
   }
-  strobeTween.play()
+}
+
+function strobeAan() {
+  laatstSpelend = true
+  pasStrobeGloedToe()
 }
 
 function strobeUit() {
-  if (!strobeGloedEl) return
-  strobeGloedEl.classList.remove('strobe-actief')
-  if (strobeTween) strobeTween.pause()
-  gsap.set(strobeGloedEl, { opacity: 1 })
+  laatstSpelend = false
+  pasStrobeGloedToe()
+}
+
+function setStroboZichtbaar(zichtbaar) {
+  stroboZichtbaar = !!zichtbaar
+  pasStrobeGloedToe()
 }
 
 // Vier stroboscoopringen (33⅓rpm/50Hz, 33⅓rpm/60Hz, 45rpm/50Hz, 45rpm/60Hz - zie svg/pioneer-plx1000.svg's
@@ -470,6 +495,6 @@ function toonHuidigeStandInstant(coverPad, progressie, spelend) {
   else strobeUit()
 }
 
-window.Turntable = { start, stop, bijwerken, reset, setAlbumCover, toonVinyl, verbergVinyl, verbergVinylInstant, toonHuidigeStandInstant, setStroboPitch }
+window.Turntable = { start, stop, bijwerken, reset, setAlbumCover, toonVinyl, verbergVinyl, verbergVinylInstant, toonHuidigeStandInstant, setStroboPitch, setStroboZichtbaar }
 
 initTurntable()

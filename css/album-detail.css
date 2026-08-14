@@ -96,9 +96,17 @@
 }
 
 /* --platenspeler-schaal (js/album-detail.js's stelPlatenspelerSchaalIn(), 0.5-1.5, gedeelde
-   localStorage-sleutel met de jukebox) vermenigvuldigt de bestaande vh-gebaseerde breedte. */
+   localStorage-sleutel met de jukebox) vermenigvuldigt de bestaande vh-gebaseerde breedte. Drie grenzen in
+   dezelfde min() als de schaal-vermenigvuldiging (niet erbuiten) - anders blijft de breedte/hoogte bij een
+   schaal > 100% alsnog buiten het scherm vallen:
+   - 90%: nooit breder dan het beschikbare horizontale vlak.
+   - calc((100vh - 340px) * 1.282): de breedte die, via aspect-ratio 1.282, exact de hoogte van
+     .album-draaitafel-wrap's eigen min-height (100vh - 340px, zie hierboven) oplevert - zonder deze grens
+     kon een brede (90%) maar daardoor via aspect-ratio ook hóge platenspeler nog steeds verticaal buiten
+     zijn container (en dus de vaste navigatiebalk onderin) uitsteken, ook al bleef de breedte zelf keurig
+     binnen 90%. Beide grenzen moeten tegelijk gelden - vandaar alle drie in één min(). */
 #turntable-svg-wrap {
-  width: calc(min(58vh, 90%) * var(--platenspeler-schaal, 1));
+  width: min(calc(58vh * var(--platenspeler-schaal, 1)), 90%, calc((100vh - 340px) * 1.282));
   aspect-ratio: 1.282;
 }
 
@@ -108,24 +116,24 @@
   display: block;
 }
 
-/* .turntable-anchor omhult alleen #turntable-svg-wrap, zie css/jukebox.css voor de volledige toelichting -
-   dezelfde kopie-aanpak als de rest van de platenspeler-schaal-styling in dit bestand. */
 .turntable-anchor {
   position: relative;
 }
 
+/* Het schuifje stond eerst absoluut gepositioneerd ín de platenspeler-tekening zelf (zie git-historie),
+   maar overlapte daar deels met de POWER-knop - op gebruikersverzoek verplaatst naar
+   .album-navigatie-knoppen, helemaal rechts (zie css/jukebox.css voor dezelfde verplaatsing daar). Niet
+   langer absoluut gepositioneerd, dus geen .turntable-anchor-ankerpunt meer nodig voor dit element. */
 .platenspeler-schaal-rij {
-  position: absolute;
-  bottom: 0;
-  left: 0;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 0.5rem;
   background: rgba(0,0,0,0.6);
   border: 1px solid var(--rand-2);
   border-radius: 4px;
   padding: 0.35rem 0.7rem;
-  z-index: 5;
+  margin-left: auto;
 }
 
 .platenspeler-schaal-icoon {
@@ -194,6 +202,11 @@
 }
 
 #draaitafel-toggle-btn.actief {
+  color: #34d058;
+  border-color: #34d058;
+}
+
+#strobo-toggle-btn.actief {
   color: #34d058;
   border-color: #34d058;
 }
@@ -366,8 +379,13 @@
   border-radius: 3px;
 }
 
+/* flex-wrap:wrap + de min-width hierboven op .album-navigatie-track zijn een bewuste noodrem: zonder deze
+   regels verdrong het toegevoegde schuifje (zie css hieronder) + de nieuwe #strobo-toggle-btn de
+   tracktekst tot 0px breed ("de tekst van het nummer valt weg") in plaats van gewoon door te lopen naar
+   een tweede regel - zelfde fix als .navigatie in css/jukebox.css. */
 .album-navigatie-knoppen {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
@@ -420,7 +438,7 @@
 
 .album-navigatie-track {
   flex: 1;
-  min-width: 0;
+  min-width: 60px;
   max-width: 280px;
   margin-left: 0.5rem;
   font-size: 12px;

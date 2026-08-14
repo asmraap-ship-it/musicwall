@@ -278,6 +278,7 @@ const VERTALINGEN = {
     'jukebox.geenMeestGespeeld': 'Nog niets afgespeeld.',
     'jukebox.keerAfgespeeld': '{n}× afgespeeld',
     'jukebox.spectrumTooltip': 'Equalizer tonen/verbergen',
+    'jukebox.stroboTooltip': 'Stroboscooplicht tonen/verbergen',
     'jukebox.platenspelerSchaalTooltip': 'Platenspeler vergroten/verkleinen',
 
     // Kapotte links
@@ -723,6 +724,7 @@ const VERTALINGEN = {
     'jukebox.geenMeestGespeeld': 'Nothing played yet.',
     'jukebox.keerAfgespeeld': 'Played {n}×',
     'jukebox.spectrumTooltip': 'Show/hide equalizer',
+    'jukebox.stroboTooltip': 'Show/hide strobe light',
     'jukebox.platenspelerSchaalTooltip': 'Resize turntable',
 
     // Broken links
