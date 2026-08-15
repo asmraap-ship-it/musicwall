@@ -291,6 +291,11 @@
        height="260%">
       <feGaussianBlur stdDeviation="2.5" />
     </filter>
+    <!-- Let op bij het bewerken van deze <style>: dit is gewone XML-content, geen CDATA - een letterlijk
+         "<g>"/"<rect>" etc. in een CSS /* */-commentaar hierbinnen wordt door een strikte XML-parser als
+         een echte starttag gelezen (niet als tekst), en breekt de hele svg-bestandsvalidatie pas veel
+         verderop bij een niet-matchende sluittag. Schrijf zulke verwijzingen zonder de punthaken (bv.
+         "de rect-groep" i.p.v. "de <rect>"). -->
     <style id="strobe-stijl">
       #strobo-rings > g {
         transform-box: fill-box;
@@ -301,12 +306,32 @@
         animation-duration: var(--strobo-duration, 1s);
         animation-play-state: var(--strobo-state, paused);
         animation-direction: var(--strobo-direction, normal);
+        transition: filter 0.2s ease, opacity 0.2s ease;
       }
       @keyframes strobo-spin {
         to { transform: rotate(360deg); }
       }
+      /* Stroboscooplicht UIT (js/turntable.js's pasStroboRingModusToe(), gekoppeld aan de bestaande
+         💡-knop/stroboZichtbaar-voorkeur - zie de uitgebreide toelichting daar): zonder het knipperende
+         licht is er geen "traag driftende ring"-illusie meer, de ring draait dan gewoon op de werkelijke
+         platter-snelheid mee - te snel om de losse stipjes te volgen, dus vervaagd i.p.v. scherp. Blur +
+         verlaagde opacity op elke ring-groep als geheel (4 elementen), niet op elk los ellipse-stipje
+         (~690 stuks) - veel goedkoper te renderen voor hetzelfde visuele resultaat. De transition hierboven
+         op de basisregel (niet hier) zorgt dat zowel aan-naar-uit als uit-naar-aan vloeiend overgaat. */
+      #strobo-rings.strobo-fast-blur > g {
+        filter: blur(1.2px);
+        opacity: 0.55;
+      }
       #strobo-glow { opacity: 0; transition: opacity 0.3s ease; }
       #strobo-glow.strobe-actief { opacity: 1; }
+      /* 33/45-snelheidsknoppen (js/turntable.js's setSpeed()) - donker/grijs is de rust-look, .speed-actief
+         (op de knop die bij de huidige currentSpeed hoort) kleurt 'm donkerblauw/cyaan, dezelfde twee kleuren
+         die vroeger hardcoded op "33" stonden. cursor:pointer op de knop-groep zelf, niet op rect/text apart. */
+      .speed-knop { cursor: pointer; }
+      .speed-knop rect { fill: #1a1b1d; transition: fill 0.15s ease; }
+      .speed-knop text { fill: #8a8b8f; transition: fill 0.15s ease; }
+      .speed-knop.speed-actief rect { fill: #12233a; }
+      .speed-knop.speed-actief text { fill: #7fe0ff; }
     </style>
     <linearGradient
        inkscape:collect="always"
@@ -1120,7 +1145,17 @@
           <textPath xlink:href="#hoogte-tekst-pad" startOffset="6">6mm HEIGHT ADJUST</textPath>
         </text>
         <!-- anti-skating dial: zwarte schijf (i.p.v. de lichte metalen knobGrad) zodat de witte
-             schaalcijfers erop leesbaar zijn, zoals op de referentiefoto -->
+             schaalcijfers erop leesbaar zijn, zoals op de referentiefoto. Op gebruikersverzoek
+             (2026-08-15) verplaatst naar recht tegenover "2" op de gewichtschaal (#text-gewicht-2,
+             (775,146) in dit lokale g89-schaal-coördinatenstelsel) - dus in eerste instantie exact
+             180° geroteerd t.o.v. de pivot-2-richting, op dezelfde afstand tot de pivot (863,142)
+             als voorheen (~95.4). Daarna op gebruikersverzoek nog "iets lager t.o.v. de 2" gezet -
+             de y-verschuiving is met +15 verruimd (translate-y van -51.33 naar -36.33), de
+             x-verschuiving (dus de 180°-relatie t.o.v. "2") ongewijzigd. translate(12.28,-36.33)
+             verschuift de hele, verder ongewijzigde dial-groep (was cx/cy 946,189, wordt effectief
+             958.28,152.67) - alle onderliggende coördinaten in dit blok blijven zoals ze waren,
+             alleen de groep als geheel schuift op. -->
+        <g id="antiskate-dial" transform="translate(12.28,-36.33)">
         <circle
            cx="946"
            cy="189"
@@ -1196,6 +1231,7 @@
         <text x="938.0" y="191.2" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5px" fill="#e6e4de" id="text-antiskate-0">0</text>
         <text x="952.7" y="186.8" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5px" fill="#e6e4de" id="text-antiskate-9">9</text>
         <text x="952.7" y="195.6" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5px" fill="#e6e4de" id="text-antiskate-4">4</text>
+        </g>
         <!-- lock / cueing-lift hendel (v2): was een vlakke statische knop,
            nu een scharnierende hendel-vorm zoals een echte cueing-lift
            die je met de vingertop optilt. Basissokkel behouden. -->
@@ -1634,45 +1670,56 @@
          (#strobo-glow) staat daarom niet hier in #behuizing (dat tekent vóór de platter, dus zou
          eronder verdwijnen) maar als losse, niet-roterende laag ná #draaischijf/#strobo-rings
          hieronder, zodat hij zichtbaar bovenop de stippenringen ligt. -->
-    <!-- 33/45 snelheidskeuze: verder naar onderen, los van start/stop -->
-    <rect
-       x="160"
-       y="734"
-       width="50"
-       height="26"
-       rx="4"
-       fill="#12233a"
-       stroke="#4a4b4e"
-       stroke-width="1.5"
-       id="rect108" />
-    <text
-       x="185"
-       y="752"
-       text-anchor="middle"
-       font-family="Arial, sans-serif"
-       font-size="12px"
-       font-weight="700"
-       fill="#7fe0ff"
-       id="text109">33</text>
-    <rect
-       x="216"
-       y="734"
-       width="50"
-       height="26"
-       rx="4"
-       fill="#1a1b1d"
-       stroke="#4a4b4e"
-       stroke-width="1.5"
-       id="rect109" />
-    <text
-       x="241"
-       y="752"
-       text-anchor="middle"
-       font-family="Arial, sans-serif"
-       font-size="12px"
-       font-weight="700"
-       fill="#8a8b8f"
-       id="text110">45</text>
+    <!-- 33/45 snelheidskeuze: verder naar onderen, los van start/stop. Klikbaar (js/turntable.js's
+         setSpeed(), aangeroepen vanuit deze twee <g>-knoppen) - de actieve/inactieve look (donkerblauwe
+         achtergrond + cyaan cijfer vs. donkere achtergrond + grijs cijfer) komt nu volledig uit de
+         .speed-actief-CSS-regel hieronder (#strobe-stijl) i.p.v. hardcoded fill-attributen op rect/text,
+         zodat setSpeed() de knoppen puur door de klasse te wisselen kan bijwerken. -->
+    <!-- <title>-elementen geven een native browser-tooltip bij hover - de enige haalbare manier om deze
+         nu-klikbare knoppen ontdekbaar te maken vanuit de svg zelf. Bewust alleen Nederlandstalig, zonder
+         de gebruikelijke data-i18n-title-vertaalsleutel: deze svg wordt via innerHTML geïnjecteerd (geen
+         eigen i18n-plumbing, net als "LOCK"/"POWER"/"ANTI-SKATING" hierboven, die ook altijd Engels/statisch
+         blijven). Zie ook whats-new.html/CHANGELOG.md voor de bredere ontdekbaarheid van deze functie. -->
+    <g id="speed-33-btn" class="speed-knop speed-actief">
+      <title>Klik om te wisselen naar 33⅓ rpm</title>
+      <rect
+         x="160"
+         y="734"
+         width="50"
+         height="26"
+         rx="4"
+         stroke="#4a4b4e"
+         stroke-width="1.5"
+         id="rect108" />
+      <text
+         x="185"
+         y="752"
+         text-anchor="middle"
+         font-family="Arial, sans-serif"
+         font-size="12px"
+         font-weight="700"
+         id="text109">33</text>
+    </g>
+    <g id="speed-45-btn" class="speed-knop">
+      <title>Klik om te wisselen naar 45 rpm</title>
+      <rect
+         x="216"
+         y="734"
+         width="50"
+         height="26"
+         rx="4"
+         stroke="#4a4b4e"
+         stroke-width="1.5"
+         id="rect109" />
+      <text
+         x="241"
+         y="752"
+         text-anchor="middle"
+         font-family="Arial, sans-serif"
+         font-size="12px"
+         font-weight="700"
+         id="text110">45</text>
+    </g>
     <!-- wordmark: verschoven naar links -->
     <text
        x="560"
@@ -3208,5 +3255,45 @@
            id="headshell-logo">Pioneer DJ</text>
       </g>
     </g>
+  </g>
+  <!-- ======================================================= -->
+  <!-- 5) TOONARM-BEUGEL - vast, niet-roterend onderdeel van de -->
+  <!-- pivot-behuizing (referentiefoto plx-1000_1-bovenkant3.png)-->
+  <!-- ======================================================= -->
+  <!-- Bewust GEEN kind van #toonarm-inner (die roteert) - deze groep is een latere sibling van
+       #toonarm zelf, dus buiten de rotatie, mét dezelfde translate als #toonarm zodat dezelfde
+       lokale (863,142)-pivotcoördinaat rechtstreeks vergelijkbaar blijft met bv. path244/circle248
+       hierboven, zonder los om te hoeven rekenen.
+       Tweede versie (2026-08-15, na gebruikersfeedback op de eerste screenshot): het knikpunt
+       (beugel-bout) ligt nu EXACT op ARM_ORIGIN (863,142) - dezelfde pivot als de toonarm zelf,
+       i.p.v. er een paar eenheden naast (dat was in de eerste versie bewust gedaan om de
+       roterende pivot-dop #circle248 niet te overlappen, maar de gebruiker wil 'm juist exact
+       samenvallend). Bovenkant (het bredere blok, iets langer) wijst nu naar "1" op de
+       gewichtschaal (#text-gewicht-1, cx≈791.8,cy≈90.2, ONtstaat als losse ring van 5 cijfers
+       0-4 rond diezelfde pivot) - de eindpositie is rekenkundig bepaald als
+       pivot + eenheidsvector(pivot→gewicht-1) * lengte, niet met de hand ingeschat, om een
+       herhaling van de eerdere drie mislukte pogingen (verkeerde hoek "op het oog") te
+       voorkomen. Onderkant (dunnere staaf, korter) wijst in exact de tegenovergestelde richting.
+       Zelfde balk/sheen/bout-stijl als de eerste versie, alleen de geometrie is aangepast - zie
+       CLAUDE.md/de bijbehorende memory voor de volledige toelichting zodra dit bevestigd is. -->
+  <g id="toonarm-beugel" transform="translate(-88.22314,41.755877)">
+    <!-- Op gebruikersverzoek (2026-08-15, tweede correctie): niet langer twee losse trapeziums die
+         allebei vanaf hun volle breedte bij de pivot naar een smallere kop tóé taps lopen (dat gaf
+         een zichtbare naad/sprong in breedte precies op de pivot, "niet doorlopend") - nu ÉÉN
+         doorlopend vlak van boven (breed, r=8 half, naar de "1" toe) tot onder (smal, r=2.5 half,
+         tegenovergesteld), met de pivot ergens halverwege die ene taper (op 61% van boven naar
+         onder, daar dus ~9,3 breed) i.p.v. een aparte start. Getekend als één <polygon>
+         (trapezium: A1/B1/B2/A2, loodrecht op de balkrichting aan beide uiteinden) i.p.v. een
+         stroke, want een <path>-stroke kan niet taps toelopen. -->
+    <polygon points="813.81,116.11 889.83,164.61 892.77,160.57 823.23,103.17" fill="#1c1d1f" id="beugel-balk" />
+    <polygon points="813.81,116.11 889.83,164.61 892.77,160.57 823.23,103.17" fill="#4a4b4e" opacity="0.22" transform="translate(-1.2,-1.6)" id="beugel-balk-sheen" />
+    <!-- Op gebruikersverzoek (2026-08-15): het knikpunt-rondje moet groter zijn en buiten de balk
+         uitsteken (blok/staaf zijn 16 resp. 9 breed, dus halve breedte max. 8 - dit rondje (r=12)
+         steekt daar dus aan alle kanten voorbij), met een zilveren schroef/moer in het midden
+         omringd door een zwarte cirkelrand - i.p.v. de eerdere kleine, volledig donkere bout die
+         binnen de balk verscholen zat. -->
+    <circle cx="863" cy="142" r="9" fill="#1c1d1f" stroke="#0a0a0b" stroke-width="1.5" id="beugel-bout-schijf" />
+    <circle cx="863" cy="142" r="6" fill="url(#knobGrad)" stroke="#6c6d70" stroke-width="0.6" id="beugel-bout-schroef" />
+    <line x1="860.5" y1="142" x2="865.5" y2="142" stroke="#4a4b4e" stroke-width="0.6" id="beugel-bout-slot" />
   </g>
 </svg>

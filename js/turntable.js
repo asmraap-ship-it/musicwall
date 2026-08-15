@@ -28,7 +28,6 @@ const ARM_ORIGIN = '863 142'
 const RUST_HOEK = -40
 const START_HOEK = -23
 const EIND_HOEK = 0
-const RPM_DEFAULT = 33
 // Op gebruikersverzoek verruimd van 0.6s - zowel de needle-drop bij starten als de lift-terug-naar-rust
 // bij stoppen/pauzeren voelden te snel/abrupt aan. Geldt voor beide (start()/stop() delen deze constante).
 const ARM_DROP_DUUR = 1.3
@@ -44,6 +43,15 @@ const ARM_DROP_DUUR = 1.3
 // volledig vrij van de toonarm, dus geen paint-order-conflict mogelijk.
 const VINYL_AANKOMST_PAD = 'M -750,100 Q -350,-150 0,0'
 const VINYL_PLAATSING_DUUR = 0.9
+
+// Fysieke nominale snelheden (rpm) - vóór de `let`-variabelen hierbeneden gedefinieerd omdat
+// currentSpeed (verderop) hier al bij initialisatie naar verwijst. Ook gebruikt door setStroboPitch()/
+// STROBO_RING_GROEPEN (zie de stroboscoop-sectie verderop) en nu ook door de platter-rotatiesnelheid zelf
+// (draaischijfTween hieronder) - vroeger draaide de platter altijd op een losse, afgeronde RPM_DEFAULT=33
+// i.p.v. de fysiek correcte 33⅓, want er was nog geen snelheidskeuze; nu beide op dezelfde bron leunen
+// voorkomt dat platter-rotatie en stroboscoopringen ooit uit sync raken.
+const STROBO_RPM_3313 = 33.333
+const STROBO_RPM_45 = 45
 
 let draaischijfEl = null
 let vinylEl = null
@@ -68,6 +76,15 @@ let armTransitieBezig = false
 // toonVinyl() voor waarom null vroeger juist expliciet uitgesloten was, en waarom dat averechts werkte.
 let vinylZichtbaar = false
 let huidigeCoverPad = null
+// 33⅓/45-toerenwissel (2026-08-15): currentSpeed is de enige bron van waarheid voor "welke snelheid staat
+// er nu geselecteerd" - zowel de platter-rotatiesnelheid (draaischijfTween's timeScale, zie setSpeed()
+// hieronder) als de stroboscoopringen (pasStroboRingModusToe(), zie de toelichting daar) lezen hieruit,
+// zodat ze per definitie nooit uit sync kunnen raken.
+// Begint op 33⅓ omdat de "33"-knop in de svg-tekening zelf al als geselecteerd is opgemaakt
+// (.speed-actief op #speed-33-btn, zie svg/pioneer-plx1000.svg).
+let currentSpeed = STROBO_RPM_3313
+let speed33BtnEl = null
+let speed45BtnEl = null
 
 function hoekVoorProgressie(progressie) {
   const p = Math.min(1, Math.max(0, progressie))
@@ -127,23 +144,23 @@ function strobeUit() {
 function setStroboZichtbaar(zichtbaar) {
   stroboZichtbaar = !!zichtbaar
   pasStrobeGloedToe()
+  pasStroboRingModusToe()
 }
 
 // Vier stroboscoopringen (33⅓rpm/50Hz, 33⅓rpm/60Hz, 45rpm/50Hz, 45rpm/60Hz - zie svg/pioneer-plx1000.svg's
 // #strobo-rings), elk permanent zichtbaar en onafhankelijk aangestuurd, maar altijd in paren van twee
 // (de twee ringen van dezelfde fysieke snelheid gedragen zich per definitie identiek - ze verschillen
-// alleen in stippenaantal, niet in draaisnelheid).
-const STROBO_RPM_3313 = 33.333
-const STROBO_RPM_45 = 45
+// alleen in stippenaantal, niet in draaisnelheid). STROBO_RPM_3313/STROBO_RPM_45 staan nu bovenaan dit
+// bestand (currentSpeed heeft ze al nodig vóór dit punt), hier alleen nog STROBO_RING_GROEPEN zelf.
 const STROBO_RING_GROEPEN = [
   { ids: ['strobo-ring-3313-50', 'strobo-ring-3313-60'], nominalRpm: STROBO_RPM_3313 },
   { ids: ['strobo-ring-45-50', 'strobo-ring-45-60'], nominalRpm: STROBO_RPM_45 }
 ]
 
-// Stroboscoopring-rotatie, volledig los van de platter-rotatie zelf (draaischijfTween hierboven blijft
-// altijd op de echte, constante RPM_DEFAULT-snelheid draaien). Op een echt apparaat lijkt elke gedrukte
-// stippenring onder stroboscooplicht stil te staan zodra de wérkelijke rotatiesnelheid precies zijn eigen
-// fysieke nominale snelheid (33⅓ of 45) is, en langzaam mee/terug te "kruipen" zodra dat niet zo is - dus
+// Stroboscoopring-rotatie, volledig los van de platter-rotatie zelf (draaischijfTween hierboven draait op
+// zijn eigen, door setSpeed() bestuurde timeScale). Op een echt apparaat lijkt elke gedrukte stippenring
+// onder stroboscooplicht stil te staan zodra de wérkelijke rotatiesnelheid precies zijn eigen fysieke
+// nominale snelheid (33⅓ of 45) is, en langzaam mee/terug te "kruipen" zodra dat niet zo is - dus
 // bijvoorbeeld het 45rpm-ringenpaar bevriest wanneer de plaat op 45 rpm draait, terwijl het 33⅓-paar dan
 // juist zichtbaar drift, en andersom. Dat natuurkundig nabootsen met echte flikkerende belichting +
 // schermverversing is onbetrouwbaar/onnodig complex in een browser; in plaats daarvan wordt de wérkelijke
@@ -153,11 +170,11 @@ const STROBO_RING_GROEPEN = [
 // snelheid geselecteerd is, wat niet overeenkomt met een echt apparaat). Bij drift 0 staat de animatie op
 // 'paused' (ring oogt stilstaand); bij een afwijking draait de ring in `60 / |drift|` seconden per
 // omwenteling, mee bij positieve drift, terug bij negatieve.
-// **Deze app heeft momenteel geen echte tempo-/pitch-fader** - playback draait altijd op nominale
-// snelheid, en de "33"-knop staat in de svg-tekening zelf al als geselecteerd afgebeeld (rect108, lichter/
-// actiever gekleurd dan de "45"-knop) - dus dit wordt alleen met pitchPercent=0, geselecteerdeNominaalRpm
-// = STROBO_RPM_3313 aangeroepen (zie initTurntable() hieronder). De functie zelf is wél al volledig af,
-// klaar om aan een toekomstige echte snelheids-/pitch-control te hangen.
+// **Deze app heeft nog geen echte tempo-/pitch-fader** - playback draait altijd op nominale snelheid, dus
+// pitchPercent is hier in de praktijk altijd 0. `geselecteerdeNominaalRpm` volgt sinds de 33⅓/45-
+// toerenwissel (setSpeed() verderop) wél de daadwerkelijk gekozen snelheid, i.p.v. altijd hardcoded
+// STROBO_RPM_3313 - de functie is verder ongewijzigd, en blijft ook klaar voor een toekomstige echte
+// pitch-control (pitchPercent zou daar dan niet meer altijd 0 zijn).
 function setStroboPitch(pitchPercent, geselecteerdeNominaalRpm) {
   if (!strobeRingsWrap) return
   const actueleRpm = geselecteerdeNominaalRpm * (1 + pitchPercent / 100)
@@ -177,6 +194,70 @@ function strobeRingSet(id, drift) {
   el.style.setProperty('--strobo-duration', `${60 / Math.abs(drift)}s`)
   el.style.setProperty('--strobo-direction', drift > 0 ? 'normal' : 'reverse')
   el.style.setProperty('--strobo-state', 'running')
+}
+
+const STROBO_RING_IDS = ['strobo-ring-3313-50', 'strobo-ring-3313-60', 'strobo-ring-45-50', 'strobo-ring-45-60']
+
+// Echt aan/uit-gedrag van de stroboscoopbelichting (2026-08-15). Tot nu toe simuleerde setStroboPitch()
+// hierboven altijd het "licht AAN"-effect (scherp, traag driftend o.b.v. het snelheidsverschil) - maar op
+// een echt apparaat is dat een illusie die uitsluitend ontstaat DOOR het knipperende stroboscooplicht op
+// netfrequentie; zonder dat licht draait de platter gewoon door op volle snelheid en zijn de losse
+// stipjes te snel om te volgen (vervagen). Bewust GEEN nieuwe POWER-knop hiervoor gebouwd - deze app heeft
+// nergens een echt aan/uit-schakelaar-concept (de POWER-knop op de svg is decoratief, geen click-handler),
+// en er bestond al een vrijwel identiek decoratief UI-toggle-concept voor dit exacte licht: de bestaande
+// 💡-knop/stroboZichtbaar-voorkeur (zie pasStrobeGloedToe() hierboven, ooit gebouwd voor de LED-gloed).
+// Die wordt hier hergebruikt i.p.v. een tweede, overlappende schakelaar te bouwen.
+// AAN (stroboZichtbaar): ongewijzigd bestaand gedrag via setStroboPitch(). UIT: geen .strobo-fast-blur-
+// klasse meer nodig op basis van drift - elke ring draait gewoon "normaal" mee op de werkelijke,
+// actuele platter-rpm (currentSpeed), en de svg/#strobe-stijl-CSS vervaagt (blur + verlaagde opacity) elke
+// ring-<g> als geheel zodra .strobo-fast-blur op #strobo-rings staat - dat blurt vier <g>-elementen i.p.v.
+// een blur-filter op elk van de ~690 losse <ellipse>-stipjes apart te zetten, veel goedkoper om te
+// renderen voor exact hetzelfde visuele resultaat.
+function pasStroboRingModusToe() {
+  if (!strobeRingsWrap) return
+  if (stroboZichtbaar) {
+    strobeRingsWrap.classList.remove('strobo-fast-blur')
+    setStroboPitch(0, currentSpeed)
+  } else {
+    strobeRingsWrap.classList.add('strobo-fast-blur')
+    const duur = `${60 / currentSpeed}s`
+    STROBO_RING_IDS.forEach(id => {
+      const el = strobeRingsWrap.querySelector('#' + id)
+      if (!el) return
+      el.style.setProperty('--strobo-duration', duur)
+      el.style.setProperty('--strobo-direction', 'normal')
+      el.style.setProperty('--strobo-state', 'running')
+    })
+  }
+}
+
+// 33⅓/45-toerenwissel: klikken op #speed-33-btn/#speed-45-btn (svg/pioneer-plx1000.svg) roept dit aan.
+// Puur visueel/decoratief, zoals de rest van deze module al bij ontbreken van een echte tempo-fader -
+// heeft geen effect op de daadwerkelijke afspeelsnelheid van het audiobestand (dat blijft in js/jukebox.js/
+// js/album-detail.js's <audio>-element gewoon op 1.0 draaien). timeScale i.p.v. draaischijfTween opnieuw
+// aan te maken of zijn duration() te wijzigen: timeScale verandert het tempo vanaf de huidige rotatiehoek,
+// zonder de rotatie zelf te resetten of te laten springen - en gsap.to() erop geeft een korte, vloeiende
+// op-/afbouw (alsof de motor van toerental wisselt) i.p.v. een abrupte tempowissel.
+function setSpeed(rpm) {
+  if (rpm === currentSpeed) return
+  currentSpeed = rpm
+  if (draaischijfTween) {
+    gsap.to(draaischijfTween, {
+      timeScale: rpm / STROBO_RPM_3313,
+      duration: 0.5,
+      ease: 'power1.inOut',
+      overwrite: true
+    })
+  }
+  // pasStroboRingModusToe() (niet rechtstreeks setStroboPitch) - bij stroboZichtbaar bevriest/drift het
+  // juiste ringenpaar zoals voorheen, bij licht-uit draait alles gewoon mee op de nieuwe currentSpeed.
+  pasStroboRingModusToe()
+  bijwerkenSpeedKnoppen()
+}
+
+function bijwerkenSpeedKnoppen() {
+  if (speed33BtnEl) speed33BtnEl.classList.toggle('speed-actief', currentSpeed === STROBO_RPM_3313)
+  if (speed45BtnEl) speed45BtnEl.classList.toggle('speed-actief', currentSpeed === STROBO_RPM_45)
 }
 
 function initTurntable() {
@@ -204,16 +285,21 @@ function initTurntable() {
   coverImageEl = wrap.querySelector('#album-cover-image')
   strobeGloedEl = wrap.querySelector('#strobo-glow')
   strobeRingsWrap = wrap.querySelector('#strobo-rings')
+  speed33BtnEl = wrap.querySelector('#speed-33-btn')
+  speed45BtnEl = wrap.querySelector('#speed-45-btn')
 
   if (!draaischijfEl || !vinylEl || !toonarmInnerEl) {
     console.error('Turntable: #draaischijf, #vinyl of #toonarm-inner niet gevonden in de geïnjecteerde svg')
     return
   }
 
-  // Geen echte snelheids-/pitch-fader in deze app (zie setStroboPitch() hierboven) - zet de ringen
-  // expliciet op basis van de in de svg-tekening als geselecteerd afgebeelde snelheid (33⅓) i.p.v. te
-  // leunen op de CSS-fallbackwaarden.
-  setStroboPitch(0, STROBO_RPM_3313)
+  if (speed33BtnEl) speed33BtnEl.addEventListener('click', () => setSpeed(STROBO_RPM_3313))
+  if (speed45BtnEl) speed45BtnEl.addEventListener('click', () => setSpeed(STROBO_RPM_45))
+  bijwerkenSpeedKnoppen()
+
+  // Zet de ringen op basis van currentSpeed (33⅓ bij opstart) én de stroboZichtbaar-lichtstand - zie
+  // pasStroboRingModusToe()'s toelichting hierboven.
+  pasStroboRingModusToe()
 
   gsap.set(toonarmInnerEl, { svgOrigin: ARM_ORIGIN, rotation: RUST_HOEK })
 
@@ -221,10 +307,12 @@ function initTurntable() {
   // in svg/pioneer-plx1000.svg (mechanisch: de motor drijft de platter aan, de vinyl draait daar via de
   // slipmat gewoon in mee), dus één rotatie hier volstaat voor beide. Eén keer aangemaakt, daarna alleen
   // play()/pause() - i.p.v. de tween telkens te herscheppen, zodat pauzeren de huidige rotatie vasthoudt
-  // en hervatten vloeiend doorloopt (geen jank/reset naar 0).
+  // en hervatten vloeiend doorloopt (geen jank/reset naar 0). Basis-duration op de 33⅓-snelheid (dus
+  // timeScale 1 bij currentSpeed===STROBO_RPM_3313); setSpeed() hierboven wijzigt de timeScale, nooit deze
+  // duration zelf - dat zou anders de lopende rotatiehoek laten springen.
   draaischijfTween = gsap.to(draaischijfEl, {
     rotation: '+=360',
-    duration: 60 / RPM_DEFAULT,
+    duration: 60 / STROBO_RPM_3313,
     repeat: -1,
     ease: 'none',
     svgOrigin: DRAAISCHIJF_ORIGIN,

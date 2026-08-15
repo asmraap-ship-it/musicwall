@@ -67,15 +67,17 @@
     <span class="album-tijd" id="album-tijd-duur">0:00</span>
   </div>
   <div class="album-navigatie-knoppen">
-    <button onclick="albumEerste()" data-i18n-title="jukebox.eerste" title="Eerste">&#9198;</button>
-    <button onclick="albumVorige()" data-i18n-title="jukebox.vorige" title="Vorige">&#9664;</button>
-    <button onclick="albumSpeelPauze()" id="album-play-btn" data-i18n-title="jukebox.afspelen" title="Afspelen">&#9654;</button>
-    <button onclick="albumStop()" data-i18n-title="jukebox.stoppen" title="Stoppen">&#9209;</button>
-    <button onclick="albumVolgende()" data-i18n-title="jukebox.volgende" title="Volgende">&#9654;</button>
-    <button onclick="albumLaatste()" data-i18n-title="jukebox.laatste" title="Laatste">&#9197;</button>
     <span class="album-navigatie-track" id="album-navigatie-track"></span>
-    <button onclick="toggleDraaitafelZichtbaar()" id="draaitafel-toggle-btn" data-i18n-title="albumDetail.draaitafelTooltip" title="Draaitafel tonen/verbergen">&#128191;</button>
-    <button onclick="toggleStroboZichtbaar()" id="strobo-toggle-btn" data-i18n-title="jukebox.stroboTooltip" title="Stroboscooplicht tonen/verbergen">&#128161;</button>
+    <div class="album-navigatie-knoppen-groep">
+      <button onclick="albumEerste()" data-i18n-title="jukebox.eerste" title="Eerste">&#9198;</button>
+      <button onclick="albumVorige()" data-i18n-title="jukebox.vorige" title="Vorige">&#9664;</button>
+      <button onclick="albumSpeelPauze()" id="album-play-btn" data-i18n-title="jukebox.afspelen" title="Afspelen">&#9654;</button>
+      <button onclick="albumStop()" data-i18n-title="jukebox.stoppen" title="Stoppen">&#9209;</button>
+      <button onclick="albumVolgende()" data-i18n-title="jukebox.volgende" title="Volgende">&#9654;</button>
+      <button onclick="albumLaatste()" data-i18n-title="jukebox.laatste" title="Laatste">&#9197;</button>
+      <button onclick="toggleDraaitafelZichtbaar()" id="draaitafel-toggle-btn" data-i18n-title="albumDetail.draaitafelTooltip" title="Draaitafel tonen/verbergen">&#128191;</button>
+      <button onclick="toggleStroboZichtbaar()" id="strobo-toggle-btn" data-i18n-title="jukebox.stroboTooltip" title="Stroboscooplicht tonen/verbergen">&#128161;</button>
+    </div>
     <div class="platenspeler-schaal-rij" id="platenspeler-schaal-rij" data-i18n-title="albumDetail.platenspelerSchaalTooltip" title="Platenspeler vergroten/verkleinen">
       <span class="platenspeler-schaal-icoon">&#128269;</span>
       <input type="range" id="platenspeler-schaal-slider" min="50" max="150" step="5" value="100" oninput="stelPlatenspelerSchaalIn(this.value)">

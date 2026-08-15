@@ -82,6 +82,7 @@
 	</div>
 	<div class="spectrum-analyzer" id="spectrum-analyzer"></div>
 	<div class="navigatie">
+	  <div class="navigatie-knoppen">
 	     <button onclick="schudPlaylist()" id="shuffle-btn" data-i18n-title="jukebox.shuffle" title="Shuffle">⤮</button>
 	     <button onclick="naarEerste()" data-i18n-title="jukebox.eerste" title="Eerste">⏮</button>
    	     <button onclick="vorige()" data-i18n-title="jukebox.vorige" title="Vorige">◀</button>
@@ -91,6 +92,7 @@
 		 <button onclick="naarLaatste()" data-i18n-title="jukebox.laatste" title="Laatste">⏭</button>
 		 <button onclick="toggleSpectrumZichtbaar()" id="spectrum-toggle-btn" data-i18n-title="jukebox.spectrumTooltip" title="Equalizer tonen/verbergen">🎛</button>
 		 <button onclick="toggleStroboZichtbaar()" id="strobo-toggle-btn" data-i18n-title="jukebox.stroboTooltip" title="Stroboscooplicht tonen/verbergen">💡</button>
+	  </div>
 		 <div class="platenspeler-schaal-rij" id="platenspeler-schaal-rij" data-i18n-title="jukebox.platenspelerSchaalTooltip" title="Platenspeler vergroten/verkleinen">
 		   <span class="platenspeler-schaal-icoon">&#128269;</span>
 		   <input type="range" id="platenspeler-schaal-slider" min="50" max="150" step="5" value="100" oninput="stelPlatenspelerSchaalIn(this.value)">
