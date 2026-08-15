@@ -100,13 +100,19 @@
    dezelfde min() als de schaal-vermenigvuldiging (niet erbuiten) - anders blijft de breedte/hoogte bij een
    schaal > 100% alsnog buiten het scherm vallen:
    - 90%: nooit breder dan het beschikbare horizontale vlak.
-   - calc((100vh - 340px) * 1.282): de breedte die, via aspect-ratio 1.282, exact de hoogte van
-     .album-draaitafel-wrap's eigen min-height (100vh - 340px, zie hierboven) oplevert - zonder deze grens
-     kon een brede (90%) maar daardoor via aspect-ratio ook hóge platenspeler nog steeds verticaal buiten
-     zijn container (en dus de vaste navigatiebalk onderin) uitsteken, ook al bleef de breedte zelf keurig
-     binnen 90%. Beide grenzen moeten tegelijk gelden - vandaar alle drie in één min(). */
+   - calc((100vh - 400px) * 1.282): de breedte die, via aspect-ratio 1.282, een hoogte oplevert die niet
+     alleen de platenspeler zelf maar ook wat er in dezelfde .album-draaitafel-wrap-kolom ONDER hem staat
+     (#album-draaitafel-track-info, artiest+titel) nog laat passen vóór de vaste (position:fixed)
+     .album-navigatie-balk onderin. 400px = 340px (platenspeler-eigen budget, zie .album-draaitafel-wrap's
+     min-height hierboven) + ~53px extra (CDP-gemeten: 1rem gap tussen turntable-svg-wrap en de trackinfo
+     + de trackinfo's eigen hoogte) - zonder die extra 53px kon de platenspeler alleen al de volle
+     (100vh - 340px)-hoogte opeisen, met geen ruimte meer over voor de tekst eronder: die viel dan niet
+     letterlijk weg (geen display:none), maar werd na de vaste navigatiebalk gepositioneerd en dus
+     onzichtbaar - bevestigd via CDP na een per ongeluk op de échte userData achtergebleven
+     --platenspeler-schaal van 150% (zie CLAUDE.md/de bijbehorende memory). Alle drie de grenzen moeten
+     tegelijk gelden - vandaar alle drie in één min(). */
 #turntable-svg-wrap {
-  width: min(calc(58vh * var(--platenspeler-schaal, 1)), 90%, calc((100vh - 340px) * 1.282));
+  width: min(calc(58vh * var(--platenspeler-schaal, 1)), 90%, calc((100vh - 400px) * 1.282));
   aspect-ratio: 1.282;
 }
 
@@ -116,8 +122,18 @@
   display: block;
 }
 
+/* display:flex + justify-content:center i.p.v. te vertrouwen op #album-draaitafel-wrap's align-items:center
+   alleen: #turntable-svg-wrap's width is een min() die vh-eenheden met een %-term mengt, en Chromium's
+   shrink-to-fit-berekening voor een auto-breed blok-kind kan zo'n gemengde min() kennelijk niet betrouwbaar
+   herleiden tot een intrinsieke breedte - .turntable-anchor strekte daardoor (bevestigd via
+   getComputedStyle: display:block, width:836px, gelijk aan de volle kolombreedte) i.p.v. te krimpen naar
+   de svg-breedte, waardoor de platenspeler tegen de linkerrand aan plakte i.p.v. gecentreerd te staan. Door
+   zelf te centreren (justify-content) i.p.v. te leunen op de eigen breedte, is dit onafhankelijk van die
+   intrinsic-sizing-eigenaardigheid. */
 .turntable-anchor {
   position: relative;
+  display: flex;
+  justify-content: center;
 }
 
 /* Het schuifje stond eerst absoluut gepositioneerd ín de platenspeler-tekening zelf (zie git-historie),

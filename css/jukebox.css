@@ -753,9 +753,20 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
    bestaande vh-gebaseerde breedte - schuifje zelf in .platenspeler-schaal-rij hieronder. De 92%-grens
    staat in dezelfde min() als de schaal-vermenigvuldiging (niet erbuiten) - anders blijft de breedte bij
    een schaal > 100% alsnog buiten het scherm vallen, want "min(72vh,92%) * schaal" kan de 92%-grens zelf
-   weer overschrijden (zie css/album-detail.css voor dezelfde fix). */
+   weer overschrijden (zie css/album-detail.css voor dezelfde fix).
+   Derde grens (100vh - 300px) * 1.282: puur width-gebaseerd (via aspect-ratio 1.282, net als
+   album-detail.css) voorkomt dat de platenspeler op een normale/kleinere vensterhoogte de rest van de
+   .speel-kolom (tekst/audio-track-info + voortgangsbalk + spectrum-analyzer + de knoppenrij eronder)
+   verticaal van het scherm verdrukt. 300px is empirisch gemeten (CDP, 1100x700-standaardvenster) als de
+   totale niet-platenspeler-hoogte binnen deze kolom: spectrum-analyzer (56) + .navigatie (~97, één rij) +
+   audio-cover-content's gap (24) + #audio-track-info (~46) + .audio-progress-rij incl. margin-bottom
+   (~39) = ~262px, plus een marge. Zonder deze grens bleek #turntable-svg-wrap's flex-shrink:0 hieronder
+   deze hele kolom te kunnen laten overlopen (bevestigd: een per ongeluk via eerder CDP-testen op de
+   échte userData achtergebleven --platenspeler-schaal van 150% liet exact dit gebeuren - "de tekst, de
+   equalizer en de knoppen vallen weg onderaan het scherm" - ook al leek dat vanuit de gebruiker bezien de
+   standaardgrootte, zie CLAUDE.md/de bijbehorende memory voor het volledige verhaal). */
 #turntable-svg-wrap {
-  width: min(calc(72vh * var(--platenspeler-schaal, 1)), 92%);
+  width: min(calc(72vh * var(--platenspeler-schaal, 1)), 92%, calc((100vh - 300px) * 1.282));
   aspect-ratio: 1.282;
   flex-shrink: 0;
 }
@@ -766,8 +777,16 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   display: block;
 }
 
+/* Zelfde fix als css/album-detail.css: display:flex + justify-content:center i.p.v. te vertrouwen op
+   #audio-cover-content's align-items:center alleen. #turntable-svg-wrap's width is een min() die vh-
+   eenheden met een %-term mengt, en Chromium's shrink-to-fit-berekening voor een auto-breed blok-kind kan
+   zo'n gemengde min() kennelijk niet betrouwbaar herleiden tot een intrinsieke breedte - .turntable-anchor
+   strekte daardoor naar de volle kolombreedte i.p.v. te krimpen naar de svg-breedte, waardoor de
+   platenspeler tegen de linkerrand aan plakte i.p.v. gecentreerd te staan. */
 .turntable-anchor {
   position: relative;
+  display: flex;
+  justify-content: center;
 }
 
 /* Het schuifje stond eerst absoluut gepositioneerd linksonder ín de platenspeler-tekening zelf (zie
