@@ -6,6 +6,13 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.7]
+### Fixed
+- The strobe lights on the turntable kept spinning/blurring while the music was paused or stopped.
+
+### Changed
+- The turntable drawing has been refined further: the tonearm bracket near the pivot, and the weight scale and tonearm tube, are now closer to the original.
+
 ## [1.2.6]
 ### Added
 - Album screens: optionally show the turntable while playing (💿 button), with the same turntable animation as the jukebox.

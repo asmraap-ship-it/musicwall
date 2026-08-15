@@ -138,22 +138,22 @@
 
 /* Het schuifje stond eerst absoluut gepositioneerd ín de platenspeler-tekening zelf (zie git-historie),
    maar overlapte daar deels met de POWER-knop - op gebruikersverzoek verplaatst naar
-   .album-navigatie-knoppen, helemaal rechts (zie css/jukebox.css voor dezelfde verplaatsing daar). Zit nu
-   in de derde grid-kolom van .album-navigatie-knoppen, justify-self:end duwt 'm tegen de rechterrand -
-   margin-left:auto (eerdere versie) werkte ook, maar duwde als bijeffect de knoppengroep uit het midden,
-   zie de toelichting bij .album-navigatie-knoppen hierboven. Niet langer absoluut gepositioneerd, dus geen
-   .turntable-anchor-ankerpunt meer nodig voor dit element. */
+   .album-navigatie-knoppen, helemaal rechts (zie css/jukebox.css voor dezelfde verplaatsing daar). Weer
+   terug naar position:absolute (ditmaal t.o.v. .album-navigatie-knoppen) - zie de toelichting daar: dit
+   haalt het schuifje volledig uit de flex-flow, zodat het nooit meer met de knoppenrij hoeft te
+   concurreren om ruimte. */
 .platenspeler-schaal-rij {
   display: flex;
-  flex-shrink: 0;
   align-items: center;
   gap: 0.5rem;
   background: rgba(0,0,0,0.6);
   border: 1px solid var(--rand-2);
   border-radius: 4px;
   padding: 0.35rem 0.7rem;
-  grid-column: 3;
-  justify-self: end;
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .platenspeler-schaal-icoon {
@@ -399,23 +399,24 @@
   border-radius: 3px;
 }
 
-/* Drie-koloms grid (1fr / auto / 1fr), zelfde patroon als .navigatie in css/jukebox.css: kolom 1 =
-   tracktekst (links, groeit met de kolom mee i.p.v. flex:1 in een platte flex-rij), kolom 2 =
-   .album-navigatie-knoppen-groep (alle transport-/toggle-knoppen samen, écht gecentreerd), kolom 3 =
-   .platenspeler-schaal-rij (rechts). Eerdere platte-flex-versie had zowel .album-navigatie-track als het
-   schuifje als los flex-kind tussen de knoppen in staan; .album-navigatie-track's eigen flex:1 at daarbij
-   alle overgebleven ruimte op, wat justify-content:center voor de knoppen erómheen teniet deed - de
-   transport-knoppen kwamen zo tegen de linkerrand te hangen i.p.v. gecentreerd. minmax(0,1fr) i.p.v. kaal
-   1fr op kolom 1 en 3: een kale 1fr-track heeft een impliciete minimumbreedte van "auto" (= zijn eigen
-   inhoud), dus de kolommen met respectievelijk de tracktekst en het schuifje erin zouden anders ongelijk
-   verdelen t.o.v. elkaar (bevestigd via hetzelfde probleem in css/jukebox.css, zie de toelichting daar) -
-   minmax(0,1fr) dwingt de minimumbreedte naar 0, zodat de fr-eenheid puur proportioneel verdeelt. */
+/* Drie eerdere grid-versies (1fr/auto/1fr, minmax(0,1fr), minmax(140px,1fr)) losten telkens één probleem
+   op maar gaven een nieuw probleem - zie de uitgebreide toelichting bij .navigatie in css/jukebox.css
+   (identiek verhaal, hier 1-op-1 van toepassing): kale 1fr verstoorde de centrering, minmax(0,1fr)
+   herstelde de centrering maar liet het schuifje over de laatste knop heen vallen, minmax(140px,1fr) loste
+   dát op maar dwong de knoppenrij naar een tweede regel bij de standaard vensterbreedte. Overgestapt op
+   dezelfde aanpak als daar: .platenspeler-schaal-rij helemaal uit de flex-flow (position:absolute, vast
+   tegen de rechterrand). Hier blijft .album-navigatie-track (de tracktekst) wél een normaal flex-kind aan
+   de linkerkant - .album-navigatie-knoppen-groep krijgt flex:1 en centreert zijn eigen inhoud binnen de
+   resterende ruimte (dus niet perfect t.o.v. het hele venster als de tracktekst breed is, maar in de
+   praktijk nauwelijks zichtbaar en veel robuuster dan de grid-aanpak). */
 .album-navigatie-knoppen {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1.5rem 1rem;
+  padding-right: 170px;
 }
 
 /* flex-wrap:wrap + de min-width op .album-navigatie-track (verderop) zijn een bewuste noodrem: zonder deze
@@ -423,11 +424,11 @@
    het nummer valt weg") in plaats van gewoon door te lopen naar een tweede regel. */
 .album-navigatie-knoppen-groep {
   display: flex;
+  flex: 1;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  grid-column: 2;
 }
 
 .album-navigatie button {
@@ -475,8 +476,8 @@
 }
 
 .album-navigatie-track {
-  grid-column: 1;
-  min-width: 0;
+  flex-shrink: 1;
+  min-width: 60px;
   max-width: 280px;
   margin-left: 0.5rem;
   font-size: 12px;

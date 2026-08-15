@@ -4,6 +4,13 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.7]
+### Fixed
+- De stroboscooplichtjes op de platenspeler bleven draaien/vervagen terwijl de muziek gepauzeerd of gestopt was.
+
+### Changed
+- De platenspeler-tekening is verder verfijnd: de toonarmbeugel bij het draaipunt, en de gewichtschaal en toonarmbuis staan dichter bij het origineel.
+
 ## [1.2.6]
 ### Added
 - Album-schermen: optioneel de platenspeler tonen tijdens het afspelen (💿-knop), met dezelfde draaitafel-animatie als de jukebox.

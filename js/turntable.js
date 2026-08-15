@@ -134,11 +134,13 @@ function pasStrobeGloedToe() {
 function strobeAan() {
   laatstSpelend = true
   pasStrobeGloedToe()
+  pasStroboRingModusToe()
 }
 
 function strobeUit() {
   laatstSpelend = false
   pasStrobeGloedToe()
+  pasStroboRingModusToe()
 }
 
 function setStroboZichtbaar(zichtbaar) {
@@ -213,8 +215,21 @@ const STROBO_RING_IDS = ['strobo-ring-3313-50', 'strobo-ring-3313-60', 'strobo-r
 // ring-<g> als geheel zodra .strobo-fast-blur op #strobo-rings staat - dat blurt vier <g>-elementen i.p.v.
 // een blur-filter op elk van de ~690 losse <ellipse>-stipjes apart te zetten, veel goedkoper om te
 // renderen voor exact hetzelfde visuele resultaat.
+// **Bug gevonden en gefixt (2026-08-15, door de gebruiker gemeld): de ringen bleven driften/vervagen
+// terwijl de muziek gepauzeerd/gestopt was** - deze functie las tot dan toe alleen stroboZichtbaar,
+// nooit laatstSpelend, dus de "licht aan"-drift-illusie (of de "licht uit"-vervaging) bleef gewoon actief
+// ook al stond de platter zelf allang stil (draaischijfTween.pause() in stop() hierboven raakt #strobo-
+// rings niet aan, dat is een volledig losse animatie). Nu wordt strobeAan()/strobeUit() (dezelfde vaste
+// call-sites als altijd, zie de "nooit een tweede aanroeppad"-regel) ook hier aangeroepen, en bevriest
+// deze functie alle vier de ringen zodra laatstSpelend false is - net zoals een echte, stilstaande
+// platter geen enkele stroboscoopring meer laat driften, ongeacht licht aan/uit.
 function pasStroboRingModusToe() {
   if (!strobeRingsWrap) return
+  if (!laatstSpelend) {
+    strobeRingsWrap.classList.remove('strobo-fast-blur')
+    STROBO_RING_IDS.forEach(id => strobeRingSet(id, 0))
+    return
+  }
   if (stroboZichtbaar) {
     strobeRingsWrap.classList.remove('strobo-fast-blur')
     setStroboPitch(0, currentSpeed)

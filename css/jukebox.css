@@ -653,42 +653,41 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   border-color: #34d058;
 }
 
-/* Drie-koloms grid (1fr / auto / 1fr) i.p.v. één platte flex-rij: .navigatie-knoppen (de transport-
-   knoppen, in hun eigen kolom) kan zo écht gecentreerd staan ongeacht de breedte van .platenspeler-schaal-
-   rij ernaast, en die laatste blijft in zijn eigen kolom tegen de rechterrand geduwd (justify-self:end).
-   Met een gewone flex-rij + margin-left:auto op het schuifje (eerdere versie) verschoof de knoppenrij zelf
-   mee naar links: een auto-margin op één flex-kind eet alle overgebleven ruimte op, wat justify-content:
-   center voor de kinderen ervóór teniet doet - de knoppen kwamen zo tegen de linkerrand te hangen i.p.v.
-   gecentreerd, ook al leek de rij zelf wel breed genoeg. Alleen deze twee directe kinderen krijgen een
-   expliciete grid-column (2 resp. 3) - kolom 1 blijft leeg en werkt zo als een symmetrische linkerspacer,
-   zonder dat daar een los leeg element voor nodig is. minmax(0,1fr) i.p.v. kaal 1fr op kolom 1 en 3: een
-   kale 1fr-track heeft een impliciete minimumbreedte van "auto" (= zijn eigen inhoud), dus kolom 3 (met
-   .platenspeler-schaal-rij erin) claimde daardoor meer ruimte dan de lege kolom 1, ondanks dat beide
-   "1fr" zijn - de knoppengroep stond zo alsnog niet echt in het midden (bevestigd via CDP: linker-
-   marge 104px, rechtermarge 172px). minmax(0,1fr) dwingt de minimumbreedte naar 0, waardoor de fr-eenheid
-   puur proportioneel (dus hier: gelijk) verdeelt. */
+/* Twee eerdere grid-versies (1fr/auto/1fr, toen minmax(0,1fr), toen minmax(140px,1fr) op de buitenste
+   kolommen) losten telkens één probleem op maar introduceerden een nieuw probleem: kale 1fr verstoorde de
+   centrering (kolom 3 met het schuifje claimde meer ruimte dan de lege kolom 1); minmax(0,1fr) herstelde
+   de centrering maar liet kolom 3 tot ónder de eigen inhoud van .platenspeler-schaal-rij krimpen (schuifje
+   viel over de laatste knop heen); minmax(140px,1fr) loste dát op maar dwong daardoor kolom 2 (de
+   knoppenrij, ~492px breed bij alle 9 knoppen) te veel samen te persen bij de standaard 1100px-
+   jukeboxbreedte (740px beschikbaar - 2×140px kolommen = 460px < 492px nodig), waardoor de knoppenrij
+   alsnog naar een tweede regel wrapte. Overgestapt op een fundamenteel andere aanpak i.p.v. nóg een
+   kolombreedte te blijven bijstellen: .platenspeler-schaal-rij helemaal uit de flex-flow halen
+   (position:absolute, vast tegen de rechterrand, zie hieronder) zodat hij nooit meer met de knoppenrij om
+   ruimte hoeft te concurreren. .navigatie zelf centreert dan gewoon zijn enige overgebleven "echte" kind
+   (.navigatie-knoppen) met een gewone justify-content:center - padding-right reserveert vaste ruimte voor
+   het schuifje zodat de gecentreerde knoppenrij er nooit onder/overheen kan schuiven. */
 .navigatie {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 0.75rem;
   padding: 1.25rem;
+  padding-right: 170px;
   border-top: 1px solid var(--rand);
   background: var(--achtergrond-2);
 }
 
-/* flex-wrap:wrap is een bewuste noodrem: zonder deze regel kroop het schuifje (zie css hieronder) de rij
-   te breed voor smallere venstergroottes, en omdat geen enkel kind hier expliciet flex-shrink:0 had
-   verdrongen de knoppen elkaar tot ze feitelijk buiten het zichtbare venster vielen ("de knoppen vallen
-   weg") i.p.v. gewoon iets kleiner te worden. Nu wordt de knoppengroep bij plaatsgebrek een tweede regel
-   i.p.v. dat er iets onzichtbaar wordt - de grid-rij van .navigatie zelf groeit daar automatisch in mee. */
+/* flex-wrap:wrap is een bewuste noodrem: zonder deze regel zou de knoppenrij bij smallere
+   venstergroottes buiten het zichtbare venster vallen ("de knoppen vallen weg") i.p.v. gewoon iets
+   kleiner te worden / naar een tweede regel te wrappen. */
 .navigatie-knoppen {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  grid-column: 2;
 }
 
 .navigatie button {
@@ -813,22 +812,23 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
 
 /* Het schuifje stond eerst absoluut gepositioneerd linksonder ín de platenspeler-tekening zelf (zie
    git-historie), maar overlapte daar deels met de POWER-knop - op gebruikersverzoek verplaatst naar
-   dezelfde rij als de transporttoetsen onderin (.navigatie), helemaal rechts. Zit in .navigatie's derde
-   grid-kolom, justify-self:end duwt 'm tegen de rechterrand van die kolom (dus tegen de rechterrand van de
-   hele rij) - margin-left:auto (eerdere versie) werkte ook, maar duwde als bijeffect ook de knoppenrij
-   ervóór uit het midden, zie de toelichting bij .navigatie hierboven. Niet langer absoluut gepositioneerd,
-   dus geen .turntable-anchor-ankerpunt meer nodig voor dit element. */
+   dezelfde rij als de transporttoetsen onderin (.navigatie), helemaal rechts. Weer terug naar
+   position:absolute (ditmaal t.o.v. .navigatie, niet de platenspeler-tekening) - zie de toelichting bij
+   .navigatie hierboven: dit haalt het schuifje volledig uit de flex-flow, zodat het nooit meer met de
+   knoppenrij hoeft te concurreren om ruimte (wat bij zowel de margin-left:auto- als de grid-versie
+   hiervoor wél gebeurde, met steeds een ander probleem als gevolg). */
 .platenspeler-schaal-rij {
   display: flex;
-  flex-shrink: 0;
   align-items: center;
   gap: 0.5rem;
   background: rgba(0,0,0,0.6);
   border: 1px solid var(--rand-2);
   border-radius: 4px;
   padding: 0.35rem 0.7rem;
-  grid-column: 3;
-  justify-self: end;
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .platenspeler-schaal-icoon {

@@ -593,357 +593,393 @@
       <g
          transform="matrix(1.05,0,0,1.05,-43.15,-7.1)"
          id="g89-schaal">
-        <!-- pivot basisplaat (statisch, fotogetrouw geplaatst t.o.v. het origineel) -->
+        <!-- pivot basisplaat (statisch, fotogetrouw geplaatst t.o.v. het origineel). Lichte buitenrand
+             (stroke #3a3b3e) op gebruikersverzoek (2026-08-15) iets naar binnen (r 124→119) en dikker
+             (stroke-width 2→3.5) gezet, dichter bij de referentiefoto. -->
         <circle
            cx="863"
            cy="142"
-           r="124"
+           r="119"
            fill="#101012"
            stroke="#3a3b3e"
-           stroke-width="2"
+           stroke-width="3.5"
            id="circle38" />
+        <!-- donkere buitenrand, op gebruikersverzoek (2026-08-15) toegevoegd - ontbrak, terwijl de
+             referentiefoto een dunne donkere rand net buiten de lichte rand (circle38 hierboven) toont. -->
         <circle
            cx="863"
            cy="142"
-           r="106"
+           r="123"
+           fill="none"
+           stroke="#0a0a0b"
+           stroke-width="2.5"
+           id="circle38-buitenrand" />
+        <!-- gewichtschaal-ring + streepjes (circle39 + line39...line78 hieronder): op gebruikersverzoek
+             (2026-08-15) naar binnen verplaatst, straal t.o.v. de pivot (863,142) van 106 naar 76 (delta
+             -30, poolcoördinaten herberekend, hoek per streepje ongewijzigd) - ongeveer de binnenrand van
+             het anti-skating-rondje. De gewichtscijfers hierboven (text-gewicht-0..4) stonden al op
+             straal 76 door een eerdere, aparte aanpassing - nu vallen ring/streepjes/cijfers weer samen
+             ("de cijfers komen in de ring"). #circle78 (de donkere achtergrondschijf, verderop) moest
+             daardoor ook kleiner (78 → 68) - anders viel die er bovenop en verdween een deel van de
+             cijfers/tekst er weer achter. -->
+        <circle
+           cx="863"
+           cy="142"
+           r="92"
            fill="none"
            stroke="#2c2d30"
-           stroke-width="10"
+           stroke-width="13"
            id="circle39" />
         <line
-           x1="965"
-           y1="142"
-           x2="969"
-           y2="142"
+           x1="951.00000"
+           y1="142.00000"
+           x2="955.00000"
+           y2="142.00000"
            stroke="#55565a"
            stroke-width="1"
            id="line39" />
         <line
-           x1="963.70001"
-           y1="158"
-           x2="967.70001"
-           y2="158.60001"
+           x1="949.87345"
+           y1="155.80313"
+           x2="953.87272"
+           y2="156.40772"
            stroke="#55565a"
            stroke-width="1"
            id="line40" />
         <line
-           x1="960"
-           y1="173.5"
-           x2="963.79999"
-           y2="174.8"
+           x1="946.68451"
+           y1="169.17590"
+           x2="950.48707"
+           y2="170.46802"
            stroke="#55565a"
            stroke-width="1"
            id="line41" />
         <line
-           x1="953.90002"
-           y1="188.3"
-           x2="957.40002"
-           y2="190.10001"
+           x1="941.42506"
+           y1="181.94586"
+           x2="944.92597"
+           y2="183.74407"
            stroke="#55565a"
            stroke-width="1"
            id="line42" />
         <line
-           x1="945.5"
-           y1="202"
-           x2="948.79999"
-           y2="204.3"
+           x1="934.17769"
+           y1="193.76560"
+           x2="937.47141"
+           y2="196.07423"
            stroke="#55565a"
            stroke-width="1"
            id="line43" />
         <line
-           x1="935.09998"
-           y1="214.10001"
-           x2="938"
-           y2="217"
+           x1="925.20049"
+           y1="204.20051"
+           x2="928.10051"
+           y2="207.10051"
            stroke="#55565a"
            stroke-width="1"
            id="line44" />
         <line
-           x1="923"
-           y1="224.5"
-           x2="925.29999"
-           y2="227.8"
+           x1="914.76560"
+           y1="213.17769"
+           x2="917.07422"
+           y2="216.47141"
            stroke="#55565a"
            stroke-width="1"
            id="line45" />
         <line
-           x1="909.29999"
-           y1="232.89999"
-           x2="911.09998"
-           y2="236.39999"
+           x1="902.94585"
+           y1="220.42503"
+           x2="904.74403"
+           y2="223.92593"
            stroke="#55565a"
            stroke-width="1"
            id="line46" />
         <!-- gewichtschaal-cijfers (0-4) op vijf van de bestaande schaalstreepjes, o.b.v. de
              referentiefoto: 0 boven, dan met de klok mee 1-2-3-4 langs de linkerzijde naar onder.
              Binnen de streepjes geplaatst (dichter naar het midden toe), niet erbuiten - zoals op
-             de referentiefoto. -->
-        <text x="849.2" y="55.1" text-anchor="middle" font-family="Arial, sans-serif" font-size="11px" fill="#9a9b9e" id="text-gewicht-0">0</text>
-        <text x="791.8" y="90.2" text-anchor="middle" font-family="Arial, sans-serif" font-size="11px" fill="#9a9b9e" id="text-gewicht-1">1</text>
-        <text x="775.0" y="146" text-anchor="middle" font-family="Arial, sans-serif" font-size="11px" fill="#9a9b9e" id="text-gewicht-2">2</text>
-        <text x="800.8" y="208" text-anchor="middle" font-family="Arial, sans-serif" font-size="11px" fill="#9a9b9e" id="text-gewicht-3">3</text>
-        <text x="849.2" y="233" text-anchor="middle" font-family="Arial, sans-serif" font-size="11px" fill="#9a9b9e" id="text-gewicht-4">4</text>
+             de referentiefoto. Op gebruikersverzoek (2026-08-15) nog verder naar binnen gehaald:
+             straal (t.o.v. de pivot 863,142) van ~88-92 naar 76, ~aan de binnenrand van het
+             anti-skating-rondje - de streepjes zelf blijven op hun oorspronkelijke straal (~102),
+             alleen de cijfers "komen in de ring". Elke hoek is ongewijzigd t.o.v. zijn eigen
+             streepje, alleen de straal is verkleind (poolcoördinaten herberekend, niet met de hand
+             geschat). -->
+        <text x="847.551" y="44.719" text-anchor="middle" font-family="Arial, sans-serif" font-size="7px" fill="#9a9b9e" id="text-gewicht-0" transform="rotate(-189.02,847.551,44.719)">0</text>
+        <text x="783.349" y="84.052" text-anchor="middle" font-family="Arial, sans-serif" font-size="7px" fill="#9a9b9e" id="text-gewicht-1" transform="rotate(-233.96,783.349,84.052)">1</text>
+        <text x="764.602" y="146.473" text-anchor="middle" font-family="Arial, sans-serif" font-size="7px" fill="#9a9b9e" id="text-gewicht-2" transform="rotate(87.40,764.602,146.473)">2</text>
+        <text x="795.444" y="213.683" text-anchor="middle" font-family="Arial, sans-serif" font-size="7px" fill="#9a9b9e" id="text-gewicht-3" transform="rotate(43.30,795.444,213.683)">3</text>
+        <text x="848.231" y="239.387" text-anchor="middle" font-family="Arial, sans-serif" font-size="7px" fill="#9a9b9e" id="text-gewicht-4" transform="rotate(8.62,848.231,239.387)">4</text>
         <line
-           x1="894.5"
-           y1="239"
-           x2="895.79999"
-           y2="242.8"
+           x1="890.17590"
+           y1="225.68451"
+           x2="891.46801"
+           y2="229.48708"
            stroke="#55565a"
            stroke-width="1"
            id="line47" />
         <line
-           x1="879"
-           y1="242.7"
-           x2="879.59998"
-           y2="246.7"
+           x1="876.80313"
+           y1="228.87344"
+           x2="877.40769"
+           y2="232.87271"
            stroke="#55565a"
            stroke-width="1"
            id="line48" />
         <line
-           x1="863"
-           y1="244"
-           x2="863"
-           y2="248"
+           x1="863.00000"
+           y1="230.00000"
+           x2="863.00000"
+           y2="234.00000"
            stroke="#55565a"
            stroke-width="1"
            id="line49" />
         <line
-           x1="847"
-           y1="242.7"
-           x2="846.40002"
-           y2="246.7"
+           x1="849.19687"
+           y1="228.87344"
+           x2="848.59231"
+           y2="232.87271"
            stroke="#55565a"
            stroke-width="2"
            id="line50" />
         <line
-           x1="831.5"
-           y1="239"
-           x2="830.20001"
-           y2="242.8"
+           x1="835.82410"
+           y1="225.68451"
+           x2="834.53199"
+           y2="229.48708"
            stroke="#55565a"
            stroke-width="1"
            id="line51" />
         <line
-           x1="816.70001"
-           y1="232.89999"
-           x2="814.90002"
-           y2="236.39999"
+           x1="823.05415"
+           y1="220.42503"
+           x2="821.25597"
+           y2="223.92593"
            stroke="#55565a"
            stroke-width="1"
            id="line52" />
         <line
-           x1="803"
-           y1="224.5"
-           x2="800.70001"
-           y2="227.8"
+           x1="811.23440"
+           y1="213.17769"
+           x2="808.92578"
+           y2="216.47141"
            stroke="#55565a"
            stroke-width="1"
            id="line53" />
         <line
-           x1="790.90002"
-           y1="214.10001"
-           x2="788"
-           y2="217"
+           x1="800.79951"
+           y1="204.20051"
+           x2="797.89949"
+           y2="207.10051"
            stroke="#55565a"
            stroke-width="2"
            id="line54" />
         <line
-           x1="780.5"
-           y1="202"
-           x2="777.20001"
-           y2="204.3"
+           x1="791.82231"
+           y1="193.76560"
+           x2="788.52859"
+           y2="196.07423"
            stroke="#55565a"
            stroke-width="1"
            id="line55" />
         <line
-           x1="772.09998"
-           y1="188.3"
-           x2="768.59998"
-           y2="190.10001"
+           x1="784.57494"
+           y1="181.94586"
+           x2="781.07403"
+           y2="183.74407"
            stroke="#55565a"
            stroke-width="1"
            id="line56" />
         <line
-           x1="766"
-           y1="173.5"
-           x2="762.20001"
-           y2="174.8"
+           x1="779.31549"
+           y1="169.17590"
+           x2="775.51293"
+           y2="170.46802"
            stroke="#55565a"
            stroke-width="1"
            id="line57" />
         <line
-           x1="762.29999"
-           y1="158"
-           x2="758.29999"
-           y2="158.60001"
+           x1="776.12655"
+           y1="155.80313"
+           x2="772.12728"
+           y2="156.40772"
            stroke="#55565a"
            stroke-width="1"
            id="line58" />
         <line
-           x1="761"
-           y1="142"
-           x2="757"
-           y2="142"
+           x1="775.00000"
+           y1="142.00000"
+           x2="771.00000"
+           y2="142.00000"
            stroke="#55565a"
            stroke-width="2"
            id="line59" />
         <line
-           x1="762.29999"
-           y1="126"
-           x2="758.29999"
-           y2="125.4"
+           x1="776.12655"
+           y1="128.19687"
+           x2="772.12728"
+           y2="127.59229"
            stroke="#55565a"
            stroke-width="1"
            id="line60" />
         <line
-           x1="766"
-           y1="110.5"
-           x2="762.20001"
-           y2="109.2"
+           x1="779.31549"
+           y1="114.82410"
+           x2="775.51293"
+           y2="113.53198"
            stroke="#55565a"
            stroke-width="1"
            id="line61" />
         <line
-           x1="772.09998"
-           y1="95.699997"
-           x2="768.59998"
-           y2="93.900002"
+           x1="784.57494"
+           y1="102.05414"
+           x2="781.07404"
+           y2="100.25594"
            stroke="#55565a"
            stroke-width="1"
            id="line62" />
         <line
-           x1="780.5"
-           y1="82"
-           x2="777.20001"
-           y2="79.699997"
+           x1="791.82231"
+           y1="90.23440"
+           x2="788.52859"
+           y2="87.92577"
            stroke="#55565a"
            stroke-width="2"
            id="line63" />
         <line
-           x1="790.90002"
-           y1="69.900002"
-           x2="788"
-           y2="67"
+           x1="800.79951"
+           y1="79.79950"
+           x2="797.89949"
+           y2="76.89949"
            stroke="#55565a"
            stroke-width="1"
            id="line64" />
         <line
-           x1="803"
-           y1="59.5"
-           x2="800.70001"
-           y2="56.200001"
+           x1="811.23440"
+           y1="70.82231"
+           x2="808.92578"
+           y2="67.52859"
            stroke="#55565a"
            stroke-width="1"
            id="line65" />
         <line
-           x1="816.70001"
-           y1="51.099998"
-           x2="814.90002"
-           y2="47.599998"
+           x1="823.05415"
+           y1="63.57496"
+           x2="821.25597"
+           y2="60.07405"
            stroke="#55565a"
            stroke-width="1"
            id="line66" />
         <line
-           x1="831.5"
-           y1="45"
-           x2="830.20001"
-           y2="41.200001"
+           x1="835.82410"
+           y1="58.31549"
+           x2="834.53199"
+           y2="54.51292"
            stroke="#55565a"
            stroke-width="1"
            id="line67" />
         <line
-           x1="847"
-           y1="41.299999"
-           x2="846.40002"
-           y2="37.299999"
+           x1="849.19687"
+           y1="55.12656"
+           x2="848.59231"
+           y2="51.12729"
            stroke="#55565a"
            stroke-width="2"
            id="line68" />
         <line
-           x1="863"
-           y1="40"
-           x2="863"
-           y2="36"
+           x1="863.00000"
+           y1="54.00000"
+           x2="863.00000"
+           y2="50.00000"
            stroke="#55565a"
            stroke-width="1"
            id="line69" />
         <line
-           x1="879"
-           y1="41.299999"
-           x2="879.59998"
-           y2="37.299999"
+           x1="876.80313"
+           y1="55.12656"
+           x2="877.40769"
+           y2="51.12729"
            stroke="#55565a"
            stroke-width="1"
            id="line70" />
         <line
-           x1="894.5"
-           y1="45"
-           x2="895.79999"
-           y2="41.200001"
+           x1="890.17590"
+           y1="58.31549"
+           x2="891.46801"
+           y2="54.51292"
            stroke="#55565a"
            stroke-width="1"
            id="line71" />
         <line
-           x1="909.29999"
-           y1="51.099998"
-           x2="911.09998"
-           y2="47.599998"
+           x1="902.94585"
+           y1="63.57496"
+           x2="904.74403"
+           y2="60.07405"
            stroke="#55565a"
            stroke-width="1"
            id="line72" />
         <line
-           x1="923"
-           y1="59.5"
-           x2="925.29999"
-           y2="56.200001"
+           x1="914.76560"
+           y1="70.82231"
+           x2="917.07422"
+           y2="67.52859"
            stroke="#55565a"
            stroke-width="1"
            id="line73" />
         <line
-           x1="935.09998"
-           y1="69.900002"
-           x2="938"
-           y2="67"
+           x1="925.20049"
+           y1="79.79950"
+           x2="928.10051"
+           y2="76.89949"
            stroke="#55565a"
            stroke-width="1"
            id="line74" />
         <line
-           x1="945.5"
-           y1="82"
-           x2="948.79999"
-           y2="79.699997"
+           x1="934.17769"
+           y1="90.23440"
+           x2="937.47141"
+           y2="87.92577"
            stroke="#55565a"
            stroke-width="1"
            id="line75" />
         <line
-           x1="953.90002"
-           y1="95.699997"
-           x2="957.40002"
-           y2="93.900002"
+           x1="941.42506"
+           y1="102.05414"
+           x2="944.92596"
+           y2="100.25594"
            stroke="#55565a"
            stroke-width="1"
            id="line76" />
         <line
-           x1="960"
-           y1="110.5"
-           x2="963.79999"
-           y2="109.2"
+           x1="946.68451"
+           y1="114.82410"
+           x2="950.48707"
+           y2="113.53198"
            stroke="#55565a"
            stroke-width="1"
            id="line77" />
         <line
-           x1="963.70001"
-           y1="126"
-           x2="967.70001"
-           y2="125.4"
+           x1="949.87345"
+           y1="128.19687"
+           x2="953.87272"
+           y2="127.59229"
            stroke="#55565a"
            stroke-width="1"
            id="line78" />
+        <!-- r verkleind van 78 naar 68 (2026-08-15): de gewichtschaal-cijfers/ring hierboven zijn naar
+             binnen verplaatst tot straal 76 t.o.v. de pivot - bij de oorspronkelijke r=78 viel deze
+             donkere achtergrondschijf daar overheen (drukte er ná in documentvolgorde, dus zichtbaar
+             boven) en verborg de cijfers grotendeels. 68 geeft weer voldoende marge, net als de
+             oorspronkelijke ~24-28-eenheden-kloof tussen deze schijf en de (toen nog wijdere) ring. -->
+        <!-- Op gebruikersverzoek (2026-08-15) laten aansluiten tegen circle39 (r=92, stroke-width 13,
+             dus binnenrand op 85.5): r vergroot naar 84, plus een dunne donkere stroke (breedte 3, dus
+             spant 82.5-85.5) die precies tot aan circle39's binnenrand reikt - dat dunne donkere randje
+             is de scheidingslijn tussen deze schijf en de ring. -->
         <circle
            cx="863"
            cy="142"
-           r="78"
-           fill="#0b0b0c"
+           r="84"
+           fill="#1c1d1f"
+           stroke="#050506"
+           stroke-width="3"
            id="circle78" />
         <!-- statische hendel-cradle (arm-lift/rust-beugel) linksonder in de pivotplaat, zoals op de
              referentiefoto - een dikke afgeronde gebogen band met een schroef erop. Puur decoratief/
@@ -1135,9 +1171,13 @@
              id="line95" />
         </g>
         <!-- "6mm HEIGHT ADJUST" rondlopend naast de "4" van de gewichtschaal, zoals op de
-             referentiefoto - een onzichtbaar boogpad waar de tekst overheen wordt gelegd -->
+             referentiefoto - een onzichtbaar boogpad waar de tekst overheen wordt gelegd. Op
+             gebruikersverzoek (2026-08-15) samen met de gewichtscijfers hierboven naar binnen
+             verplaatst (r=92 → r=76 t.o.v. de pivot (863,142), ~aan de binnenrand van het
+             anti-skating-rondje) - de streepjes zelf (hoogtering-kartel/-schaal, hierboven)
+             blijven ongewijzigd op hun eigen straal, alleen cijfers/tekst komen "in de ring". -->
         <path
-           d="M 848.61,232.87 A 92,92 0 0,0 942.67,188"
+           d="M 890.16,236.68 A 98.5,98.5 0 0,0 961.13,150.59"
            fill="none"
            stroke="none"
            id="hoogte-tekst-pad" />
@@ -2895,18 +2935,64 @@
          stroke-linecap="round"
          stroke-opacity="0.55"
          id="lead-wire-highlight" />
-      <!-- korte verbindingsbuis tussen pivot en contragewicht (staart van de arm) -->
+      <!-- verbindingsbuis tussen pivot en contragewicht (staart van de arm) - op gebruikersverzoek
+           (2026-08-15, o.b.v. de referentiefoto) verlengd: het bovenste deel was te kort, het
+           contragewicht moet tegen de buitenste cirkelrand aan komen. Eerste poging (factor 1,671, CDP-
+           gemeten tot ~0,95x de buitenrand-straal) bleek op gebruikersfeedback te lang - teruggebracht
+           naar factor 1,4 (34,-37 -> 47,60,-51,80) t.o.v. het origineel. -->
       <path
-         d="m 863,142 34,-37"
+         d="m 863,142 47.60,-51.80"
          fill="none"
          stroke="url(#armTubeGrad)"
          stroke-width="24"
          stroke-linecap="round"
          id="path244"
          style="stroke:url(#linearGradient483)" />
-      <!-- contragewicht (achterzijde, tegenovergesteld aan de headshell) -->
+      <!-- Op gebruikersverzoek (2026-08-15) een naad tússen het draaipunt en het contragewicht i.p.v. op
+           het contragewicht zelf (een eerdere versie zat op #g246/rect244, is daar weer verwijderd) -
+           een donkere band dwars over path244 heen, loodrecht op de buisrichting, op het midden van de
+           buis (863,142 -> 910.60,90.20). Zelfde donkere kleur als #contragewicht-markeerring.
+           stroke-linecap:butt (geen ronde uiteinden) zodat de band recht over de buisbreedte afsnijdt.
+           stroke-width verruimd (4->6.5) zodat er ín deze donkere band ruimte overblijft voor het
+           zilveren streepje hieronder, met aan weerskanten nog zichtbaar donker ("tussenruimte"). -->
+      <line
+         x1="896.08"
+         y1="124.62"
+         x2="877.52"
+         y2="107.58"
+         stroke="#1a1a1c"
+         stroke-width="6.5"
+         stroke-linecap="butt"
+         id="armbuis-naad" />
+      <!-- subtiel zilveren overgangsstreepje ÍN het midden van de donkere naad hierboven (niet ernaast -
+           op gebruikersverzoek gecorrigeerd). Twee assen, apart bijgesteld: de hoogte (stroke-width, de
+           dikte van de streep in de buisrichting) moest eerst GROTER worden (1,2 -> 5,5), daarna weer
+           iets ingeleverd (5,5 -> 4,5) op gebruikersverzoek "nu nog iets ruimte aan de boven- en
+           onderkant laten" - laat zo een duidelijker zichtbaar donker randje (~1 eenheid) aan elke kant
+           van de donkere naad (6,5) staan i.p.v. bijna volledig aan te sluiten. De breedte (hoe ver de
+           streep dwars over de buis reikt) is apart, ongewijzigd op halve breedte 10,5 (eigen, kortere
+           coördinaten i.p.v. gedeeld met #armbuis-naad) - eerdere ronde had beide assen precies andersom
+           gedaan, op gebruikersverzoek hersteld ("de hoogte moest groter worden, niet kleiner, en de
+           breedte juist smaller"). Oogt als een dunne highlight-ring middenin de groef, zelfde stijl als
+           de dunne highlight-lijnen elders in dit bestand (bv. #lead-wire-highlight/#path247). -->
+      <line
+         x1="894.53"
+         y1="123.20"
+         x2="879.07"
+         y2="109.00"
+         stroke="#9a9b9e"
+         stroke-width="4.5"
+         stroke-linecap="butt"
+         stroke-opacity="0.85"
+         id="armbuis-naad-highlight" />
+      <!-- contragewicht (achterzijde, tegenovergesteld aan de headshell). translate(13.60,-14.80)
+           toegevoegd (2026-08-15) om mee te schuiven met de verlengde path244 hierboven - g246's eigen
+           rotate-parameters coderen zowel de rotatiehoek als (via een ver weg gelegen rotatiecentrum,
+           Inkscape-stijl) een impliciete positie; een losse translate ná die rotate (dus vóóraan in het
+           transform-attribuut, dat rechts-naar-links toepast) verschuift het eindresultaat zonder de
+           rotatiehoek zelf aan te raken. -->
       <g
-         transform="rotate(43,315.22099,1191.0836)"
+         transform="translate(13.60,-14.80) rotate(43,315.22099,1191.0836)"
          id="g246">
         <rect
            x="-23"
