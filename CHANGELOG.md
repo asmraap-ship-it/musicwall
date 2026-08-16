@@ -4,6 +4,11 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.9]
+### Changed
+- Nog meer onderdelen van de platenspeler hebben nu subtiele schaduw en metaalglans: de 45-toerenadapter, de pivot/anti-skating-knop en de POWER- en START/STOP-knoppen.
+- De toonarmbuis bij het draaipunt is verfijnd: een duidelijker herkenbare rechte kraag die pas verderop taps toeloopt, en een net iets uitgesprokener zilverkleurige tint bovenaan de arm.
+
 ## [1.2.8]
 ### Changed
 - De toonarmbeugel van de platenspeler heeft nu een subtiele schaduw en metaalglans, voor meer diepte in de tekening.

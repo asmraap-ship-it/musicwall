@@ -6,6 +6,11 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.9]
+### Changed
+- More parts of the turntable now have subtle shadow and metallic sheen: the 45rpm adapter, the pivot/anti-skating knob, and the POWER and START/STOP buttons.
+- The tonearm tube near the pivot has been refined: a more clearly defined straight collar that only tapers further along, and a slightly more pronounced silver tint near the top of the arm.
+
 ## [1.2.8]
 ### Changed
 - The turntable's tonearm bracket now has a subtle shadow and metallic sheen, adding depth to the drawing.

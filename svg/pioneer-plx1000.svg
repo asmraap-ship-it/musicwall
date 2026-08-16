@@ -425,6 +425,10 @@
        fx="425.49692"
        fy="697.63137"
        gradientUnits="userSpaceOnUse" />
+    <!-- Contragewicht-buis (path244) meer uitgesproken zilverkleurig dan de rest van de toonarmbuis
+         (2026-08-16, op gebruikersverzoek o.b.v. referentiefoto) - eigen stops i.p.v. de pure
+         href-doorgifte naar armTubeGrad hierboven: hoger contrast (helderdere hooglichten,
+         diepere schaduwen) voor een gepolijst-chroom-uitstraling i.p.v. simpelweg egaal donkerder. -->
     <linearGradient
        inkscape:collect="always"
        xlink:href="#armTubeGrad"
@@ -433,7 +437,29 @@
        x1="696.0"
        y1="311.7"
        x2="676.0"
-       y2="289.3" />
+       y2="289.3">
+      <stop offset="0%" stop-color="#d5d6d9" />
+      <stop offset="18%" stop-color="#ffffff" />
+      <stop offset="45%" stop-color="#7d7e82" />
+      <stop offset="70%" stop-color="#f0f1f2" />
+      <stop offset="100%" stop-color="#6c6d70" />
+    </linearGradient>
+    <!-- Iets donkerdere variant van linearGradient483 hierboven, voor het taps toelopende deel van
+         de toonarm-kraag (2026-08-16, op gebruikersverzoek) - elke stop ~15% donkerder, zelfde
+         verloop-vorm zodat het duidelijk bij dezelfde buis hoort maar net iets dieper oogt. -->
+    <linearGradient
+       id="armTubeGradTaperDark"
+       gradientUnits="userSpaceOnUse"
+       x1="696.0"
+       y1="311.7"
+       x2="676.0"
+       y2="289.3">
+      <stop offset="0%" stop-color="#9fa0a2" />
+      <stop offset="18%" stop-color="#bfbfbf" />
+      <stop offset="45%" stop-color="#5d5e61" />
+      <stop offset="70%" stop-color="#b4b4b5" />
+      <stop offset="100%" stop-color="#515254" />
+    </linearGradient>
     <linearGradient
        inkscape:collect="always"
        xlink:href="#metalGrad"
@@ -545,12 +571,14 @@
     <!-- 45-toeren adapter: zelfde formaat als start/stop, zilverkleurig, met gaatje zoals in de vinylplaat -->
     <g
        transform="translate(100,100)"
+       filter="url(#drop-shadow-soft)"
        id="g33">
       <circle
          r="44"
          fill="url(#knobGrad)"
          stroke="#6c6d70"
          stroke-width="1.5"
+         filter="url(#metal-highlight)"
          id="circle32"
          cx="0"
          cy="0" />
@@ -615,6 +643,7 @@
     <!-- pivot-mechaniek (dial, tick-markeringen, anti-skating, lock-knop): dichter bij de platter gezet o.b.v. referentiefoto -->
     <g
        transform="translate(-88.22314,43.122775)"
+       filter="url(#drop-shadow-soft)"
        id="g89">
       <!-- Hele pivot-cluster iets vergroot rond zijn eigen (vaste) middelpunt (863,142) - trekt 'm
            dichter tegen de platterrand aan zoals op de referentiefoto, zonder het pivotpunt zelf
@@ -1013,6 +1042,7 @@
            fill="#1c1d1f"
            stroke="#050506"
            stroke-width="3"
+           filter="url(#inner-shadow)"
            id="circle78" />
         <!-- statische hendel-cradle (arm-lift/rust-beugel) linksonder in de pivotplaat, zoals op de
              referentiefoto - een dikke afgeronde gebogen band met een schroef erop. Puur decoratief/
@@ -1609,6 +1639,7 @@
     <!-- power knop: zwarte schijf (zelfde #141416 als de antiskate-dial hieronder, i.p.v. de lichte
          metalen knobGrad) met een dikkere, lichtgrijze rand (#8a8b8f, zelfde lichtgrijs als de
          schaalstreepjes/OFF/ON-tekst, i.p.v. het eerdere donkerdere #4a4b4e) - op gebruikersverzoek. -->
+    <g id="power-knop-schaduw" filter="url(#drop-shadow-soft)">
     <circle
        cx="60"
        cy="610"
@@ -1616,6 +1647,7 @@
        fill="#141416"
        stroke="#1a1a1b"
        stroke-width="2"
+       filter="url(#inner-shadow)"
        id="circle103" />
     <circle
        cx="60"
@@ -1704,7 +1736,9 @@
           fill="#8a8b8f" id="text105-on">
       <textPath xlink:href="#power-on-pad" startOffset="50%">ON</textPath>
     </text>
+    </g>
     <!-- start/stop knop -->
+    <g id="start-stop-schaduw" filter="url(#drop-shadow-soft)">
     <circle
        cx="75"
        cy="715"
@@ -1718,6 +1752,7 @@
        cy="715"
        r="35"
        fill="url(#knobGrad)"
+       filter="url(#metal-highlight)"
        id="circle107" />
     <text
        x="75"
@@ -1737,6 +1772,7 @@
        font-weight="700"
        fill="#26272a"
        id="text108">STOP</text>
+    </g>
     <!-- Stroboscoop-LED: op de referentiefoto is er geen los zichtbaar lampbehuizinkje (zoals de
          vorige versie van dit element hier tekende) - de LED zit onzichtbaar wég in de plint en je ziet
          alleen zijn effect: een vast blauw gloeiend boogje op de stippenring zelf. Dat gloei-element
@@ -3100,15 +3136,24 @@
          stroke-opacity="0.35"
          stroke-linecap="round"
          id="path247" />
-      <!-- verdikte kraag bovenaan de arm, BOVEN de dunne stang getekend zodat hij zichtbaar dikker is -->
-      <path
-         d="m 863,142 -37.3,40.4"
-         fill="none"
-         stroke="url(#armTubeGrad)"
-         stroke-width="24"
-         stroke-linecap="round"
-         id="path248"
-         style="stroke:url(#linearGradient486)" />
+      <!-- verdikte kraag bovenaan de arm, BOVEN de dunne stang getekend zodat hij zichtbaar dikker is.
+           Taps toelopende gevulde vorm (2026-08-16, i.p.v. de vorige uniforme stroke-width 24 lijn) -
+           vloeiende overgang van halve breedte 12 bij de pivot (863,142) naar halve breedte 6.5 bij
+           het aansluitpunt op path246 (stroke-width 13), op gebruikersverzoek o.b.v. referentiefoto
+           plx-1000_1-bovenkant4.png. -->
+      <polygon
+         points="871.82,150.14 840.61,183.93 822.98,167.65 854.18,133.86"
+         fill="url(#linearGradient483)"
+         stroke="#6c6d70"
+         stroke-width="0.6"
+         id="toonarm-kraag-recht" />
+      <!-- taps toelopend deel iets donkerder dan het rechte deel erboven (2026-08-16, op gebruikersverzoek) -->
+      <polygon
+         points="840.61,183.93 830.48,186.81 820.93,177.99 822.98,167.65"
+         fill="url(#armTubeGradTaperDark)"
+         stroke="#6c6d70"
+         stroke-width="0.6"
+         id="toonarm-kraag-taper" />
       <!-- pivot-as (draaiende dop, boven op de statische basisplaat) -->
       <circle
          cx="863"
