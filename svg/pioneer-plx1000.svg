@@ -270,6 +270,39 @@
          flood-color="#000000"
          flood-opacity="0.45" />
     </filter>
+    <!-- Schaduwdiepte-filters (2026-08-16): drop-shadow-soft/inner-shadow/metal-highlight, lichtrichting
+         linksboven (consistent met dx/dy hierboven bij softShadow). Bewust alléén toegepast op de
+         statische #toonarm-beugel (roteert nooit mee, zie de toelichting bij dat element) - NIET op
+         #draaischijf/#toonarm-inner: die roteren continu resp. bij elke needle-drop/track-voortgang via
+         GSAP-tweens, en de zwaardere inner-shadow/metal-highlight-primitives (met name
+         feSpecularLighting, per-pixel lichtberekening) bovenop al-animerende content stapelen zou de
+         framerate kunnen raken. De bestaande, goedkope enkelvoudige feDropShadow op de platter
+         (`softShadow` hierboven, op #circle112) blijft ongewijzigd en ongemoeid - geen extra filters
+         daarbovenop. -->
+    <filter id="drop-shadow-soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.7" result="beugel-schaduw-blur" />
+      <feOffset in="beugel-schaduw-blur" dx="1" dy="2" result="beugel-schaduw-verschoven" />
+      <feMerge>
+        <feMergeNode in="beugel-schaduw-verschoven" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="inner-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feComponentTransfer in="SourceAlpha" result="beugel-alpha-omgekeerd">
+        <feFuncA type="table" tableValues="1 0" />
+      </feComponentTransfer>
+      <feGaussianBlur in="beugel-alpha-omgekeerd" stdDeviation="1.2" result="beugel-binnenschaduw-blur" />
+      <feOffset in="beugel-binnenschaduw-blur" dx="1" dy="1.5" result="beugel-binnenschaduw-verschoven" />
+      <feComposite in="beugel-binnenschaduw-verschoven" in2="SourceGraphic" operator="atop" />
+    </filter>
+    <filter id="metal-highlight" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1" result="beugel-glans-blur" />
+      <feSpecularLighting in="beugel-glans-blur" surfaceScale="2" specularConstant="0.75" specularExponent="15" lighting-color="#ffffff" result="beugel-glans-specular">
+        <feDistantLight azimuth="235" elevation="50" />
+      </feSpecularLighting>
+      <feComposite in="beugel-glans-specular" in2="SourceAlpha" operator="in" result="beugel-glans-geclipt" />
+      <feComposite in="beugel-glans-geclipt" in2="SourceGraphic" operator="over" />
+    </filter>
     <!-- Stroboscoopringen + LED-gloed: zie de uitgebreide toelichting bij #strobo-rings/#strobo-glow
          verderop in dit bestand (na #draaischijf). Twee losstaande mechanismen, bewust niet gekoppeld:
          elke ring-rotatie volgt individueel het snelheidsverschil t.o.v. zijn eigen fysieke nominale
@@ -3362,6 +3395,11 @@
        voorkomen. Onderkant (dunnere staaf, korter) wijst in exact de tegenovergestelde richting.
        Zelfde balk/sheen/bout-stijl als de eerste versie, alleen de geometrie is aangepast - zie
        CLAUDE.md/de bijbehorende memory voor de volledige toelichting zodra dit bevestigd is. -->
+  <!-- Wrapper alleen voor de slagschaduw (drop-shadow-soft) - #toonarm-beugel zelf blijft de
+       bestaande, ongewijzigde groep; SVG staat maar één filter-attribuut per element toe, dus
+       inner-shadow/metal-highlight gaan hieronder rechtstreeks op de losse subvormen die dat
+       nodig hebben. -->
+  <g id="toonarm-beugel-schaduw" filter="url(#drop-shadow-soft)">
   <g id="toonarm-beugel" transform="translate(-88.22314,41.755877)">
     <!-- Op gebruikersverzoek (2026-08-15, tweede correctie): niet langer twee losse trapeziums die
          allebei vanaf hun volle breedte bij de pivot naar een smallere kop tóé taps lopen (dat gaf
@@ -3370,8 +3408,9 @@
          tegenovergesteld), met de pivot ergens halverwege die ene taper (op 61% van boven naar
          onder, daar dus ~9,3 breed) i.p.v. een aparte start. Getekend als één <polygon>
          (trapezium: A1/B1/B2/A2, loodrecht op de balkrichting aan beide uiteinden) i.p.v. een
-         stroke, want een <path>-stroke kan niet taps toelopen. -->
-    <polygon points="813.81,116.11 889.83,164.61 892.77,160.57 823.23,103.17" fill="#1c1d1f" id="beugel-balk" />
+         stroke, want een <path>-stroke kan niet taps toelopen. Kreeg op 2026-08-16 inner-shadow
+         (ingesloten schaduw) voor een dieper/gefreesd uiterlijk. -->
+    <polygon points="813.81,116.11 889.83,164.61 892.77,160.57 823.23,103.17" fill="#1c1d1f" filter="url(#inner-shadow)" id="beugel-balk" />
     <polygon points="813.81,116.11 889.83,164.61 892.77,160.57 823.23,103.17" fill="#4a4b4e" opacity="0.22" transform="translate(-1.2,-1.6)" id="beugel-balk-sheen" />
     <!-- Op gebruikersverzoek (2026-08-15): het knikpunt-rondje moet groter zijn en buiten de balk
          uitsteken (blok/staaf zijn 16 resp. 9 breed, dus halve breedte max. 8 - dit rondje (r=12)
@@ -3379,7 +3418,11 @@
          omringd door een zwarte cirkelrand - i.p.v. de eerdere kleine, volledig donkere bout die
          binnen de balk verscholen zat. -->
     <circle cx="863" cy="142" r="9" fill="#1c1d1f" stroke="#0a0a0b" stroke-width="1.5" id="beugel-bout-schijf" />
-    <circle cx="863" cy="142" r="6" fill="url(#knobGrad)" stroke="#6c6d70" stroke-width="0.6" id="beugel-bout-schroef" />
+    <!-- metal-highlight (2026-08-16): specular glans, alleen hier - dit is het enige écht gepolijst-
+         metalen onderdeeltje van de beugel (dezelfde knobGrad als de andere metalen knoppen/bouten
+         in deze tekening). -->
+    <circle cx="863" cy="142" r="6" fill="url(#knobGrad)" stroke="#6c6d70" stroke-width="0.6" filter="url(#metal-highlight)" id="beugel-bout-schroef" />
     <line x1="860.5" y1="142" x2="865.5" y2="142" stroke="#4a4b4e" stroke-width="0.6" id="beugel-bout-slot" />
+  </g>
   </g>
 </svg>

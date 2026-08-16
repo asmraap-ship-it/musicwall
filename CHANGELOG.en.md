@@ -6,6 +6,10 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.8]
+### Changed
+- The turntable's tonearm bracket now has a subtle shadow and metallic sheen, adding depth to the drawing.
+
 ## [1.2.7]
 ### Fixed
 - The strobe lights on the turntable kept spinning/blurring while the music was paused or stopped.

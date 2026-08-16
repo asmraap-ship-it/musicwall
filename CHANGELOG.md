@@ -4,6 +4,10 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.8]
+### Changed
+- De toonarmbeugel van de platenspeler heeft nu een subtiele schaduw en metaalglans, voor meer diepte in de tekening.
+
 ## [1.2.7]
 ### Fixed
 - De stroboscooplichtjes op de platenspeler bleven draaien/vervagen terwijl de muziek gepauzeerd of gestopt was.
