@@ -385,10 +385,12 @@ albumSpeler.addEventListener('ended', () => {
   const i = huidigSpeelIndex()
   if (i !== -1 && i < huidigeTrackLijst.length - 1) {
     albumVolgende()
+  } else {
+    // Laatste track van het album afgespeeld: albumStop() tilt de toonarm terug naar rust en haalt de
+    // plaat weg - zonder deze aanroep bleef de naald op de bij het einde horende hoek hangen, want er komt
+    // na 'ended' geen timeupdate meer die bijwerken() opnieuw zou aanroepen.
+    albumStop()
   }
-  // Anders: laatste track van het album afgespeeld, gewoon stil blijven staan - de browser pauzeert het
-  // element zelf al bij 'ended' (vuurt ook 'pause'), dus #album-play-btn's icoon/actief-status klopt via
-  // de native listener hierboven vanzelf al.
 })
 
 function toggleSelecteerAlleInAlbum() {

@@ -3182,116 +3182,60 @@
            armTubeGrad (userSpaceOnUse) - die laatste is vastgeklonken aan vaste scherm-coördinaten en zou
            hier, diep genest in translate+rotate, zinloos uitvallen. -->
       <g
-         transform="rotate(161.41075,219.51141,270.44155)"
+         transform="rotate(161.41075,219.51141,270.44155) translate(33.3,0) scale(1.45)"
          id="g251">
         <path
-           d="M 8,-11 Q 10,-11 10,-9 L 10,9 Q 10,11 8,11 L -20,11 Q -32,11 -40,8 Q -50,5.5 -56,4.7 Q -59,4.5 -59,0 Q -59,-4.5 -56,-4.7 Q -50,-5.5 -40,-8 Q -32,-11 -20,-11 Z"
+           d="M 10.37,-11.43 C -7.25,-11.65 -8.35,-11.10 -9.01,-10.88 C -9.67,-10.66 -12.65,-9.34 -12.65,-9.34 L -13.97,-9.23 L -34.67,-8.79 L -38.63,-9.67 L -42.04,-9.23 L -43.37,-7.47 L -45.68,-7.14 L -52.17,-7.47 L -52.94,-7.91 L -56.36,-7.80 L -56.36,-7.36 L -58.89,-7.58 L -59.00,5.96 L -45.68,6.07 L -44.91,5.08 L -42.92,4.86 L -43.04,6.30 L -42.59,7.18 L -17.82,7.84 L -16.83,7.62 L -13.86,7.84 L -11.43,8.28 L -9.45,9.27 L -8.02,10.70 L 10.37,10.59 L 11.47,8.28 L 11.69,6.52 L 13.01,5.74 L 14.00,4.97 L 13.78,-8.13 L 13.01,-9.23 L 11.25,-9.45 L 10.37,-11.43 Z"
            fill="url(#metalGrad)"
            stroke="#5a5b5e"
            stroke-width="1"
            id="headshell-plaat"
            style="fill:url(#linearGradient487)" />
-        <!-- zwarte cartridge-body (los onderdeel t.o.v. de zilveren montageplaat, zoals op de
-             referentiefoto) - een afgeronde vorm die net zo ver reikt als de oude scherpe punt
-             (rechterrand x=14) zodat de eerder geijkte naaldpositie/toonarm-hoeken in
-             js/turntable.js niet hoeven te verschuiven. Bewust een simpele rx-rect i.p.v. een
-             handgetekend pad - dit onderdeel is grotendeels bolvormig/onopvallend gedetailleerd
-             op de referentiefoto. -->
-        <rect
-           x="-1"
-           y="-6.5"
-           width="15"
-           height="13"
-           rx="4.5"
-           fill="#16171a"
-           stroke="#000000"
-           stroke-width="0.5"
-           id="headshell-cartridge-body" />
-        <!-- steunbeugel ("haakje") aan de rand ter hoogte van het kabelvenster, haaks op de
-             lengterichting van de plaat - kort en met een vlak uiteinde (geen taps toelopende
-             punt) zoals op de referentiefoto. Was eerder een 20 lang toelopende wig tot een punt
-             van 1.6 breed - dat las bij deze rotatiehoek als een scherpe vin/spike i.p.v. een
-             klein lipje, vooral opvallender nu de plaat zelf een afgeronde neus heeft gekregen.
-             Daarna even te kort (8 lang) op gebruikersfeedback - 14 lang is de huidige lengte. -->
+        <!-- haakje/pin (verplaatst uitstekend puntje) - los element i.p.v. onderdeel van het grote
+             headshell-plaat-pad: als onderdeel van dat ene grote pad deelde het de vaste
+             userSpaceOnUse-gradient (linearGradient487) van de hele plaat, wat het te licht liet ogen
+             op deze positie en de aansluitpunten lagen niet exact op de (na verwijdering van de
+             oude inkeping) opnieuw rechte plaatrand - vandaar "los" ogend. Basispunten liggen nu
+             exact op de rechte plaatrand tussen de bestaande punten -13.97,-9.23 en -34.67,-8.79,
+             eigen fill (linearGradient488, dezelfde die de oude steunbeugel al gebruikte) i.p.v. de
+             gedeelde plaat-gradient. -->
         <path
-           d="m -24,-11 h 7 l -1.8,-14 h -3.4 z"
+           d="M -14.5,-9.22 L -15.3,-31.2 L -17.7,-31.2 L -18.5,-9.13 Z"
            fill="url(#metalGrad)"
            stroke="#4a4b4e"
            stroke-width="0.6"
-           id="headshell-steunbeugel"
+           id="headshell-haakje"
            style="fill:url(#linearGradient488)" />
+        <path
+           d="M -14.30,-1.52 C -31.47,-1.96 -32.57,-0.64 -32.57,-0.64 L -31.91,1.23 L -29.38,1.67 L -25.75,1.45 L -14.74,1.01 L -13.53,0.57 L -13.20,-0.64 L -14.30,-1.52 Z"
+           fill="#0a0a0b"
+           stroke="#9a9b9e"
+           stroke-width="0.4"
+           id="headshell-venster-getekend" />
+        <path
+           d="M 4.20,-8.46 L -5.05,-8.46 L -6.48,-7.25 L -5.93,-6.37 L -5.16,-5.49 L 4.31,-5.82 L 4.75,-6.48 L 4.20,-8.46 Z"
+           fill="#c7c8cb"
+           stroke="#3a3b3e"
+           stroke-width="0.4"
+           id="headshell-schroef-1-getekend" />
+        <path
+           d="M 0.24,4.75 L -5.16,4.75 L -5.93,5.85 L -5.49,7.07 L 3.54,7.51 L 4.64,6.96 L 4.75,6.41 L 4.64,5.52 L 2.99,4.75 L 0.24,4.75 Z"
+           fill="#c7c8cb"
+           stroke="#3a3b3e"
+           stroke-width="0.4"
+           id="headshell-schroef-2-getekend" />
+        <path
+           d="M -42.70,-7.47 C -42.15,-0.20 -42.37,4.86 -42.37,4.86 L -43.81,4.86 L -43.81,-3.28 L -44.25,-7.80 L -42.70,-7.47 Z"
+           fill="#e8e9eb"
+           stroke="#5a5b5e"
+           stroke-width="0.4"
+           id="headshell-naadje-getekend" />
         <!-- kabelvenster met kleurcodering (wit/blauw/rood/groen, standaard 4-pins headshell-bedrading) -
-             dicht bij de nek, zoals op de foto -->
-        <rect
-           x="-23"
-           y="-6"
-           width="16"
-           height="12"
-           rx="2"
-           fill="#111216"
-           stroke="#000000"
-           stroke-width="0.6"
-           id="headshell-venster"
-           transform="translate(-5.1066316e-6)" />
-        <line
-           x1="-9"
-           y1="4"
-           x2="-21"
-           y2="4"
-           stroke="#4c9a52"
-           stroke-width="1"
-           stroke-linecap="round"
-           id="headshell-draad-groen"
-           transform="translate(-5.1066316e-6)" />
-        <line
-           x1="-9"
-           y1="-4"
-           x2="-21"
-           y2="-4"
-           stroke="#e8e6df"
-           stroke-width="1"
-           stroke-linecap="round"
-           id="headshell-draad-wit" />
-        <line
-           x1="-9"
-           y1="-1.3"
-           x2="-21"
-           y2="-1.3"
-           stroke="#3f6fd6"
-           stroke-width="1"
-           stroke-linecap="round"
-           id="headshell-draad-blauw" />
-        <line
-           x1="-9"
-           y1="1.3"
-           x2="-21"
-           y2="1.3"
-           stroke="#d64545"
-           stroke-width="1"
-           stroke-linecap="round"
-           id="headshell-draad-rood" />
-        <!-- twee losse langwerpige montagesleuven (schuifbaar voor azimuth-afstelling), elk als eigen
-             blokje boven zijn schroef - niet één doorlopende strook, zoals op de referentiefoto -->
-        <rect
-           x="-2"
-           y="-9.3000002"
-           width="6"
-           height="4"
-           rx="2"
-           fill="#87888b"
-           stroke="#5a5b5e"
-           stroke-width="0.4"
-           id="headshell-sleuf-1" />
-        <rect
-           x="-2"
-           y="5.3000002"
-           width="6"
-           height="4"
-           rx="2"
-           fill="#87888b"
-           stroke="#5a5b5e"
-           stroke-width="0.4"
-           id="headshell-sleuf-2" />
+             dicht bij de nek, zoals op de foto - de rechthoek zelf is vervangen door
+             headshell-venster-getekend hierboven; de vier draadjes en het steunbeugel-haakje zijn op
+             gebruikersverzoek verwijderd, net als de zwarte cartridge-body-ondergrond achter het logo. -->
+        <!-- twee losse langwerpige montagesleuven (schuifbaar voor azimuth-afstelling) - de rechthoeken
+             zijn vervangen door headshell-schroef-1-getekend/-2-getekend hierboven -->
         <!-- twee grote bevestigingsschroeven + zichtgaatje, op de zilveren plaat vlak vóór de
              zwarte cartridge-body (die begint bij x=5) -->
         <circle
@@ -3402,18 +3346,18 @@
            ry="4"
            fill="#1a1b1e"
            id="headshell-buiseinde" />
-        <!-- logo wit-op-zwart op de cartridge-body i.p.v. donker-op-zilver op de plaat zelf,
-             zoals op de referentiefoto - geen matrix-transform meer nodig nu de ondergrond een
-             simpele rx-rect is i.p.v. de schuine plaatrand -->
+        <!-- logo zwart, rechtstreeks op de zilveren plaat (geen cartridge-body-ondergrond meer) en
+             90 graden linksom gedraaid om zijn eigen ankerpunt - op gebruikersverzoek -->
         <text
-           x="6.5"
-           y="1.6"
+           x="10.5"
+           y="0.6"
+           transform="rotate(-90,10.5,0.6)"
            text-anchor="middle"
            font-family="Arial, Helvetica, sans-serif"
            font-weight="700"
            font-style="italic"
            font-size="2.8px"
-           fill="#e6e4de"
+           fill="#0a0a0b"
            textLength="11"
            lengthAdjust="spacingAndGlyphs"
            id="headshell-logo">Pioneer DJ</text>
