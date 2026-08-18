@@ -17,10 +17,17 @@ let draaitafelZichtbaar = localStorage.getItem('musicwall-album-draaitafel-zicht
 // Stroboscoop-gloed aan/uit (js/turntable.js's setStroboZichtbaar()) - decoratieve toggle, zelfde
 // localStorage-sleutel als js/jukebox.js (gedeeld, net als musicwall-platenspeler-schaal).
 let stroboLichtVoorkeur = localStorage.getItem('musicwall-strobo-zichtbaar') !== 'nee'
+// Hovertekst beschrijft steeds de actie die een klik nu zou uitvoeren (dus het omgekeerde van de huidige
+// staat) - zelfde aanpak als js/jukebox.js, geen data-i18n-title meer op dit element (zie de
+// 'taal-gewijzigd'-listener verderop in dit bestand).
+function bijwerkenStroboTooltip() {
+  document.getElementById('strobo-toggle-btn').title = t(stroboLichtVoorkeur ? 'jukebox.stroboTooltipVerberg' : 'jukebox.stroboTooltipToon')
+}
 function toggleStroboZichtbaar() {
   stroboLichtVoorkeur = !stroboLichtVoorkeur
   localStorage.setItem('musicwall-strobo-zichtbaar', stroboLichtVoorkeur ? 'ja' : 'nee')
   document.getElementById('strobo-toggle-btn').classList.toggle('actief', stroboLichtVoorkeur)
+  bijwerkenStroboTooltip()
   if (window.Turntable) window.Turntable.setStroboZichtbaar(stroboLichtVoorkeur)
 }
 window.toggleStroboZichtbaar = toggleStroboZichtbaar
@@ -214,10 +221,14 @@ function bijwerkenWeergave() {
   document.querySelector('.track-acties-balk').classList.toggle('verborgen', actief)
 }
 
+function bijwerkenDraaitafelTooltip() {
+  document.getElementById('draaitafel-toggle-btn').title = t(draaitafelZichtbaar ? 'albumDetail.draaitafelTooltipVerberg' : 'albumDetail.draaitafelTooltipToon')
+}
 function toggleDraaitafelZichtbaar() {
   draaitafelZichtbaar = !draaitafelZichtbaar
   localStorage.setItem('musicwall-album-draaitafel-zichtbaar', draaitafelZichtbaar ? 'ja' : 'nee')
   document.getElementById('draaitafel-toggle-btn').classList.toggle('actief', draaitafelZichtbaar)
+  bijwerkenDraaitafelTooltip()
   bijwerkenWeergave()
   // Verplaatst de trackinfo meteen tussen navigatiebalk en onder-de-draaitafel (zie bijwerkenSpeelUI())
   bijwerkenSpeelUI()
@@ -524,8 +535,17 @@ window.zoekInAlbumSpeler = zoekInAlbumSpeler
 window.toggleDraaitafelZichtbaar = toggleDraaitafelZichtbaar
 
 document.getElementById('draaitafel-toggle-btn').classList.toggle('actief', draaitafelZichtbaar)
+bijwerkenDraaitafelTooltip()
 document.getElementById('strobo-toggle-btn').classList.toggle('actief', stroboLichtVoorkeur)
+bijwerkenStroboTooltip()
 if (window.Turntable) window.Turntable.setStroboZichtbaar(stroboLichtVoorkeur)
+// Data-i18n-title is bewust niet gebruikt op deze twee knoppen (zie bijwerkenStroboTooltip()/
+// bijwerkenDraaitafelTooltip() hierboven) - deze listener herstelt de dynamische, staat-afhankelijke
+// hovertekst na een taalwissel zelf.
+document.addEventListener('taal-gewijzigd', () => {
+  bijwerkenStroboTooltip()
+  bijwerkenDraaitafelTooltip()
+})
 
 // Platenspeler vergroten/verkleinen - zelfde --platenspeler-schaal-mechanisme en gedeelde localStorage-
 // sleutel als js/jukebox.js, zie de toelichting daar.

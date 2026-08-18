@@ -643,14 +643,16 @@ html::after { right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
   box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.6);
 }
 
-#spectrum-toggle-btn.actief {
-  color: #34d058;
-  border-color: #34d058;
-}
-
+/* Blauwe LED-gloed i.p.v. een vlakke randkleur - dezelfde blauwtint als de stroboscoop-LED op de
+   platenspeler zelf (svg/pioneer-plx1000.svg's ledGlow-gradient, #7fe0ff/#2596c9), zodat deze knoppen
+   er echt "opgelicht" uitzien i.p.v. enkel een andere kleur te hebben. Vast/thema-onafhankelijk, net
+   als de eerdere groene .actief-kleur dat al was. */
+#spectrum-toggle-btn.actief,
 #strobo-toggle-btn.actief {
-  color: #34d058;
-  border-color: #34d058;
+  color: #7fe0ff;
+  border-color: #7fe0ff;
+  background: rgba(37, 150, 201, 0.18);
+  box-shadow: 0 0 10px rgba(77, 216, 255, 0.65), 0 0 2px rgba(127, 224, 255, 0.9) inset;
 }
 
 /* Twee eerdere grid-versies (1fr/auto/1fr, toen minmax(0,1fr), toen minmax(140px,1fr) op de buitenste

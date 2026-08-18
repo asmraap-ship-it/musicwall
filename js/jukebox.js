@@ -78,14 +78,23 @@ let spectrumZichtbaar = localStorage.getItem('musicwall-spectrum-zichtbaar') !==
 // Stroboscoop-gloed aan/uit (js/turntable.js's setStroboZichtbaar()) - decoratieve toggle, zelfde
 // localStorage-precedent als spectrumZichtbaar hierboven, gedeelde sleutel met album-detail.
 let stroboLichtVoorkeur = localStorage.getItem('musicwall-strobo-zichtbaar') !== 'nee'
+// Hovertekst beschrijft steeds de actie die een klik nu zou uitvoeren (dus het omgekeerde van de huidige
+// staat), niet de statische "tonen/verbergen"-tekst van voorheen - herbruikt bij taalwissel via de
+// 'taal-gewijzigd'-listener onderaan dit blok, want data-i18n-title zou anders bij elke taalwissel de
+// dynamische tekst overschrijven met een vaste vertaalsleutel.
+function bijwerkenStroboTooltip() {
+  document.getElementById('strobo-toggle-btn').title = t(stroboLichtVoorkeur ? 'jukebox.stroboTooltipVerberg' : 'jukebox.stroboTooltipToon')
+}
 function toggleStroboZichtbaar() {
   stroboLichtVoorkeur = !stroboLichtVoorkeur
   localStorage.setItem('musicwall-strobo-zichtbaar', stroboLichtVoorkeur ? 'ja' : 'nee')
   document.getElementById('strobo-toggle-btn').classList.toggle('actief', stroboLichtVoorkeur)
+  bijwerkenStroboTooltip()
   if (window.Turntable) window.Turntable.setStroboZichtbaar(stroboLichtVoorkeur)
 }
 window.toggleStroboZichtbaar = toggleStroboZichtbaar
 document.getElementById('strobo-toggle-btn').classList.toggle('actief', stroboLichtVoorkeur)
+bijwerkenStroboTooltip()
 if (window.Turntable) window.Turntable.setStroboZichtbaar(stroboLichtVoorkeur)
 
 // Versterkt het contrast tussen stil en luid (exponent > 1 duwt lage waarden verder omlaag terwijl hoge
@@ -215,6 +224,9 @@ function stopSpectrum() {
   })
 }
 
+function bijwerkenSpectrumTooltip() {
+  document.getElementById('spectrum-toggle-btn').title = t(spectrumZichtbaar ? 'jukebox.spectrumTooltipVerberg' : 'jukebox.spectrumTooltipToon')
+}
 function toggleSpectrumZichtbaar() {
   spectrumZichtbaar = !spectrumZichtbaar
   localStorage.setItem('musicwall-spectrum-zichtbaar', spectrumZichtbaar ? 'ja' : 'nee')
@@ -222,6 +234,7 @@ function toggleSpectrumZichtbaar() {
   const container = document.getElementById('spectrum-analyzer')
   container.classList.toggle('verborgen', !spectrumZichtbaar)
   document.getElementById('spectrum-toggle-btn').classList.toggle('actief', spectrumZichtbaar)
+  bijwerkenSpectrumTooltip()
 
   if (spectrumZichtbaar) {
     // Alleen herstarten als er op dit moment ook echt iets speelt - anders zou de analyzer een lege,
@@ -238,6 +251,13 @@ function toggleSpectrumZichtbaar() {
 
 bouwSpectrumAnalyzer()
 document.getElementById('spectrum-toggle-btn').classList.toggle('actief', spectrumZichtbaar)
+bijwerkenSpectrumTooltip()
+// Data-i18n-title is bewust niet gebruikt op strobo-/spectrum-toggle-btn (zie bijwerkenStroboTooltip()) - deze
+// listener herstelt de dynamische, staat-afhankelijke hovertekst na een taalwissel zelf.
+document.addEventListener('taal-gewijzigd', () => {
+  bijwerkenStroboTooltip()
+  bijwerkenSpectrumTooltip()
+})
 
 // Platenspeler vergroten/verkleinen (schuifje in .audio-cover-wrap): --platenspeler-schaal
 // vermenigvuldigt #turntable-svg-wrap's bestaande vh-gebaseerde breedte (css/jukebox.css). Gedeelde
