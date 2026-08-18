@@ -22,16 +22,52 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="2.9263342"
-     inkscape:cx="371.28364"
-     inkscape:cy="502.16411"
+     inkscape:cx="371.11277"
+     inkscape:cy="501.82238"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg251" />
+     inkscape:current-layer="g251" />
   <defs
      id="defs30">
+    <linearGradient
+       id="linearGradient74"
+       x1="0%"
+       y1="0%"
+       x2="100%"
+       y2="0%"
+       inkscape:swatch="gradient">
+      <stop
+         offset="0%"
+         stop-color="#c7c8cb"
+         id="stop70" />
+      <stop
+         offset="0.14086957"
+         stop-color="#f4f5f6"
+         id="stop71"
+         style="stop-color:#e7ecec;stop-opacity:1;" />
+      <stop
+         offset="45%"
+         stop-color="#9fa0a4"
+         id="stop72" />
+      <stop
+         offset="70%"
+         stop-color="#e4e5e7"
+         id="stop73" />
+      <stop
+         offset="100%"
+         stop-color="#8a8b8f"
+         id="stop74" />
+    </linearGradient>
+    <linearGradient
+       id="swatch59">
+      <stop
+         style="stop-color:#c1c2c3;stop-opacity:1;"
+         offset="0"
+         id="stop59" />
+    </linearGradient>
     <linearGradient
        id="chassisGrad"
        x1="0%"
@@ -528,13 +564,13 @@
          diepere schaduwen) voor een gepolijst-chroom-uitstraling i.p.v. simpelweg egaal donkerder. -->
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#armTubeGrad"
        id="linearGradient483"
        gradientUnits="userSpaceOnUse"
-       x1="696.0"
-       y1="311.7"
-       x2="676.0"
-       y2="289.3">
+       x1="696"
+       y1="311.70001"
+       x2="676"
+       y2="289.29999"
+       spreadMethod="pad">
       <stop
          offset="0%"
          stop-color="#d5d6d9"
@@ -643,7 +679,7 @@
        y1="-19.119363"
        x2="-27.268542"
        y2="-19.119363"
-       gradientTransform="scale(0.61084228,1.6370838)"
+       gradientTransform="matrix(0.61084228,0,0,1.6370838,0.14423467,1.78902)"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
        inkscape:collect="always"
@@ -665,6 +701,15 @@
        fx="386.7"
        fy="390.6"
        gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient74"
+       id="linearGradient75"
+       gradientUnits="userSpaceOnUse"
+       x1="-14.408315"
+       y1="-27.191214"
+       x2="-14.408315"
+       y2="26.596153" />
   </defs>
   <!-- ======================================================= -->
   <!-- 1) BEHUIZING - basis, fader, knoppen, lampjes, logo      -->
@@ -8419,7 +8464,7 @@
          transform="rotate(161.41075,219.51141,270.44155) translate(33.3,0) scale(1.45)"
          id="g251">
         <path
-           d="M 10.37,-11.43 C -7.25,-11.65 -8.35,-11.10 -9.01,-10.88 C -9.67,-10.66 -12.65,-9.34 -12.65,-9.34 C -13.48,-9.06 -10.30,-9.32 -13.97,-9.23 C -17.64,-9.14 -30.56,-8.72 -34.67,-8.79 C -38.78,-8.86 -37.40,-9.60 -38.63,-9.67 C -39.86,-9.74 -41.25,-9.60 -42.04,-9.23 C -42.83,-8.86 -42.76,-7.82 -43.37,-7.47 C -43.98,-7.12 -44.21,-7.14 -45.68,-7.14 C -47.15,-7.14 -50.96,-7.34 -52.17,-7.47 C -53.38,-7.60 -52.24,-7.86 -52.94,-7.91 C -53.64,-7.96 -55.79,-7.89 -56.36,-7.80 C -56.93,-7.71 -55.94,-7.40 -56.36,-7.36 C -56.78,-7.32 -58.45,-9.80 -58.89,-7.58 L -59.00,5.96 L -45.68,6.07 L -44.91,5.08 L -42.92,4.86 L -43.04,6.30 L -42.59,7.18 L -17.82,7.84 L -16.83,7.62 L -13.86,7.84 L -11.43,8.28 L -9.45,9.27 L -8.02,10.70 L 10.37,10.59 L 11.47,8.28 L 11.69,6.52 L 13.01,5.74 L 14.00,4.97 L 13.78,-8.13 L 13.01,-9.23 L 11.25,-9.45 L 10.37,-11.43 Z"
+           d="M 9.9012225,10.001832 -7.7476718,9.7488229 -9.4837573,9.0092797 -12.844183,7.5311346 -16.137342,6.674857 -27.565916,5.4390378 l -5.088535,-0.7679306 -5.155825,-1.3897994 -1.713852,-1.050011 -1.431043,-1.87599025 -0.164196,-0.8297846 0.409382,-1.03201615 1.92142,-1.8476111 3.582824,-1.6264417 10.309971,-1.8801293 9.319629,-0.5423651 3.754433,-0.9001378 2.5325964,-1.0140475 2.2121861,-1.2238513 17.6711215,-0.05745 1.319292,1.8750532 0.395658,2.2814228 -0.08785,4.3483134 -0.787451,6.3098085 -0.62492,2.4798901 z"
            fill="url(#metalGrad)"
            stroke="#5a5b5e"
            stroke-width="1"
@@ -8434,7 +8479,7 @@
              eigen fill (linearGradient488, dezelfde die de oude steunbeugel al gebruikte) i.p.v. de
              gedeelde plaat-gradient. -->
         <path
-           d="M -14.5,-9.22 L -15.3,-31.2 L -17.7,-31.2 L -18.5,-9.13 Z"
+           d="m -14.355765,-7.43098 -0.8,-21.98 h -2.4 l -0.8,22.07 z"
            fill="url(#metalGrad)"
            stroke="#4a4b4e"
            stroke-width="0.6"
