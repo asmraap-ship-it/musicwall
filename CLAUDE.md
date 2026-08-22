@@ -352,7 +352,7 @@ Geïnstalleerd is Electron `^42.5.0` (42.6.0); npm's laatste release is 43.x. Be
 
 ## Geopperde toekomstige features (nog niet gebouwd)
 Op 2026-08-22 geopperd door Claude Code, door de gebruiker als goede ideeën bestempeld om nog op te pakken — puur genoteerd, nog niet gepland/uitgewerkt.
-- **Echte pitch-fader**: de TEMPO-schuif op de platenspeler-tekening is nu decoratief. `js/turntable.js`'s `setStroboPitch(pitchPercent, geselecteerdeNominaalRpm)` is al gebouwd om een écht pitch-percentage te ontvangen (nu altijd aangeroepen met `0`) — de stroboscoopringen zouden dus al correct reageren zodra de schuif `playbackRate` van het audio-element aanstuurt en dat percentage doorgeeft.
+- **Echte pitch-fader**: de TEMPO-schuif op de platenspeler-tekening is nu decoratief. `js/turntable.js`'s `setStroboPitch(pitchPercent, geselecteerdeNominaalRpm)` is al gebouwd om een écht pitch-percentage te ontvangen (nu altijd aangeroepen met `0`) — de stroboscoopringen zouden dus al correct reageren zodra de schuif `playbackRate` van het audio-element aanstuurt en dat percentage doorgeeft. **Let op (2026-08-22, gebruiker)**: de TEMPO-schuif zelf is grafisch nog niet helemaal goed — bij het bouwen van deze feature ook de tekening van de schuif zelf beoordelen/bijstellen, niet alleen de functionele koppeling.
 - **Media-toetsen op het toetsenbord** (play/pause/volgende via hardware media-knoppen) — via Electrons `globalShortcut`.
 - **"Op deze dag"-herinnering**: een klein blokje op het hoofdscherm dat toont welke wall-video('s) op de huidige kalenderdag in een eerder jaar zijn toegevoegd/spelen, passend bij het doel van walls (levensmomenten vastleggen).
 
