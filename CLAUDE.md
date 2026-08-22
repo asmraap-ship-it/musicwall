@@ -350,6 +350,12 @@ Geïnstalleerd is Electron `^42.5.0` (42.6.0); npm's laatste release is 43.x. Be
 - **Impact voor deze (Windows-only, 64-bit) app is laag**: de aangekondigde breaking changes van Electron 43 zijn vrijwel allemaal Linux/macOS-specifiek (Unity-desktopondersteuning weg op Linux, `app.isUnityRunning()` verwijderd, afgeronde hoeken standaard aan op Linux) of raken 32-bit-platforms (irrelevant, dit is een 64-bit build). Downloads gaan voortaan standaard naar de Downloads-map i.p.v. de laatst gebruikte map — niet van toepassing, Musicwall gebruikt geen `webContents.downloadURL`/save-dialogs voor downloads.
 - **Praktisch werk bij het doorvoeren**: `package.json`'s `devDependencies.electron` bumpen, `better-sqlite3` moet opnieuw rebuilden tegen de nieuwe Electron-Node-ABI (`@electron/rebuild`, zie hoe `npm ci` in `.github/workflows/release.yml` dit al voor CI regelt met expliciete target-vars), daarna `npm test` + handmatig doorlopen.
 
+## Geopperde toekomstige features (nog niet gebouwd)
+Op 2026-08-22 geopperd door Claude Code, door de gebruiker als goede ideeën bestempeld om nog op te pakken — puur genoteerd, nog niet gepland/uitgewerkt.
+- **Echte pitch-fader**: de TEMPO-schuif op de platenspeler-tekening is nu decoratief. `js/turntable.js`'s `setStroboPitch(pitchPercent, geselecteerdeNominaalRpm)` is al gebouwd om een écht pitch-percentage te ontvangen (nu altijd aangeroepen met `0`) — de stroboscoopringen zouden dus al correct reageren zodra de schuif `playbackRate` van het audio-element aanstuurt en dat percentage doorgeeft.
+- **Media-toetsen op het toetsenbord** (play/pause/volgende via hardware media-knoppen) — via Electrons `globalShortcut`.
+- **"Op deze dag"-herinnering**: een klein blokje op het hoofdscherm dat toont welke wall-video('s) op de huidige kalenderdag in een eerder jaar zijn toegevoegd/spelen, passend bij het doel van walls (levensmomenten vastleggen).
+
 ## Performance bij grote walls
 - `laadWalls()` in `js/index.js` rendert per wall maximaal `KAART_RENDER_LIMIT` (150) kaarten in één keer; bij meer video's verschijnt een **"Toon nog N video's"**-knop (`toonAlleKaarten(wallId)`) die de rest pas opbouwt/toevoegt na een klik
 - `bouwKaartHtml()` is de herbruikbare kaart-HTML-builder, gebruikt door zowel `laadWalls()` als `toonAlleKaarten()`; `videoData` krijgt bij het laden altijd de volledige videolijst van elke wall zodat latere idx-toewijzing via `wallStartIdx` klopt
