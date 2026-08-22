@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [1.2.9]
 ### Changed
+- The tonearm is drawn thicker and more realistically, with a new ribbed collar where it connects to the headshell.
+- The number scales and controls around the pivot (anti-skating, counterweight scale, LOCK) are now aligned more precisely.
+- The needle lands in the right place on the record again: just inside the edge at the start of a track, close to the center at the end.
 - More parts of the turntable now have subtle shadow and metallic sheen: the 45rpm adapter, the pivot/anti-skating knob, and the POWER and START/STOP buttons.
 - The tonearm tube near the pivot has been refined: a more clearly defined straight collar that only tapers further along, and a slightly more pronounced silver tint near the top of the arm.
 

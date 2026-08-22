@@ -6,6 +6,9 @@ Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0
 
 ## [1.2.9]
 ### Changed
+- De toonarm is dikker en realistischer getekend, met een nieuwe geribbelde kraag waar hij op de headshell aansluit.
+- De cijferschalen en knoppen rond het draaipunt (anti-skating, gewichtschaal, LOCK) staan preciezer uitgelijnd.
+- De naald landt weer op de juiste plek op de plaat: net binnen de rand bij het begin van een nummer, dichtbij het midden aan het einde.
 - Nog meer onderdelen van de platenspeler hebben nu subtiele schaduw en metaalglans: de 45-toerenadapter, de pivot/anti-skating-knop en de POWER- en START/STOP-knoppen.
 - De toonarmbuis bij het draaipunt is verfijnd: een duidelijker herkenbare rechte kraag die pas verderop taps toeloopt, en een net iets uitgesprokener zilverkleurige tint bovenaan de arm.
 
