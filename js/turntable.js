@@ -25,9 +25,39 @@ const ARM_ORIGIN = '863 142'
 // middelpunt, zonder schaalfactor-omrekening nodig). startHoek verschoof van -20 naar -23 (bij -20 landt
 // de naald nu op r ≈ 262, te ver naar binnen). rustHoek (-40) bleek toevallig nog steeds ruim vrij te
 // blijven van de pitch-fader (x 880-926) - gemeten marge ~113 canvas-eenheden, geen aanpassing nodig.
+// Opnieuw bijgesteld -23 -> -24.5 (2026-08-22, eerste correctie: de naald bij het starten kwam niet
+// helemaal tot de rand van de plaat): een CDP-hermeting liet zien dat de naald bij -23 nog maar op
+// r ≈ 274 landde - ín plaats van tussen de vinylrand (r=292) en de eerste groefring (r=278), zoals
+// origineel bedoeld - vermoedelijk gedrift door latere, losstaande wijzigingen aan headshell-plaat/de
+// armbuis-dikte (die #g251's precieze lokale geometrie beïnvloeden, ook al ligt het kalibratiepunt zelf
+// nog op dezelfde coördinaat). Bij -24.5 landde de naald weer op r ≈ 285.7.
+// Tweede, fundamentelere correctie, zelfde dag: de gebruiker wees erop dat de headshell "buiten het
+// middelpunt van de plaat komt" - simuleer je de volledige zwaai (verder dan alleen START_HOEK/EIND_HOEK),
+// dan hoort de naald ergens vlak bij, maar nooit voorbij, het midden te komen. Een CDP-meting van de
+// werkelijk getekende armlengte bevestigde dit kwantitatief: de vaste afstand pivot (863,142) -> naaldpunt
+// (via #g251, zie hieronder) was 509,1 eenheden, tegenover een pivot-naar-plaatmiddelpunt-afstand van
+// 438,8 - de dichtste nadering tot het middelpunt over de volle rotatiecirkel is dus |509,1-438,8|=70,3,
+// en die trad pas op bij hoek ≈ +10° (ver voorbij het toen gebruikte bereik). Geen S-curve-beperking,
+// puur een te lange effectieve arm. Opgelost bij de bron i.p.v. met een kunstgreep in de hoeken: het
+// `translate(...,0)`-onderdeel van #g251's eigen transform (svg/pioneer-plx1000.svg) - dat plaatst de
+// headshell op zijn eigen positie tov de buis, los van path246's getekende buiseinde - is verlaagd van
+// 33,3 naar -10, wat de naald zo'n 20 eenheden dichter naar de pivot trekt zonder de buis zelf in te
+// korten (dus geen zichtbare naad/breuk bij de aansluiting - geverifieerd via CDP-screenshot vóór en na).
+// Nieuwe armlengte 468,6, dichtste nadering nu 29,8 (bij hoek ≈ +10°) - "net binnen het midden" i.p.v.
+// er ver voorbij.
+// Derde correctieronde, nog dezelfde dag: START_HOEK -25°/EIND_HOEK +8° bleken zelf ook niet goed -
+// de gebruiker meldde dat de naald bij het starten alsnog bijna buiten de plaat kwam, EN dat de arm aan
+// het einde veel te ver ging: er staat een echte labelcirkel getekend in de svg (`circle243`,
+// cx=390 cy=395 r=84 - "de plaat met albumhoes-label") en het einde van een nummer hoort daar net
+// buiten te blijven, niet er middenin te eindigen (bij +8° landde de naald op r ≈ 40, ruim ín het
+// label). Beide hoeken opnieuw doorgemeten (dezelfde CDP-methode: `getScreenCTM()` + de vinylrand als
+// schaalreferentie, venster met `show:true`) met een ruimere marge dan de vorige ronde:
+// START_HOEK -23° (r ≈ 269,6 - duidelijk binnen zowel de vinylrand 292 als de eerste groefring 278,
+// i.p.v. er nog maar net binnen te schrapen) en EIND_HOEK +0.5° (r ≈ 90,9 - net buiten de labelrand 84,
+// ruim vóór de werkelijke dichtste-naderingshoek bij +10°). RUST_HOEK (-40) bleef ongewijzigd.
 const RUST_HOEK = -40
 const START_HOEK = -23
-const EIND_HOEK = 0
+const EIND_HOEK = 0.5
 // Op gebruikersverzoek verruimd van 0.6s - zowel de needle-drop bij starten als de lift-terug-naar-rust
 // bij stoppen/pauzeren voelden te snel/abrupt aan. Geldt voor beide (start()/stop() delen deze constante).
 const ARM_DROP_DUUR = 1.3
