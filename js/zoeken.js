@@ -236,8 +236,8 @@ async function zoekVideos() {
       el.id = 'res-' + videoId
       el.innerHTML = '<img src="' + thumb + '">'
         + '<div class="resultaat-info">'
-        + '<div class="resultaat-titel">' + titel + '</div>'
-        + '<div class="resultaat-kanaal">' + kanaal + '</div>'
+        + '<div class="resultaat-titel">' + escapeHtml(titel) + '</div>'
+        + '<div class="resultaat-kanaal">' + escapeHtml(kanaal) + '</div>'
         + '</div>'
 
       el.onclick = () => toggleSelectie(videoId, el)
@@ -305,8 +305,8 @@ function renderPlaylistLijst() {
     el.className = 'resultaat'
     el.innerHTML = (playlist.thumb ? '<img src="' + playlist.thumb + '">' : '')
       + '<div class="resultaat-info">'
-      + '<div class="resultaat-titel">' + playlist.titel + '</div>'
-      + '<div class="resultaat-kanaal">' + playlist.kanaal + '</div>'
+      + '<div class="resultaat-titel">' + escapeHtml(playlist.titel) + '</div>'
+      + '<div class="resultaat-kanaal">' + escapeHtml(playlist.kanaal) + '</div>'
       + '</div>'
 
     el.onclick = () => toonPlaylistVideos(playlist.id)
@@ -384,8 +384,8 @@ async function toonPlaylistVideos(playlistId) {
       el.id = 'res-' + videoId
       el.innerHTML = (thumb ? '<img src="' + thumb + '">' : '')
         + '<div class="resultaat-info">'
-        + '<div class="resultaat-titel">' + titel + '</div>'
-        + '<div class="resultaat-kanaal">' + kanaal + '</div>'
+        + '<div class="resultaat-titel">' + escapeHtml(titel) + '</div>'
+        + '<div class="resultaat-kanaal">' + escapeHtml(kanaal) + '</div>'
         + '</div>'
 
       el.onclick = () => toggleSelectie(videoId, el)

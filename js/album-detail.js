@@ -114,7 +114,7 @@ function laadTrackLijst() {
 
     rij.innerHTML = '<span class="track-nummer">' + (i + 1) + '</span>'
       + '<button class="track-play" title="' + t('albumDetail.afspelenTooltip') + '" onclick="event.stopPropagation();trackKnopKlik(' + track.id + ')">' + trackPlayIconHtml(false) + '</button>'
-      + '<div class="track-info"><div class="track-titel">' + track.titel + '</div><div class="track-artiest">' + (track.artiest || huidigAlbum.artiest || '') + '</div></div>'
+      + '<div class="track-info"><div class="track-titel">' + escapeHtml(track.titel) + '</div><div class="track-artiest">' + escapeHtml(track.artiest || huidigAlbum.artiest || '') + '</div></div>'
       + '<button class="track-verwijder" title="' + t('albumDetail.trackVerwijderenTooltip') + '" onclick="event.stopPropagation();verwijderTrackItem(' + track.id + ')">&times;</button>'
 
     rij.onclick = (event) => {
@@ -193,7 +193,7 @@ function bijwerkenSpeelUI() {
   if (label) label.textContent = draaitafelZichtbaar ? '' : artiest + ' - ' + track.titel
   if (draaitafelInfo) {
     draaitafelInfo.innerHTML = draaitafelZichtbaar
-      ? '<div class="album-draaitafel-track-artiest">' + artiest + '</div><div class="album-draaitafel-track-titel">' + track.titel + '</div>'
+      ? '<div class="album-draaitafel-track-artiest">' + escapeHtml(artiest) + '</div><div class="album-draaitafel-track-titel">' + escapeHtml(track.titel) + '</div>'
       : ''
   }
   bijwerkenTrackKnoppen()

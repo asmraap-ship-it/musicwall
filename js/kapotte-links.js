@@ -55,7 +55,7 @@ function toonKapotItem(item) {
   el.className = 'kapot-item'
   el.id = 'kapot-' + index
   el.innerHTML = '<div class="kapot-info">'
-    + '<div class="kapot-titel">' + naam + '</div>'
+    + '<div class="kapot-titel">' + escapeHtml(naam) + '</div>'
     + '<div class="kapot-herkomst">' + t(item.bron === 'wall' ? 'jukebox.herkomstWall' : 'jukebox.herkomstConcert', { naam: item.herkomst }) + '</div>'
     + '</div>'
     + '<button class="kapot-verwijder" title="' + t('video.verwijderenTooltip') + '">🗑</button>'

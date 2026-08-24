@@ -410,8 +410,8 @@ async function laadPlaylist() {
       + bronLabel
       + '</div>'
       + '<div class="playlist-info">'
-      + '<div class="playlist-artiest">' + (item.artiest || '') + '</div>'
-      + '<div class="playlist-titel">' + item.titel + '</div>'
+      + '<div class="playlist-artiest">' + escapeHtml(item.artiest || '') + '</div>'
+      + '<div class="playlist-titel">' + escapeHtml(item.titel) + '</div>'
       + '</div>'
       + '<button class="playlist-verwijder" onclick="event.stopPropagation();verwijderItem(' + item.playlist_id + ')">'
       + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H6L5,6"/><path d="M10,11v6M14,11v6"/><path d="M9,6V4h6v2"/></svg>'
@@ -529,8 +529,8 @@ async function renderBibliotheekResultaten(generatie) {
       + bronLabel
       + '</div>'
       + '<div class="playlist-info">'
-      + '<div class="playlist-artiest">' + (resultaat.artiest || '') + '</div>'
-      + '<div class="playlist-titel">' + resultaat.titel + '</div>'
+      + '<div class="playlist-artiest">' + escapeHtml(resultaat.artiest || '') + '</div>'
+      + '<div class="playlist-titel">' + escapeHtml(resultaat.titel) + '</div>'
       + '<div class="bibliotheek-herkomst">' + herkomstLabel + '</div>'
       + '</div>'
     el.onclick = () => toggleBibliotheekResultaat(sleutel, el)
@@ -766,8 +766,8 @@ function speelIndex(i) {
       speler.pause()
       speler.classList.remove('zichtbaar')
       document.getElementById('audio-track-info').innerHTML =
-        '<div class="audio-track-artiest">' + (item.artiest || '') + '</div>'
-        + '<div class="audio-track-titel">' + (item.titel || '') + '</div>'
+        '<div class="audio-track-artiest">' + escapeHtml(item.artiest || '') + '</div>'
+        + '<div class="audio-track-titel">' + escapeHtml(item.titel || '') + '</div>'
       document.getElementById('audio-progress-vulling').style.width = '0%'
       document.getElementById('audio-tijd-huidig').textContent = '0:00'
       document.getElementById('audio-tijd-duur').textContent = '0:00'
@@ -1091,10 +1091,16 @@ async function renderMeestGespeeld() {
       ? '<img class="meest-gespeeld-thumb" src="' + thumb + '">'
       : '<div class="meest-gespeeld-thumb meest-gespeeld-thumb-leeg"></div>')
       + '<div class="opgeslagen-playlist-info">'
-      + '<div class="opgeslagen-playlist-naam" title="' + naam + '">' + naam + '</div>'
+      + '<div class="opgeslagen-playlist-naam"></div>'
       + '<div class="opgeslagen-playlist-aantal">' + t('jukebox.keerAfgespeeld', { n: item.aantal }) + '</div>'
       + '</div>'
       + '<button class="opgeslagen-playlist-laden" title="' + t('selectie.voegToeAanPlaylist') + '">+</button>'
+    // naam (artiest - titel) via een echte DOM-property gezet, niet in de HTML-string zelf - naam
+    // kan uit een ID3-tag/YouTube-titel komen, en title="..." als attribuutstring is een aparte
+    // escape-context die de tekst-node-gerichte escapeHtml() niet dekt (die laat " ongemoeid).
+    const naamEl = el.querySelector('.opgeslagen-playlist-naam')
+    naamEl.textContent = naam
+    naamEl.title = naam
     el.querySelector('.opgeslagen-playlist-laden').onclick = () => {
       voegToeAanPlaylist({ type: item.type, lokaalPad: item.lokaal_pad, youtubeUrl: item.youtube_url, artiest: item.artiest, titel: item.titel, coverPad: item.cover_pad })
       laadPlaylist()

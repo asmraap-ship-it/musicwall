@@ -65,11 +65,14 @@ async function laadAlbums(groepId) {
         ? '<img src="file:///' + album.cover_pad.replace(/\\/g, '/') + '" alt="">'
         : '<div class="concert-cover-placeholder">&#9835;</div>'
 
-      const verwijderKnop = '<button class="concert-verwijder-btn" onclick="event.stopPropagation();bevestigAlbumVerwijderen(' + album.id + ',\'' + album.naam.replace(/'/g, "\\'") + '\')" title="' + t('albums.verwijderenTooltip') + '">'
+      // Geen embedded album-data meer in een inline onclick-attribuutstring - album.naam kan uit een
+      // ID3-tag komen (zie beveiligingsreview 2026-08-24). De handlers worden hieronder via een echte
+      // closure aan de knop gehangen, zelfde patroon als kaart.onclick/filterInput.oninput in dit bestand.
+      const verwijderKnop = '<button class="concert-verwijder-btn" title="' + t('albums.verwijderenTooltip') + '">'
         + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H6L5,6"/><path d="M10,11v6M14,11v6"/><path d="M9,6V4h6v2"/></svg>'
         + '</button>'
 
-      const bewerkKnop = '<button class="concert-bewerk-btn" onclick="event.stopPropagation();bewerkAlbum(' + album.id + ')" title="' + t('albums.bewerkenTooltip') + '">'
+      const bewerkKnop = '<button class="concert-bewerk-btn" title="' + t('albums.bewerkenTooltip') + '">'
         + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>'
         + '</button>'
 
@@ -91,9 +94,25 @@ async function laadAlbums(groepId) {
         + bewerkKnop
         + '</div>'
         + '<div class="concert-info">'
-        + '<div class="concert-artiest">' + (album.artiest || '') + '</div>'
-        + '<div class="concert-naam">' + album.naam + '</div>'
+        + '<div class="concert-artiest">' + escapeHtml(album.artiest || '') + '</div>'
+        + '<div class="concert-naam">' + escapeHtml(album.naam) + '</div>'
         + '</div>'
+
+      const verwijderBtn = kaart.querySelector('.concert-verwijder-btn')
+      if (verwijderBtn) {
+        verwijderBtn.onclick = (event) => {
+          event.stopPropagation()
+          bevestigAlbumVerwijderen(album.id, album.naam)
+        }
+      }
+
+      const bewerkBtn = kaart.querySelector('.concert-bewerk-btn')
+      if (bewerkBtn) {
+        bewerkBtn.onclick = (event) => {
+          event.stopPropagation()
+          bewerkAlbum(album.id)
+        }
+      }
 
       kaart.onclick = (event) => {
         if (event.ctrlKey) {
