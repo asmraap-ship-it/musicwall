@@ -183,6 +183,24 @@
        xlink:href="#metalGrad"
        gradientTransform="matrix(1.8270549,0,0,0.54732894,-0.02415345,0.61214882)"
        gradientUnits="userSpaceOnUse" />
+    <!-- klein donkergrijs verloop voor de onderste groef van de TEMPO-schuifknop (2026-08-24,
+         "iets lichter als verloop" i.p.v. een platte vulling) - lichter bovenaan, donkerder
+         onderaan, suggereert een ondiepe groef die van bovenaf licht vangt. -->
+    <linearGradient
+       id="groefGradDonker"
+       x1="0%"
+       y1="0%"
+       x2="0%"
+       y2="100%">
+      <stop
+         offset="0%"
+         stop-color="#3f4043"
+         id="stop-groef-1" />
+      <stop
+         offset="100%"
+         stop-color="#2a2a2c"
+         id="stop-groef-2" />
+    </linearGradient>
     <linearGradient
        id="metalGradV"
        x1="-29.46722"
@@ -392,6 +410,47 @@
          operator="atop"
          id="feComposite2" />
     </filter>
+    <!-- sterkere variant van inner-shadow, specifiek voor de smalle TEMPO-schuifsleuf (rect94,
+         2026-08-24) - de gedeelde inner-shadow hierboven blijft ongewijzigd voor zijn overige
+         gebruikers (o.a. #beugel-balk). -->
+    <filter
+       id="inner-shadow-sterk"
+       x="-20%"
+       y="-20%"
+       width="140%"
+       height="140%">
+      <feComponentTransfer
+         in="SourceAlpha"
+         result="sleuf-alpha-omgekeerd">
+        <feFuncA
+           type="table"
+           tableValues="1 0" />
+      </feComponentTransfer>
+      <feGaussianBlur
+         in="sleuf-alpha-omgekeerd"
+         stdDeviation="2.4"
+         result="sleuf-binnenschaduw-blur" />
+      <feOffset
+         in="sleuf-binnenschaduw-blur"
+         dx="2"
+         dy="2"
+         result="sleuf-binnenschaduw-verschoven" />
+      <!-- op puur zwart (rect94) is een "donkerdere" schaduw onzichtbaar - daarom hier een echte
+         lichtgrijze kleur invloeien (feFlood) i.p.v. te vertrouwen op de (zwarte) alpha-schaduw zelf
+         (2026-08-24, op gebruikersverzoek "de schaduw moet lichter worden"). -->
+      <feFlood
+         flood-color="#333335"
+         result="sleuf-grijsvlak" />
+      <feComposite
+         in="sleuf-grijsvlak"
+         in2="sleuf-binnenschaduw-verschoven"
+         operator="in"
+         result="sleuf-binnenschaduw-grijs" />
+      <feComposite
+         in="sleuf-binnenschaduw-grijs"
+         in2="SourceGraphic"
+         operator="atop" />
+    </filter>
     <filter
        id="metal-highlight"
        x="-20%"
@@ -530,6 +589,40 @@
        fx="855.05"
        fy="131.4"
        gradientUnits="userSpaceOnUse" />
+    <!-- verloop voor beugel-balk (toonarm-beugel, 2026-08-24, op gebruikersverzoek): bovenste stuk
+         (breed uiteinde, richting "1" op de gewichtschaal) donkerder, verlopend naar donkergrijs
+         richting het onderste (smalle) uiteinde. userSpaceOnUse langs de eigen lengte-as van de
+         beugel (top: 818.52,109.64 - onder: 891.3,162.59, de twee middelpunten van de trapezium-
+         uiteinden). -->
+    <linearGradient
+       id="beugelBalkGrad"
+       x1="818.52"
+       y1="109.64"
+       x2="903.43"
+       y2="171.41"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0%"
+         stop-color="#0a0a0b" />
+      <stop
+         offset="100%"
+         stop-color="#3a3b3e" />
+    </linearGradient>
+    <!-- radiaal verloop voor hoogtering-basis (2026-08-24, opnieuw gecorrigeerd op
+         gebruikersverzoek: "van buiten naar binnen toe lichter worden (naar zilvergrijs)") -
+         buitenrand donker, middelpunt zilvergrijs. -->
+    <radialGradient
+       id="hoogteringZwartGrad"
+       cx="50%"
+       cy="50%"
+       r="50%">
+      <stop
+         offset="0%"
+         stop-color="#c7c8cb" />
+      <stop
+         offset="100%"
+         stop-color="#0b0b0c" />
+    </radialGradient>
     <radialGradient
        inkscape:collect="always"
        xlink:href="#knobGrad"
@@ -1289,49 +1382,66 @@
            stroke-width="3"
            filter="url(#inner-shadow)"
            id="circle78" />
-        <!-- statische hendel-cradle (arm-lift/rust-beugel) linksonder in de pivotplaat, zoals op de
-             referentiefoto - een dikke afgeronde gebogen band met een schroef erop. Puur decoratief/
-             statisch (onderdeel van behuizing, niet van de roterende toonarm-groep). -->
-        <path
-           d="M 835,178 C 800,182 780,205 792,224"
-           fill="none"
-           stroke="#1a1b1e"
-           stroke-width="13"
-           stroke-linecap="round"
-           id="arm-rust-beugel" />
-        <path
-           d="M 835,178 C 800,182 780,205 792,224"
-           fill="none"
+        <!-- arm-rust-beugel, vierde poging (2026-08-24) - eerste drie pogingen (schattingen op
+             hoek 145°/5° en verschillende stralen) klopten niet, gebruiker bevestigde: "op de foto
+             staat de beugel tussen 2 en 4 [op de gewichtschaal] met een sleufje waar het beugeltje
+             met het rondje in valt". Hoeken nu NIET geschat maar berekend uit de al bestaande,
+             geverifieerde positie van text-gewicht-2 (780.585,145.746 -> hoek 177,4° t.o.v. pivot
+             863,142) en text-gewicht-4 (850.630,223.567 -> hoek 98,6°). Straal 45 (schatting,
+             kleiner dan de gewichtschaal zelf op r=82,5 - dit is een apart, dichter-bij-de-pivot
+             onderdeel). Bewust een duidelijk contrasterende kleur (#0a0a0b, merkbaar donkerder dan
+             circle78's #1c1d1f) i.p.v. de vorige #1a1b1e die praktisch onzichtbaar bleek tegen de
+             achtergrond (niet een z-order/occlusie-probleem, zoals eerder ten onrechte aangenomen -
+             bevestigd via een felgekleurde testrender). -->
+        <!-- echte cirkelboog (SVG arc-commando) i.p.v. de eerdere quadratic-curve-benadering, die
+             als een "banaan" oogde i.p.v. even rond te lopen als de rest van de pivot-cirkels
+             (2026-08-24, op gebruikersverzoek). Straal 45->62->55 (nog wat naar binnen op
+             gebruikersfeedback). Rand-in-vlak-opbouw (donkere rand eronder, donkergrijs vlak
+             erboven) + drop-shadow-soft voor een "wat lichtere schaduw" - i.p.v. de eerdere platte
+             enkele-kleur-stroke. -->
+        <g filter="url(#drop-shadow-soft)">
+          <path
+             d="M 808.05,144.50 A 55,55 0 0,0 854.78,196.38"
+             fill="none"
+             stroke="#050506"
+             stroke-width="8"
+             stroke-linecap="round"
+             id="arm-rust-beugel-rand" />
+          <path
+             d="M 808.05,144.50 A 55,55 0 0,0 854.78,196.38"
+             fill="none"
+             stroke="#3a3b3e"
+             stroke-width="6"
+             stroke-linecap="round"
+             id="arm-rust-beugel" />
+          <path
+             d="M 808.05,144.50 A 55,55 0 0,0 854.78,196.38"
+             fill="none"
+             stroke="#6c6d70"
+             stroke-width="6"
+             stroke-linecap="round"
+             opacity="0.25"
+             id="arm-rust-beugel-sheen"
+             transform="translate(-1,-1.2)" />
+        </g>
+        <!-- sleufje aan het "4"-uiteinde waar het beugeltje-met-rondje in valt -->
+        <ellipse
+           cx="854.78"
+           cy="196.38"
+           rx="3"
+           ry="1.8"
+           fill="#0a0a0b"
            stroke="#3a3b3e"
-           stroke-width="13"
-           stroke-linecap="round"
-           opacity="0.25"
-           id="arm-rust-beugel-sheen"
-           transform="translate(-1,-1.5)" />
+           stroke-width="0.5"
+           id="arm-rust-beugel-sleuf" />
         <circle
-           cx="803"
-           cy="196"
-           r="4"
-           fill="#2a2b2e"
+           cx="854.78"
+           cy="196.38"
+           r="1.6"
+           fill="#c7c8cb"
            stroke="#0a0a0b"
-           stroke-width="0.6"
-           id="arm-rust-beugel-schroef" />
-        <line
-           x1="801.5"
-           y1="196"
-           x2="804.5"
-           y2="196"
-           stroke="#6c6d70"
-           stroke-width="0.6"
-           id="arm-rust-beugel-schroef-slot" />
-        <line
-           x1="803"
-           y1="194.5"
-           x2="803"
-           y2="197.5"
-           stroke="#6c6d70"
-           stroke-width="0.6"
-           id="arm-rust-beugel-schroef-slot-v" />
+           stroke-width="0.4"
+           id="arm-rust-beugel-knop" />
         <!-- hoogte-afstelring ("6mm HEIGHT ADJUST"): gekartelde kraag rond de voet van de arm, met
            een kort schaalboogje (0-4) eronder, zoals op de referentiefoto. Concentrisch met het
            pivotpunt (863,142). De draaiende pivot-dop (circle248 in de toonarm-groep, r=18,
@@ -1342,11 +1452,10 @@
            cx="863"
            cy="142"
            r="26"
-           fill="url(#knobGrad)"
-           stroke="#1a1a1b"
-           stroke-width="1"
-           id="hoogtering-basis"
-           style="fill:url(#radialGradient480)" />
+           fill="url(#hoogteringZwartGrad)"
+           stroke="#6c6d70"
+           stroke-width="1.2"
+           id="hoogtering-basis" />
         <circle
            cx="863"
            cy="142"
@@ -1871,39 +1980,41 @@
         <g
            id="lock-cluster"
            transform="translate(9,48)">
+          <!-- rondje verkleind (r 12 -> 9, evenredig met de knop-vs-anti-skating-dial-verhouding op
+               de referentiefoto, 2026-08-24) - hendel/knopje/tekst-boog evenredig meegeschaald
+               (factor 0.75) rond hetzelfde middelpunt (898,78). -->
           <circle
              cx="898"
              cy="78"
-             r="12"
-             fill="#1c1d1f"
-             stroke="#4a4b4e"
-             stroke-width="1.5"
+             r="9"
+             fill="#3a3b3e"
+             stroke="#1a1a1c"
+             stroke-width="0.8"
+             filter="url(#drop-shadow-soft)"
              id="circle88" />
-          <circle
-             cx="898"
-             cy="78"
-             r="4"
-             fill="#26272a"
-             id="circle89" />
-          <line
-             x1="898"
-             y1="78"
-             x2="912"
-             y2="64"
-             stroke="url(#metalGrad)"
-             stroke-width="3.5"
+          <!-- subtiel lichtrandje rechts binnen de rand van het rondje (2026-08-24, op
+               gebruikerscorrectie - was eerst een vlak, moet een dun randje zijn). Een losse
+               boogvormige lijn (r=7.5, ruim binnen circle88's r=9), geen vlak/clip meer nodig. -->
+          <path
+             d="M 902.82,72.26 A 7.5,7.5 0 0,1 902.82,83.74"
+             fill="none"
+             stroke="#ffffff"
+             stroke-width="0.6"
              stroke-linecap="round"
-             id="cueing-lever-arm"
-             style="stroke:url(#linearGradient481)" />
-          <circle
-             cx="912"
-             cy="64"
-             r="3.5"
-             fill="url(#metalGrad)"
-             stroke="#000000"
-             stroke-width="0.5"
-             id="cueing-lever-tip"
-             style="fill:url(#linearGradient482)" />
+             opacity="0.3"
+             id="circle88-glansrand" />
+          <!-- hendeltje herzien (2026-08-24, op gebruikerscorrectie o.b.v. de referentiefoto): geen
+               rond knopje aan het uiteinde, zwart i.p.v. zilver, en BUITEN het rondje (vanaf net
+               buiten circle88's rand) i.p.v. vanuit het middelpunt. -->
+          <line
+             x1="908"
+             y1="78"
+             x2="916"
+             y2="78"
+             stroke="#1a1a1c"
+             stroke-width="2"
+             stroke-linecap="round"
+             id="cueing-lever-arm" />
           <!-- 2026-08-22: eerste correctie (los van de knop, eronder) bleek zelf ook fout - hoort
                BOVENIN de knop zelf te staan (net als "ANTI-SKATING" bovenin die dial), niet ernaast.
                Teruggezet in circle88 (cx=898,cy=78,r=12). Vervolgcorrectie (zelfde dag, o.b.v. de
@@ -1911,7 +2022,7 @@
                licht rond mee met de cirkel i.p.v. recht - nu net als antiskate-tekst-pad/hoogte-tekst-pad
                een onzichtbaar boogpad (radius 9, ruim binnen r=12) met de tekst erop via textPath. -->
           <path
-             d="M 892.21,71.11 A 9,9 0 0,1 903.79,71.11"
+             d="M 894.46,73.79 A 5.5,5.5 0 0,1 901.54,73.79"
              fill="none"
              stroke="none"
              id="lock-tekst-pad" />
@@ -1922,10 +2033,10 @@
              text-anchor="middle"
              font-family="Arial, sans-serif"
              font-weight="700"
-             font-size="4px"
+             font-size="3px"
              fill="#0a0a0b"
-             stroke="#5a5b5e"
-             stroke-width="0.15"
+             stroke="#2a2a2c"
+             stroke-width="0.12"
              id="text-lock"><textPath
                xlink:href="#lock-tekst-pad"
                startOffset="50%"
@@ -1939,10 +2050,11 @@
        y="300.13129"
        width="75.799904"
        height="20.025284"
-       rx="3.2255278"
+       rx="0"
        fill="#4a4b4e"
-       stroke="#6c6d70"
-       stroke-width="0.898555"
+       stroke="#1a1a1c"
+       stroke-width="1.4"
+       filter="url(#drop-shadow-soft)"
        id="rect89" />
     <text
        x="1006.8565"
@@ -1952,19 +2064,32 @@
        font-family="Arial, sans-serif"
        font-size="10.5px"
        font-weight="700"
-       fill="#d7d8da"
+       fill="#0c0c0d"
        id="text-tempo-50"
        transform="scale(0.89742061,1.1143047)"
        style="stroke-width:0.898555">±50</text>
+    <!-- donkere buitenrand achter de actieve (cyaan) knop (2026-08-24, op gebruikersverzoek) -
+         een aparte, iets grotere kaderlijn i.p.v. rect90's eigen stroke te wijzigen, want die is
+         zelf al de cyaan gloed-rand van de actieve status. -->
+    <rect
+       x="863.67389"
+       y="324.16418"
+       width="79.799904"
+       height="24.025284"
+       fill="none"
+       stroke="#1a1a1c"
+       stroke-width="1.4"
+       id="rect90-buitenrand" />
     <rect
        x="865.67389"
        y="326.16418"
        width="75.799904"
        height="20.025284"
-       rx="3.2255278"
+       rx="0"
        fill="url(#ledGlow)"
-       stroke="#bdeeff"
+       stroke="#1a1a1c"
        stroke-width="0.898555"
+       filter="url(#drop-shadow-soft)"
        id="rect90"
        style="fill:url(#radialGradient482)" />
     <text
@@ -1984,10 +2109,11 @@
        y="352.19705"
        width="75.799904"
        height="20.025284"
-       rx="3.2255278"
+       rx="0"
        fill="#4a4b4e"
-       stroke="#6c6d70"
-       stroke-width="0.898555"
+       stroke="#1a1a1c"
+       stroke-width="1.4"
+       filter="url(#drop-shadow-soft)"
        id="rect91" />
     <text
        x="1006.8565"
@@ -1997,7 +2123,7 @@
        font-family="Arial, sans-serif"
        font-size="10.5px"
        font-weight="700"
-       fill="#d7d8da"
+       fill="#0c0c0d"
        id="text-tempo-8"
        transform="scale(0.89742061,1.1143047)"
        style="stroke-width:0.898555">±8</text>
@@ -2008,8 +2134,9 @@
        height="30.037926"
        rx="4.0319095"
        fill="#0c0c0d"
-       stroke="#4a4b4e"
+       stroke="#2a2a2c"
        stroke-width="1.34783"
+       filter="url(#drop-shadow-soft)"
        id="rect92" />
     <text
        x="1006.8565"
@@ -2031,6 +2158,18 @@
          x="1006.8565"
          y="362.33795">RANGE</tspan></text>
     <!-- pitch fader -->
+    <!-- zwarte schaduwring rond de zilveren rand van de fader-behuizing (2026-08-24, op
+         gebruikersverzoek) - een iets grotere, volledig zwarte kopie van rect93 vóór hem getekend;
+         rect93's eigen dunnere rand steekt er middenin uit, dus alleen een dunne zwarte rand blijft
+         zichtbaar rondom de zilveren lijn. -->
+    <rect
+       x="865.65253"
+       y="429.22974"
+       width="77.91201"
+       height="275.56876"
+       rx="15.506435"
+       fill="#000000"
+       id="rect93-schaduwring" />
     <rect
        x="868.65253"
        y="432.22974"
@@ -2038,9 +2177,22 @@
        height="269.56876"
        rx="12.506435"
        fill="#0b0b0c"
-       stroke="#3a3b3e"
-       stroke-width="2.49864"
+       stroke="url(#metalGrad)"
+       stroke-width="1.3"
        id="rect93" />
+    <!-- grijs vlak dat de hele binnenkant van de fader-behuizing vult (2026-08-24, op
+         gebruikersverzoek) - ligt onder de sleuf/streepjes/schuifknop/TEMPO-tekst, die er dus
+         allemaal overheen getekend blijven. -->
+    <rect
+       x="874.65253"
+       y="438.22974"
+       width="59.91201"
+       height="257.56876"
+       rx="6.506435"
+       fill="#3a3b3e"
+       id="rect-tempo-vlak" />
+    <!-- binnenschaduw voor meer nuance (2026-08-24, op gebruikersverzoek) - bestaande
+         inner-shadow-filter, zelfde ingesloten/gefreesd effect als elders in deze tekening. -->
     <rect
        x="900.56989"
        y="444.21048"
@@ -2048,6 +2200,7 @@
        height="232.07585"
        rx="2.6756821"
        fill="#000000"
+       filter="url(#inner-shadow-sterk)"
        id="rect94"
        style="stroke-width:0.794391"
        sodipodi:insensitive="true" />
@@ -2223,31 +2376,67 @@
        font-size="7px"
        fill="#9a9b9e"
        id="text-tempo-plus8">+8</text>
+    <!-- schuifknop: rechthoekig met rechte hoeken, past binnen het grijze vlak (874.65-934.56)
+         i.p.v. eroverheen te steken. Twee dikke zwarte groefjes + een licht streepje ertussenin
+         (2026-08-24, terug op gebruikersverzoek na de diagonale-ribbel-poging - "te plat"). -->
     <rect
-       x="873.34253"
+       x="876.65253"
        y="555.03333"
-       width="62.532173"
+       width="55.91201"
        height="25.958475"
-       rx="7.8165216"
        fill="url(#metalGrad)"
        stroke="#6c6d70"
        stroke-width="1.49918"
+       filter="url(#drop-shadow-soft)"
        id="rect102"
        style="fill:url(#linearGradient1)" />
+    <!-- twee lichtgrijze accentstreepjes net binnen de boven-/onderrand (2026-08-24, op
+         gebruikersverzoek, "geven meer accent") -->
     <rect
-       x="873.34253"
-       y="564.01892"
-       width="62.532173"
-       height="2.9952087"
-       fill="#3a3b3e"
+       x="876.65253"
+       y="556.53333"
+       width="55.91201"
+       height="1.2"
+       fill="#c7c8cb"
+       id="rect102-accent-top" />
+    <rect
+       x="876.65253"
+       y="578.29181"
+       width="55.91201"
+       height="1.2"
+       fill="#9a9b9e"
+       id="rect102-accent-bottom" />
+    <rect
+       x="876.65253"
+       y="561.68576"
+       width="55.91201"
+       height="4"
+       fill="#2a2a2c"
        id="rect103"
        style="stroke-width:1.24932" />
+    <rect
+       x="876.65253"
+       y="572.88576"
+       width="55.91201"
+       height="2.4"
+       fill="url(#groefGradDonker)"
+       id="rect103-b"
+       style="stroke-width:1.24932" />
+    <rect
+       x="876.65253"
+       y="568.68576"
+       width="55.91201"
+       height="1.2"
+       fill="#e4e5e7"
+       id="rect103-highlight"
+       style="stroke-width:1.24932" />
     <text
-       x="905.89966"
-       y="691.55389"
+       x="904.60853"
+       y="690"
        text-anchor="middle"
+       dominant-baseline="middle"
        font-family="Arial, sans-serif"
-       font-size="11px"
+       font-size="9px"
        font-weight="700"
        fill="#c9cacd"
        id="text103">TEMPO</text>
@@ -8534,28 +8723,19 @@
            het aansluitpunt op path246 (stroke-width 16, oorspronkelijk 6.5/13 vóór de buisverdikking
            hierboven), op gebruikersverzoek o.b.v. referentiefoto plx-1000_1-bovenkant4.png. -->
       <polygon
-         points="822.98,167.65 854.18,133.86 871.82,150.14 840.61,183.93 "
+         points="829.03,159.66 853.44,133.19 872.56,150.81 848.15,177.28 "
          fill="url(#linearGradient483)"
          stroke="#6c6d70"
          stroke-width="0.6"
          id="toonarm-kraag-recht" />
       <!-- taps toelopend deel iets donkerder dan het rechte deel erboven (2026-08-16, op gebruikersverzoek) -->
       <polygon
-         points="819.82,177.01 822.98,167.65 840.61,183.93 831.58,187.87 "
+         points="819.82,177.01 829.03,159.66 848.15,177.28 831.58,187.87 "
          fill="url(#armTubeGradTaperDark)"
          stroke="#6c6d70"
          stroke-width="0.6"
          id="toonarm-kraag-taper" />
-      <!-- pivot-as (draaiende dop, boven op de statische basisplaat) -->
-      <circle
-         cx="863"
-         cy="142"
-         r="18"
-         fill="url(#knobGrad)"
-         stroke="#3a3b3e"
-         stroke-width="2"
-         id="circle248"
-         style="fill:url(#radialGradient486)" />
+      <!-- pivot-as (circle248) verwijderd (2026-08-24, op gebruikersverzoek: "klopt niet") -->
       <circle
          cx="863"
          cy="142"
@@ -8899,12 +9079,12 @@
          stroke, want een <path>-stroke kan niet taps toelopen. Kreeg op 2026-08-16 inner-shadow
          (ingesloten schaduw) voor een dieper/gefreesd uiterlijk. -->
       <polygon
-         points="813.81,116.11 889.83,164.61 892.77,160.57 823.23,103.17"
-         fill="#1c1d1f"
+         points="813.52,116.51 901.52,174.04 905.34,168.78 823.52,102.77"
+         fill="url(#beugelBalkGrad)"
          filter="url(#inner-shadow)"
          id="beugel-balk" />
       <polygon
-         points="813.81,116.11 889.83,164.61 892.77,160.57 823.23,103.17"
+         points="813.52,116.51 901.52,174.04 905.34,168.78 823.52,102.77"
          fill="#4a4b4e"
          opacity="0.22"
          transform="translate(-1.2,-1.6)"
