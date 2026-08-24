@@ -2937,6 +2937,19 @@
        filter="url(#softShadow)"
        id="circle112"
        style="fill:url(#platterGrad)" />
+    <!-- Zwarte buitenrand van de platter (2026-08-24, op gebruikersverzoek: "aan de buitenrand van de
+         draaischijf hoort een zwarte rand te zitten, die zit er nu niet, deze is wat dikker dan de
+         buitenste zilveren lijn") - de echte rand van de metalen platter, met de zilveren highlight
+         (circle113 hierna) als dunnere chrome-accentring net erbinnen/erbovenop. Vóór circle113 getekend
+         zodat die zilveren lijn er scherp bovenop blijft liggen i.p.v. overschilderd te worden. -->
+    <circle
+       cx="390"
+       cy="395"
+       r="337.5"
+       fill="none"
+       stroke="#0a0a0b"
+       stroke-width="8"
+       id="circle112-zwarte-rand" />
     <circle
        cx="390"
        cy="395"
