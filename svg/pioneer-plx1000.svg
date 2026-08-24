@@ -3198,42 +3198,12 @@
          stroke-opacity="0.35"
          stroke-width="1"
          id="circle234" />
-      <circle
-         cx="390"
-         cy="395"
-         r="117"
-         fill="none"
-         stroke="#000000"
-         stroke-opacity="0.35"
-         stroke-width="1"
-         id="circle235" />
-      <circle
-         cx="390"
-         cy="395"
-         r="110"
-         fill="none"
-         stroke="#000000"
-         stroke-opacity="0.35"
-         stroke-width="1"
-         id="circle236" />
-      <circle
-         cx="390"
-         cy="395"
-         r="103"
-         fill="none"
-         stroke="#000000"
-         stroke-opacity="0.35"
-         stroke-width="1"
-         id="circle237" />
-      <circle
-         cx="390"
-         cy="395"
-         r="96"
-         fill="none"
-         stroke="#000000"
-         stroke-opacity="0.35"
-         stroke-width="1"
-         id="circle238" />
+      <!-- Blanco, groefloze ring tussen de laatste groef (r=124) en het label (r=84) - op elke echte
+           vinylplaat zit hier de "run-out"-zone, glad en zonder groeven. De vier groefcirkels die
+           voorheen doorliepen tot vlak tegen het label (r=117/110/103/96) zijn verwijderd (2026-08-24,
+           op gebruikersverzoek n.a.v. een referentiefoto) - het blanco stuk is nu duidelijk zichtbaar
+           i.p.v. bijna onzichtbaar smal. circle239 (dark fill, vlak vóór het label) blijft staan als
+           achtergrond voor het label zelf. -->
       <circle
          cx="390"
          cy="395"
