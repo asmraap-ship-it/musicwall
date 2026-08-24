@@ -108,13 +108,17 @@ function pasTempoRateToe() {
 }
 if (window.Turntable) window.Turntable.onTempoChange(pasTempoRateToe)
 // START/STOP-knop op de platenspeler-tekening (2026-08-24) - géén simpele pauze-toggle: bij "speelt"
-// een echte stop() (nummer + toonarm terug naar het begin, zelfde als de bestaande ⏹-knop), bij "staat
-// stil" (gepauzeerd óf gestopt) speelPauze() (hervat, of herstart via speelIndex() als er geen bron
-// meer is - dat onderscheid maakt speelPauze() zelf al, zie aldaar).
+// een echte stop(true) (nummer + toonarm terug naar het begin, ZELFDE aanroep als de bestaande
+// ⏹-knop in jukebox.html - behoudTurntable=true laat de Pioneer-tekening gewoon in beeld staan,
+// alleen de plaat verdwijnt, i.p.v. het hele scherm leeg te maken voor de "Kies een nummer"-
+// placeholder. Eerdere versie riep hier per abuis kale stop() aan, wat wél de hele platenspeler liet
+// verdwijnen - bug gemeld door de gebruiker). Bij "staat stil" (gepauzeerd óf gestopt) speelPauze()
+// (hervat, of herstart via speelIndex() als er geen bron meer is - dat onderscheid maakt speelPauze()
+// zelf al, zie aldaar).
 function startStopKlik() {
   const speler = document.getElementById('speler')
   if (speler.paused) speelPauze()
-  else stop()
+  else stop(true)
 }
 if (window.Turntable) window.Turntable.onStartStopClick(startStopKlik)
 
