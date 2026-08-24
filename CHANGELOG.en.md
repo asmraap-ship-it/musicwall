@@ -6,6 +6,21 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.10]
+### Added
+- The TEMPO slider and TEMPO RANGE buttons on the turntable now actually work: they adjust the playback speed, in both the jukebox and the album screen.
+- The START/STOP button on the turntable is now fully functional.
+- Play/pause/next/previous now also work via your keyboard's media keys, as long as the jukebox is open.
+
+### Fixed
+- The smooth, groove-free ring between the grooves and the label was missing from the vinyl record, unlike on a real record.
+- The tonearm no longer landed correctly on the record after earlier headshell changes.
+
+### Changed
+- The tonearm tube has been redrawn for a smoother, more realistic S-shape.
+- The headshell is drawn larger, in proportion with the rest of the tonearm.
+- The turntable now has a soft shadow around the whole housing, and a thicker black rim with a light accent line around the outer edge of the platter.
+
 ## [1.2.9]
 ### Changed
 - The tonearm is drawn thicker and more realistically, with a new ribbed collar where it connects to the headshell.

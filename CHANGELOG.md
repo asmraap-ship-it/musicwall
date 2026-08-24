@@ -4,6 +4,21 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.10]
+### Added
+- De TEMPO-schuif en TEMPO RANGE-knoppen op de platenspeler werken nu echt: ze passen de afspeelsnelheid aan, in zowel de jukebox als het albumscherm.
+- De START/STOP-knop op de platenspeler is nu ook echt bedienbaar.
+- Play/pauze/volgende/vorige werken nu ook via de media-toetsen van je toetsenbord, zolang de jukebox open staat.
+
+### Fixed
+- Tussen de groeven en het label op de vinylplaat ontbrak het gladde, groefloze randje dat een echte plaat daar heeft.
+- De toonarm landde niet meer goed op de plaat na eerdere aanpassingen aan de headshell.
+
+### Changed
+- De toonarmbuis is opnieuw getekend voor een vloeiendere, realistischere S-vorm.
+- De headshell is groter getekend, in verhouding met de rest van de toonarm.
+- De platenspeler heeft nu een zachte schaduw rond de hele behuizing, en een dikkere zwarte rand met een lichte accentlijn aan de buitenkant van de plaat.
+
 ## [1.2.9]
 ### Changed
 - De toonarm is dikker en realistischer getekend, met een nieuwe geribbelde kraag waar hij op de headshell aansluit.
