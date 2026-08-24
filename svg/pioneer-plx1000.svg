@@ -8792,16 +8792,21 @@
            transform="matrix(0.99993528,0.01137656,0.01135848,0.99993549,0,0)" />
         </g>
       </g>
-      <!-- S-vormige armbuis: geometrie teruggezet naar de originele,
-           1-op-1 nagetekende vorm (op verzoek de v2-S-curve-wijziging
-           teruggedraaid). Materiaal blijft armTubeGrad (v2-fix).
+      <!-- S-vormige armbuis (2026-08-24, herbouwd o.b.v. een echte referentiefoto - de eerdere
+           line+quad+line+quad+line-opbouw was weliswaar tangent-continu (dus zonder zichtbare knikken),
+           maar had te veel rechte stukken en een te subtiele bocht t.o.v. de foto, waar de S-bocht een
+           veel groter deel van de buislengte beslaat. Nu een enkele kubieke bezier tussen twee vaste
+           punten: het eerste/laatste lijnsegment (bij de pivot resp. de headshell) zijn ONGEWIJZIGD
+           gelaten (exact dezelfde start-/eindpunten én richtingen als voorheen), zodat de aansluiting op
+           de pivot-kraag en op de headshell-hals naadloos blijft - alleen het middenstuk is vervangen.
+           Materiaal blijft armTubeGrad (v2-fix).
            stroke-width 13 -> 20 -> 16 (2026-08-22): eerste verdikking (op gebruikersverzoek o.b.v. een
            close-up referentiefoto: de hele buis van pivot tot headshell-aansluiting oogt in het echt
            dikker dan hier getekend) bleek op gebruikersfeedback te fors ("niet zoveel dat deze weer te
            smal wordt" - dus een tussenwaarde). De highlight (path247) en de taps toelopende kraag
            hieronder zijn evenredig meegeschaald zodat de aansluiting bij de pivot naadloos blijft. -->
       <path
-         d="m 863.02833,141.97547 -75.79187,82.49134 q -30.29688,33.01649 -52.64704,71.91809 l -33.97224,59.25013 q -27.31686,47.57965 -79.0699,65.13524 l -110.16145,37.40539"
+         d="M 863.02833,141.97547 L 787.23646,224.46681 C 699.28208,320.19574 744.64459,378.9725 621.54728,420.77027 L 511.38583,458.17566"
          fill="none"
          stroke="url(#armTubeGrad)"
          stroke-width="15.9265"
@@ -8809,20 +8814,16 @@
          stroke-linejoin="round"
          id="path246"
          style="stroke:url(#linearGradient485)" />
-      <!-- Highlight vervangen door TWEE dunne banen met een kleine tussenruimte (2026-08-22, op
-           gebruikersverzoek o.b.v. een referentiefoto) i.p.v. één brede gecentreerde gloed - een
-           gepolijst-rond-metalen buis heeft in het echt twee losse catchlights, geen platte gloed
-           middenin, en dat geeft de buis een veel duidelijker zilverachtig karakter.
-           Beide banen zijn een letterlijke kopie van path246's eigen `d` (dus vloeien exact met de buis
-           mee), elk met een vaste `transform="translate(dx,dy)"` loodrecht op de globale pivot->
-           buiseinde-richting (eenheidsvector (-0.7450,0.6671), dus loodrecht (0.6671,0.7450)) i.p.v. een
-           per-segment offset-berekening - een uniforme translate is geen perfecte perpendiculaire offset
-           op elk punt van de kromme (de richting varieert enigszins langs de S-bocht), maar voor een
-           puur decoratieve highlight (dit was al een stylering, geen fysiek correcte specular-reflectie)
-           is dat verschil niet zichtbaar. Offset ±1.53,±1.71 (magnitude 2.3, ruim binnen path246's eigen
-           halve breedte van 8) laat een duidelijke donkere tussenruimte tussen de twee banen staan. -->
+      <!-- Highlight, TWEE dunne banen met een kleine tussenruimte - een gepolijst-rond-metalen buis
+           heeft in het echt twee losse catchlights, geen platte gloed middenin, en dat geeft de buis een
+           veel duidelijker zilverachtig karakter.
+           Beide banen zijn een letterlijke kopie van path246's eigen `d` hierboven (dus vloeien exact met
+           de nieuwe S-bocht mee, 2026-08-24 meeherbouwd), elk met dezelfde vaste perpendiculaire offset
+           (±1.5,±1.7, magnitude ~2.3, ruim binnen path246's eigen halve breedte van 8) als voorheen -
+           puur decoratief, geen fysiek correcte specular-reflectie, dus het verschil met een echte
+           per-punt-perpendiculaire offset is niet zichtbaar. -->
       <path
-         d="m 864.53599,143.70401 -75.71335,82.43568 q -30.26549,32.9942 -52.5925,71.86955 l -33.93704,59.21015 q -27.28856,47.54754 -78.98798,65.09128 l -110.04731,37.38015"
+         d="M 864.53599,143.70401 L 788.74412,226.19535 C 700.78974,321.92428 746.15225,380.70104 623.05494,422.49881 L 512.89349,459.9042"
          fill="none"
          stroke="#ffffff"
          stroke-width="2.18802"
@@ -8830,7 +8831,7 @@
          stroke-linecap="round"
          id="path247-a" />
       <path
-         d="m 861.48589,140.27411 -74.4655,82.30712 q -29.76668,32.94275 -51.7257,71.75747 l -33.37772,59.1178 q -26.83881,47.47339 -77.68615,64.98978 l -108.2336,37.32185"
+         d="M 861.48589,140.27411 L 785.69402,222.76545 C 697.73964,318.49438 743.10215,377.27114 620.00484,419.06891 L 509.84339,456.4743"
          fill="none"
          stroke="#ffffff"
          stroke-width="2.16822"
