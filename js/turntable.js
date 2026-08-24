@@ -66,8 +66,23 @@ const ARM_ORIGIN = '863 142'
 // nog preciezer op de vinylrand/eerste-groef-marge dan de vorige ronde) en **EIND_HOEK +0.75°**
 // (r ≈ 89,33, opnieuw net buiten de labelrand 84). RUST_HOEK (-40) opnieuw ongewijzigd/niet
 // herbevestigd nodig (puur decoratief, geen precisie-eis).
+// Vijfde correctieronde (2026-08-24, zelfde dag): gebruiker meldde alsnog "de toonarm komt niet goed
+// op de plaat". De vorige ronde mat alleen het éne naaldpunt (9.9012225,10.001832, headshell-plaat's
+// eigen eerste padpunt) - maar die 20%-vergroting maakt de hele plaat groter, niet alleen dat ene punt:
+// de plaat is een fysieke vorm met een echte oppervlakte, en het TEGENOVERGESTELDE hoekpunt (de
+// achterkant, dicht bij het buisje/de toonarmbuis) ligt bij START_HOEK -25° op r ≈ 327 - ruim ín de
+// stroboscoop-stippenring (die begint bij r ≈ 307, zie svg's #strobo-ring-*-groepen) i.p.v. op de
+// vinyl zelf. Visueel (CDP-screenshot, needle-drop-tip.png in scratchpad) hing daardoor het grootste
+// deel van de headshell-plaat over de platterrand/stippenring, met maar een klein hoekje nog op zwart
+// vinyl - precies het "komt niet goed op de plaat"-effect. Losgelost door BEIDE hoekpunten (niet alleen
+// het naaldpunt) te bewaken: bij elke testhoek zowel het naaldpunt (front, dichtst bij vinylcentrum) als
+// het verste bbox-hoekpunt van headshell-plaat (back, verst van vinylcentrum) gemeten. START_HOEK -19°
+// geeft front r ≈ 239,5 (ruim binnen vinylrand 292, ruim buiten labelrand 84) én back r ≈ 285,6 (net
+// bínnen de vinylrand, dus de hele plaat past nu op de vinyl, geen overlap meer met de stippenring).
+// EIND_HOEK (+0.75°, front r ≈ 89,9, back r ≈ 144,9) bleef ongewijzigd - bij de binnenste groef speelt
+// dit probleem niet, daar zit geen decoratieve ring in de weg. RUST_HOEK (-40) ongewijzigd.
 const RUST_HOEK = -40
-const START_HOEK = -25
+const START_HOEK = -19
 const EIND_HOEK = 0.75
 // Op gebruikersverzoek verruimd van 0.6s - zowel de needle-drop bij starten als de lift-terug-naar-rust
 // bij stoppen/pauzeren voelden te snel/abrupt aan. Geldt voor beide (start()/stop() delen deze constante).
