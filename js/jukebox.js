@@ -97,6 +97,17 @@ document.getElementById('strobo-toggle-btn').classList.toggle('actief', stroboLi
 bijwerkenStroboTooltip()
 if (window.Turntable) window.Turntable.setStroboZichtbaar(stroboLichtVoorkeur)
 
+// Echte TEMPO-fader (2026-08-24): js/turntable.js weet niets van #speler, dus zet playbackRate hier
+// zelf op basis van het percentage dat de fader doorgeeft. pasTempoRateToe() wordt daarnaast ook
+// expliciet aangeroepen vlak ná elke speler.src=... in speelIndex() (zie aldaar), zodat het gekozen
+// tempo blijft gelden bij het wisselen van nummer i.p.v. terug te vallen op 1.0.
+function pasTempoRateToe() {
+  const speler = document.getElementById('speler')
+  if (!speler || !window.Turntable) return
+  speler.playbackRate = 1 + window.Turntable.getTempoPercent() / 100
+}
+if (window.Turntable) window.Turntable.onTempoChange(pasTempoRateToe)
+
 // Versterkt het contrast tussen stil en luid (exponent > 1 duwt lage waarden verder omlaag terwijl hoge
 // waarden relatief hoog blijven) - zonder deze curve oogde de analyzer vlak/gedempt, met een grillige
 // live-uitslag waarbij stille stukken merkbaar sneller wegzakken en pieken duidelijker uitschieten
@@ -373,6 +384,16 @@ window.addEventListener('message', (event) => {
     stopSpectrum()
     foutGaVerder()
   }
+})
+
+// Hardware media-toetsen (2026-08-24, systeembreed via globalShortcut in main.js, alleen actief zolang
+// dit jukebox-venster open is - zie main.js's open-jukebox-handler). Gaat via IPC i.p.v. main.js
+// rechtstreeks executeJavaScript() te laten aanroepen, consistent met hoe andere main->renderer-
+// commando's in dit project (bv. thema-toegepast) al werken.
+ipcRenderer.on('mediatoets', (event, actie) => {
+  if (actie === 'afspelen-pauzeren') speelPauze()
+  else if (actie === 'volgende') volgende()
+  else if (actie === 'vorige') vorige()
 })
 
 async function laadPlaylist() {
@@ -779,6 +800,7 @@ function speelIndex(i) {
 
       const startAfspelen = () => {
         speler.src = 'file:///' + item.lokaal_pad.replace(/\\/g, '/')
+        pasTempoRateToe()
         speler.play()
       }
       if (window.Turntable) {
@@ -796,6 +818,7 @@ function speelIndex(i) {
       }
     } else {
       speler.src = 'file:///' + item.lokaal_pad.replace(/\\/g, '/')
+      pasTempoRateToe()
       speler.play()
       speler.classList.add('zichtbaar')
       audioCoverWrap.classList.remove('zichtbaar')

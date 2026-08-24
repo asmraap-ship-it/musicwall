@@ -32,6 +32,18 @@ function toggleStroboZichtbaar() {
 }
 window.toggleStroboZichtbaar = toggleStroboZichtbaar
 
+// Echte TEMPO-fader (2026-08-24): js/turntable.js weet niets van #album-speler, dus zet playbackRate
+// hier zelf op basis van het percentage dat de fader doorgeeft. Eigen, losstaande tempo-staat t.o.v.
+// een eventueel tegelijk open jukebox-venster - elk venster heeft toch al zijn eigen Turntable-
+// module-instantie (zie CLAUDE.md). pasTempoRateToe() wordt ook expliciet aangeroepen vlak ná
+// albumSpeler.src=... in laadTrack() (zie aldaar), zodat het gekozen tempo blijft gelden bij het
+// wisselen van track i.p.v. terug te vallen op 1.0.
+function pasTempoRateToe() {
+  if (!window.Turntable) return
+  albumSpeler.playbackRate = 1 + window.Turntable.getTempoPercent() / 100
+}
+if (window.Turntable) window.Turntable.onTempoChange(pasTempoRateToe)
+
 async function laadAlbum(albumId) {
   huidigAlbumId = albumId
   const album = getAlbum(albumId)
@@ -274,6 +286,7 @@ function laadTrack(track) {
   // (het ▶/⏸-icoontje ván de trackrij zelf) volgt dezelfde route via de 'play'-listener.
   const startAfspelen = () => {
     albumSpeler.src = 'file:///' + track.lokaal_pad.replace(/\\/g, '/')
+    pasTempoRateToe()
     albumSpeler.play()
   }
 

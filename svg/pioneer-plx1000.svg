@@ -575,6 +575,14 @@
       .speed-knop text { fill: #8a8b8f; transition: fill 0.15s ease; }
       .speed-knop.speed-actief rect { fill: #12233a; }
       .speed-knop.speed-actief text { fill: #7fe0ff; }
+      /* TEMPO RANGE-knoppen (js/turntable.js's setTempoRange()), zelfde idioom als .speed-knop hierboven -
+         .tempo-range-actief (op de knop die bij de huidige currentTempoRange hoort) kleurt 'm met de
+         bestaande cyaan ledGlow-vulling + toont zijn buitenrand, de andere twee blijven neutraal grijs. */
+      .tempo-range-knop { cursor: pointer; }
+      .tempo-range-knop .tempo-range-vlak { fill: #4a4b4e; transition: fill 0.15s ease; }
+      .tempo-range-knop.tempo-range-actief .tempo-range-vlak { fill: url(#radialGradient482); }
+      .tempo-range-knop .tempo-range-buitenrand { display: none; }
+      .tempo-range-knop.tempo-range-actief .tempo-range-buitenrand { display: inline; }
     </style>
     <linearGradient
        inkscape:collect="always"
@@ -2067,89 +2075,119 @@
         </g>
       </g>
     </g>
-    <!-- tempo range indicatorlampjes + knop (ruim onder de pivotplaat) -->
-    <rect
-       x="865.67389"
-       y="300.13129"
-       width="75.799904"
-       height="20.025284"
-       rx="0"
-       fill="#4a4b4e"
-       stroke="#1a1a1c"
-       stroke-width="1.4"
-       filter="url(#drop-shadow-soft)"
-       id="rect89" />
-    <text
-       x="1006.8565"
-       y="278.29"
-       text-anchor="middle"
-       dominant-baseline="middle"
-       font-family="Arial, sans-serif"
-       font-size="10.5px"
-       font-weight="700"
-       fill="#0c0c0d"
-       id="text-tempo-50"
-       transform="scale(0.89742061,1.1143047)"
-       style="stroke-width:0.898555">±50</text>
-    <!-- donkere buitenrand achter de actieve (cyaan) knop (2026-08-24, op gebruikersverzoek) -
-         een aparte, iets grotere kaderlijn i.p.v. rect90's eigen stroke te wijzigen, want die is
-         zelf al de cyaan gloed-rand van de actieve status. -->
-    <rect
-       x="863.67389"
-       y="324.16418"
-       width="79.799904"
-       height="24.025284"
-       fill="none"
-       stroke="#1a1a1c"
-       stroke-width="1.4"
-       id="rect90-buitenrand" />
-    <rect
-       x="865.67389"
-       y="326.16418"
-       width="75.799904"
-       height="20.025284"
-       rx="0"
-       fill="url(#ledGlow)"
-       stroke="#1a1a1c"
-       stroke-width="0.898555"
-       filter="url(#drop-shadow-soft)"
-       id="rect90"
-       style="fill:url(#radialGradient482)" />
-    <text
-       x="1006.8565"
-       y="301.66"
-       text-anchor="middle"
-       dominant-baseline="middle"
-       font-family="Arial, sans-serif"
-       font-size="10.5px"
-       font-weight="700"
-       fill="#0c0c0d"
-       id="text-tempo-16"
-       transform="scale(0.89742061,1.1143047)"
-       style="stroke-width:0.898555">±16</text>
-    <rect
-       x="865.67389"
-       y="352.19705"
-       width="75.799904"
-       height="20.025284"
-       rx="0"
-       fill="#4a4b4e"
-       stroke="#1a1a1c"
-       stroke-width="1.4"
-       filter="url(#drop-shadow-soft)"
-       id="rect91" />
-    <text
-       x="1006.8565"
-       y="325.03"
-       text-anchor="middle"
-       dominant-baseline="middle"
-       font-family="Arial, sans-serif"
-       font-size="10.5px"
-       font-weight="700"
-       fill="#0c0c0d"
-       id="text-tempo-8"
-       transform="scale(0.89742061,1.1143047)"
-       style="stroke-width:0.898555">±8</text>
+    <!-- tempo range indicatorlampjes + knop (ruim onder de pivotplaat). Elk geklikt (js/turntable.js,
+         2026-08-24, echte pitch-fader) - .tempo-range-actief (CSS hieronder, #strobe-stijl) bepaalt
+         welke van de drie de gloed-vulling + buitenrand krijgt i.p.v. hardcoded fill-attributen, zelfde
+         idioom als .speed-knop/.speed-actief bij de 33/45-knoppen. -->
+    <g id="tempo-range-50-btn" class="tempo-range-knop">
+      <rect
+         x="863.67389"
+         y="298.13129"
+         width="79.799904"
+         height="24.025284"
+         fill="none"
+         stroke="#1a1a1c"
+         stroke-width="1.4"
+         class="tempo-range-buitenrand"
+         id="rect89-buitenrand" />
+      <rect
+         x="865.67389"
+         y="300.13129"
+         width="75.799904"
+         height="20.025284"
+         rx="0"
+         stroke="#1a1a1c"
+         stroke-width="1.4"
+         filter="url(#drop-shadow-soft)"
+         class="tempo-range-vlak"
+         id="rect89" />
+      <text
+         x="1006.8565"
+         y="278.29"
+         text-anchor="middle"
+         dominant-baseline="middle"
+         font-family="Arial, sans-serif"
+         font-size="10.5px"
+         font-weight="700"
+         fill="#0c0c0d"
+         id="text-tempo-50"
+         transform="scale(0.89742061,1.1143047)"
+         style="stroke-width:0.898555">±50</text>
+    </g>
+    <g id="tempo-range-16-btn" class="tempo-range-knop tempo-range-actief">
+      <!-- donkere buitenrand achter de actieve (cyaan) knop (2026-08-24, op gebruikersverzoek) -
+           een aparte, iets grotere kaderlijn i.p.v. rect90's eigen stroke te wijzigen, want die is
+           zelf al de cyaan gloed-rand van de actieve status. -->
+      <rect
+         x="863.67389"
+         y="324.16418"
+         width="79.799904"
+         height="24.025284"
+         fill="none"
+         stroke="#1a1a1c"
+         stroke-width="1.4"
+         class="tempo-range-buitenrand"
+         id="rect90-buitenrand" />
+      <rect
+         x="865.67389"
+         y="326.16418"
+         width="75.799904"
+         height="20.025284"
+         rx="0"
+         fill="url(#ledGlow)"
+         stroke="#1a1a1c"
+         stroke-width="0.898555"
+         filter="url(#drop-shadow-soft)"
+         class="tempo-range-vlak"
+         id="rect90" />
+      <text
+         x="1006.8565"
+         y="301.66"
+         text-anchor="middle"
+         dominant-baseline="middle"
+         font-family="Arial, sans-serif"
+         font-size="10.5px"
+         font-weight="700"
+         fill="#0c0c0d"
+         id="text-tempo-16"
+         transform="scale(0.89742061,1.1143047)"
+         style="stroke-width:0.898555">±16</text>
+    </g>
+    <g id="tempo-range-8-btn" class="tempo-range-knop">
+      <rect
+         x="863.67389"
+         y="350.19705"
+         width="79.799904"
+         height="24.025284"
+         fill="none"
+         stroke="#1a1a1c"
+         stroke-width="1.4"
+         class="tempo-range-buitenrand"
+         id="rect91-buitenrand" />
+      <rect
+         x="865.67389"
+         y="352.19705"
+         width="75.799904"
+         height="20.025284"
+         rx="0"
+         stroke="#1a1a1c"
+         stroke-width="1.4"
+         filter="url(#drop-shadow-soft)"
+         class="tempo-range-vlak"
+         id="rect91" />
+      <text
+         x="1006.8565"
+         y="325.03"
+         text-anchor="middle"
+         dominant-baseline="middle"
+         font-family="Arial, sans-serif"
+         font-size="10.5px"
+         font-weight="700"
+         fill="#0c0c0d"
+         id="text-tempo-8"
+         transform="scale(0.89742061,1.1143047)"
+         style="stroke-width:0.898555">±8</text>
+    </g>
     <rect
        x="865.67389"
        y="380.23242"
@@ -2225,7 +2263,7 @@
        fill="#000000"
        filter="url(#inner-shadow-sterk)"
        id="rect94"
-       style="stroke-width:0.794391"
+       style="stroke-width:0.794391;pointer-events:none"
        sodipodi:insensitive="true" />
     <line
        x1="861.31299"
@@ -2309,31 +2347,34 @@
        stroke-width="1.11214"
        id="line112" />
     <!-- reset-knopje links van de tempo-schaal, op dezelfde hoogte als het gele nulpunt-streepje,
-         zoals op de referentiefoto -->
-    <circle
-       cx="818"
-       cy="566.09399"
-       r="10"
-       fill="#141416"
-       stroke="#4a4b4e"
-       stroke-width="1.4"
-       id="reset-knop" />
-    <circle
-       cx="814.5"
-       cy="562.2"
-       r="3"
-       fill="#3a3b3e"
-       opacity="0.5"
-       id="reset-knop-highlight" />
-    <text
-       x="818"
-       y="587"
-       text-anchor="middle"
-       font-family="Arial, sans-serif"
-       font-weight="700"
-       font-size="7px"
-       fill="#c9cacd"
-       id="text-reset">RESET</text>
+         zoals op de referentiefoto. Geklikbaar (js/turntable.js, 2026-08-24, echte pitch-fader) -
+         zet de fader terug naar 0%. -->
+    <g id="tempo-reset-btn" style="cursor:pointer">
+      <circle
+         cx="818"
+         cy="566.09399"
+         r="10"
+         fill="#141416"
+         stroke="#4a4b4e"
+         stroke-width="1.4"
+         id="reset-knop" />
+      <circle
+         cx="814.5"
+         cy="562.2"
+         r="3"
+         fill="#3a3b3e"
+         opacity="0.5"
+         id="reset-knop-highlight" />
+      <text
+         x="818"
+         y="587"
+         text-anchor="middle"
+         font-family="Arial, sans-serif"
+         font-weight="700"
+         font-size="7px"
+         fill="#c9cacd"
+         id="text-reset">RESET</text>
+    </g>
     <!-- schaalcijfers naast de streepjes, van boven naar beneden -8..+8 (geel streepje = midden/nul) -->
     <text
        x="858"
@@ -2401,58 +2442,63 @@
        id="text-tempo-plus8">+8</text>
     <!-- schuifknop: rechthoekig met rechte hoeken, past binnen het grijze vlak (874.65-934.56)
          i.p.v. eroverheen te steken. Twee dikke zwarte groefjes + een licht streepje ertussenin
-         (2026-08-24, terug op gebruikersverzoek na de diagonale-ribbel-poging - "te plat"). -->
-    <rect
-       x="876.65253"
-       y="555.03333"
-       width="55.91201"
-       height="25.958475"
-       fill="url(#metalGrad)"
-       stroke="#6c6d70"
-       stroke-width="1.49918"
-       filter="url(#drop-shadow-soft)"
-       id="rect102"
-       style="fill:url(#linearGradient1)" />
-    <!-- twee lichtgrijze accentstreepjes net binnen de boven-/onderrand (2026-08-24, op
-         gebruikersverzoek, "geven meer accent") -->
-    <rect
-       x="876.65253"
-       y="556.53333"
-       width="55.91201"
-       height="1.2"
-       fill="#c7c8cb"
-       id="rect102-accent-top" />
-    <rect
-       x="876.65253"
-       y="578.29181"
-       width="55.91201"
-       height="1.2"
-       fill="#9a9b9e"
-       id="rect102-accent-bottom" />
-    <rect
-       x="876.65253"
-       y="561.68576"
-       width="55.91201"
-       height="4"
-       fill="#2a2a2c"
-       id="rect103"
-       style="stroke-width:1.24932" />
-    <rect
-       x="876.65253"
-       y="572.88576"
-       width="55.91201"
-       height="2.4"
-       fill="url(#groefGradDonker)"
-       id="rect103-b"
-       style="stroke-width:1.24932" />
-    <rect
-       x="876.65253"
-       y="568.68576"
-       width="55.91201"
-       height="1.2"
-       fill="#e4e5e7"
-       id="rect103-highlight"
-       style="stroke-width:1.24932" />
+         (2026-08-24, terug op gebruikersverzoek na de diagonale-ribbel-poging - "te plat").
+         Alle 6 elementen zitten in #tempo-handle (2026-08-24, echte pitch-fader) - js/turntable.js
+         zet hierop een translate(0,dy) om de knop langs de rail te positioneren, zonder de
+         individuele elementen zelf te hoeven verschuiven (hun getekende y komt overeen met 0%). -->
+    <g id="tempo-handle" style="cursor:grab">
+      <rect
+         x="876.65253"
+         y="555.03333"
+         width="55.91201"
+         height="25.958475"
+         fill="url(#metalGrad)"
+         stroke="#6c6d70"
+         stroke-width="1.49918"
+         filter="url(#drop-shadow-soft)"
+         id="rect102"
+         style="fill:url(#linearGradient1)" />
+      <!-- twee lichtgrijze accentstreepjes net binnen de boven-/onderrand (2026-08-24, op
+           gebruikersverzoek, "geven meer accent") -->
+      <rect
+         x="876.65253"
+         y="556.53333"
+         width="55.91201"
+         height="1.2"
+         fill="#c7c8cb"
+         id="rect102-accent-top" />
+      <rect
+         x="876.65253"
+         y="578.29181"
+         width="55.91201"
+         height="1.2"
+         fill="#9a9b9e"
+         id="rect102-accent-bottom" />
+      <rect
+         x="876.65253"
+         y="561.68576"
+         width="55.91201"
+         height="4"
+         fill="#2a2a2c"
+         id="rect103"
+         style="stroke-width:1.24932" />
+      <rect
+         x="876.65253"
+         y="572.88576"
+         width="55.91201"
+         height="2.4"
+         fill="url(#groefGradDonker)"
+         id="rect103-b"
+         style="stroke-width:1.24932" />
+      <rect
+         x="876.65253"
+         y="568.68576"
+         width="55.91201"
+         height="1.2"
+         fill="#e4e5e7"
+         id="rect103-highlight"
+         style="stroke-width:1.24932" />
+    </g>
     <text
        x="904.60853"
        y="690"
@@ -2462,6 +2508,7 @@
        font-size="9px"
        font-weight="700"
        fill="#c9cacd"
+       style="pointer-events:none"
        id="text103">TEMPO</text>
     <!-- power knop: zwarte schijf (zelfde #141416 als de antiskate-dial hieronder, i.p.v. de lichte
          metalen knobGrad) met een dikkere, lichtgrijze rand (#8a8b8f, zelfde lichtgrijs als de

@@ -83,6 +83,20 @@ const VINYL_PLAATSING_DUUR = 0.9
 const STROBO_RPM_3313 = 33.333
 const STROBO_RPM_45 = 45
 
+// Echte TEMPO-fader (2026-08-24) - rail-ijkpunten opgemeten in svg/pioneer-plx1000.svg (lokale
+// coördinaten van de fader-groep, geen extra transform nodig): TOP = volle uitslag omhoog (-range%),
+// ZERO = midden (valt samen met het gele nulpunt-blokje/de RESET-knop-hoogte), BOTTOM = volle uitslag
+// omlaag (+range%). Twee-segments-lineair (TOP->ZERO, ZERO->BOTTOM) i.p.v. één rechte lijn TOP->BOTTOM,
+// zodat 0% altijd exact op de gele nulmarkering landt ondanks een kleine, bestaande asymmetrie in de
+// getekende schaalstreepjes (de -8-streep zit net iets dichter bij 0 dan de +8-streep).
+const TEMPO_RAIL_TOP_Y = 451.95386
+const TEMPO_RAIL_ZERO_Y = 566.09399
+const TEMPO_RAIL_BOTTOM_Y = 683.07532
+// #tempo-handle's 6 kind-elementen zijn getekend op hun eigen, vaste y (rusthoogte) - dat komt al
+// nagenoeg overeen met TEMPO_RAIL_ZERO_Y (center ≈568.01, verschil <2 eenheden, onzichtbaar), dus die
+// getekende stand IS de 0%-referentie waar een translate(0,dy) vanaf rekent.
+const TEMPO_HANDLE_REST_CENTER_Y = 555.03333 + 25.958475 / 2
+
 let draaischijfEl = null
 let vinylEl = null
 let toonarmInnerEl = null
@@ -115,6 +129,22 @@ let huidigeCoverPad = null
 let currentSpeed = STROBO_RPM_3313
 let speed33BtnEl = null
 let speed45BtnEl = null
+// Echte TEMPO-fader/TEMPO RANGE (2026-08-24) - currentTempoFraction (-1..+1) is de positie langs de
+// rail, ONAFHANKELIJK van het gekozen bereik (net als op echte hardware: de fysieke schuifstand blijft
+// staan als je van bereik wisselt, alleen het percentage dat die stand vertegenwoordigt verandert).
+// currentTempoRange begint op 16 omdat de "±16"-knop in de svg-tekening zelf al als geselecteerd is
+// opgemaakt (.tempo-range-actief op #tempo-range-16-btn).
+let currentTempoFraction = 0
+let currentTempoRange = 16
+let tempoChangeCallback = null
+let tempoDragging = false
+let tempoHandleEl = null
+let tempoRailEl = null
+let tempoResetBtnEl = null
+let tempoRange8BtnEl = null
+let tempoRange16BtnEl = null
+let tempoRange50BtnEl = null
+let svgRootEl = null
 
 function hoekVoorProgressie(progressie) {
   const p = Math.min(1, Math.max(0, progressie))
@@ -202,11 +232,10 @@ const STROBO_RING_GROEPEN = [
 // snelheid geselecteerd is, wat niet overeenkomt met een echt apparaat). Bij drift 0 staat de animatie op
 // 'paused' (ring oogt stilstaand); bij een afwijking draait de ring in `60 / |drift|` seconden per
 // omwenteling, mee bij positieve drift, terug bij negatieve.
-// **Deze app heeft nog geen echte tempo-/pitch-fader** - playback draait altijd op nominale snelheid, dus
-// pitchPercent is hier in de praktijk altijd 0. `geselecteerdeNominaalRpm` volgt sinds de 33⅓/45-
-// toerenwissel (setSpeed() verderop) wél de daadwerkelijk gekozen snelheid, i.p.v. altijd hardcoded
-// STROBO_RPM_3313 - de functie is verder ongewijzigd, en blijft ook klaar voor een toekomstige echte
-// pitch-control (pitchPercent zou daar dan niet meer altijd 0 zijn).
+// Sinds de echte TEMPO-fader (2026-08-24) is pitchPercent niet meer altijd 0 - pasTempoFractieToe()/
+// setTempoRange() verderop roepen deze functie aan met het daadwerkelijke fader-percentage.
+// `geselecteerdeNominaalRpm` volgt sinds de 33⅓/45-toerenwissel (setSpeed() verderop) de daadwerkelijk
+// gekozen snelheid, i.p.v. altijd hardcoded STROBO_RPM_3313.
 function setStroboPitch(pitchPercent, geselecteerdeNominaalRpm) {
   if (!strobeRingsWrap) return
   const actueleRpm = geselecteerdeNominaalRpm * (1 + pitchPercent / 100)
@@ -262,7 +291,9 @@ function pasStroboRingModusToe() {
   }
   if (stroboZichtbaar) {
     strobeRingsWrap.classList.remove('strobo-fast-blur')
-    setStroboPitch(0, currentSpeed)
+    // Niet hardcoded 0 (2026-08-24) - anders zou het aan/uit-togglen van dit licht of het wisselen van
+    // 33⅓/45 de ringen laten "vergeten" dat de TEMPO-fader ergens anders dan 0% staat.
+    setStroboPitch(huidigTempoPercent(), currentSpeed)
   } else {
     strobeRingsWrap.classList.add('strobo-fast-blur')
     const duur = `${60 / currentSpeed}s`
@@ -277,9 +308,9 @@ function pasStroboRingModusToe() {
 }
 
 // 33⅓/45-toerenwissel: klikken op #speed-33-btn/#speed-45-btn (svg/pioneer-plx1000.svg) roept dit aan.
-// Puur visueel/decoratief, zoals de rest van deze module al bij ontbreken van een echte tempo-fader -
-// heeft geen effect op de daadwerkelijke afspeelsnelheid van het audiobestand (dat blijft in js/jukebox.js/
-// js/album-detail.js's <audio>-element gewoon op 1.0 draaien). timeScale i.p.v. draaischijfTween opnieuw
+// Puur visueel/decoratief - heeft geen effect op de daadwerkelijke afspeelsnelheid van het audiobestand
+// (dat wordt uitsluitend door de TEMPO-fader/TEMPO RANGE bestuurd, zie pasTempoFractieToe() verderop).
+// timeScale i.p.v. draaischijfTween opnieuw
 // aan te maken of zijn duration() te wijzigen: timeScale verandert het tempo vanaf de huidige rotatiehoek,
 // zonder de rotatie zelf te resetten of te laten springen - en gsap.to() erop geeft een korte, vloeiende
 // op-/afbouw (alsof de motor van toerental wisselt) i.p.v. een abrupte tempowissel.
@@ -303,6 +334,83 @@ function setSpeed(rpm) {
 function bijwerkenSpeedKnoppen() {
   if (speed33BtnEl) speed33BtnEl.classList.toggle('speed-actief', currentSpeed === STROBO_RPM_3313)
   if (speed45BtnEl) speed45BtnEl.classList.toggle('speed-actief', currentSpeed === STROBO_RPM_45)
+}
+
+// Echte TEMPO-fader/TEMPO RANGE (2026-08-24): slepen aan #tempo-handle (of klikken op de rail zelf,
+// #rect-tempo-vlak - beide via dezelfde mousedown-handler in initTurntable() hieronder) stuurt de
+// werkelijke afspeelsnelheid aan via een geregistreerde callback (onTempoChange, zie window.Turntable
+// hieronder) - js/jukebox.js/js/album-detail.js zetten daar zelf speler.playbackRate mee, deze module
+// weet niets van het <audio>-element van het aanroepende venster.
+function huidigTempoPercent() {
+  return currentTempoFraction * currentTempoRange
+}
+
+// Twee-segments-lineair (TOP->ZERO, ZERO->BOTTOM), zie de toelichting bij de TEMPO_RAIL_*-constanten
+// hierboven voor waarom niet één rechte lijn TOP->BOTTOM.
+function fractionToCenterY(fraction) {
+  if (fraction <= 0) return TEMPO_RAIL_TOP_Y + (fraction + 1) * (TEMPO_RAIL_ZERO_Y - TEMPO_RAIL_TOP_Y)
+  return TEMPO_RAIL_ZERO_Y + fraction * (TEMPO_RAIL_BOTTOM_Y - TEMPO_RAIL_ZERO_Y)
+}
+
+function yToFraction(y) {
+  const geklemd = Math.min(TEMPO_RAIL_BOTTOM_Y, Math.max(TEMPO_RAIL_TOP_Y, y))
+  let fraction
+  if (geklemd <= TEMPO_RAIL_ZERO_Y) {
+    fraction = -1 + (geklemd - TEMPO_RAIL_TOP_Y) / (TEMPO_RAIL_ZERO_Y - TEMPO_RAIL_TOP_Y)
+  } else {
+    fraction = (geklemd - TEMPO_RAIL_ZERO_Y) / (TEMPO_RAIL_BOTTOM_Y - TEMPO_RAIL_ZERO_Y)
+  }
+  return Math.min(1, Math.max(-1, fraction))
+}
+
+// clientY (muisevent-coördinaat) -> svg user-space y, via de svg-root z'n eigen screen-CTM - de
+// standaard, betrouwbare DOM-API hiervoor (houdt vanzelf rekening met viewBox-schaling en de vh-
+// gebaseerde CSS-breedte van #turntable-svg-wrap).
+function clientYNaarSvgY(clientY) {
+  if (!svgRootEl) return TEMPO_RAIL_ZERO_Y
+  const pt = svgRootEl.createSVGPoint()
+  pt.x = 0
+  pt.y = clientY
+  const ctm = svgRootEl.getScreenCTM()
+  if (!ctm) return TEMPO_RAIL_ZERO_Y
+  return pt.matrixTransform(ctm.inverse()).y
+}
+
+function bijwerkenTempoHandle(animate) {
+  if (!tempoHandleEl) return
+  const dy = fractionToCenterY(currentTempoFraction) - TEMPO_HANDLE_REST_CENTER_Y
+  if (animate) {
+    gsap.to(tempoHandleEl, { y: dy, duration: 0.3, ease: 'power2.out', overwrite: true })
+  } else {
+    gsap.killTweensOf(tempoHandleEl)
+    gsap.set(tempoHandleEl, { y: dy })
+  }
+}
+
+// animate: alleen true bij RESET (een korte tween oogt als een gemotoriseerde terugkeer) - tijdens het
+// slepen zelf moet de knop 1-op-1 de muis volgen, nooit vertraagd door een tween.
+function pasTempoFractieToe(fraction, animate) {
+  currentTempoFraction = Math.min(1, Math.max(-1, fraction))
+  bijwerkenTempoHandle(animate)
+  setStroboPitch(huidigTempoPercent(), currentSpeed)
+  if (tempoChangeCallback) tempoChangeCallback(huidigTempoPercent())
+}
+
+// TEMPO RANGE wisselen verplaatst de schuifknop bewust NIET - zelfde gedrag als een echt fysiek
+// apparaat: de fysieke stand blijft staan, alleen het percentage dat die stand vertegenwoordigt
+// verandert mee met het nieuwe bereik.
+function setTempoRange(range) {
+  if (range === currentTempoRange) return
+  currentTempoRange = range
+  bijwerkenTempoRangeKnoppen()
+  setStroboPitch(huidigTempoPercent(), currentSpeed)
+  if (tempoChangeCallback) tempoChangeCallback(huidigTempoPercent())
+}
+
+function bijwerkenTempoRangeKnoppen() {
+  if (tempoRange8BtnEl) tempoRange8BtnEl.classList.toggle('tempo-range-actief', currentTempoRange === 8)
+  if (tempoRange16BtnEl) tempoRange16BtnEl.classList.toggle('tempo-range-actief', currentTempoRange === 16)
+  if (tempoRange50BtnEl) tempoRange50BtnEl.classList.toggle('tempo-range-actief', currentTempoRange === 50)
 }
 
 function initTurntable() {
@@ -332,6 +440,13 @@ function initTurntable() {
   strobeRingsWrap = wrap.querySelector('#strobo-rings')
   speed33BtnEl = wrap.querySelector('#speed-33-btn')
   speed45BtnEl = wrap.querySelector('#speed-45-btn')
+  svgRootEl = wrap.querySelector('svg')
+  tempoHandleEl = wrap.querySelector('#tempo-handle')
+  tempoRailEl = wrap.querySelector('#rect-tempo-vlak')
+  tempoResetBtnEl = wrap.querySelector('#tempo-reset-btn')
+  tempoRange8BtnEl = wrap.querySelector('#tempo-range-8-btn')
+  tempoRange16BtnEl = wrap.querySelector('#tempo-range-16-btn')
+  tempoRange50BtnEl = wrap.querySelector('#tempo-range-50-btn')
 
   if (!draaischijfEl || !vinylEl || !toonarmInnerEl) {
     console.error('Turntable: #draaischijf, #vinyl of #toonarm-inner niet gevonden in de geïnjecteerde svg')
@@ -341,6 +456,31 @@ function initTurntable() {
   if (speed33BtnEl) speed33BtnEl.addEventListener('click', () => setSpeed(STROBO_RPM_3313))
   if (speed45BtnEl) speed45BtnEl.addEventListener('click', () => setSpeed(STROBO_RPM_45))
   bijwerkenSpeedKnoppen()
+
+  // TEMPO-fader slepen + klikken-op-de-rail (2026-08-24) - mousedown op zowel de knop zelf als het
+  // rail-vlak eromheen springt meteen naar die positie (dekt "klik = spring ernaartoe" én de eerste
+  // sleepstap); de daaropvolgende mousemove/mouseup zitten op document (één keer geregistreerd, no-op
+  // als er niet gesleept wordt) zodat het slepen ook buiten de svg zelf blijft werken als de muis
+  // eventjes van de rail af beweegt.
+  const tempoMousedown = (event) => {
+    tempoDragging = true
+    pasTempoFractieToe(yToFraction(clientYNaarSvgY(event.clientY)), false)
+    event.preventDefault()
+  }
+  if (tempoHandleEl) tempoHandleEl.addEventListener('mousedown', tempoMousedown)
+  if (tempoRailEl) tempoRailEl.addEventListener('mousedown', tempoMousedown)
+  document.addEventListener('mousemove', (event) => {
+    if (!tempoDragging) return
+    pasTempoFractieToe(yToFraction(clientYNaarSvgY(event.clientY)), false)
+  })
+  document.addEventListener('mouseup', () => { tempoDragging = false })
+
+  if (tempoResetBtnEl) tempoResetBtnEl.addEventListener('click', () => pasTempoFractieToe(0, true))
+  if (tempoRange8BtnEl) tempoRange8BtnEl.addEventListener('click', () => setTempoRange(8))
+  if (tempoRange16BtnEl) tempoRange16BtnEl.addEventListener('click', () => setTempoRange(16))
+  if (tempoRange50BtnEl) tempoRange50BtnEl.addEventListener('click', () => setTempoRange(50))
+  bijwerkenTempoRangeKnoppen()
+  bijwerkenTempoHandle(false)
 
   // Zet de ringen op basis van currentSpeed (33⅓ bij opstart) én de stroboZichtbaar-lichtstand - zie
   // pasStroboRingModusToe()'s toelichting hierboven.
@@ -628,6 +768,11 @@ function toonHuidigeStandInstant(coverPad, progressie, spelend) {
   else strobeUit()
 }
 
-window.Turntable = { start, stop, bijwerken, reset, setAlbumCover, toonVinyl, verbergVinyl, verbergVinylInstant, toonHuidigeStandInstant, setStroboPitch, setStroboZichtbaar }
+window.Turntable = {
+  start, stop, bijwerken, reset, setAlbumCover, toonVinyl, verbergVinyl, verbergVinylInstant,
+  toonHuidigeStandInstant, setStroboPitch, setStroboZichtbaar,
+  onTempoChange: (cb) => { tempoChangeCallback = cb },
+  getTempoPercent: huidigTempoPercent
+}
 
 initTurntable()

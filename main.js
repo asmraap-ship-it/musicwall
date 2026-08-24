@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, safeStorage } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog, safeStorage, globalShortcut } = require('electron')
 const ffmpegPath = require('ffmpeg-static')
 const { execFile } = require('child_process')
 const fs = require('fs')
@@ -1016,10 +1016,33 @@ ipcMain.on('open-jukebox', () => {
   jukeboxWin.loadFile('jukebox.html')
   jukeboxWin.setMenuBarVisibility(false)
 
+  registreerMediaToetsen()
+
   jukeboxWin.on('closed', () => {
+    globalShortcut.unregisterAll()
     jukeboxWin = null
   })
 })
+
+// Hardware media-toetsen (2026-08-24) - systeembreed via globalShortcut, alleen actief zolang de
+// jukebox open is (geregistreerd bij het aanmaken van jukeboxWin hierboven, opgeruimd bij 'closed' en
+// als veiligheidsnet ook bij will-quit hieronder). Stuurt via IPC naar de renderer i.p.v. rechtstreeks
+// executeJavaScript() - consistent met hoe main->renderer-commando's elders in dit project al lopen.
+// register() geeft false terug als een andere app de toets al geclaimd heeft - geen blokkerende fout,
+// gewoon de rest blijft werken.
+function registreerMediaToetsen() {
+  const acties = {
+    MediaPlayPause: 'afspelen-pauzeren',
+    MediaNextTrack: 'volgende',
+    MediaPreviousTrack: 'vorige'
+  }
+  Object.keys(acties).forEach(toets => {
+    const ok = globalShortcut.register(toets, () => {
+      if (jukeboxWin && !jukeboxWin.isDestroyed()) jukeboxWin.webContents.send('mediatoets', acties[toets])
+    })
+    if (!ok) console.warn('Kon media-toets niet registreren (mogelijk al in gebruik door een andere app):', toets)
+  })
+}
 
 ipcMain.on('open-opslaan-playlist', () => {
   const opslaanWin = new BrowserWindow({
@@ -1491,4 +1514,10 @@ app.whenReady().then(() => {
 // hierboven, want niets riep ooit app.quit() aan
 app.on('window-all-closed', () => {
   app.quit()
+})
+
+// Veiligheidsnet naast jukeboxWin.on('closed', ...) hierboven - voor het geval het venster ooit op een
+// andere manier verdwijnt (bv. het hele app-proces stopt terwijl de jukebox nog open stond).
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll()
 })
