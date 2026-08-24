@@ -8951,6 +8951,17 @@
              exact op de rechte plaatrand tussen de bestaande punten -13.97,-9.23 en -34.67,-8.79,
              eigen fill (linearGradient488, dezelfde die de oude steunbeugel al gebruikte) i.p.v. de
              gedeelde plaat-gradient. -->
+          <!-- Schaduwrandje rondom het kabelvenster (2026-08-24, op gebruikersverzoek: "mist nog een
+               schaduwrandje, grijs eromheen") - een dikkere, grijze kopie van dezelfde `d` vóór het
+               venster zelf getekend (zelfde soort truc als rect93-schaduwring bij de TEMPO-behuizing),
+               zodat er een zachte grijze halo rond de rand van het venster zichtbaar blijft. -->
+          <path
+             d="m -14.3,-1.52 c -5.029864,-0.1007376 -10.076205,-0.2148825 -15.094157,0.224176 -1.040458,0.1275978 -2.118378,0.1916451 -3.095042,0.59996462 -0.149862,0.18677611 -0.551931,0.98664095 -0.518498,1.23280176 L -31.91,1.23 c 0.871306,0.1386764 1.739762,0.3283441 2.612859,0.4349782 2.314166,-0.1526596 4.629968,-0.2727829 6.947883,-0.3508843 L -14.74,1.01 l 1.21,-0.44 0.619341,-1.02477757 z"
+             fill="none"
+             stroke="#6c6d70"
+             stroke-width="1.1"
+             stroke-opacity="0.6"
+             id="headshell-venster-schaduw" />
           <path
              d="m -14.3,-1.52 c -5.029864,-0.1007376 -10.076205,-0.2148825 -15.094157,0.224176 -1.040458,0.1275978 -2.118378,0.1916451 -3.095042,0.59996462 -0.149862,0.18677611 -0.551931,0.98664095 -0.518498,1.23280176 L -31.91,1.23 c 0.871306,0.1386764 1.739762,0.3283441 2.612859,0.4349782 2.314166,-0.1526596 4.629968,-0.2727829 6.947883,-0.3508843 L -14.74,1.01 l 1.21,-0.44 0.619341,-1.02477757 z"
              fill="#0a0a0b"
