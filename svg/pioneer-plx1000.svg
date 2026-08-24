@@ -21,15 +21,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="5.8526684"
-     inkscape:cx="507.11911"
-     inkscape:cy="501.73695"
+     inkscape:zoom="0.73158355"
+     inkscape:cx="453.12665"
+     inkscape:cy="492.76668"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g251" />
+     inkscape:current-layer="svg251" />
   <defs
      id="defs30">
     <linearGradient
@@ -176,11 +176,13 @@
          gebruikt voor headshell-hals/-buisje (2026-08-22, "de gradient moet andersom komen"). -->
     <linearGradient
        id="metalGradReversed"
-       x1="100%"
-       y1="0%"
-       x2="0%"
-       y2="0%"
-       xlink:href="#metalGrad" />
+       x1="0.65679473"
+       y1="-17.265669"
+       x2="-24.739268"
+       y2="-17.265669"
+       xlink:href="#metalGrad"
+       gradientTransform="matrix(1.8270549,0,0,0.54732894,-0.02415345,0.61214882)"
+       gradientUnits="userSpaceOnUse" />
     <linearGradient
        id="metalGradV"
        x1="-29.46722"
@@ -650,7 +652,8 @@
        x1="696.0"
        y1="311.7"
        x2="676.0"
-       y2="289.3" />
+       y2="289.3"
+       gradientTransform="matrix(0.99334041,0,0,0.99747694,5.7755625,0.33374129)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#armTubeGrad"
@@ -8189,7 +8192,8 @@
      id="toonarm"
      transform="translate(-88.22314,41.755877)">
     <g
-       id="toonarm-inner">
+       id="toonarm-inner"
+       style="display:inline">
       <!-- flexibele signaalkabel (v2): korte lus tussen het lagerhuis en de
            armbuis, nodig om de rotatie van de gimbal-ophanging op te vangen.
            Ontbrak volledig in v1. -->
@@ -8214,7 +8218,7 @@
            gemeten tot ~0,95x de buitenrand-straal) bleek op gebruikersfeedback te lang - teruggebracht
            naar factor 1,4 (34,-37 -> 47,60,-51,80) t.o.v. het origineel. -->
       <path
-         d="m 863,142 47.60,-51.80"
+         d="M 863,142 910.6,90.2"
          fill="none"
          stroke="url(#armTubeGrad)"
          stroke-width="24"
@@ -8229,9 +8233,9 @@
            stroke-width verruimd (4->6.5) zodat er ín deze donkere band ruimte overblijft voor het
            zilveren streepje hieronder, met aan weerskanten nog zichtbaar donker ("tussenruimte"). -->
       <line
-         x1="896.08"
+         x1="896.08002"
          y1="124.62"
-         x2="877.52"
+         x2="877.52002"
          y2="107.58"
          stroke="#1a1a1c"
          stroke-width="6.5"
@@ -8249,10 +8253,10 @@
            breedte juist smaller"). Oogt als een dunne highlight-ring middenin de groef, zelfde stijl als
            de dunne highlight-lijnen elders in dit bestand (bv. #lead-wire-highlight/#path247). -->
       <line
-         x1="894.53"
-         y1="123.20"
-         x2="879.07"
-         y2="109.00"
+         x1="894.53003"
+         y1="123.2"
+         x2="879.07001"
+         y2="109"
          stroke="#9a9b9e"
          stroke-width="4.5"
          stroke-linecap="butt"
@@ -8265,7 +8269,7 @@
            transform-attribuut, dat rechts-naar-links toepast) verschuift het eindresultaat zonder de
            rotatiehoek zelf aan te raken. -->
       <g
-         transform="translate(13.60,-14.80) rotate(43,315.22099,1191.0836)"
+         transform="rotate(43,340.80698,1200.9464)"
          id="g246">
         <rect
            x="-23"
@@ -8294,9 +8298,9 @@
              y2="-8"
              id="line686" />
           <line
-             x1="-16.7"
+             x1="-16.700001"
              y1="-13"
-             x2="-16.7"
+             x2="-16.700001"
              y2="-8"
              id="line687" />
           <line
@@ -8312,9 +8316,9 @@
              y2="-8"
              id="line689" />
           <line
-             x1="-6.8"
+             x1="-6.8000002"
              y1="-13"
-             x2="-6.8"
+             x2="-6.8000002"
              y2="-8"
              id="line690" />
           <line
@@ -8330,21 +8334,21 @@
              y2="-8"
              id="line692" />
           <line
-             x1="3.1"
+             x1="3.0999999"
              y1="-13"
-             x2="3.1"
+             x2="3.0999999"
              y2="-8"
              id="line693" />
           <line
-             x1="6.4"
+             x1="6.4000001"
              y1="-13"
-             x2="6.4"
+             x2="6.4000001"
              y2="-8"
              id="line694" />
           <line
-             x1="9.7"
+             x1="9.6999998"
              y1="-13"
-             x2="9.7"
+             x2="9.6999998"
              y2="-8"
              id="line695" />
           <line
@@ -8354,9 +8358,9 @@
              y2="-8"
              id="line696" />
           <line
-             x1="16.3"
+             x1="16.299999"
              y1="-13"
-             x2="16.3"
+             x2="16.299999"
              y2="-8"
              id="line697" />
           <line
@@ -8377,9 +8381,9 @@
              y2="9"
              id="line699" />
           <line
-             x1="-16.7"
+             x1="-16.700001"
              y1="4"
-             x2="-16.7"
+             x2="-16.700001"
              y2="9"
              id="line700" />
           <line
@@ -8395,9 +8399,9 @@
              y2="9"
              id="line702" />
           <line
-             x1="-6.8"
+             x1="-6.8000002"
              y1="4"
-             x2="-6.8"
+             x2="-6.8000002"
              y2="9"
              id="line703" />
           <line
@@ -8413,21 +8417,21 @@
              y2="9"
              id="line705" />
           <line
-             x1="3.1"
+             x1="3.0999999"
              y1="4"
-             x2="3.1"
+             x2="3.0999999"
              y2="9"
              id="line706" />
           <line
-             x1="6.4"
+             x1="6.4000001"
              y1="4"
-             x2="6.4"
+             x2="6.4000001"
              y2="9"
              id="line707" />
           <line
-             x1="9.7"
+             x1="9.6999998"
              y1="4"
-             x2="9.7"
+             x2="9.6999998"
              y2="9"
              id="line708" />
           <line
@@ -8437,9 +8441,9 @@
              y2="9"
              id="line709" />
           <line
-             x1="16.3"
+             x1="16.299999"
              y1="4"
-             x2="16.3"
+             x2="16.299999"
              y2="9"
              id="line710" />
           <line
@@ -8488,10 +8492,10 @@
            smal wordt" - dus een tussenwaarde). De highlight (path247) en de taps toelopende kraag
            hieronder zijn evenredig meegeschaald zodat de aansluiting bij de pivot naadloos blijft. -->
       <path
-         d="m 863,142 -76.3,82.7 q -30.5,33.1 -53,72.1 l -34.2,59.4 Q 672,403.9 619.9,421.5 L 509,459"
+         d="m 863.02833,141.97547 -75.79187,82.49134 q -30.29688,33.01649 -52.64704,71.91809 l -33.97224,59.25013 q -27.31686,47.57965 -79.0699,65.13524 l -110.16145,37.40539"
          fill="none"
          stroke="url(#armTubeGrad)"
-         stroke-width="16"
+         stroke-width="15.9265"
          stroke-linecap="butt"
          stroke-linejoin="round"
          id="path246"
@@ -8509,22 +8513,20 @@
            is dat verschil niet zichtbaar. Offset ±1.53,±1.71 (magnitude 2.3, ruim binnen path246's eigen
            halve breedte van 8) laat een duidelijke donkere tussenruimte tussen de twee banen staan. -->
       <path
-         d="m 863,142 -76.3,82.7 q -30.5,33.1 -53,72.1 l -34.2,59.4 Q 672,403.9 619.9,421.5 L 509,459"
+         d="m 864.53599,143.70401 -75.71335,82.43568 q -30.26549,32.9942 -52.5925,71.86955 l -33.93704,59.21015 q -27.28856,47.54754 -78.98798,65.09128 l -110.04731,37.38015"
          fill="none"
          stroke="#ffffff"
-         stroke-width="2.2"
+         stroke-width="2.18802"
          stroke-opacity="0.4"
          stroke-linecap="round"
-         id="path247-a"
-         transform="translate(1.53,1.71)" />
+         id="path247-a" />
       <path
-         d="m 863,142 -76.3,82.7 q -30.5,33.1 -53,72.1 l -34.2,59.4 Q 672,403.9 619.9,421.5 L 509,459"
+         d="m 861.48589,140.27411 -74.4655,82.30712 q -29.76668,32.94275 -51.7257,71.75747 l -33.37772,59.1178 q -26.83881,47.47339 -77.68615,64.98978 l -108.2336,37.32185"
          fill="none"
          stroke="#ffffff"
-         stroke-width="2.2"
+         stroke-width="2.16822"
          stroke-opacity="0.4"
          stroke-linecap="round"
-         transform="translate(-1.53,-1.71)"
          id="path247-b" />
       <!-- verdikte kraag bovenaan de arm, BOVEN de dunne stang getekend zodat hij zichtbaar dikker is.
            Taps toelopende gevulde vorm (2026-08-16, i.p.v. de vorige uniforme stroke-width 24 lijn) -
@@ -8532,14 +8534,14 @@
            het aansluitpunt op path246 (stroke-width 16, oorspronkelijk 6.5/13 vóór de buisverdikking
            hierboven), op gebruikersverzoek o.b.v. referentiefoto plx-1000_1-bovenkant4.png. -->
       <polygon
-         points="871.82,150.14 840.61,183.93 822.98,167.65 854.18,133.86"
+         points="822.98,167.65 854.18,133.86 871.82,150.14 840.61,183.93 "
          fill="url(#linearGradient483)"
          stroke="#6c6d70"
          stroke-width="0.6"
          id="toonarm-kraag-recht" />
       <!-- taps toelopend deel iets donkerder dan het rechte deel erboven (2026-08-16, op gebruikersverzoek) -->
       <polygon
-         points="840.61,183.93 831.58,187.87 819.82,177.01 822.98,167.65"
+         points="819.82,177.01 822.98,167.65 840.61,183.93 831.58,187.87 "
          fill="url(#armTubeGradTaperDark)"
          stroke="#6c6d70"
          stroke-width="0.6"
@@ -8577,7 +8579,7 @@
            plaatmiddelpunt-afstand (438,8) - zonder de buis (path246) zelf in te korten, dus geen
            zichtbare naad bij de aansluiting (geverifieerd via CDP-screenshot). -->
       <g
-         transform="rotate(161.41075,219.51141,270.44155) translate(-10,0) scale(1.45)"
+         transform="matrix(-1.3743509,0.46223315,-0.46223315,-1.3743509,523.26056,453.6097)"
          id="g251">
         <!-- headshell-hals: het "rechte stukje" dat vanaf het buisje/de overgang doorloopt tot ver
              ONDER de plaat (2026-08-22, o.b.v. referentiefoto plx-1000_1-kop3.png) - bewust VÓÓR
@@ -8588,15 +8590,16 @@
              de schroefjes" - headshell-schroef-1/-2 staan op cx 1/0.57), dus nu tot ruim voorbij de
              schroeven. fill: metalGradReversed i.p.v. metalGrad ("de gradient moet andersom komen"). -->
         <rect
-           x="-45"
-           y="-9.25"
+           x="-45.024158"
+           y="-8.6378517"
            width="46"
            height="13.5"
            fill="url(#metalGradReversed)"
            stroke="#5a5b5e"
            stroke-width="0.4"
            id="headshell-hals"
-           transform="matrix(0.99950558,-0.03144199,-0.0290357,0.99957838,0,0)" />
+           transform="matrix(0.9999938,-0.0035219,-0.05693425,0.99837793,0,0)"
+           style="fill:url(#metalGradReversed)" />
         <!-- Op gebruikersverzoek (2026-08-22) geheel headshell-plaat + z'n subvormen (haakje/venster/
              schroeven/zichtgaatje, plus headshell-logo verderop - apart gewrapt want die staat niet
              aansluitend in de documentvolgorde) verschoven om de door de gebruiker waargenomen knik/
@@ -8615,14 +8618,24 @@
              hals/ring/buisje-elementen (die al op de buis-richting zijn afgestemd) blijven ongewijzigd. -->
         <g
            id="headshell-plaat-groep"
-           transform="translate(0,-1.96)">
+           transform="translate(-3.2681077,-1.6526129)"
+           style="display:inline"
+           sodipodi:insensitive="true">
           <path
-             d="M 9.9012225,10.001832 -7.7476718,9.7488229 -9.4837573,9.0092797 -12.844183,7.5311346 -16.137342,6.674857 -27.565916,5.4390378 l -5.088535,-0.7679306 -5.155825,-1.3897994 -1.713852,-1.050011 -1.431043,-1.87599025 -0.164196,-0.8297846 0.409382,-1.03201615 1.92142,-1.8476111 3.582824,-1.6264417 10.309971,-1.8801293 9.319629,-0.5423651 3.754433,-0.9001378 2.5325964,-1.0140475 2.2121861,-1.2238513 17.6711215,-0.05745 1.319292,1.8750532 0.395658,2.2814228 -0.08785,4.3483134 -0.787451,6.3098085 -0.62492,2.4798901 z"
+             d="m -14.355765,-7.43098 -0.8,-21.98 h -2.4 l -0.8,22.07 z"
+             fill="url(#metalGrad)"
+             stroke="#4a4b4e"
+             stroke-width="0.6"
+             id="headshell-haakje"
+             style="fill:url(#linearGradient488)" />
+          <path
+             d="M 9.9012225,10.001832 -7.7476718,9.7488229 C -10.11559,8.8335642 -12.333016,7.4992937 -14.846518,7.0104933 -17.293231,6.3140112 -19.893482,6.578252 -22.40262,6.251311 -26.397419,6.0642287 -30.357663,5.4348624 -34.182037,4.2593324 c -1.645206,-0.5322356 -3.466292,-0.6558887 -4.873522,-1.7409612 -0.859503,-0.4703824 -1.252673,-1.4572548 -1.899612,-2.16306465 -0.4015,-1.00705876 0.234228,-2.02192765 1.034702,-2.62098815 0.681265,-0.7694201 1.480497,-1.364912 2.461709,-1.6920956 1.228155,-0.5691277 2.432494,-1.2177635 3.815937,-1.2684661 3.662837,-0.6390416 7.350323,-1.0902988 11.051551,-1.4368518 2.570878,-0.327793 5.180723,-0.4288561 7.725213,-0.9101909 1.815404,-0.3958807 3.614357,-0.8434565 5.30397,-1.634641 1.1751169,-0.4138707 2.1295415,-1.560758 3.4587658,-1.336316 5.56583973,-0.0181 11.1316795,-0.03619 16.6975192,-0.05429 0.60074,0.9439451 1.516587,1.7574685 1.506453,2.9542525 0.433596,2.1047268 0.02264,4.2696519 0.124857,6.402433 -0.01864,1.90556312 -0.106227,4.8571362 -0.436968,6.724088 -0.350109,1.9762788 -1.014916,2.7172136 -1.8873145,4.5195865 -7e-7,2e-6 -1e-6,5e-6 -1e-6,5e-6 z"
              fill="url(#metalGrad)"
              stroke="#5a5b5e"
              stroke-width="1"
              id="headshell-plaat"
-             style="fill:url(#linearGradient487)" />
+             style="fill:url(#linearGradient487)"
+             sodipodi:nodetypes="cccccccccccccccccssc" />
           <!-- haakje/pin (verplaatst uitstekend puntje) - los element i.p.v. onderdeel van het grote
              headshell-plaat-pad: als onderdeel van dat ene grote pad deelde het de vaste
              userSpaceOnUse-gradient (linearGradient487) van de hele plaat, wat het te licht liet ogen
@@ -8632,26 +8645,21 @@
              eigen fill (linearGradient488, dezelfde die de oude steunbeugel al gebruikte) i.p.v. de
              gedeelde plaat-gradient. -->
           <path
-             d="m -14.355765,-7.43098 -0.8,-21.98 h -2.4 l -0.8,22.07 z"
-             fill="url(#metalGrad)"
-             stroke="#4a4b4e"
-             stroke-width="0.6"
-             id="headshell-haakje"
-             style="fill:url(#linearGradient488)" />
-          <path
-             d="M -14.30,-1.52 C -31.47,-1.96 -32.57,-0.64 -32.57,-0.64 L -31.91,1.23 L -29.38,1.67 L -25.75,1.45 L -14.74,1.01 L -13.53,0.57 L -13.20,-0.64 L -14.30,-1.52 Z"
+             d="m -14.3,-1.52 c -5.029864,-0.1007376 -10.076205,-0.2148825 -15.094157,0.224176 -1.040458,0.1275978 -2.118378,0.1916451 -3.095042,0.59996462 -0.149862,0.18677611 -0.551931,0.98664095 -0.518498,1.23280176 L -31.91,1.23 c 0.871306,0.1386764 1.739762,0.3283441 2.612859,0.4349782 2.314166,-0.1526596 4.629968,-0.2727829 6.947883,-0.3508843 L -14.74,1.01 l 1.21,-0.44 0.619341,-1.02477757 z"
              fill="#0a0a0b"
              stroke="#9a9b9e"
              stroke-width="0.4"
-             id="headshell-venster-getekend" />
+             id="headshell-venster-getekend"
+             sodipodi:nodetypes="ccccccccccc" />
           <path
-             d="M 4.20,-8.46 L -5.05,-8.46 L -6.48,-7.25 L -5.93,-6.37 L -5.16,-5.49 L 4.31,-5.82 L 4.75,-6.48 L 4.20,-8.46 Z"
+             d="m 4.2,-8.46 h -9.25 l -1.43,1.21 c 0.2774837,0.4274831 0.5099631,0.8883841 0.8746957,1.2510808 L -5.16,-5.49 4.31,-5.82 4.7112218,-6.7567693 Z"
              fill="#c7c8cb"
              stroke="#3a3b3e"
              stroke-width="0.4"
-             id="headshell-schroef-1-getekend" />
+             id="headshell-schroef-1-getekend"
+             sodipodi:nodetypes="cccccccc" />
           <path
-             d="M 0.24,4.75 L -5.16,4.75 L -5.93,5.85 L -5.49,7.07 L 3.54,7.51 L 4.64,6.96 L 4.75,6.41 L 4.64,5.52 L 2.99,4.75 L 0.24,4.75 Z"
+             d="m 0.24,4.75 h -5.4 L -5.93,5.85 -5.49,7.07 3.54,7.51 4.64,6.96 4.75,6.41 4.64,5.52 2.99,4.75 Z"
              fill="#c7c8cb"
              stroke="#3a3b3e"
              stroke-width="0.4"
@@ -8772,9 +8780,9 @@
            transform="matrix(0.99940712,-0.03442983,-0.03156555,0.99950168,0,0)"
            style="fill:url(#linearGradient5)" />
         <line
-           x1="-61.6"
+           x1="-61.599998"
            y1="-4.5"
-           x2="-48.6"
+           x2="-48.599998"
            y2="-4.5"
            stroke="#ffffff"
            stroke-width="2.2"
@@ -8786,10 +8794,10 @@
            het buisje, in de lengte - op gebruikersverzoek (2026-08-22) bewust ASYMMETRISCH (anders dan
            path247-a/-b die gelijk zijn): links een iets bredere band, rechts een smallere. -->
         <line
-           x1="-61.6"
-           y1="-0.3"
-           x2="-48.6"
-           y2="-0.3"
+           x1="-61.599998"
+           y1="-0.30000001"
+           x2="-48.599998"
+           y2="-0.30000001"
            stroke="#ffffff"
            stroke-width="1.1"
            stroke-opacity="0.4"
@@ -8810,7 +8818,7 @@
            id="headshell-buisje-rand-1"
            transform="matrix(0.99950558,-0.03144199,-0.0290357,0.99957838,0,0)" />
         <rect
-           x="-57.3"
+           x="-57.299999"
            y="-9.25"
            width="1.3"
            height="13.5"
@@ -8818,7 +8826,7 @@
            id="headshell-buisje-rand-2"
            transform="matrix(0.99950558,-0.03144199,-0.0290357,0.99957838,0,0)" />
         <rect
-           x="-60.1"
+           x="-60.099998"
            y="-9.25"
            width="1.3"
            height="13.5"
@@ -8832,7 +8840,7 @@
              staat niet aansluitend in de documentvolgorde (de ring/buisje-elementen staan ertussen),
              dus kon niet in diezelfde groep meegenomen worden. -->
         <g
-           transform="translate(0,-1.96)"
+           transform="translate(-3.2681077,-1.6526129)"
            id="g1">
           <text
              x="10.5"
