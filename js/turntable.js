@@ -81,8 +81,17 @@ const ARM_ORIGIN = '863 142'
 // bínnen de vinylrand, dus de hele plaat past nu op de vinyl, geen overlap meer met de stippenring).
 // EIND_HOEK (+0.75°, front r ≈ 89,9, back r ≈ 144,9) bleef ongewijzigd - bij de binnenste groef speelt
 // dit probleem niet, daar zit geen decoratieve ring in de weg. RUST_HOEK (-40) ongewijzigd.
+// Zesde correctieronde (2026-08-24, zelfde dag, twee iteraties op basis van live feedback ín de app
+// i.p.v. losse CDP-screenshots): START_HOEK -19° bleek een overcorrectie - de gebruiker gaf aan dat de
+// headshell nu juist veel te ver van de plaatrand af kwam (front r ≈ 239,5, een ruime 53 eenheden
+// binnen de vinylrand 292). De achterkant-tegen-de-stippenring-constraint uit de vijfde ronde woog dus
+// zwaarder mee dan wat de gebruiker in de praktijk wilde zien: liever de naald duidelijk zichtbaar op/
+// nabij de buitenste rand, ook als de achterkant van de plaat daarbij wat verder in de stippenring komt.
+// Eerst teruggezet naar -24° (front r ≈ 277,4, rond de eerste-groefring-marge 278), waarna de gebruiker
+// nog een kleine correctie in dezelfde richting vroeg ("nog iets verder, nu komt hij precies op de
+// rand") - **START_HOEK -24,5°** (front r ≈ 281,2, back r ≈ 323,6).
 const RUST_HOEK = -40
-const START_HOEK = -19
+const START_HOEK = -24.5
 const EIND_HOEK = 0.75
 // Op gebruikersverzoek verruimd van 0.6s - zowel de needle-drop bij starten als de lift-terug-naar-rust
 // bij stoppen/pauzeren voelden te snel/abrupt aan. Geldt voor beide (start()/stop() delen deze constante).
