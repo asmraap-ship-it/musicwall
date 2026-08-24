@@ -4,8 +4,8 @@
 Een persoonlijke Electron desktop-applicatie waarbij gebruikers YouTube-video's en lokale video's koppelen aan levensmomenten, georganiseerd in thematische "walls" en concertervaringen. Geïnspireerd op de Wurlitzer MediaPlayer (Flash/ActionScript, 2000–2020).
 
 ## Technische stack
-- Electron v42.6.0
-- SQLite via better-sqlite3
+- Electron v43.4.1
+- SQLite via better-sqlite3 (v13+, N-API-based — zie `## Testinfrastructuur`)
 - GSAP voor animaties
 - ffmpeg-static voor thumbnails
 - music-metadata voor ID3-tags/embedded albumhoezen bij MP3-import (pure JS, ESM-only — zie `## MP3-albums`)
@@ -338,17 +338,12 @@ Er bestond nergens een check of een bestand/URL al aanwezig was, dus twee keer d
 - `.github/workflows/release.yml` draait op `windows-latest` bij het pushen van een versietag (`v*`, bijv. `v1.0.1`) of handmatig via `workflow_dispatch`; installeert dependencies, draait `npm run build -- --publish always` met `GH_TOKEN` (de standaard `secrets.GITHUB_TOKEN` van Actions, met `permissions: contents: write` op workflow-niveau)
 - Releaseproces: `version` in `package.json` ophogen → committen → `git tag vX.Y.Z` → `git push origin vX.Y.Z` → CI bouwt en zet de installer + blockmap als draft-release op GitHub
 - **Nog geen echt code-signing-certificaat**: `signtool.exe` draait wel tijdens de build, maar zonder geconfigureerd certificaat is de resulterende `.exe` in werkelijkheid **niet ondertekend** (`Get-AuthenticodeSignature` geeft `NotSigned`) — gebruikers die de installer downloaden krijgen dus een Windows SmartScreen-waarschuwing. Pas op te lossen door een echt (OV/EV) certificaat aan te schaffen en als CI-secret toe te voegen
-- **`npm ci` heeft expliciete Electron-target-vars nodig** (`npm_config_runtime`/`target`/`target_platform`/`target_arch`/`disturl` op de install-stap in `release.yml`): zonder deze probeert `better-sqlite3`'s eigen install-script een binary te bouwen voor de kale Node-runtime van de CI-runner, waar geen prebuilt voor bestaat, en valt terug op `node-gyp`, dat vastloopt
+- **`npm ci` heeft expliciete Electron-target-vars** (`npm_config_runtime`/`target`/`target_platform`/`target_arch`/`disturl` op de install-stap in `release.yml`) — historisch nodig omdat `better-sqlite3`'s install-script anders een binary probeerde te bouwen voor de kale Node-runtime van de CI-runner, geen prebuilt daarvoor vond en terugviel op `node-gyp`, dat vastliep. Sinds de upgrade naar `better-sqlite3` v13 (N-API-based, zie `## Testinfrastructuur`) is dit vermoedelijk niet meer nodig — bewust nog niet verwijderd omdat dit onbeproefd is op de daadwerkelijke CI-runner; `npm_config_target` moet in elk geval meebewegen met `devDependencies.electron`'s versie als hij blijft staan
 
 ## Microsoft Store (MSIX/appx)
 - Los van de GitHub-EXE (NSIS) kan een Store-pakket gebouwd worden met `npm run build:appx` (`electron-builder --win appx`) — bewust **niet** toegevoegd aan `win.target` in de hoofdbuild, zodat de gewone GitHub-release onveranderd blijft
 - `build.appx` in `package.json` bevat de Store-identiteit (`identityName`, `publisher`, `publisherDisplayName`) — deze drie waarden komen uit Partner Center via **Apps and games → productnaam → Product management → Product identity**, ná het aanmaken van een product van het type **"MSIX or PWA app"**
 - **Eigen tegel-iconen in `build/appx/`** (`Square44x44Logo.png`, `Square150x150Logo.png`, `Wide310x150Logo.png`, `StoreLogo.png`) zijn nodig omdat electron-builders eigen appx-icoongeneratie vanuit `build/icon.ico` een vrijwel volledig blanco/transparant resultaat gaf voor alle vier de tegelformaten. De vervangende PNG's zijn gerenderd vanuit hetzelfde `build/icon.ico` via een canvas in een kale Electron-testinstantie en zijn los aangemaakte bestanden — geen wijziging aan `build/icon.ico` zelf
-
-## Openstaand: Electron-upgrade (42.6.0 → 43.x)
-Geïnstalleerd is Electron `^42.5.0` (42.6.0); npm's laatste release is 43.x. Bewust nog niet doorgevoerd — geen bekende urgentie, gepland als eigen, losstaande stap, niet gecombineerd met ander werk.
-- **Impact voor deze (Windows-only, 64-bit) app is laag**: de aangekondigde breaking changes van Electron 43 zijn vrijwel allemaal Linux/macOS-specifiek (Unity-desktopondersteuning weg op Linux, `app.isUnityRunning()` verwijderd, afgeronde hoeken standaard aan op Linux) of raken 32-bit-platforms (irrelevant, dit is een 64-bit build). Downloads gaan voortaan standaard naar de Downloads-map i.p.v. de laatst gebruikte map — niet van toepassing, Musicwall gebruikt geen `webContents.downloadURL`/save-dialogs voor downloads.
-- **Praktisch werk bij het doorvoeren**: `package.json`'s `devDependencies.electron` bumpen, `better-sqlite3` moet opnieuw rebuilden tegen de nieuwe Electron-Node-ABI (`@electron/rebuild`, zie hoe `npm ci` in `.github/workflows/release.yml` dit al voor CI regelt met expliciete target-vars), daarna `npm test` + handmatig doorlopen.
 
 ## Geopperde toekomstige features (nog niet gebouwd)
 Op 2026-08-22 geopperd door Claude Code, door de gebruiker als goede ideeën bestempeld om nog op te pakken — puur genoteerd, nog niet gepland/uitgewerkt.
@@ -433,7 +428,8 @@ Op 2026-08-22 geopperd door Claude Code, door de gebruiker als goede ideeën bes
 - `open-whats-new` → opent whats-new.html (singleton, zoals jukeboxWin)
 
 ## Testinfrastructuur
-- `npm test` draait via `electron --test` met `ELECTRON_RUN_AS_NODE=1` (`package.json`), niet via kale `node --test`: `better-sqlite3` is gecompileerd tegen Electrons Node-ABI (`@electron/rebuild`), niet die van de systeem-Node, dus tests die `database.js` laden crashen onder kale `node` met een `NODE_MODULE_VERSION`-mismatch. `ELECTRON_RUN_AS_NODE=1` laat de Electron-executable als kale Node-runtime draaien (geen `app`/`BrowserWindow`), waardoor native modules met Electrons ABI wél laden.
+- `npm test` draait via `electron --test` met `ELECTRON_RUN_AS_NODE=1` (`package.json`), niet via kale `node --test`. `ELECTRON_RUN_AS_NODE=1` laat de Electron-executable als kale Node-runtime draaien (geen `app`/`BrowserWindow`).
+- **`better-sqlite3` is sinds v13 N-API-based** (upgrade 2026-08-24, samen met de Electron 42→43-bump): één gecompileerde binary is ABI-stabiel over zowel de systeem-Node- als de Electron-Node-runtime heen, dus geen `NODE_MODULE_VERSION`-mismatch meer en geen `@electron/rebuild`-stap nodig bij een toekomstige Electron-upgrade — geverifieerd door `require('better-sqlite3')` los onder kale `node` te draaien. De `electron --test`/`ELECTRON_RUN_AS_NODE=1`-opzet hierboven blijft desondanks staan (ongewijzigd, werkend patroon; niet omgezet naar kale `node --test` zonder concrete aanleiding).
 - `database.js` opent normaal de echte database op `%APPDATA%\Musicwall\musicwall.db` als module-singleton — dat zou tests zonder ingreep tegen de productiedatabase van de gebruiker laten draaien. Opgelost met een env-var-override: `const dbPad = process.env.MUSICWALL_TEST_DB_PAD || path.join(userDataPath, 'musicwall.db')`. Elk testbestand onder `test/db-*.test.js` zet `process.env.MUSICWALL_TEST_DB_PAD = ':memory:'` als allereerste regel, vóór enige `require('../db/...')` — `node --test` draait elk testbestand in een eigen kindproces, dus deze override is per bestand geïsoleerd.
 - Testdekking voor de `db/`-CRUD-modules: `test/db-walls.test.js`, `test/db-videos.test.js`, `test/db-concerten.test.js`, `test/db-wallgroepen.test.js`, `test/db-zoeken.test.js`, `test/db-albums.test.js` — gericht op cascade-deletes en volgorde-herordeningslogica. Elk testbestand reset zijn tabellen in `test.beforeEach()` (`DELETE FROM ...`), omdat de `:memory:`-database per bestand maar één keer wordt aangemaakt en dus gedeeld wordt tussen de `test()`-blokken in dat bestand.
 

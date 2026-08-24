@@ -31,7 +31,7 @@ jobs:
           # CI-runner (Visual Studio wordt niet herkend). electron-builder's eigen
           # rebuild-stap gebruikt dezelfde Electron-target en werkt al wel.
           npm_config_runtime: electron
-          npm_config_target: 42.5.0
+          npm_config_target: 43.4.1
           npm_config_target_platform: win32
           npm_config_target_arch: x64
           npm_config_disturl: https://electronjs.org/headers
