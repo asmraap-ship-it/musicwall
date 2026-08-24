@@ -107,6 +107,16 @@ function pasTempoRateToe() {
   speler.playbackRate = 1 + window.Turntable.getTempoPercent() / 100
 }
 if (window.Turntable) window.Turntable.onTempoChange(pasTempoRateToe)
+// START/STOP-knop op de platenspeler-tekening (2026-08-24) - géén simpele pauze-toggle: bij "speelt"
+// een echte stop() (nummer + toonarm terug naar het begin, zelfde als de bestaande ⏹-knop), bij "staat
+// stil" (gepauzeerd óf gestopt) speelPauze() (hervat, of herstart via speelIndex() als er geen bron
+// meer is - dat onderscheid maakt speelPauze() zelf al, zie aldaar).
+function startStopKlik() {
+  const speler = document.getElementById('speler')
+  if (speler.paused) speelPauze()
+  else stop()
+}
+if (window.Turntable) window.Turntable.onStartStopClick(startStopKlik)
 
 // Versterkt het contrast tussen stil en luid (exponent > 1 duwt lage waarden verder omlaag terwijl hoge
 // waarden relatief hoog blijven) - zonder deze curve oogde de analyzer vlak/gedempt, met een grillige

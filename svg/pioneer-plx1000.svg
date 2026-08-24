@@ -583,6 +583,34 @@
       .tempo-range-knop.tempo-range-actief .tempo-range-vlak { fill: url(#radialGradient482); }
       .tempo-range-knop .tempo-range-buitenrand { display: none; }
       .tempo-range-knop.tempo-range-actief .tempo-range-buitenrand { display: inline; }
+      /* START/STOP-knop (js/turntable.js) - #circle106's ledGlow-rand gedimd in rust, vol fel zodra er
+         echt iets speelt (.start-stop-speelt, gezet op #start-stop-schaduw zelf). */
+      #circle106 { opacity: 0.35; transition: opacity 0.2s ease; }
+      #start-stop-schaduw.start-stop-speelt #circle106 { opacity: 1; }
+      /* Hover-belichting op alle klikbare platenspeler-knoppen (2026-08-24, op gebruikersverzoek - "net
+         als bij de afspeelknoppen van de jukebox") - een zachte gouden gloed + lichte helderheidsboost,
+         zelfde accentkleur als de bestaande .navigatie button:hover in de jukebox-UI (css/jukebox.css).
+         Elke regel behoudt het element se eigen bestaande filter (url(#...)) door 'm mee te ketenen in
+         de CSS filter-shorthand, i.p.v. 'm te overschrijven - anders zou de bestaande schaduw verdwijnen
+         zodra je hovert. */
+      .speed-knop, .tempo-range-knop, #tempo-handle, #tempo-reset-btn, #start-stop-schaduw {
+        transition: filter 0.15s ease;
+      }
+      .speed-knop:hover rect {
+        filter: url(#inner-shadow) brightness(1.18) drop-shadow(0 0 3px rgba(200,168,122,0.55));
+      }
+      .tempo-range-knop:hover .tempo-range-vlak {
+        filter: url(#drop-shadow-soft) brightness(1.18) drop-shadow(0 0 3px rgba(200,168,122,0.55));
+      }
+      #tempo-handle:hover #rect102 {
+        filter: url(#drop-shadow-soft) brightness(1.18) drop-shadow(0 0 3px rgba(200,168,122,0.55));
+      }
+      #tempo-reset-btn:hover {
+        filter: brightness(1.18) drop-shadow(0 0 3px rgba(200,168,122,0.55));
+      }
+      #start-stop-schaduw:hover {
+        filter: url(#drop-shadow-soft) brightness(1.15) drop-shadow(0 0 4px rgba(200,168,122,0.55));
+      }
     </style>
     <linearGradient
        inkscape:collect="always"
@@ -2744,10 +2772,16 @@
            startOffset="50%"
            id="textPath52">ON</textPath></text>
     </g>
-    <!-- start/stop knop -->
+    <!-- start/stop knop: klikbaar (js/turntable.js, 2026-08-24) - toggelt afspelen/pauzeren via
+         window.Turntable.onStartStopClick(cb), zelfde soort venster-onafhankelijke callback als
+         onTempoChange. #circle106's ledGlow-rand is nu conditioneel (.start-stop-speelt, #strobe-stijl
+         hieronder) i.p.v. altijd zichtbaar - gedimd in rust, vol fel zodra er echt iets speelt
+         (laatstSpelend, dezelfde bron als de stroboscoop-gloed). -->
     <g
        id="start-stop-schaduw"
-       filter="url(#drop-shadow-soft)">
+       filter="url(#drop-shadow-soft)"
+       style="cursor:pointer">
+      <title id="title-start-stop">Klik om af te spelen/pauzeren</title>
       <circle
          cx="75"
          cy="715"

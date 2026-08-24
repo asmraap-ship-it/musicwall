@@ -43,6 +43,15 @@ function pasTempoRateToe() {
   albumSpeler.playbackRate = 1 + window.Turntable.getTempoPercent() / 100
 }
 if (window.Turntable) window.Turntable.onTempoChange(pasTempoRateToe)
+// START/STOP-knop op de platenspeler-tekening (2026-08-24) - géén simpele pauze-toggle: bij "speelt"
+// een echte albumStop() (track + toonarm terug naar het begin, zelfde als de bestaande ⏹-knop), bij
+// "staat stil" (gepauzeerd óf gestopt) albumSpeelPauze() (hervat, of herstart vanaf de eerste track
+// als er geen huidige track meer is - dat onderscheid maakt albumSpeelPauze() zelf al, zie aldaar).
+function albumStartStopKlik() {
+  if (albumSpeler.paused) albumSpeelPauze()
+  else albumStop()
+}
+if (window.Turntable) window.Turntable.onStartStopClick(albumStartStopKlik)
 
 async function laadAlbum(albumId) {
   huidigAlbumId = albumId

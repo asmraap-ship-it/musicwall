@@ -145,6 +145,11 @@ let tempoRange8BtnEl = null
 let tempoRange16BtnEl = null
 let tempoRange50BtnEl = null
 let svgRootEl = null
+// START/STOP-knop (2026-08-24) - startStopClickCallback is venster-onafhankelijk (net als
+// tempoChangeCallback hierboven): js/turntable.js weet niets van speelPauze()/albumSpeelPauze(), elk
+// venster registreert zijn eigen functie via window.Turntable.onStartStopClick(cb).
+let startStopClickCallback = null
+let startStopBtnEl = null
 
 function hoekVoorProgressie(progressie) {
   const p = Math.min(1, Math.max(0, progressie))
@@ -191,16 +196,25 @@ function pasStrobeGloedToe() {
   }
 }
 
+// START/STOP-knop se ledGlow-rand volgt laatstSpelend - zelfde bron als de stroboscoop-gloed, dus
+// hier meteen mee aangeroepen i.p.v. een los, derde aanroeppad ergens anders toe te voegen.
+function pasStartStopToe() {
+  if (!startStopBtnEl) return
+  startStopBtnEl.classList.toggle('start-stop-speelt', laatstSpelend)
+}
+
 function strobeAan() {
   laatstSpelend = true
   pasStrobeGloedToe()
   pasStroboRingModusToe()
+  pasStartStopToe()
 }
 
 function strobeUit() {
   laatstSpelend = false
   pasStrobeGloedToe()
   pasStroboRingModusToe()
+  pasStartStopToe()
 }
 
 function setStroboZichtbaar(zichtbaar) {
@@ -447,6 +461,7 @@ function initTurntable() {
   tempoRange8BtnEl = wrap.querySelector('#tempo-range-8-btn')
   tempoRange16BtnEl = wrap.querySelector('#tempo-range-16-btn')
   tempoRange50BtnEl = wrap.querySelector('#tempo-range-50-btn')
+  startStopBtnEl = wrap.querySelector('#start-stop-schaduw')
 
   if (!draaischijfEl || !vinylEl || !toonarmInnerEl) {
     console.error('Turntable: #draaischijf, #vinyl of #toonarm-inner niet gevonden in de geïnjecteerde svg')
@@ -481,6 +496,11 @@ function initTurntable() {
   if (tempoRange50BtnEl) tempoRange50BtnEl.addEventListener('click', () => setTempoRange(50))
   bijwerkenTempoRangeKnoppen()
   bijwerkenTempoHandle(false)
+
+  // START/STOP-knop (2026-08-24) - roept alleen de geregistreerde callback aan, geen eigen
+  // play/pause-logica hier (die hoort bij het aanroepende venster, zie window.Turntable.onStartStopClick).
+  if (startStopBtnEl) startStopBtnEl.addEventListener('click', () => { if (startStopClickCallback) startStopClickCallback() })
+  pasStartStopToe()
 
   // Zet de ringen op basis van currentSpeed (33⅓ bij opstart) én de stroboZichtbaar-lichtstand - zie
   // pasStroboRingModusToe()'s toelichting hierboven.
@@ -772,7 +792,8 @@ window.Turntable = {
   start, stop, bijwerken, reset, setAlbumCover, toonVinyl, verbergVinyl, verbergVinylInstant,
   toonHuidigeStandInstant, setStroboPitch, setStroboZichtbaar,
   onTempoChange: (cb) => { tempoChangeCallback = cb },
-  getTempoPercent: huidigTempoPercent
+  getTempoPercent: huidigTempoPercent,
+  onStartStopClick: (cb) => { startStopClickCallback = cb }
 }
 
 initTurntable()
