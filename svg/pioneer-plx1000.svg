@@ -2762,8 +2762,9 @@
          width="50"
          height="26"
          rx="4"
-         stroke="#4a4b4e"
+         stroke="#000000"
          stroke-width="1.5"
+         filter="url(#inner-shadow)"
          id="rect108" />
       <text
          x="185"
@@ -2785,8 +2786,9 @@
          width="50"
          height="26"
          rx="4"
-         stroke="#4a4b4e"
+         stroke="#000000"
          stroke-width="1.5"
+         filter="url(#inner-shadow)"
          id="rect109" />
       <text
          x="241"
