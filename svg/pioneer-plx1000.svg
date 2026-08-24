@@ -342,6 +342,28 @@
          flood-color="#000000"
          flood-opacity="0.45" />
     </filter>
+    <!-- Cast shadow voor de hele draaitafel-behuizing (2026-08-24, op gebruikersverzoek: "de hele
+         draaitafel zelf" mist schaduw t.o.v. de achtergrond) - op #rect30 (de buitenrand/silhouet van de
+         hele PLX-1000), niet op #behuizing als groep (SVG staat maar één filter per element toe, en
+         #behuizing bevat ook de fader/knoppen die zelf al eigen filters kunnen krijgen). Ruime
+         percentage-gebaseerde x/y/width/height (i.p.v. de krappe 0/0/1/1 van softShadow hierboven) zodat
+         de blur niet tegen de eigen bbox-rand clipt - zie de bekende Inkscape-filterregio-regressie
+         elders in dit bestand, vaste percentages zijn hier bewust het patroon. #behuizing is volledig
+         statisch (geen GSAP-animatie), dus geen performance-overweging zoals bij #draaischijf/
+         #toonarm-inner. -->
+    <filter
+       id="chassisShadow"
+       x="-15%"
+       y="-15%"
+       width="130%"
+       height="130%">
+      <feDropShadow
+         dx="0"
+         dy="10"
+         stdDeviation="14"
+         flood-color="#000000"
+         flood-opacity="0.55" />
+    </filter>
     <!-- Schaduwdiepte-filters (2026-08-16): drop-shadow-soft/inner-shadow/metal-highlight, lichtrichting
          linksboven (consistent met dx/dy hierboven bij softShadow). Bewust alléén toegepast op de
          statische #toonarm-beugel (roteert nooit mee, zie de toelichting bij dat element) - NIET op
@@ -889,7 +911,8 @@
   <g
      id="behuizing"
      sodipodi:insensitive="true">
-    <!-- Buitenrand van de PLX-1000 zelf: dikke zwarte rand. -->
+    <!-- Buitenrand van de PLX-1000 zelf: dikke zwarte rand. filter=chassisShadow geeft de hele
+         behuizing een zachte cast shadow t.o.v. de achtergrond (zie toelichting bij het filter). -->
     <rect
        x="8"
        y="8"
@@ -899,6 +922,7 @@
        fill="url(#chassisGrad)"
        stroke="#0a0a0b"
        stroke-width="5"
+       filter="url(#chassisShadow)"
        id="rect30" />
     <rect
        x="8"
