@@ -89,12 +89,12 @@ const ARM_ORIGIN = '863 142'
 // nabij de buitenste rand, ook als de achterkant van de plaat daarbij wat verder in de stippenring komt.
 // Eerst teruggezet naar -24° (front r ≈ 277,4, rond de eerste-groefring-marge 278), waarna de gebruiker
 // nog een kleine correctie in dezelfde richting vroeg ("nog iets verder, nu komt hij precies op de
-// rand") - eerst naar **-24,5°** (front r ≈ 281,2), maar de gebruiker gaf daarna aan dat dit weer te
-// ver naar buiten was ("nog steeds niet goed, meer naar binnen met de hoek") - **START_HOEK -22°**
-// (front r ≈ 262,3, back r ≈ 306,4) is de huidige stand, middenin het eerder beproefde bereik tussen
-// -19° (te ver naar binnen) en -24,5° (te ver naar buiten).
+// rand") - eerst naar **-24,5°** (front r ≈ 281,2), toen "nog steeds niet goed, meer naar binnen met
+// de hoek" naar **-22°** (front r ≈ 262,3), toen "nu weer te ver naar binnen, ga er tussenin zitten"
+// naar **-23,25°**, en tot slot "nog heel iets naar buiten" - **START_HOEK -23,6°** (front r ≈ 274,6,
+// back r ≈ 317,8) is de huidige, in de draaiende app stapsgewijs bijgeschaafde stand.
 const RUST_HOEK = -40
-const START_HOEK = -22
+const START_HOEK = -23.6
 const EIND_HOEK = 0.75
 // Op gebruikersverzoek verruimd van 0.6s - zowel de needle-drop bij starten als de lift-terug-naar-rust
 // bij stoppen/pauzeren voelden te snel/abrupt aan. Geldt voor beide (start()/stop() delen deze constante).
