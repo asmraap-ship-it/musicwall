@@ -2950,6 +2950,19 @@
        stroke="#0a0a0b"
        stroke-width="8"
        id="circle112-zwarte-rand" />
+    <!-- Dun licht lijntje net buiten de zwarte rand (2026-08-24, op gebruikersverzoek - eerst als donker
+         schaduwrandje geprobeerd, "te breed en te donker", daarna verduidelijkt: "een dun licht lijntje")
+         - een smalle, lichtgekleurde highlight-lijn i.p.v. een schaduw, alsof licht van bovenaf net de
+         buitenste rand van de zwarte rand raakt. -->
+    <circle
+       cx="390"
+       cy="395"
+       r="342"
+       fill="none"
+       stroke="#d8d8db"
+       stroke-opacity="0.5"
+       stroke-width="1"
+       id="circle112-zwarte-rand-highlight" />
     <circle
        cx="390"
        cy="395"
