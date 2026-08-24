@@ -8532,6 +8532,26 @@
       <g
          transform="rotate(43,340.80698,1200.9464)"
          id="g246">
+        <!-- kort taps stukje, EERST getekend (2026-08-24, derde correctieronde: "onder het
+             contragewicht-staaf-uiteinde" bleek een documentvolgorde/laag-instructie te zijn, niet een
+             nieuwe positie) - zit dus in tekenvolgorde onder/achter #contragewicht-lichaam (en dus ook
+             achter contragewicht-staaf-uiteinde) i.p.v. erna/erboven. Positie zelf ongewijzigd (y=16-20,
+             de vaste aansluiting op de schacht). Iets smaller gemaakt: halve breedte 23->19 (boven,
+             rect244-kant) en 12->10 (onder, schacht-kant). Bewust vlak/grijs zonder kartelstreepjes (op
+             gebruikersverzoek: "dat zal moeilijk zijn om erop te zetten"). -->
+        <polygon
+           points="-19,16 19,16 12,20 -12,20"
+           fill="#5a5b5e"
+           stroke="#4a4b4e"
+           stroke-width="0.7"
+           id="contragewicht-taps-stuk" />
+        <!-- contragewicht-lichaam (rect244 + kartels + markeerring + staaf-uiteinde) een stukje
+             omhoog geschoven (2026-08-24) om ruimte te maken voor het taps stukje hierboven, zonder de
+             totale lengte/aansluiting op de schacht te veranderen - translate(0,-4) i.p.v. elk kind-
+             element apart te herpositioneren. -->
+        <g
+           id="contragewicht-lichaam"
+           transform="translate(0,-4)">
         <rect
            x="-23"
            y="-20"
@@ -8736,6 +8756,7 @@
            id="contragewicht-staaf-uiteinde"
            style="fill:url(#linearGradient52)"
            transform="matrix(0.99993528,0.01137656,0.01135848,0.99993549,0,0)" />
+        </g>
       </g>
       <!-- S-vormige armbuis: geometrie teruggezet naar de originele,
            1-op-1 nagetekende vorm (op verzoek de v2-S-curve-wijziging
