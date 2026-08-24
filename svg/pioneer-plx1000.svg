@@ -21,15 +21,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="0.73158355"
-     inkscape:cx="453.12665"
-     inkscape:cy="492.76668"
+     inkscape:zoom="1.4631672"
+     inkscape:cx="689.59995"
+     inkscape:cy="204.69295"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg251" />
+     inkscape:current-layer="toonarm-inner" />
   <defs
      id="defs30">
     <linearGradient
@@ -421,35 +421,42 @@
        height="140%">
       <feComponentTransfer
          in="SourceAlpha"
-         result="sleuf-alpha-omgekeerd">
+         result="sleuf-alpha-omgekeerd"
+         id="feComponentTransfer1">
         <feFuncA
            type="table"
-           tableValues="1 0" />
+           tableValues="1 0"
+           id="feFuncA1" />
       </feComponentTransfer>
       <feGaussianBlur
          in="sleuf-alpha-omgekeerd"
          stdDeviation="2.4"
-         result="sleuf-binnenschaduw-blur" />
+         result="sleuf-binnenschaduw-blur"
+         id="feGaussianBlur3" />
       <feOffset
          in="sleuf-binnenschaduw-blur"
          dx="2"
          dy="2"
-         result="sleuf-binnenschaduw-verschoven" />
+         result="sleuf-binnenschaduw-verschoven"
+         id="feOffset3" />
       <!-- op puur zwart (rect94) is een "donkerdere" schaduw onzichtbaar - daarom hier een echte
          lichtgrijze kleur invloeien (feFlood) i.p.v. te vertrouwen op de (zwarte) alpha-schaduw zelf
          (2026-08-24, op gebruikersverzoek "de schaduw moet lichter worden"). -->
       <feFlood
          flood-color="#333335"
-         result="sleuf-grijsvlak" />
+         result="sleuf-grijsvlak"
+         id="feFlood3" />
       <feComposite
          in="sleuf-grijsvlak"
          in2="sleuf-binnenschaduw-verschoven"
          operator="in"
-         result="sleuf-binnenschaduw-grijs" />
+         result="sleuf-binnenschaduw-grijs"
+         id="feComposite3" />
       <feComposite
          in="sleuf-binnenschaduw-grijs"
          in2="SourceGraphic"
-         operator="atop" />
+         operator="atop"
+         id="feComposite4" />
     </filter>
     <filter
        id="metal-highlight"
@@ -461,7 +468,7 @@
          in="SourceAlpha"
          stdDeviation="1"
          result="beugel-glans-blur"
-         id="feGaussianBlur3" />
+         id="feGaussianBlur4" />
       <feSpecularLighting
          in="beugel-glans-blur"
          surfaceScale="2"
@@ -480,12 +487,12 @@
          in2="SourceAlpha"
          operator="in"
          result="beugel-glans-geclipt"
-         id="feComposite3" />
+         id="feComposite5" />
       <feComposite
          in="beugel-glans-geclipt"
          in2="SourceGraphic"
          operator="over"
-         id="feComposite4" />
+         id="feComposite6" />
     </filter>
     <!-- Stroboscoopringen + LED-gloed: zie de uitgebreide toelichting bij #strobo-rings/#strobo-glow
          verderop in dit bestand (na #draaischijf). Twee losstaande mechanismen, bewust niet gekoppeld:
@@ -603,10 +610,12 @@
        gradientUnits="userSpaceOnUse">
       <stop
          offset="0%"
-         stop-color="#0a0a0b" />
+         stop-color="#0a0a0b"
+         id="stop39" />
       <stop
          offset="100%"
-         stop-color="#3a3b3e" />
+         stop-color="#3a3b3e"
+         id="stop40" />
     </linearGradient>
     <!-- radiaal verloop voor hoogtering-basis (2026-08-24, opnieuw gecorrigeerd op
          gebruikersverzoek: "van buiten naar binnen toe lichter worden (naar zilvergrijs)") -
@@ -618,10 +627,12 @@
        r="50%">
       <stop
          offset="0%"
-         stop-color="#c7c8cb" />
+         stop-color="#c7c8cb"
+         id="stop41" />
       <stop
          offset="100%"
-         stop-color="#0b0b0c" />
+         stop-color="#0b0b0c"
+         id="stop42" />
     </radialGradient>
     <radialGradient
        inkscape:collect="always"
@@ -678,23 +689,23 @@
       <stop
          offset="0%"
          stop-color="#d5d6d9"
-         id="stop39" />
+         id="stop43" />
       <stop
          offset="18%"
          stop-color="#ffffff"
-         id="stop40" />
+         id="stop44" />
       <stop
          offset="45%"
          stop-color="#7d7e82"
-         id="stop41" />
+         id="stop45" />
       <stop
          offset="70%"
          stop-color="#f0f1f2"
-         id="stop42" />
+         id="stop46" />
       <stop
          offset="100%"
          stop-color="#6c6d70"
-         id="stop43" />
+         id="stop47" />
     </linearGradient>
     <!-- Iets donkerdere variant van linearGradient483 hierboven, voor het taps toelopende deel van
          de toonarm-kraag (2026-08-16, op gebruikersverzoek) - elke stop ~15% donkerder, zelfde
@@ -709,23 +720,23 @@
       <stop
          offset="0%"
          stop-color="#9fa0a2"
-         id="stop44" />
+         id="stop48" />
       <stop
          offset="18%"
          stop-color="#bfbfbf"
-         id="stop45" />
+         id="stop49" />
       <stop
          offset="45%"
          stop-color="#5d5e61"
-         id="stop46" />
+         id="stop50" />
       <stop
          offset="70%"
          stop-color="#b4b4b5"
-         id="stop47" />
+         id="stop51" />
       <stop
          offset="100%"
          stop-color="#515254"
-         id="stop48" />
+         id="stop52" />
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
@@ -825,6 +836,16 @@
        y2="-9.2784794"
        gradientTransform="matrix(1.0412241,0,0,1.0879228,3.3150241,0.00495235)"
        gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#metalGrad"
+       id="linearGradient52"
+       x1="-10.8"
+       y1="-38.3"
+       x2="10.8"
+       y2="-38.3"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.1239906,0,0,1.1257791,0.14373954,-8.5738321)" />
   </defs>
   <!-- ======================================================= -->
   <!-- 1) BEHUIZING - basis, fader, knoppen, lampjes, logo      -->
@@ -1399,7 +1420,9 @@
              gebruikersfeedback). Rand-in-vlak-opbouw (donkere rand eronder, donkergrijs vlak
              erboven) + drop-shadow-soft voor een "wat lichtere schaduw" - i.p.v. de eerdere platte
              enkele-kleur-stroke. -->
-        <g filter="url(#drop-shadow-soft)">
+        <g
+           filter="url(#drop-shadow-soft)"
+           id="g52">
           <path
              d="M 808.05,144.50 A 55,55 0 0,0 854.78,196.38"
              fill="none"
@@ -8642,15 +8665,6 @@
              y2="9"
              id="line711" />
         </g>
-        <ellipse
-           cx="0"
-           cy="-17"
-           rx="21"
-           ry="4"
-           fill="url(#knobGrad)"
-           stroke="#4a4b4e"
-           stroke-width="1"
-           id="contragewicht-dop" />
         <rect
            x="-23"
            y="12"
@@ -8662,15 +8676,17 @@
              zelfde breedte als de rest van de toonarmbuis, zoals op de referentiefoto (het
              gewicht schroeft niet helemaal tot het uiteinde) -->
         <rect
-           x="-10.5"
-           y="-38"
-           width="21"
-           height="21"
-           rx="3.5"
+           x="-11.658162"
+           y="-51.353432"
+           width="23.604"
+           height="30"
+           rx="3.9339676"
            fill="url(#metalGrad)"
            stroke="#6c6d70"
-           stroke-width="0.6"
-           id="contragewicht-staaf-uiteinde" />
+           stroke-width="0.67493"
+           id="contragewicht-staaf-uiteinde"
+           style="fill:url(#linearGradient52)"
+           transform="matrix(0.99993528,0.01137656,0.01135848,0.99993549,0,0)" />
       </g>
       <!-- S-vormige armbuis: geometrie teruggezet naar de originele,
            1-op-1 nagetekende vorm (op verzoek de v2-S-curve-wijziging
