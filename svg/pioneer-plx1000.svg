@@ -598,8 +598,8 @@
        id="beugelBalkGrad"
        x1="818.52"
        y1="109.64"
-       x2="903.43"
-       y2="171.41"
+       x2="896.96"
+       y2="166.70"
        gradientUnits="userSpaceOnUse">
       <stop
          offset="0%"
@@ -9079,12 +9079,12 @@
          stroke, want een <path>-stroke kan niet taps toelopen. Kreeg op 2026-08-16 inner-shadow
          (ingesloten schaduw) voor een dieper/gefreesd uiterlijk. -->
       <polygon
-         points="813.52,116.51 901.52,174.04 905.34,168.78 823.52,102.77"
+         points="813.52,116.51 895.05,169.33 898.87,164.07 823.52,102.77"
          fill="url(#beugelBalkGrad)"
          filter="url(#inner-shadow)"
          id="beugel-balk" />
       <polygon
-         points="813.52,116.51 901.52,174.04 905.34,168.78 823.52,102.77"
+         points="813.52,116.51 895.05,169.33 898.87,164.07 823.52,102.77"
          fill="#4a4b4e"
          opacity="0.22"
          transform="translate(-1.2,-1.6)"
