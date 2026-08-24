@@ -2527,15 +2527,9 @@
          id="rect103-highlight"
          style="stroke-width:1.24932" />
     </g>
-    <!-- Onder de fader-behuizing verplaatst (2026-08-24, gemeld door de gebruiker) - bij volle
-         uitslag naar +range% reikt de schuifknop (halve hoogte ~13) tot vlak bij de onderkant van
-         #rect-tempo-vlak (y ≈696), en overlapte daarmee dit label op zijn oorspronkelijke y=690 (nog
-         net binnen de bestaande "buffer" tussen de +8-streep op y=683 en de rail-onderkant). Op een
-         echt apparaat staat "TEMPO" altijd buiten het bereik van de schuifknop, niet erin - vandaar nu
-         onder rect93's eigen onderrand (y≈701.8), met marge. -->
     <text
        x="904.60853"
-       y="712"
+       y="690"
        text-anchor="middle"
        dominant-baseline="middle"
        font-family="Arial, sans-serif"
