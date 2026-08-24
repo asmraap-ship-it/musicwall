@@ -55,9 +55,20 @@ const ARM_ORIGIN = '863 142'
 // START_HOEK -23° (r ≈ 269,6 - duidelijk binnen zowel de vinylrand 292 als de eerste groefring 278,
 // i.p.v. er nog maar net binnen te schrapen) en EIND_HOEK +0.5° (r ≈ 90,9 - net buiten de labelrand 84,
 // ruim vóór de werkelijke dichtste-naderingshoek bij +10°). RUST_HOEK (-40) bleef ongewijzigd.
+// Vierde correctieronde (2026-08-24): #g251 (de headshell) is 20% vergroot (o.b.v. een referentiefoto,
+// "de grootte van de headshell is nu kleiner qua afmeting") - a/b/c/d van g251's matrix-transform
+// geschaald met factor 1.2, e/f (translate) ongewijzigd zodat de lokale origin (dicht bij de
+// aansluiting op path246) op zijn plek blijft; de rest van de headshell (incl. de naaldpositie, elders
+// in g251's lokale coördinaten) groeit daar omheen. Dat verschuift de vaste pivot-naaldafstand, dus
+// opnieuw doorgemeten met dezelfde CDP-methode (plain `rotate(deg,863,142)`-attribuut i.p.v. GSAP -
+// `require('gsap').gsap` bleek in een los scratchpad-testbestand buiten de projectroot niet op te
+// lossen, puur een testharnas-beperking, geen productiecode-issue): **START_HOEK -25°** (r ≈ 284,94,
+// nog preciezer op de vinylrand/eerste-groef-marge dan de vorige ronde) en **EIND_HOEK +0.75°**
+// (r ≈ 89,33, opnieuw net buiten de labelrand 84). RUST_HOEK (-40) opnieuw ongewijzigd/niet
+// herbevestigd nodig (puur decoratief, geen precisie-eis).
 const RUST_HOEK = -40
-const START_HOEK = -23
-const EIND_HOEK = 0.5
+const START_HOEK = -25
+const EIND_HOEK = 0.75
 // Op gebruikersverzoek verruimd van 0.6s - zowel de needle-drop bij starten als de lift-terug-naar-rust
 // bij stoppen/pauzeren voelden te snel/abrupt aan. Geldt voor beide (start()/stop() delen deze constante).
 const ARM_DROP_DUUR = 1.3

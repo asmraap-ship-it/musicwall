@@ -8879,8 +8879,14 @@
            zodat de vaste pivot-naaldafstand (was 509,1) beter in verhouding staat tot de pivot-naar-
            plaatmiddelpunt-afstand (438,8) - zonder de buis (path246) zelf in te korten, dus geen
            zichtbare naad bij de aansluiting (geverifieerd via CDP-screenshot). -->
+      <!-- Headshell 20% vergroot (2026-08-24, o.b.v. referentiefoto - "de grootte van de headshell,
+           die is nu kleiner qua afmeting") - a/b/c/d met factor 1.2 geschaald, e/f (translate) ONGEWIJZIGD
+           zodat g251's lokale origin (0,0), dicht bij de aansluiting op de toonarmbuis, op zijn plek
+           blijft staan; de rest van de headshell groeit daar omheen. START_HOEK/EIND_HOEK in
+           js/turntable.js zijn hierna opnieuw doorgemeten (de naaldpositie t.o.v. de pivot/vinylrand
+           verschuift mee met deze schaling). -->
       <g
-         transform="matrix(-1.3743509,0.46223315,-0.46223315,-1.3743509,523.26056,453.6097)"
+         transform="matrix(-1.64922108,0.55467978,-0.55467978,-1.64922108,523.26056,453.6097)"
          id="g251">
         <!-- headshell-hals: het "rechte stukje" dat vanaf het buisje/de overgang doorloopt tot ver
              ONDER de plaat (2026-08-22, o.b.v. referentiefoto plx-1000_1-kop3.png) - bewust VÓÓR
