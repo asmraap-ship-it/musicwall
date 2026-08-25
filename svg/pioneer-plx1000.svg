@@ -183,6 +183,33 @@
        xlink:href="#metalGrad"
        gradientTransform="matrix(1.8270549,0,0,0.54732894,-0.02415345,0.61214882)"
        gradientUnits="userSpaceOnUse" />
+    <!-- Verticaal verloop voor het geleiderpaneel links van de anti-skating-knop: donker boven,
+         licht in het midden, weer donker onderaan (2026-08-25, o.b.v. referentiefoto). -->
+    <linearGradient
+       id="pivotPaneelGrad"
+       x1="0%"
+       y1="0%"
+       x2="0%"
+       y2="100%">
+      <stop
+         offset="0%"
+         stop-color="#141416" />
+      <stop
+         offset="20%"
+         stop-color="#3a3b3e" />
+      <stop
+         offset="38%"
+         stop-color="#55565a" />
+      <stop
+         offset="62%"
+         stop-color="#55565a" />
+      <stop
+         offset="80%"
+         stop-color="#3a3b3e" />
+      <stop
+         offset="100%"
+         stop-color="#141416" />
+    </linearGradient>
     <!-- Kleine vervaging voor de licht/donker-halo's rond circle39 (gewichtschaal-ring). -->
     <filter
        id="ringHaloBlur"
@@ -1092,22 +1119,22 @@
         <circle
            cx="863"
            cy="142"
-           r="86"
+           r="85"
            fill="none"
-           stroke="#6a6b6f"
-           stroke-width="3"
+           stroke="#e4e5e7"
+           stroke-width="0.6"
            filter="url(#ringHaloBlur)"
-           opacity="0.6"
+           opacity="0.8"
            id="circle39-halo-licht" />
         <circle
            cx="863"
            cy="142"
-           r="66"
+           r="67.5"
            fill="none"
            stroke="#000000"
-           stroke-width="3"
+           stroke-width="2"
            filter="url(#ringHaloBlur)"
-           opacity="0.5"
+           opacity="0.25"
            id="circle39-halo-donker" />
         <line
            x1="935.69565"
@@ -1564,6 +1591,24 @@
            stroke="#0a0a0b"
            stroke-width="0.4"
            id="arm-rust-beugel-knop" />
+        <!-- Grijs paneel links van de anti-skating-knop, deels onder de toonarm-beugel (2026-08-25) -
+             lens-vorm van twee echte cirkelbogen, elk concentrisch met een bestaand element: de
+             rechterboog volgt de anti-skating-dial (r=20, center 939,152.67), de linkerboog volgt
+             de hoogtering (r=32, center 863,142) - dus per definitie sluitend, geen benadering.
+             Hoogte (34, iets kleiner dan de dial se diameter 40) rond y=152.67 (dial se verticale
+             midden) is de gedeelde referentie voor beide bogen se eindpunten, op gebruikersverzoek
+             ("dezelfde hoogte"). Rechte verbindingslijnen boven/onder i.p.v. curves, eenvoudig en
+             voorspelbaar. -->
+        <path
+           d="M 928.46,135.67
+              A 20,20 0 0,0 928.46,169.67
+              L 879.07,169.67
+              A 32,32 0 0,0 894.37,135.67
+              Z"
+           fill="url(#pivotPaneelGrad)"
+           stroke="#0a0a0b"
+           stroke-width="1"
+           id="pivot-geleider-paneel" />
         <!-- hoogte-afstelring ("6mm HEIGHT ADJUST"): gekartelde kraag rond de voet van de arm, met
            een kort schaalboogje (0-4) eronder, zoals op de referentiefoto. Concentrisch met het
            pivotpunt (863,142). De draaiende pivot-dop (circle248 in de toonarm-groep, r=18,
