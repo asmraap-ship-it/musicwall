@@ -210,6 +210,83 @@
          offset="100%"
          stop-color="#141416" />
     </linearGradient>
+    <!-- Radiaal verloop voor de verbrede rand-band (pivot-rand-verbreding-voorstel): donkerder aan
+         de binnenkant (rIn=87), lichter aan de buitenkant (rOut=121), zelfde middelpunt als de
+         pivot-cirkels (863,142). -->
+    <radialGradient
+       id="pivotRandGrad"
+       cx="863"
+       cy="142"
+       r="121"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0%"
+         stop-color="#1e1f21" />
+      <stop
+         offset="72%"
+         stop-color="#1e1f21" />
+      <stop
+         offset="100%"
+         stop-color="#3a3b3e" />
+    </radialGradient>
+    <!-- Clip-vorm voor pivot-rand-schaduw-binnen (2026-08-25, derde versie) - de schuine kanten
+         gebruiken nu dezelfde hoeken als het echte paneel (224°/218° boven, 89°/93° onder), dus
+         lopen parallel aan de echte schuine randen i.p.v. recht/radiaal zoals de vorige versie.
+         Straal blijft bewust anders dan het paneel (r=105 i.p.v. 121, r=82 i.p.v. 87) - stopt vóór
+         de buitenlijn, reikt over de lichte halo heen. Beide buitenhoeken afgerond (Q-curve), net
+         als de afgeronde hoek op het paneel zelf. -->
+    <clipPath
+       id="pivotRandClip"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         d="M 785.52,51.68
+            A 119,119 0 0,0 861.08,260.95
+            Q 865.08,260.98 863.40,257.04
+            L 859.13,215.90
+            A 74,74 0 0,1 804.69,96.44
+            L 784.25,73.83
+            Q 774.55,62.39 785.52,51.68
+            Z" />
+    </clipPath>
+    <!-- Radiaal verloop voor de ronde uitvloeiing aan de uiteinden van pivot-rand-schaduw-binnen
+         (2026-08-25) - zwart/ondoorzichtig in het midden, vervaagt naar buiten toe naar volledig
+         transparant. Gebruikt in een masker (pivotRandSchaduwFade) op elk uiteinde van de schuine
+         kanten, zodat de schaduw daar zachtjes wegvloeit i.p.v. hard af te breken bij de clip. -->
+    <radialGradient
+       id="pivotRandTipFadeGrad">
+      <stop
+         offset="0%"
+         stop-color="#000000"
+         stop-opacity="1" />
+      <stop
+         offset="100%"
+         stop-color="#000000"
+         stop-opacity="0" />
+    </radialGradient>
+    <mask
+       id="pivotRandSchaduwFade"
+       maskUnits="userSpaceOnUse"
+       x="700"
+       y="0"
+       width="250"
+       height="300">
+      <rect
+         x="700"
+         y="0"
+         width="250"
+         height="300"
+         fill="white" />
+      <circle
+         cx="781.72"
+         cy="63.50"
+         r="20"
+         fill="url(#pivotRandTipFadeGrad)" />
+      <circle
+         cx="864.97"
+         cy="254.98"
+         r="14"
+         fill="url(#pivotRandTipFadeGrad)" />
+    </mask>
     <!-- Kleine vervaging voor de licht/donker-halo's rond circle39 (gewichtschaal-ring). -->
     <filter
        id="ringHaloBlur"
@@ -1094,6 +1171,22 @@
            stroke="#0a0a0b"
            stroke-width="2.5"
            id="circle38-buitenrand" />
+        <!-- VOORSTEL (2026-08-25, nog niet definitief): verbrede lichte rand in de linkerzone,
+             concentrisch met circle38 (863,142) - annulaire sector rOut=121 (net binnen
+             circle38-buitenrand r=123) tot rIn=93 (ruime marge tot circle39's buitenrand r=82.5),
+             hoeken 300°→30° de lange weg (via links/onder, ~270°), zodat de toonarmbuis 'm straks
+             op natuurlijke wijze kruist/overdekt. -->
+        <path
+           d="M 783.06,50.83
+              A 121,121 0 0,0 860.89,262.98
+              Q 865.11,262.98 864.34,259.05
+              L 858.81,221.89
+              A 80,80 0 0,1 799.96,92.74
+              L 781.51,71.03
+              C 776.83,65.51 789.38,44.99 783.06,50.83
+              Z"
+           fill="url(#pivotRandGrad)"
+           id="pivot-rand-verbreding-voorstel" />
         <!-- gewichtschaal-ring + streepjes (circle39 + line39...line78 hieronder): op gebruikersverzoek
              (2026-08-15) naar binnen verplaatst, straal t.o.v. de pivot (863,142) van 106 naar 76 (delta
              -30, poolcoördinaten herberekend, hoek per streepje ongewijzigd) - ongeveer de binnenrand van
@@ -1136,6 +1229,26 @@
            filter="url(#ringHaloBlur)"
            opacity="0.25"
            id="circle39-halo-donker" />
+        <!-- Donkere schaduw aan de binnenkant van de verbrede rand-band, inclusief de twee schuine
+             zijkanten (2026-08-25) - vervaagde lijn langs de hele binnengrens (schuine kant onder,
+             binnenboog r=87, schuine kant boven, incl. de afgeronde hoek), zelfde techniek als
+             circle39-halo-donker. Bewust exclusief de buitenboog (r=121), die grenst aan circle38
+             en hoort niet donker te worden. Ná circle39-halo-licht/-donker geplaatst (i.p.v. ervoor
+             zoals de eerste poging) - anders lag de lichte halo (r=85, bijna dezelfde straal) er
+             overheen en verdween de schaduw grotendeels. -->
+        <path
+           d="M 865.11,262.98
+              L 858.45,228.88
+              A 87,87 0 0,1 794.44,88.43
+              L 775.54,64.20
+              Q 773.08,61.04 775.96,57.94"
+           fill="none"
+           stroke="#000000"
+           stroke-width="5"
+           opacity="0.6"
+           clip-path="url(#pivotRandClip)"
+           mask="url(#pivotRandSchaduwFade)"
+           id="pivot-rand-schaduw-binnen" />
         <line
            x1="935.69565"
            y1="142.00000"
