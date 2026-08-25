@@ -1183,7 +1183,7 @@
               L 858.81,221.89
               A 80,80 0 0,1 799.96,92.74
               L 781.51,71.03
-              C 776.83,65.51 789.38,44.99 783.06,50.83
+              C 779.00,63.00 794.00,42.00 783.06,50.83
               Z"
            fill="url(#pivotRandGrad)"
            id="pivot-rand-verbreding-voorstel" />
@@ -1239,15 +1239,12 @@
         <path
            d="M 865.11,262.98
               L 858.45,228.88
-              A 87,87 0 0,1 794.44,88.43
-              L 775.54,64.20
-              Q 773.08,61.04 775.96,57.94"
+              A 87,87 0 0,1 794.44,88.43"
            fill="none"
            stroke="#000000"
            stroke-width="5"
            opacity="0.6"
            clip-path="url(#pivotRandClip)"
-           mask="url(#pivotRandSchaduwFade)"
            id="pivot-rand-schaduw-binnen" />
         <line
            x1="935.69565"
