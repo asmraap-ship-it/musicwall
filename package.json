@@ -29,6 +29,7 @@
   "build": {
     "appId": "com.musicwall.app",
     "productName": "Musicwall",
+    "npmRebuild": false,
     "files": [
       "**/*",
       "!instellingen.json",
