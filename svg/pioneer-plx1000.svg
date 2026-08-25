@@ -183,6 +183,15 @@
        xlink:href="#metalGrad"
        gradientTransform="matrix(1.8270549,0,0,0.54732894,-0.02415345,0.61214882)"
        gradientUnits="userSpaceOnUse" />
+    <!-- Kleine vervaging voor de licht/donker-halo's rond circle39 (gewichtschaal-ring). -->
+    <filter
+       id="ringHaloBlur"
+       x="-30%"
+       y="-30%"
+       width="160%"
+       height="160%">
+      <feGaussianBlur stdDeviation="2" />
+    </filter>
     <!-- klein donkergrijs verloop voor de onderste groef van de TEMPO-schuifknop (2026-08-24,
          "iets lichter als verloop" i.p.v. een platte vulling) - lichter bovenaan, donkerder
          onderaan, suggereert een ondiepe groef die van bovenaf licht vangt. -->
@@ -335,12 +344,14 @@
        y="0"
        width="1"
        height="1">
-      <feDropShadow
-         dx="0"
-         dy="4"
-         stdDeviation="6"
-         flood-color="#000000"
-         flood-opacity="0.45" />
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur1" />
+      <feOffset in="blur1" dx="0" dy="4" result="offsetblur" />
+      <feFlood flood-color="#000000" flood-opacity="0.45" result="floodcol" />
+      <feComposite in="floodcol" in2="offsetblur" operator="in" result="shadow" />
+      <feMerge>
+        <feMergeNode in="shadow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
     </filter>
     <!-- Cast shadow voor de hele draaitafel-behuizing (2026-08-24, op gebruikersverzoek: "de hele
          draaitafel zelf" mist schaduw t.o.v. de achtergrond) - op #rect30 (de buitenrand/silhouet van de
@@ -357,12 +368,14 @@
        y="-15%"
        width="130%"
        height="130%">
-      <feDropShadow
-         dx="0"
-         dy="10"
-         stdDeviation="14"
-         flood-color="#000000"
-         flood-opacity="0.55" />
+      <feGaussianBlur in="SourceAlpha" stdDeviation="14" result="blur1" />
+      <feOffset in="blur1" dx="0" dy="10" result="offsetblur" />
+      <feFlood flood-color="#000000" flood-opacity="0.55" result="floodcol" />
+      <feComposite in="floodcol" in2="offsetblur" operator="in" result="shadow" />
+      <feMerge>
+        <feMergeNode in="shadow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
     </filter>
     <!-- Schaduwdiepte-filters (2026-08-16): drop-shadow-soft/inner-shadow/metal-highlight, lichtrichting
          linksboven (consistent met dx/dy hierboven bij softShadow). Bewust alléén toegepast op de
@@ -1070,6 +1083,32 @@
            stroke="#2c2d30"
            stroke-width="13"
            id="circle39" />
+        <!-- Licht/donker-halo BUITEN de ring zelf (2026-08-25, o.b.v. referentiefoto
+             plx-1000_1-bovenkant3.png) - twee losse, vervaagde cirkellijnen i.p.v. de ring se eigen
+             stroke-kleur aan te passen (dat zat "in" de ring, niet erbuiten): een lichte, vervaagde
+             lijn net buiten de buitenrand (r=86, ruim buiten r=82.5) en een donkere, vervaagde lijn
+             net buiten de binnenrand aan de kant van het gat (r=66, ruim binnen r=69.5) - suggereert
+             dat de ring licht vangt aan de buitenkant en schaduw werpt naar het gat toe. -->
+        <circle
+           cx="863"
+           cy="142"
+           r="86"
+           fill="none"
+           stroke="#6a6b6f"
+           stroke-width="3"
+           filter="url(#ringHaloBlur)"
+           opacity="0.6"
+           id="circle39-halo-licht" />
+        <circle
+           cx="863"
+           cy="142"
+           r="66"
+           fill="none"
+           stroke="#000000"
+           stroke-width="3"
+           filter="url(#ringHaloBlur)"
+           opacity="0.5"
+           id="circle39-halo-donker" />
         <line
            x1="935.69565"
            y1="142.00000"
@@ -2904,19 +2943,19 @@
          font-weight="700"
          id="text110">45</text>
     </g>
-    <!-- wordmark: verschoven naar links -->
+    <!-- wordmark: op dezelfde regel als text112, links ervan met tussenruimte, niet groter dan text112 -->
     <text
-       x="560"
-       y="745"
+       x="554"
+       y="757"
        font-family="Arial, sans-serif"
-       font-size="22px"
+       font-size="13px"
        font-style="italic"
        font-weight="800"
        fill="#d7d8da"
-       id="text111">Pioneer DJ</text>
+       id="text111">Pioneer D<tspan dy="3">J</tspan></text>
     <text
-       x="560"
-       y="762"
+       x="637"
+       y="757"
        font-family="Arial, sans-serif"
        font-size="10px"
        letter-spacing="1"
