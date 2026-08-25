@@ -4,6 +4,10 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.11]
+### Changed
+- De platenspeler heeft weer een aantal grafische verfijningen gekregen: het "Pioneer DJ"-opschrift staat nu netter uitgelijnd, de gewichtschaal-ring heeft een subtiele lichtschaduw, en de rand rond het draaipunt is verbreed en afgerond.
+
 ## [1.2.10]
 ### Added
 - De TEMPO-schuif en TEMPO RANGE-knoppen op de platenspeler werken nu echt: ze passen de afspeelsnelheid aan, in zowel de jukebox als het albumscherm.

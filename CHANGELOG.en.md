@@ -6,6 +6,10 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.11]
+### Changed
+- The turntable received another round of graphical refinements: the "Pioneer DJ" wordmark is now aligned more neatly, the weight-scale ring has a subtle light shadow, and the rim around the pivot is wider and rounded.
+
 ## [1.2.10]
 ### Added
 - The TEMPO slider and TEMPO RANGE buttons on the turntable now actually work: they adjust the playback speed, in both the jukebox and the album screen.
