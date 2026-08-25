@@ -23,14 +23,19 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        # Geen Electron-target-vars meer nodig: better-sqlite3 v13+ is N-API-based,
-        # dus de kale-Node-prebuilt die npm ci hier ophaalt is ABI-compatibel met
-        # Electron's Node-runtime. De oude target-vars (runtime/target/disturl)
-        # matchten niet meer met v13's prebuild-lookup en dwongen juist een
-        # node-gyp source-compile af, wat faalde: deze CI-runner heeft geen
-        # Visual Studio. electron-builder's eigen rebuild-stap is uitgeschakeld
-        # via package.json's build.npmRebuild=false, om dezelfde reden overbodig.
-        run: npm ci
+        # `npm ci` bouwt zijn install-scripts-plan op basis van package-lock.json,
+        # dat custom package.json-velden zoals better-sqlite3's `gypfile: false`
+        # niet meebewaart — daardoor denkt npm alsnog dat er een `node-gyp rebuild`
+        # nodig is (binding.gyp staat gewoon op disk), wat faalt zonder bruikbare
+        # Visual Studio-detectie, terwijl better-sqlite3 v13 (N-API) al een
+        # kant-en-klare win32-x64-prebuild meelevert die dat helemaal niet nodig
+        # heeft. Opgelost door install-scripts helemaal over te slaan en daarna
+        # gericht alleen de twee packages te herbouwen die een écht install-script
+        # nodig hebben (ffmpeg-static downloadt ffmpeg.exe, electron-winstaller
+        # kiest zijn 7z-architectuur) — better-sqlite3 blijft zo buiten schot.
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild ffmpeg-static electron-winstaller
 
       - name: Build and publish
         run: npm run build -- --publish always
