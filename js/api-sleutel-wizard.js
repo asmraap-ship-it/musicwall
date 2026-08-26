@@ -117,6 +117,12 @@ async function slaOp() {
 }
 
 function overslaan() {
+  // Alleen bij de automatische eerste-opstart-wizard (niet de handmatige 'wijzig sleutel'-variant vanuit
+  // Help, waar 'annuleren' geen "hou op met vragen"-betekenis heeft) onthouden dat de gebruiker bewust voor
+  // later heeft gekozen - anders verscheen dit venster bij elke volgende opstart gewoon weer opnieuw, wat
+  // voor een nieuwe gebruiker als een storende, zich herhalende blokkade kan aanvoelen (gemeld door de
+  // gebruiker als mogelijke afhaakreden).
+  if (modus !== 'wijzig') ipcRenderer.send('api-sleutel-later-gekozen')
   ipcRenderer.send('api-sleutel-venster-sluiten')
 }
 

@@ -1256,6 +1256,9 @@ ipcMain.handle('sla-api-sleutel-op', (event, sleutel) => {
   if (!safeStorage.isEncryptionAvailable()) return { ok: false }
   const sleutelPad = path.join(userDataPath, 'api-sleutel.enc')
   fs.writeFileSync(sleutelPad, safeStorage.encryptString(sleutel).toString('base64'))
+  // Opruimen: sleutelPad's aanwezigheid alleen was al genoeg om controleerApiSleutel() nooit meer te laten
+  // openen, maar laat dit vlagbestand niet zonder reden achter nu de gebruiker alsnog een sleutel instelde.
+  try { fs.unlinkSync(path.join(userDataPath, 'api-sleutel-later.flag')) } catch (e) {}
   return { ok: true }
 })
 
@@ -1363,6 +1366,7 @@ function controleerApiSleutel() {
   const instellingenPad = path.join(userDataPath, 'instellingen.json')
   const voorbeeldPad = path.join(__dirname, 'instellingen.voorbeeld.json')
   const sleutelPad = path.join(userDataPath, 'api-sleutel.enc')
+  const laterPad = path.join(userDataPath, 'api-sleutel-later.flag')
 
   if (!fs.existsSync(instellingenPad) && fs.existsSync(voorbeeldPad)) {
     fs.copyFileSync(voorbeeldPad, instellingenPad)
@@ -1381,10 +1385,20 @@ function controleerApiSleutel() {
     } catch (e) {}
   }
 
-  if (!fs.existsSync(sleutelPad)) {
+  // laterPad's loutere aanwezigheid (net als sleutelPad zelf) is de vlag - gezet zodra de gebruiker bij de
+  // automatische eerste-opstart-wizard bewust "Later instellen" koos, zie ipcMain.on('api-sleutel-later-
+  // gekozen') hieronder. Voorkomt dat dit venster bij elke volgende opstart weer verschijnt; wie zelf later
+  // alsnog een sleutel instelt via Help kan dat gewoon nog steeds doen.
+  if (!fs.existsSync(sleutelPad) && !fs.existsSync(laterPad)) {
     openApiSleutelWindow()
   }
 }
+
+ipcMain.on('api-sleutel-later-gekozen', () => {
+  try {
+    fs.writeFileSync(path.join(userDataPath, 'api-sleutel-later.flag'), '')
+  } catch (e) {}
+})
 
 ipcMain.on('sla-volgorde-op', (event, volgordeArray) => {
   const { slaVolgordeOp } = require('./db/videos.js')
