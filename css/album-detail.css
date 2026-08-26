@@ -232,6 +232,23 @@
   box-shadow: 0 0 10px rgba(77, 216, 255, 0.65), 0 0 2px rgba(127, 224, 255, 0.9) inset;
 }
 
+/* Verbergt stroboscoopknop/platenspeler-schuifje zodra de tracklijst getoond wordt i.p.v. de draaitafel
+   (bijwerkenWeergave() in js/album-detail.js) - beide knoppen staan in de altijd-zichtbare
+   .album-navigatie-knoppen, niet in #album-draaitafel-wrap zelf, en hebben zonder deze regel dus geen
+   zichtbaar effect meer terwijl ze wel actief/klikbaar bleven staan (gemeld door de gebruiker). Beide
+   knoppen krijgen hier een samengestelde selector i.p.v. alleen de generieke .verborgen (uit
+   css/concert-detail.css, dat vóór dit bestand laadt): #strobo-toggle-btn is een <button> binnen
+   `.album-navigatie button { display:flex }` verderop (specificiteit 0,0,1,1, hoger dan een kale klasse -
+   pas via CDP teruggevonden, `grep` op ".album-navigatie-knoppen button" miste 'm doordat de werkelijke
+   selector ".album-navigatie button" heet, zonder "-knoppen"), en .platenspeler-schaal-rij heeft zijn eigen
+   `display:flex`-regel (gelijke specificiteit als .verborgen, wint dan op laadvolgorde) - in beide gevallen
+   wint de kale .verborgen-klasse dus niet vanzelf (zelfde valkuil als eerder al gedocumenteerd in CLAUDE.md
+   bij .track-acties-balk/.track-lijst, en identiek aan de fix die hiervoor al in css/jukebox.css nodig was). */
+#strobo-toggle-btn.verborgen,
+.platenspeler-schaal-rij.verborgen {
+  display: none;
+}
+
 .track-acties-balk {
   display: flex;
   justify-content: flex-end;

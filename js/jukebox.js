@@ -74,6 +74,15 @@ let spectrumVullingen = []
 let spectrumPieken = []
 let ytSimWaarden = new Array(SPECTRUM_BALKEN).fill(0)
 let spectrumPiekWaarden = new Array(SPECTRUM_BALKEN).fill(0)
+// Cache van de balkhoogte in px (zie bijwerkenSpectrumBalkHoogte()) en de laatst geschreven waarden per balk
+// (zie spectrumTick()) - twee losse hoofdthread-optimalisaties bovenop de bestaande interval-throttle
+// hierboven, gemeten nodig gebleken tijdens een sessie waarin muziek afspelen de framerate merkbaar liet
+// zakken (zelfs met de analyzer al op 30fps): .spectrum-peak zette tot dan toe elke tick zijn CSS `bottom`
+// (percentage) - een layout-triggerende eigenschap - i.p.v. een compositor-only `transform`, en beide lagen
+// schreven hun stijl ook als de waarde nauwelijks veranderde
+let spectrumBalkHoogtePx = 0
+let spectrumLaatsteVulPct = new Array(SPECTRUM_BALKEN).fill(-1)
+let spectrumLaatstePiekPct = new Array(SPECTRUM_BALKEN).fill(-1)
 let spectrumZichtbaar = localStorage.getItem('musicwall-spectrum-zichtbaar') !== 'nee'
 // Stroboscoop-gloed aan/uit (js/turntable.js's setStroboZichtbaar()) - decoratieve toggle, zelfde
 // localStorage-precedent als spectrumZichtbaar hierboven, gedeelde sleutel met album-detail.
@@ -96,6 +105,18 @@ window.toggleStroboZichtbaar = toggleStroboZichtbaar
 document.getElementById('strobo-toggle-btn').classList.toggle('actief', stroboLichtVoorkeur)
 bijwerkenStroboTooltip()
 if (window.Turntable) window.Turntable.setStroboZichtbaar(stroboLichtVoorkeur)
+
+// Stroboscoopknop + platenspeler-grootte-schuifje hebben alleen zichtbaar effect als #audio-cover-wrap ook
+// daadwerkelijk getoond wordt (audio-only lokaal/album-nummer) - bij een video/YouTube-video is dat paneel
+// verborgen, dus deden deze knoppen dan niets terwijl ze wel klikbaar bleven staan (gemeld door de
+// gebruiker). De equalizer (spectrum-toggle-btn) blijft bewust wél altijd zichtbaar: die is ook
+// audio-reactief tijdens video's, dus relevant ongeacht content-type. Aangeroepen vanuit speelIndex()'s
+// drie takken (youtube/lokale video/lokaal audio), telkens bij het starten van een nieuw item.
+function stelPlatenspelerBedieningZichtbaarheidIn(zichtbaar) {
+  document.getElementById('strobo-toggle-btn').classList.toggle('verborgen', !zichtbaar)
+  const schaalRij = document.getElementById('platenspeler-schaal-rij')
+  if (schaalRij) schaalRij.classList.toggle('verborgen', !zichtbaar)
+}
 
 // Echte TEMPO-fader (2026-08-24): js/turntable.js weet niets van #speler, dus zet playbackRate hier
 // zelf op basis van het percentage dat de fader doorgeeft. pasTempoRateToe() wordt daarnaast ook
@@ -211,7 +232,12 @@ function spectrumTick(tijdstip) {
 
   waarden.forEach((ruw, i) => {
     const pct = versterk(ruw)
-    if (spectrumVullingen[i]) spectrumVullingen[i].style.clipPath = 'inset(' + (100 - pct) + '% 0 0 0)'
+    // Skip de stijl-write als de waarde nauwelijks veranderd is t.o.v. de vorige tick (bv. tijdens een stille
+    // passage) - scheelt onnodige paints zonder dat het visueel merkbaar is bij deze update-frequentie
+    if (spectrumVullingen[i] && Math.abs(pct - spectrumLaatsteVulPct[i]) > 0.4) {
+      spectrumVullingen[i].style.clipPath = 'inset(' + (100 - pct) + '% 0 0 0)'
+      spectrumLaatsteVulPct[i] = pct
+    }
 
     // Peak-hold: springt meteen mee omhoog met een nieuwe piek, zakt daarna in vaste kleine stapjes per
     // update terug omlaag (losstaand van de vulling zelf, die door versterk()/smoothing al sneller daalt)
@@ -220,13 +246,34 @@ function spectrumTick(tijdstip) {
     } else {
       spectrumPiekWaarden[i] = Math.max(0, spectrumPiekWaarden[i] - SPECTRUM_PIEK_VAL_PER_FRAME)
     }
-    if (spectrumPieken[i]) spectrumPieken[i].style.bottom = spectrumPiekWaarden[i] + '%'
+    // transform i.p.v. bottom: bottom is een layout-eigenschap (verplaatsen vereist een reflow van het
+    // element), transform is compositor-only (GPU-verschoven, geen reflow/repaint) - bij 28 balken x tot
+    // 30x/seconde scheelt dat merkbaar op de hoofdthread. spectrumBalkHoogtePx wordt niet hier maar eenmalig
+    // per afspeelstart gemeten (zie bijwerkenSpectrumBalkHoogte()), een layout-*read* op elke tick zou de
+    // winst van transform weer tenietdoen.
+    if (spectrumPieken[i] && spectrumBalkHoogtePx && Math.abs(spectrumPiekWaarden[i] - spectrumLaatstePiekPct[i]) > 0.4) {
+      spectrumPieken[i].style.transform = 'translateY(' + (-(spectrumPiekWaarden[i] / 100) * spectrumBalkHoogtePx) + 'px)'
+      spectrumLaatstePiekPct[i] = spectrumPiekWaarden[i]
+    }
   })
 }
+
+// Eenmalige (layout-lezende) hoogtemeting i.p.v. elke tick opnieuw - alle balken delen dezelfde hoogte
+// (100% van #spectrum-analyzer), dus de eerste balk meten volstaat. Aangeroepen vanuit startSpectrum() (bij
+// elke afspeelstart, dus ook na een venstergrootte-wijziging sinds de vorige keer) en bij een resize terwijl
+// er al gespeeld wordt.
+function bijwerkenSpectrumBalkHoogte() {
+  const eersteBalk = spectrumVullingen[0] && spectrumVullingen[0].parentElement
+  spectrumBalkHoogtePx = eersteBalk ? eersteBalk.clientHeight : 0
+}
+window.addEventListener('resize', () => {
+  if (spectrumActief) bijwerkenSpectrumBalkHoogte()
+})
 
 function startSpectrum() {
   if (spectrumActief || !spectrumZichtbaar) return
   spectrumActief = true
+  bijwerkenSpectrumBalkHoogte()
   // spectrumLaatsteUpdate op 0 -> het verschil met de eerste (hoge) rAF-tijdstip is sowieso groter dan
   // SPECTRUM_INTERVAL_MS, dus de allereerste tick rendert altijd meteen i.p.v. eerst 33ms te wachten.
   // Bewust via requestAnimationFrame(spectrumTick) i.p.v. spectrumTick() direct aanroepen, zodat 'tijdstip'
@@ -241,11 +288,16 @@ function stopSpectrum() {
   if (spectrumFrameId) cancelAnimationFrame(spectrumFrameId)
   ytSimWaarden = new Array(SPECTRUM_BALKEN).fill(0)
   spectrumPiekWaarden = new Array(SPECTRUM_BALKEN).fill(0)
+  // -1 (niet 0) zodat de eerste tick van de volgende afspeelbeurt altijd écht schrijft, ook als het eerste
+  // gemeten niveau toevallig (bijna) 0 is - anders zou de skip-if-unchanged-guard in spectrumTick() die
+  // eerste, noodzakelijke reset-naar-0-op-het-scherm ten onrechte overslaan
+  spectrumLaatsteVulPct.fill(-1)
+  spectrumLaatstePiekPct.fill(-1)
   spectrumVullingen.forEach(vulling => {
     vulling.style.clipPath = 'inset(100% 0 0 0)'
   })
   spectrumPieken.forEach(piek => {
-    piek.style.bottom = '0%'
+    piek.style.transform = 'translateY(0)'
   })
 }
 
@@ -679,7 +731,7 @@ function renderOpgeslagenPlaylists() {
     const el = document.createElement('div')
     el.className = 'opgeslagen-playlist-item'
     el.innerHTML = '<div class="opgeslagen-playlist-info">'
-      + '<div class="opgeslagen-playlist-naam">' + p.naam + '</div>'
+      + '<div class="opgeslagen-playlist-naam">' + escapeHtml(p.naam) + '</div>'
       + '<div class="opgeslagen-playlist-aantal">' + t('jukebox.aantalNummers', { n: p.aantal }) + '</div>'
       + '</div>'
       + '<button class="opgeslagen-playlist-laden" title="' + t('jukebox.playlistLadenTooltip') + '">&#9658;</button>'
@@ -772,7 +824,16 @@ function speelIndex(i) {
     // Instant (geen animatie) - #audio-cover-wrap verdwijnt hier toch al in dezelfde tick, dus een
     // weghaal-animatie zou nooit te zien zijn. Voorkomt vooral dat een latere toonVinyl() denkt dat er nog
     // een (inmiddels onzichtbare) plaat ligt.
-    if (window.Turntable) window.Turntable.verbergVinylInstant()
+    // Turntable.stop() erbij (gemeld door de gebruiker): zonder deze aanroep bleef, als het vórige nummer
+    // muziek was, de platter-rotatie/stroboscoop/START-STOP-gloed gewoon actief staan tijdens het afspelen
+    // van een YouTube-video - er was hier nooit een aanroeppad dat de "speelt"-staat (laatstSpelend)
+    // terugzette naar false. verbergVinylInstant() haalt alleen de zichtbare plaat weg, niet de rotatie/
+    // gloed zelf.
+    if (window.Turntable) {
+      window.Turntable.stop()
+      window.Turntable.verbergVinylInstant()
+    }
+    stelPlatenspelerBedieningZichtbaarheidIn(false)
 
     ytWrap.classList.add('zichtbaar')
     const videoId = getYoutubeId(item.youtube_url)
@@ -810,6 +871,7 @@ function speelIndex(i) {
         window.Turntable.stop()
         window.Turntable.reset()
       }
+      stelPlatenspelerBedieningZichtbaarheidIn(true)
       audioCoverWrap.classList.add('zichtbaar')
 
       const startAfspelen = () => {
@@ -831,6 +893,14 @@ function speelIndex(i) {
         startAfspelen()
       }
     } else {
+      // Zelfde reden als bij de youtube-tak hierboven (gemeld door de gebruiker): zonder deze aanroep bleef
+      // een nog draaiende platter/actieve stroboscoop van een vorig muzieknummer gewoon doorlopen tijdens
+      // het afspelen van een lokale video.
+      if (window.Turntable) {
+        window.Turntable.stop()
+        window.Turntable.verbergVinylInstant()
+      }
+      stelPlatenspelerBedieningZichtbaarheidIn(false)
       speler.src = 'file:///' + item.lokaal_pad.replace(/\\/g, '/')
       pasTempoRateToe()
       speler.play()

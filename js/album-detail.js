@@ -240,6 +240,15 @@ function bijwerkenWeergave() {
   if (wrap) wrap.classList.toggle('zichtbaar', actief)
   document.getElementById('track-lijst').classList.toggle('verborgen', actief)
   document.querySelector('.track-acties-balk').classList.toggle('verborgen', actief)
+
+  // Stroboscoopknop/platenspeler-schuifje staan in de altijd-zichtbare navigatiebalk (.album-navigatie-
+  // knoppen), niet in #album-draaitafel-wrap zelf, dus wisselden ze tot dusver niet mee met de tracklijst/
+  // draaitafel-toggle hierboven - gemeld door de gebruiker (bleef "actief" staan bij het wisselen naar de
+  // tracklijst). Zelfde redenering en oplossing als de jukebox (stelPlatenspelerBedieningZichtbaarheidIn()
+  // in js/jukebox.js): deze knoppen hebben alleen zichtbaar effect als de draaitafel ook echt getoond wordt.
+  document.getElementById('strobo-toggle-btn').classList.toggle('verborgen', !actief)
+  const schaalRij = document.getElementById('platenspeler-schaal-rij')
+  if (schaalRij) schaalRij.classList.toggle('verborgen', !actief)
 }
 
 function bijwerkenDraaitafelTooltip() {
