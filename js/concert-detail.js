@@ -55,14 +55,14 @@ async function laadMediaGrid() {
     const playIcon = '<div class="media-play"><svg viewBox="0 0 24 24" fill="#c8a87a"><polygon points="5,3 19,12 5,21"/></svg></div>'
 
     if (item.type === 'foto') {
-      tegel.innerHTML = '<img src="file:///' + item.bestand_pad.replace(/\\/g, '/') + '" alt="">' + verwijderKnop
+      tegel.innerHTML = '<img src="file:///' + item.bestand_pad.replace(/\\/g, '/') + '" alt="" loading="lazy">' + verwijderKnop
       tegel.onclick = () => openViewer(i)
     } else if (item.type === 'youtube') {
       const id = getYoutubeId(item.bestand_pad)
       const poster = id ? 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg' : ''
       posterMap[item.id] = poster
       tegel.innerHTML = (poster
-          ? '<img src="' + poster + '" alt="">'
+          ? '<img src="' + poster + '" alt="" loading="lazy">'
           : '<div class="media-placeholder">&#9835;</div>')
         + playIcon
         + '<div class="media-bron youtube">' + t('video.bron.youtube') + '</div>'
@@ -79,12 +79,14 @@ async function laadMediaGrid() {
         }
       }
     } else {
-      const pad = await ipcRenderer.invoke('maak-thumbnail', item.bestand_pad)
-      const poster = pad ? 'file:///' + pad.replace(/\\/g, '/') : ''
-      posterMap[item.id] = poster
-      tegel.innerHTML = (poster
-          ? '<img src="' + poster + '" alt="">'
-          : '<div class="media-placeholder">&#9654;</div>')
+      // De thumbnail zelf wordt hier bewust NIET opgehaald (dat was voorheen een await ipcRenderer.invoke(...)
+      // per tegel, serieel in deze lus - bij een concert met veel lokale video's telde dat op tot een merkbare
+      // vertraging vóórdat de grid zichtbaar werd, zelfde probleem als walls vóór 1.2.4). In plaats daarvan
+      // verschijnt de tegel meteen met een placeholder en vult vulLokaleMediaThumbnails() de echte thumbnail
+      // later, parallel, asynchroon in - zelfde patroon als js/index.js's vulLokaleThumbnails().
+      posterMap[item.id] = ''
+      tegel.dataset.thumbPad = item.bestand_pad
+      tegel.innerHTML = '<div class="media-placeholder">&#9654;</div>'
         + playIcon
         + '<div class="media-bron lokaal">' + t('video.bron.lokaal') + '</div>'
         + verwijderKnop
@@ -114,6 +116,42 @@ async function laadMediaGrid() {
   }
 
   controleerKaartenInContainer(grid)
+  vulLokaleMediaThumbnails(grid)
+}
+
+// Vult lokale-videotegels (herkenbaar aan data-thumb-pad, zie laadMediaGrid hierboven) achteraf in met hun
+// echte thumbnail, met een beperkt aantal gelijktijdige IPC-aanvragen - zelfde constante/aanpak als
+// js/index.js's vulLokaleThumbnails(). Werkt bewust ook posterMap bij (i.t.t. de walls-variant, die geen
+// aparte posterMap kent) - openViewer()/renderViewer() lezen die later voor de lightbox-poster, en moeten dus
+// de bijgewerkte waarde zien als de kijker geopend wordt nadat de thumbnail al binnen is.
+const CONCERT_THUMBNAIL_CONCURRENTIE = 6
+
+async function vulLokaleMediaThumbnails(container) {
+  const tegels = Array.from(container.querySelectorAll('.media-tegel[data-thumb-pad]'))
+  let volgende = 0
+
+  async function werker() {
+    while (volgende < tegels.length) {
+      const tegel = tegels[volgende++]
+      const pad = tegel.getAttribute('data-thumb-pad')
+      const mediaId = parseInt(tegel.dataset.mediaId, 10)
+      tegel.removeAttribute('data-thumb-pad')
+      const thumbPad = await ipcRenderer.invoke('maak-thumbnail', pad)
+      if (!thumbPad || !tegel.isConnected) continue
+      const poster = 'file:///' + thumbPad.replace(/\\/g, '/')
+      posterMap[mediaId] = poster
+      const placeholder = tegel.querySelector('.media-placeholder')
+      if (!placeholder) continue
+      const img = document.createElement('img')
+      img.alt = ''
+      img.loading = 'lazy'
+      img.src = poster
+      placeholder.replaceWith(img)
+    }
+  }
+
+  const werkers = Array.from({ length: Math.min(CONCERT_THUMBNAIL_CONCURRENTIE, tegels.length) }, () => werker())
+  await Promise.all(werkers)
 }
 
 function kiesMedia() {

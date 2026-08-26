@@ -62,7 +62,7 @@ async function laadAlbums(groepId) {
       const tracks = getTracksVoorAlbum(album.id)
 
       const coverHtml = album.cover_pad
-        ? '<img src="file:///' + album.cover_pad.replace(/\\/g, '/') + '" alt="">'
+        ? '<img src="file:///' + album.cover_pad.replace(/\\/g, '/') + '" alt="" loading="lazy">'
         : '<div class="concert-cover-placeholder">&#9835;</div>'
 
       // Geen embedded album-data meer in een inline onclick-attribuutstring - album.naam kan uit een
