@@ -93,6 +93,16 @@ db.exec(`
   );
 `)
 
+// bron_type ('video' of 'album_track') onderscheidt waar video_id naar verwijst - opgeslagen playlists
+// matchten tot nu toe uitsluitend tegen de videos-tabel, waardoor MP3-tracks uit een geïmporteerd album
+// (die in de losstaande album_tracks-tabel staan, nooit in videos) altijd stilzwijgend werden overgeslagen
+// bij het opslaan van een playlist (gemeld door de gebruiker). DEFAULT 'video' laat bestaande rijen
+// ongemoeid - die verwezen altijd al naar videos.id.
+const playlistVideosKolommen = db.prepare("PRAGMA table_info(playlist_videos)").all().map(k => k.name)
+if (!playlistVideosKolommen.includes('bron_type')) {
+  db.exec("ALTER TABLE playlist_videos ADD COLUMN bron_type TEXT NOT NULL DEFAULT 'video'")
+}
+
 const wallKolommen = db.prepare("PRAGMA table_info(walls)").all().map(k => k.name)
 if (!wallKolommen.includes('groep_id')) {
   db.exec('ALTER TABLE walls ADD COLUMN groep_id INTEGER')

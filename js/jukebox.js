@@ -756,7 +756,7 @@ async function laadOpgeslagenPlaylistActie(playlistId, naam) {
 
   leegPlaylist()
   items.forEach(item => voegToeAanPlaylist({
-    type: item.type, lokaalPad: item.lokaal_pad, youtubeUrl: item.youtube_url, artiest: item.artiest, titel: item.titel
+    type: item.type, lokaalPad: item.lokaal_pad, youtubeUrl: item.youtube_url, artiest: item.artiest, titel: item.titel, coverPad: item.cover_pad
   }))
 
   huidigeIndex = -1
