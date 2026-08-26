@@ -4,6 +4,11 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.13]
+### Fixed
+- Opgeslagen playlists sloegen MP3-nummers uit een geïmporteerd album niet meer op — ze werden stilzwijgend overgeslagen. Werkt nu correct, inclusief de albumhoes bij het terugladen.
+- De YouTube-sleutel-wizard verscheen bij elke opstart opnieuw als je eerder op "Later instellen" had geklikt — onthoudt die keuze nu.
+
 ## [1.2.12]
 ### Fixed
 - De stroboscoopknop en het platenspeler-formaat-schuifje in de jukebox bleven actief staan tijdens het afspelen van een video of YouTube-video, terwijl ze alleen bij de platenspeler horen — verdwijnen nu automatisch mee. Hetzelfde gold in een albumscherm bij het wisselen van de platenspeler-animatie naar de tracklijst.

@@ -6,6 +6,11 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.13]
+### Fixed
+- Saved playlists no longer skipped MP3 tracks from an imported album — they were silently left out. Now saved correctly, including the album cover when reloading.
+- The YouTube API key wizard kept reappearing on every startup even after you clicked "Set up later" — that choice is now remembered.
+
 ## [1.2.12]
 ### Fixed
 - The strobe-light button and the turntable size slider in the jukebox stayed active while a video or YouTube video was playing, even though they only belong to the turntable — they now correctly hide along with it. The same applied in an album screen when switching from the turntable animation to the track list.
