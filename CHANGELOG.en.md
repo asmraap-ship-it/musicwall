@@ -6,6 +6,14 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.12]
+### Fixed
+- The strobe-light button and the turntable size slider in the jukebox stayed active while a video or YouTube video was playing, even though they only belong to the turntable — they now correctly hide along with it. The same applied in an album screen when switching from the turntable animation to the track list.
+- Names and text fields (walls, concert experiences, saved playlists, a video's story field) weren't consistently displayed safely in a few places when they contained quotation marks or HTML-like characters.
+
+### Changed
+- Concert experiences with a lot of local video now load noticeably faster: tiles appear immediately, thumbnails fill in afterward (same as walls since 1.2.4).
+
 ## [1.2.11]
 ### Changed
 - The turntable received another round of graphical refinements: the "Pioneer DJ" wordmark is now aligned more neatly, the weight-scale ring has a subtle light shadow, and the rim around the pivot is wider and rounded.

@@ -1,6 +1,6 @@
 {
   "name": "musicwall",
-  "version": "1.2.11",
+  "version": "1.2.12",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -10,8 +10,8 @@
     "build:appx": "electron-builder --win appx"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Alain Raap",
+  "license": "GPL-3.0-or-later",
   "type": "commonjs",
   "devDependencies": {
     "electron": "^43.4.1",

@@ -93,6 +93,12 @@ Het resultaat komt in de map `dist/` te staan (`Musicwall Setup.exe` en een unpa
 
 Bij het pushen van een versietag (`vX.Y.Z`) bouwt een GitHub Actions-workflow automatisch een installer en zet die als concept-release klaar onder [Releases](https://github.com/asmraap-ship-it/musicwall/releases). Zie `CLAUDE.md` voor het volledige releaseproces.
 
+## Licentie
+
+Copyright © 2026 Alain Raap
+
+Musicwall is vrije software, uitgebracht onder de [GNU General Public License v3.0 (of later)](LICENSE) — je mag de code vrij gebruiken, aanpassen en verspreiden, zolang afgeleide versies onder dezelfde licentie open source blijven.
+
 ## Projectstructuur
 
 ```
