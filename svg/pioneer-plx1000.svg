@@ -487,9 +487,10 @@
          #draaischijf/#toonarm-inner: die roteren continu resp. bij elke needle-drop/track-voortgang via
          GSAP-tweens, en de zwaardere inner-shadow/metal-highlight-primitives (met name
          feSpecularLighting, per-pixel lichtberekening) bovenop al-animerende content stapelen zou de
-         framerate kunnen raken. De bestaande, goedkope enkelvoudige feDropShadow op de platter
-         (`softShadow` hierboven, op #circle112) blijft ongewijzigd en ongemoeid - geen extra filters
-         daarbovenop. -->
+         framerate kunnen raken. De bestaande, goedkope enkelvoudige schaduw op de platter (`softShadow`
+         hierboven, op #circle112 - sinds 2026-08-25 een feGaussianBlur/feOffset/feFlood/feComposite/
+         feMerge-keten i.p.v. feDropShadow, zie die datum verderop in CLAUDE.md) blijft ongewijzigd en
+         ongemoeid - geen extra filters daarbovenop. -->
     <filter
        id="drop-shadow-soft"
        x="-40%"
