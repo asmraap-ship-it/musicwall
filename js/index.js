@@ -944,7 +944,7 @@ function bouwKaartHtml(video, wallId, idx, n) {
     + '<div class="chevron" id="ch' + wallId + '-' + n + '">&#8964;</div>'
     + '</div>'
     + '<div class="card-face card-back">'
-    + '<div class="card-story"><p>' + (video.verhaal || '') + '</p></div>'
+    + '<div class="card-story"><p>' + escapeHtml(video.verhaal || '') + '</p></div>'
     + '</div>'
     + '</div>'
     + '</div>'
@@ -1018,7 +1018,7 @@ async function laadWalls() {
       + ' ondragover="wallDragOver(event, this)"'
       + ' ondragleave="wallDragLeave(this)"'
       + ' ondrop="wallDrop(event,' + wall.id + ')">'
-      + '<span class="wall-naam" onclick="hernoemWallPrompt(' + wall.id + ',\'' + wall.naam.replace(/'/g, "\\'") + '\')" title="' + t('wall.hernoemenTooltip') + '" style="cursor:pointer">' + wall.naam + '</span>'
+      + '<span class="wall-naam" title="' + t('wall.hernoemenTooltip') + '" style="cursor:pointer">' + escapeHtml(wall.naam) + '</span>'
       + '<div style="display:flex;align-items:center;gap:0.5rem">'
       + '<span class="wall-aantal">' + videos.length + '</span>'
       + (videos.length > 0
@@ -1026,7 +1026,7 @@ async function laadWalls() {
           + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="7,12 10.5,15.5 17,8.5"/></svg>'
           + '</button>'
         : '')
-      + '<button class="wall-verwijder-btn" onclick="bevestigWallVerwijderen(' + wall.id + ',\'' + wall.naam.replace(/'/g, "\\'") + '\')" title="' + t('wall.verwijderenTooltip') + '">'
+      + '<button class="wall-verwijder-btn" title="' + t('wall.verwijderenTooltip') + '">'
       + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H6L5,6"/><path d="M10,11v6M14,11v6"/><path d="M9,6V4h6v2"/></svg>'
       + '</button>'
       + '</div>'
@@ -1042,6 +1042,17 @@ async function laadWalls() {
       + '</div>'
 
     container.innerHTML += wallHtml
+
+    // wall.naam wordt hier via een echte closure doorgegeven i.p.v. embedded in een inline
+    // onclick-attribuutstring (zie beveiligingsreview) - anders zou een dubbel aanhalingsteken in de
+    // naam uit het attribuut kunnen breken, ook al is de zichtbare tekst hierboven wel al ge-escaped.
+    const wallEl = document.getElementById('wall-' + wall.id)
+    if (wallEl) {
+      const naamEl = wallEl.querySelector('.wall-naam')
+      if (naamEl) naamEl.onclick = () => hernoemWallPrompt(wall.id, wall.naam)
+      const verwijderBtn = wallEl.querySelector('.wall-verwijder-btn')
+      if (verwijderBtn) verwijderBtn.onclick = () => bevestigWallVerwijderen(wall.id, wall.naam)
+    }
   }
 
   container.innerHTML += '<button class="nieuwe-wall-btn" onclick="voegWallToe()" title="' + t('wall.nieuweWall') + '">+</button>'

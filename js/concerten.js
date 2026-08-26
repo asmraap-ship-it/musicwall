@@ -332,7 +332,7 @@ async function laadConcerten() {
         }
       }
 
-      const verwijderKnop = '<button class="concert-verwijder-btn" onclick="event.stopPropagation();bevestigConcertVerwijderen(' + concert.id + ',\'' + concert.naam.replace(/'/g, "\\'") + '\')" title="' + t('concert.verwijderenTooltip') + '">'
+      const verwijderKnop = '<button class="concert-verwijder-btn" title="' + t('concert.verwijderenTooltip') + '">'
         + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H6L5,6"/><path d="M10,11v6M14,11v6"/><path d="M9,6V4h6v2"/></svg>'
         + '</button>'
 
@@ -356,10 +356,21 @@ async function laadConcerten() {
         + bewerkKnop
         + '</div>'
         + '<div class="concert-info">'
-        + '<div class="concert-artiest">' + (concert.artiest || '') + '</div>'
-        + '<div class="concert-naam">' + concert.naam + '</div>'
+        + '<div class="concert-artiest">' + escapeHtml(concert.artiest || '') + '</div>'
+        + '<div class="concert-naam">' + escapeHtml(concert.naam) + '</div>'
         + '<div class="concert-datum">' + (concert.datum || '') + '</div>'
         + '</div>'
+
+      // concert.naam wordt hier via een echte closure doorgegeven i.p.v. embedded in een inline
+      // onclick-attribuutstring (zie beveiligingsreview) - anders zou een dubbel aanhalingsteken in de
+      // naam uit het attribuut kunnen breken, ook al is de zichtbare tekst hierboven wel al ge-escaped.
+      const verwijderBtn = kaart.querySelector('.concert-verwijder-btn')
+      if (verwijderBtn) {
+        verwijderBtn.onclick = (event) => {
+          event.stopPropagation()
+          bevestigConcertVerwijderen(concert.id, concert.naam)
+        }
+      }
 
       kaart.onclick = () => openConcert(concert.id)
       container.appendChild(kaart)
