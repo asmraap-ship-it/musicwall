@@ -6,6 +6,14 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.14]
+### Added
+- Three new themes: Chrome (light metallic, blue accent), Ocean (deep navy blue) and Radar (dark HUD theme with a cyan glow, inspired by sci-fi interfaces).
+
+### Fixed
+- The equalizer and strobe-light buttons in the jukebox no longer showed a clear border once active, in every theme.
+- The equalizer icon was invisible in the Chrome theme.
+
 ## [1.2.13]
 ### Fixed
 - Saved playlists no longer skipped MP3 tracks from an imported album — they were silently left out. Now saved correctly, including the album cover when reloading.

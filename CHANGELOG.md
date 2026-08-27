@@ -4,6 +4,14 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.14]
+### Added
+- Drie nieuwe thema's: Chroom (lichtmetalig, blauw accent), Oceaan (diep marineblauw) en Radar (donker HUD-thema met cyaan gloed, geïnspireerd op sciencefiction-interfaces).
+
+### Fixed
+- De equalizer- en stroboscoopknoppen in de jukebox toonden geen duidelijke rand meer zodra ze actief waren, in elk thema.
+- Het equalizer-icoon was onzichtbaar in het Chroom-thema.
+
 ## [1.2.13]
 ### Fixed
 - Opgeslagen playlists sloegen MP3-nummers uit een geïmporteerd album niet meer op — ze werden stilzwijgend overgeslagen. Werkt nu correct, inclusief de albumhoes bij het terugladen.
