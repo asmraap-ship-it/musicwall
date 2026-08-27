@@ -56,7 +56,10 @@ const titelbalkKleuren = {
   jukebox: { color: '#1c0d0d', symbolColor: '#e8b94a' },
   nacht: { color: '#0e0c1c', symbolColor: '#9d7ce8' },
   jr: { color: '#0a0a0a', symbolColor: '#f5f5f5' },
-  natuur: { color: '#0e140e', symbolColor: '#8fae6a' }
+  natuur: { color: '#0e140e', symbolColor: '#8fae6a' },
+  chroom: { color: '#e6e9f0', symbolColor: '#1c3d7d' },
+  oceaan: { color: '#16375d', symbolColor: '#1e90ff' },
+  radar: { color: '#0a1013', symbolColor: '#00e5ff' }
 }
 
 function titelbalkOptiesVoorThema(thema) {

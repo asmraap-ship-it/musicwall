@@ -190,7 +190,7 @@ function wisselThema(thema) {
   ipcRenderer.send('thema-gewijzigd', thema)
 }
 
-const themaLabelSleutels = { '': 'thema.standaard', metaal: 'thema.metaal', jukebox: 'thema.jukebox', nacht: 'thema.nacht', jr: 'thema.raw', natuur: 'thema.natuur', licht: 'thema.licht' }
+const themaLabelSleutels = { '': 'thema.standaard', metaal: 'thema.metaal', jukebox: 'thema.jukebox', nacht: 'thema.nacht', jr: 'thema.raw', natuur: 'thema.natuur', licht: 'thema.licht', chroom: 'thema.chroom', oceaan: 'thema.oceaan', radar: 'thema.radar' }
 
 function kiesThema(thema) {
   wisselThema(thema)

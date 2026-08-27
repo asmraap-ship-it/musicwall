@@ -1,0 +1,247 @@
+[data-thema="radar"] {
+  --achtergrond: #0a1013;
+  --achtergrond-2: #0e161a;
+  --achtergrond-3: #131e23;
+  --oppervlak: rgba(10, 22, 26, 0.92);
+  --oppervlak-hover: rgba(14, 30, 35, 0.95);
+  --accent: #00e5ff;
+  --accent-rgb: 0, 229, 255;
+  --accent-dim: rgba(0, 229, 255, 0.15);
+  --accent-rand: rgba(0, 229, 255, 0.4);
+  --tekst: #d6f5fa;
+  --tekst-dim: #7fa8ae;
+  --tekst-donker: #45646a;
+  --rand: #16262c;
+  --rand-2: #1e3138;
+  --rand-3: #274852;
+  --schaduw: rgba(0, 0, 0, 0.85);
+  --card-rand: 2px solid var(--accent);
+  --radius: 2px;
+}
+
+[data-thema="radar"] body {
+  background:
+    repeating-linear-gradient(0deg, rgba(0,229,255,0.035) 0px, rgba(0,229,255,0.035) 1px, transparent 1px, transparent 32px),
+    repeating-linear-gradient(90deg, rgba(0,229,255,0.035) 0px, rgba(0,229,255,0.035) 1px, transparent 1px, transparent 32px);
+  background-color: var(--achtergrond);
+}
+
+[data-thema="radar"] body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.55) 100%);
+  z-index: 5;
+}
+
+[data-thema="radar"] .wall {
+  background: linear-gradient(160deg, rgba(16, 28, 33, 0.94), rgba(8, 14, 17, 0.92));
+  border: 1px solid #1e3138;
+  box-shadow:
+    inset 0 1px 0 rgba(0, 229, 255, 0.08),
+    inset 0 -2px 6px rgba(0,0,0,0.5),
+    0 0 24px rgba(0, 229, 255, 0.08),
+    0 6px 28px rgba(0,0,0,0.6);
+  position: relative;
+}
+
+[data-thema="radar"] .wall::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.8), transparent);
+}
+
+[data-thema="radar"] .wall-header {
+  position: relative;
+  background: linear-gradient(180deg, rgba(19, 34, 40, 0.98), rgba(9, 16, 19, 0.95));
+  border-bottom: 1px solid #1e3138;
+  box-shadow: inset 0 1px 0 rgba(0, 229, 255, 0.1), inset 0 -1px 4px rgba(0,0,0,0.5);
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+[data-thema="radar"] .wall-header::before,
+[data-thema="radar"] .wall-header::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #7ff5ff, #054249);
+  box-shadow: 0 0 4px rgba(0, 229, 255, 0.9), inset 0 0 1px rgba(255,255,255,0.5);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+[data-thema="radar"] .wall-header::before { left: 0.75rem; }
+[data-thema="radar"] .wall-header::after { right: 0.75rem; }
+
+[data-thema="radar"] header {
+  background: linear-gradient(180deg, rgba(12, 21, 25, 0.98), rgba(5, 9, 11, 0.96));
+  border-bottom: 1px solid #1e3138;
+  box-shadow: inset 0 1px 0 rgba(0, 229, 255, 0.12), inset 0 -2px 6px rgba(0,0,0,0.5), 0 2px 16px rgba(0,0,0,0.6);
+}
+
+[data-thema="radar"] .card {
+  background: linear-gradient(160deg, rgba(15, 27, 32, 0.9), rgba(7, 13, 16, 0.88));
+  border-left: 3px solid #00e5ff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), inset -1px 0 0 rgba(0,0,0,0.4);
+}
+
+[data-thema="radar"] .card:hover {
+  background: linear-gradient(160deg, rgba(20, 38, 44, 0.95), rgba(10, 20, 24, 0.92));
+  box-shadow: inset 0 1px 0 rgba(0, 229, 255, 0.2), 0 0 18px rgba(0, 229, 255, 0.25);
+}
+
+[data-thema="radar"] .navigatie button,
+[data-thema="radar"] .toevoegen-btn,
+[data-thema="radar"] #thema-keuze,
+[data-thema="radar"] #prullenbak,
+[data-thema="radar"] .yt-btn,
+[data-thema="radar"] .opslaan-btn,
+[data-thema="radar"] .bestand-btn,
+[data-thema="radar"] .wall-toevoegen-btn,
+[data-thema="radar"] .nieuwe-wall-btn,
+[data-thema="radar"] .zoekbalk button {
+  background: linear-gradient(180deg, rgba(20, 38, 44, 0.95), rgba(8, 16, 19, 0.9));
+  border: 1px solid #274852;
+  color: #b8f0f7;
+  box-shadow:
+    inset 0 1px 0 rgba(0, 229, 255, 0.15),
+    inset 0 -2px 3px rgba(0,0,0,0.5),
+    0 2px 6px rgba(0,0,0,0.6);
+}
+
+[data-thema="radar"] .navigatie button:hover,
+[data-thema="radar"] .toevoegen-btn:hover,
+[data-thema="radar"] .opslaan-btn:hover,
+[data-thema="radar"] .bestand-btn:hover,
+[data-thema="radar"] .wall-toevoegen-btn:hover,
+[data-thema="radar"] .nieuwe-wall-btn:hover,
+[data-thema="radar"] .yt-btn:hover {
+  background: linear-gradient(180deg, rgba(28, 54, 62, 1), rgba(12, 24, 28, 1));
+  box-shadow:
+    inset 0 1px 0 rgba(0, 229, 255, 0.4),
+    inset 0 -2px 3px rgba(0,0,0,0.5),
+    0 0 14px rgba(0, 229, 255, 0.45);
+  border-color: #00e5ff;
+}
+
+[data-thema="radar"] .navigatie button:active {
+  background: linear-gradient(180deg, rgba(4, 8, 10, 0.95), rgba(8, 16, 19, 0.95));
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.7);
+}
+
+[data-thema="radar"] .card-thumb-play {
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.3), rgba(0,0,0,0.6));
+  border: 1px solid rgba(0, 229, 255, 0.5);
+  box-shadow: 0 0 18px rgba(0, 229, 255, 0.4);
+}
+
+[data-thema="radar"] h1 span {
+  text-shadow: 0 0 16px rgba(0, 229, 255, 0.85), 0 0 4px rgba(0, 229, 255, 0.6);
+}
+
+[data-thema="radar"] .logo {
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+
+[data-thema="radar"] .type-btn.actief {
+  border-color: #00e5ff;
+  color: #00e5ff;
+  background: linear-gradient(180deg, rgba(24, 46, 53, 0.9), rgba(9, 18, 21, 0.85));
+}
+
+[data-thema="radar"] .verwijder-btn {
+  background: linear-gradient(180deg, #c0392b, #8e2419);
+  border: 1px solid #5a1610;
+  color: #fff;
+}
+
+[data-thema="radar"] .verwijder-btn:hover {
+  background: linear-gradient(180deg, #e74c3c, #a8301f);
+}
+
+[data-thema="radar"] input[type="text"],
+[data-thema="radar"] input[type="url"],
+[data-thema="radar"] textarea,
+[data-thema="radar"] select {
+  background: rgba(6, 12, 14, 0.85);
+  border: 1px solid #274852;
+  color: #d6f5fa;
+}
+
+[data-thema="radar"] input:focus,
+[data-thema="radar"] textarea:focus {
+  border-color: #00e5ff;
+}
+
+[data-thema="radar"] .zoekbalk input,
+[data-thema="radar"] select {
+  background: rgba(6, 12, 14, 0.85);
+  border: 1px solid #274852;
+  color: #d6f5fa;
+}
+
+[data-thema="radar"] .resultaat {
+  background: linear-gradient(160deg, rgba(15, 27, 32, 0.9), rgba(7, 13, 16, 0.88));
+  border: 1px solid #274852;
+}
+
+[data-thema="radar"] .resultaat:hover {
+  background: linear-gradient(160deg, rgba(20, 38, 44, 0.95), rgba(10, 20, 24, 0.92));
+  border-color: #00e5ff;
+}
+
+[data-thema="radar"] .card-thumb-wrap:hover .card-thumbnail {
+  filter: brightness(0.85) saturate(1.2) contrast(1.05);
+}
+
+[data-thema="radar"] .chevron {
+  filter: drop-shadow(0 0 3px rgba(0, 229, 255, 0.5));
+}
+
+[data-thema="radar"] .card.geselecteerd {
+  outline: 2px solid #00e5ff;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+}
+
+[data-thema="radar"] .card.geselecteerd .card-thumb-wrap::after {
+  background: #00e5ff;
+  color: #061014;
+}
+
+[data-thema="radar"] #prullenbak.hover {
+  box-shadow: 0 0 18px rgba(231, 76, 60, 0.5);
+}
+
+[data-thema="radar"] .selectie-info {
+  background: linear-gradient(180deg, rgba(16, 30, 35, 0.96), rgba(8, 15, 18, 0.94));
+  border: 1px solid #00e5ff;
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+[data-thema="radar"] .sectie-tabs {
+  border-bottom: 2px solid #274852;
+}
+
+[data-thema="radar"] .tab-btn {
+  background: linear-gradient(135deg, #112126, #070d0f);
+  border-color: #274852;
+  color: #7fa8ae;
+  text-shadow: none;
+}
+
+[data-thema="radar"] .tab-btn:hover {
+  background: linear-gradient(135deg, #163038, #0a1519);
+}
+
+[data-thema="radar"] .tab-btn.actief {
+  background: linear-gradient(135deg, #164752, #0a1a1f);
+  border-right-color: rgba(0, 229, 255, 0.5);
+  border-bottom-color: #0a1a1f;
+  box-shadow: inset 0 1px 0 rgba(0, 229, 255, 0.2);
+}

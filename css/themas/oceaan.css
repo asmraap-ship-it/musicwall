@@ -1,0 +1,239 @@
+[data-thema="oceaan"] {
+  --achtergrond: #16375d;
+  --achtergrond-2: #1b4672;
+  --achtergrond-3: #225987;
+  --oppervlak: rgba(30, 81, 129, 0.88);
+  --oppervlak-hover: rgba(39, 103, 159, 0.9);
+  --accent: #1e90ff;
+  --accent-rgb: 30, 144, 255;
+  --accent-dim: rgba(30, 144, 255, 0.2);
+  --accent-rand: rgba(30, 144, 255, 0.35);
+  --tekst: #e3f0ff;
+  --tekst-dim: #8fb3d9;
+  --tekst-donker: #5c84ad;
+  --rand: #2b6795;
+  --rand-2: #357eae;
+  --rand-3: #4198c6;
+  --schaduw: rgba(0, 0, 0, 0.7);
+  --card-rand: 2px solid var(--accent);
+  --radius: 4px;
+}
+
+[data-thema="oceaan"] body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(4, 18, 36,0.4) 100%);
+  z-index: 5;
+}
+
+[data-thema="oceaan"] .wall {
+  background: linear-gradient(160deg, rgba(30, 103, 162, 0.9), rgba(18, 47, 75, 0.88));
+  border: 1px solid #357eae;
+  box-shadow:
+    inset 0 1px 0 rgba(170,215,255,0.08),
+    inset 0 -2px 6px rgba(0,0,0,0.4),
+    0 6px 28px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+[data-thema="oceaan"] .wall::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(30, 144, 255, 0.6), transparent);
+}
+
+[data-thema="oceaan"] .wall-header {
+  position: relative;
+  background: linear-gradient(180deg, rgba(34, 115, 180, 0.98), rgba(20, 62, 99, 0.95));
+  border-bottom: 1px solid #357eae;
+  box-shadow: inset 0 1px 0 rgba(170,215,255,0.1), inset 0 -1px 4px rgba(0,0,0,0.4);
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+[data-thema="oceaan"] .wall-header::before,
+[data-thema="oceaan"] .wall-header::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #4ea8ff, #10324e);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.8), inset 0 0 1px rgba(255,255,255,0.4);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+[data-thema="oceaan"] .wall-header::before { left: 0.75rem; }
+[data-thema="oceaan"] .wall-header::after { right: 0.75rem; }
+
+[data-thema="oceaan"] header {
+  background: linear-gradient(180deg, rgba(23, 67, 108, 0.98), rgba(13, 38, 60, 0.95));
+  border-bottom: 1px solid #357eae;
+  box-shadow: inset 0 1px 0 rgba(30, 144, 255, 0.12), inset 0 -2px 6px rgba(0,0,0,0.4), 0 2px 12px rgba(0,0,0,0.5);
+}
+
+[data-thema="oceaan"] .card {
+  background: linear-gradient(160deg, rgba(32, 92, 147, 0.85), rgba(18, 55, 87, 0.82));
+  border-left: 3px solid #1e90ff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset -1px 0 0 rgba(0,0,0,0.3);
+}
+
+[data-thema="oceaan"] .card:hover {
+  background: linear-gradient(160deg, rgba(43, 120, 189, 0.92), rgba(23, 72, 114, 0.88));
+  box-shadow: inset 0 1px 0 rgba(30, 144, 255, 0.15), 0 2px 12px rgba(30, 144, 255, 0.15);
+}
+
+[data-thema="oceaan"] .navigatie button,
+[data-thema="oceaan"] .toevoegen-btn,
+[data-thema="oceaan"] #thema-keuze,
+[data-thema="oceaan"] #prullenbak,
+[data-thema="oceaan"] .yt-btn,
+[data-thema="oceaan"] .opslaan-btn,
+[data-thema="oceaan"] .bestand-btn,
+[data-thema="oceaan"] .wall-toevoegen-btn,
+[data-thema="oceaan"] .nieuwe-wall-btn,
+[data-thema="oceaan"] .zoekbalk button {
+  background: linear-gradient(180deg, rgba(46, 138, 214, 0.95), rgba(28, 78, 122, 0.9));
+  border: 1px solid #4198c6;
+  color: #cfe6ff;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -2px 3px rgba(0,0,0,0.4),
+    0 2px 5px rgba(0,0,0,0.5);
+}
+
+[data-thema="oceaan"] .navigatie button:hover,
+[data-thema="oceaan"] .toevoegen-btn:hover,
+[data-thema="oceaan"] .opslaan-btn:hover,
+[data-thema="oceaan"] .bestand-btn:hover,
+[data-thema="oceaan"] .wall-toevoegen-btn:hover,
+[data-thema="oceaan"] .nieuwe-wall-btn:hover,
+[data-thema="oceaan"] .yt-btn:hover {
+  background: linear-gradient(180deg, rgba(64, 172, 255, 1), rgba(38, 106, 158, 1));
+  box-shadow:
+    inset 0 1px 0 rgba(30, 144, 255, 0.3),
+    inset 0 -2px 3px rgba(0,0,0,0.4),
+    0 2px 10px rgba(30, 144, 255, 0.35);
+  border-color: #1e90ff;
+}
+
+[data-thema="oceaan"] .navigatie button:active {
+  background: linear-gradient(180deg, rgba(11, 31, 48, 0.92), rgba(18, 48, 78, 0.92));
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.6);
+}
+
+[data-thema="oceaan"] .card-thumb-play {
+  background: radial-gradient(circle, rgba(30, 144, 255, 0.25), rgba(0,0,0,0.5));
+  border: 1px solid rgba(30, 144, 255, 0.4);
+  box-shadow: 0 0 16px rgba(30, 144, 255, 0.35);
+}
+
+[data-thema="oceaan"] h1 span {
+  text-shadow: 0 0 14px rgba(30, 144, 255, 0.7);
+}
+
+[data-thema="oceaan"] .logo {
+  text-shadow: 0 0 8px rgba(30, 144, 255, 0.4);
+}
+
+[data-thema="oceaan"] .type-btn.actief {
+  border-color: #1e90ff;
+  color: #1e90ff;
+  background: linear-gradient(180deg, rgba(46, 149, 234, 0.9), rgba(20, 60, 96, 0.85));
+}
+
+[data-thema="oceaan"] .verwijder-btn {
+  background: linear-gradient(180deg, #c0392b, #8e2419);
+  border: 1px solid #5a1610;
+  color: #fff;
+}
+
+[data-thema="oceaan"] .verwijder-btn:hover {
+  background: linear-gradient(180deg, #e74c3c, #a8301f);
+}
+
+[data-thema="oceaan"] input[type="text"],
+[data-thema="oceaan"] input[type="url"],
+[data-thema="oceaan"] textarea,
+[data-thema="oceaan"] select {
+  background: rgba(16, 52, 81, 0.82);
+  border: 1px solid #357eae;
+  color: #e3f0ff;
+}
+
+[data-thema="oceaan"] input:focus,
+[data-thema="oceaan"] textarea:focus {
+  border-color: #1e90ff;
+}
+
+[data-thema="oceaan"] .zoekbalk input,
+[data-thema="oceaan"] select {
+  background: rgba(16, 52, 81, 0.82);
+  border: 1px solid #357eae;
+  color: #e3f0ff;
+}
+
+[data-thema="oceaan"] .resultaat {
+  background: linear-gradient(160deg, rgba(32, 92, 147, 0.85), rgba(18, 55, 87, 0.82));
+  border: 1px solid #357eae;
+}
+
+[data-thema="oceaan"] .resultaat:hover {
+  background: linear-gradient(160deg, rgba(43, 120, 189, 0.92), rgba(23, 72, 114, 0.88));
+  border-color: #1e90ff;
+}
+
+[data-thema="oceaan"] .card-thumb-wrap:hover .card-thumbnail {
+  filter: brightness(0.9) saturate(1.15);
+}
+
+[data-thema="oceaan"] .chevron {
+  filter: drop-shadow(0 0 2px rgba(30, 144, 255, 0.3));
+}
+
+[data-thema="oceaan"] .card.geselecteerd {
+  outline: 2px solid #1e90ff;
+  box-shadow: 0 0 16px rgba(30, 144, 255, 0.35);
+}
+
+[data-thema="oceaan"] .card.geselecteerd .card-thumb-wrap::after {
+  background: #1e90ff;
+  color: #16375d;
+}
+
+[data-thema="oceaan"] #prullenbak.hover {
+  box-shadow: 0 0 16px rgba(231, 76, 60, 0.4);
+}
+
+[data-thema="oceaan"] .selectie-info {
+  background: linear-gradient(180deg, rgba(32, 92, 147, 0.95), rgba(18, 55, 87, 0.92));
+  border: 1px solid #1e90ff;
+  box-shadow: 0 0 20px rgba(30, 144, 255, 0.2), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+[data-thema="oceaan"] .sectie-tabs {
+  border-bottom: 2px solid #357eae;
+}
+
+[data-thema="oceaan"] .tab-btn {
+  background: linear-gradient(135deg, #1b4672, #113256);
+  border-color: #357eae;
+  color: #8fb3d9;
+  text-shadow: none;
+}
+
+[data-thema="oceaan"] .tab-btn:hover {
+  background: linear-gradient(135deg, #225987, #163a5f);
+}
+
+[data-thema="oceaan"] .tab-btn.actief {
+  background: linear-gradient(135deg, #2e6da4, #1b4672);
+  border-right-color: rgba(30, 144, 255, 0.5);
+  border-bottom-color: #1b4672;
+  box-shadow: inset 0 1px 0 rgba(120, 190, 255, 0.15);
+}

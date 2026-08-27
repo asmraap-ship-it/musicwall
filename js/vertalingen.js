@@ -27,6 +27,9 @@ const VERTALINGEN = {
     'thema.raw': 'Raw',
     'thema.natuur': 'Natuur',
     'thema.licht': 'Licht',
+    'thema.chroom': 'Chroom',
+    'thema.oceaan': 'Oceaan',
+    'thema.radar': 'Radar',
 
     // Selectie / jukebox-toevoegen
     'selectie.voegToeAanPlaylist': '♫ Voeg toe aan de playlist',
@@ -490,6 +493,9 @@ const VERTALINGEN = {
     'thema.raw': 'Raw',
     'thema.natuur': 'Nature',
     'thema.licht': 'Light',
+    'thema.chroom': 'Chrome',
+    'thema.oceaan': 'Ocean',
+    'thema.radar': 'Radar',
 
     'selectie.voegToeAanPlaylist': '♫ Add to playlist',
     'selectie.verwijderen': 'Delete',

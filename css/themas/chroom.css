@@ -1,0 +1,283 @@
+[data-thema="chroom"] {
+  --achtergrond: #e6e9f0;
+  --achtergrond-2: #dadee9;
+  --achtergrond-3: #ccd2e1;
+  --oppervlak: rgba(255, 255, 255, 0.85);
+  --oppervlak-hover: rgba(255, 255, 255, 0.95);
+  --accent: #1c3d7d;
+  --accent-rgb: 28, 61, 125;
+  --accent-dim: rgba(28, 61, 125, 0.12);
+  --accent-rand: rgba(28, 61, 125, 0.3);
+  --tekst: #12172a;
+  --tekst-dim: #4a5470;
+  --tekst-donker: #838da6;
+  --rand: #b8c0d2;
+  --rand-2: #a2acc2;
+  --rand-3: #8c97b2;
+  --schaduw: rgba(20, 30, 60, 0.18);
+  --card-rand: 2px solid var(--accent);
+  --radius: 3px;
+}
+
+[data-thema="chroom"] body {
+  background:
+    repeating-linear-gradient(
+      115deg,
+      rgba(0,10,30,0.03) 0px,
+      rgba(0,10,30,0.03) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+  background-color: var(--achtergrond);
+}
+
+[data-thema="chroom"] body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at top, rgba(255,255,255,0.5) 0%, transparent 55%);
+  z-index: 5;
+}
+
+[data-thema="chroom"] .wall {
+  background: linear-gradient(160deg, rgba(255,255,255,0.92), rgba(216, 222, 233, 0.88));
+  border: 1px solid #a2acc2;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -2px 6px rgba(20,30,60,0.08),
+    0 6px 28px rgba(20,30,60,0.15);
+  position: relative;
+}
+
+[data-thema="chroom"] .wall::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(28, 61, 125, 0.6), transparent);
+}
+
+[data-thema="chroom"] .wall-header {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(218, 222, 233, 0.95));
+  border-bottom: 1px solid #a2acc2;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 4px rgba(20,30,60,0.06);
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+[data-thema="chroom"] .wall-header::before,
+[data-thema="chroom"] .wall-header::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff, #97a4c0);
+  box-shadow: 0 1px 2px rgba(20,30,60,0.4), inset 0 0 1px rgba(255,255,255,0.8);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+[data-thema="chroom"] .wall-header::before { left: 0.75rem; }
+[data-thema="chroom"] .wall-header::after { right: 0.75rem; }
+
+[data-thema="chroom"] header {
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(204, 210, 225, 0.95));
+  border-bottom: 1px solid #a2acc2;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 12px rgba(20,30,60,0.1);
+}
+
+[data-thema="chroom"] .card {
+  background: linear-gradient(160deg, rgba(255,255,255,0.9), rgba(218, 222, 233, 0.82));
+  border-left: 3px solid #1c3d7d;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), inset -1px 0 0 rgba(20,30,60,0.06);
+}
+
+[data-thema="chroom"] .card:hover {
+  background: linear-gradient(160deg, rgba(255,255,255,0.98), rgba(230, 234, 244, 0.92));
+  box-shadow: inset 0 1px 0 rgba(28, 61, 125, 0.15), 0 2px 12px rgba(28, 61, 125, 0.15);
+}
+
+[data-thema="chroom"] .navigatie button,
+[data-thema="chroom"] .toevoegen-btn,
+[data-thema="chroom"] #thema-keuze,
+[data-thema="chroom"] #prullenbak,
+[data-thema="chroom"] .yt-btn,
+[data-thema="chroom"] .opslaan-btn,
+[data-thema="chroom"] .bestand-btn,
+[data-thema="chroom"] .wall-toevoegen-btn,
+[data-thema="chroom"] .nieuwe-wall-btn,
+[data-thema="chroom"] .zoekbalk button {
+  background: linear-gradient(180deg, #ffffff, #ccd2e1);
+  border: 1px solid #8c97b2;
+  color: #12172a;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -2px 3px rgba(20,30,60,0.1),
+    0 2px 5px rgba(20,30,60,0.15);
+}
+
+[data-thema="chroom"] .navigatie button:hover,
+[data-thema="chroom"] .toevoegen-btn:hover,
+[data-thema="chroom"] .opslaan-btn:hover,
+[data-thema="chroom"] .bestand-btn:hover,
+[data-thema="chroom"] .wall-toevoegen-btn:hover,
+[data-thema="chroom"] .nieuwe-wall-btn:hover,
+[data-thema="chroom"] .yt-btn:hover {
+  background: linear-gradient(180deg, #ffffff, #6788c9);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -2px 3px rgba(20,30,60,0.1),
+    0 2px 10px rgba(28, 61, 125, 0.3);
+  border-color: #1c3d7d;
+  color: #12172a;
+}
+
+[data-thema="chroom"] .navigatie button:active {
+  background: linear-gradient(180deg, #ccd2e1, #dadee9);
+  box-shadow: inset 0 3px 6px rgba(20,30,60,0.2);
+}
+
+[data-thema="chroom"] .card-thumb-play {
+  background: radial-gradient(circle, rgba(28, 61, 125, 0.2), rgba(255,255,255,0.6));
+  border: 1px solid rgba(28, 61, 125, 0.4);
+  box-shadow: 0 0 16px rgba(28, 61, 125, 0.25);
+}
+
+[data-thema="chroom"] h1 span {
+  text-shadow: 0 0 10px rgba(187, 210, 255, 0.9), 0 0 2px rgba(28, 61, 125, 0.4);
+}
+
+[data-thema="chroom"] .logo {
+  text-shadow: 0 0 8px rgba(187, 210, 255, 0.7);
+}
+
+[data-thema="chroom"] .type-btn.actief {
+  border-color: #1c3d7d;
+  color: #1c3d7d;
+  background: linear-gradient(180deg, #ffffff, #dde3ef);
+}
+
+[data-thema="chroom"] .verwijder-btn {
+  background: linear-gradient(180deg, #d9463a, #a3281d);
+  border: 1px solid #6e160f;
+  color: #fff;
+}
+
+[data-thema="chroom"] .verwijder-btn:hover {
+  background: linear-gradient(180deg, #ea5a4d, #b8342a);
+}
+
+[data-thema="chroom"] .annuleer-btn {
+  background: linear-gradient(180deg, #ffffff, #ccd2e1);
+  border: 1px solid #8c97b2;
+  color: #12172a;
+}
+
+[data-thema="chroom"] input[type="text"],
+[data-thema="chroom"] input[type="url"],
+[data-thema="chroom"] textarea,
+[data-thema="chroom"] select {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #a2acc2;
+  color: #12172a;
+}
+
+[data-thema="chroom"] input:focus,
+[data-thema="chroom"] textarea:focus {
+  border-color: #1c3d7d;
+}
+
+[data-thema="chroom"] .zoekbalk input,
+[data-thema="chroom"] select {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #a2acc2;
+  color: #12172a;
+}
+
+[data-thema="chroom"] .resultaat {
+  background: linear-gradient(160deg, rgba(255,255,255,0.9), rgba(218, 222, 233, 0.82));
+  border: 1px solid #a2acc2;
+}
+
+[data-thema="chroom"] .resultaat:hover {
+  background: linear-gradient(160deg, rgba(255,255,255,0.98), rgba(230, 234, 244, 0.92));
+  border-color: #1c3d7d;
+}
+
+[data-thema="chroom"] .card-thumb-wrap:hover .card-thumbnail {
+  filter: brightness(1.03) saturate(1.05);
+}
+
+[data-thema="chroom"] .chevron {
+  filter: drop-shadow(0 0 2px rgba(28, 61, 125, 0.3));
+}
+
+[data-thema="chroom"] .card.geselecteerd {
+  outline: 2px solid #1c3d7d;
+  box-shadow: 0 0 16px rgba(28, 61, 125, 0.25);
+}
+
+[data-thema="chroom"] .card.geselecteerd .card-thumb-wrap::after {
+  background: #1c3d7d;
+  color: #ffffff;
+}
+
+[data-thema="chroom"] #prullenbak.hover {
+  box-shadow: 0 0 16px rgba(217, 70, 58, 0.4);
+}
+
+[data-thema="chroom"] .selectie-info {
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(218, 222, 233, 0.9));
+  border: 1px solid #1c3d7d;
+  box-shadow: 0 0 20px rgba(28, 61, 125, 0.15), inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+[data-thema="chroom"] .concert-kaart,
+[data-thema="chroom"] .concert-nieuw-btn {
+  box-shadow: 0 2px 10px rgba(20, 30, 60, 0.18);
+}
+
+[data-thema="chroom"] .concert-cover img {
+  opacity: 1;
+}
+
+[data-thema="chroom"] .media-tegel,
+[data-thema="chroom"] .resultaat,
+[data-thema="chroom"] .bestand-btn {
+  box-shadow: 0 1px 3px rgba(20, 30, 60, 0.18);
+}
+
+[data-thema="chroom"] .sectie-tabs {
+  border-bottom: 2px solid #a2acc2;
+}
+
+[data-thema="chroom"] .tab-btn {
+  background: linear-gradient(135deg, #ffffff, #dadee9);
+  border: 1px solid #a2acc2;
+  color: #4a5470;
+  text-shadow: none;
+}
+
+[data-thema="chroom"] .tab-btn:hover {
+  color: #1c3d7d;
+  background: #ffffff;
+  box-shadow: 0 0 14px rgba(28, 61, 125, 0.2), inset 0 1px 0 rgba(28, 61, 125, 0.1);
+  text-shadow: none;
+}
+
+[data-thema="chroom"] .tab-btn.actief {
+  background: #ffffff;
+  border-color: #1c3d7d;
+  border-right-color: rgba(28, 61, 125, 0.5);
+  border-bottom: 2px solid #ffffff;
+  color: #1c3d7d;
+  box-shadow: inset 0 1px 0 rgba(28, 61, 125, 0.1);
+}
+
+[data-thema="chroom"] .tab-btn.actief:hover {
+  box-shadow: 0 0 16px rgba(28, 61, 125, 0.25), inset 0 1px 0 rgba(28, 61, 125, 0.15);
+  text-shadow: none;
+}
