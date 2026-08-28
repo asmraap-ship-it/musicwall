@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        # Zelfde `--ignore-scripts` + gerichte rebuild-aanpak als release.yml —
+        # zie de toelichting daar voor waarom een kale `npm ci` faalt.
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild ffmpeg-static electron-winstaller
+
+      - name: Run tests
+        run: npm test
+
+      - name: npm audit (productieafhankelijkheden, blokkerend)
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: npm audit (inclusief dev-toolchain, informatief)
+        # Kwetsbaarheden in electron-builder/electron-rebuild's eigen
+        # afhankelijkheden zijn build-tooling, niet iets dat meegaat in de
+        # geïnstalleerde app — zichtbaar maken zonder de build te blokkeren.
+        run: npm audit --audit-level=high
+        continue-on-error: true
