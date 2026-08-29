@@ -167,29 +167,42 @@ body {
 /* .turntable-anchor is flex:1 (vult de volle hoogte van #album-draaitafel-wrap) i.p.v. enkel shrink-to-fit
    - dat geeft #turntable-svg-wrap hieronder een écht DEFINITE hoogte om `max-height:100%` tegenaan te
    resolven (percentage-hoogtes hebben een voorouder met een bepaalde hoogte nodig, een auto-hoge flex-
-   container voldoet daar niet aan). min-height:0 is de bekende flex-kind-in-kolom-noodrem. */
+   container voldoet daar niet aan). min-height:0 is de bekende flex-kind-in-kolom-noodrem.
+   width:100% is om dezelfde reden nodig voor de breedte: zonder deze regel krimpt .turntable-anchor
+   shrink-to-fit naar zijn eigen kind (#turntable-svg-wrap), terwijl #turntable-svg-wrap's eigen breedte via
+   een 96%-term juist weer NAAR die anchor-breedte verwijst - die circulaire afhankelijkheid loste Chromium
+   kennelijk inconsistent op (bevestigd via CDP: bij een gemaximaliseerd venster bleef de platenspeler tot
+   ~100px onder de werkelijk beschikbare hoogte steken, bij de standaardvenstergrootte maar ~20px - gemeld
+   door de gebruiker als "de Pioneer is nog niet de maximale grootte bij het maximale scherm"). width:100%
+   maakt .turntable-anchor's breedte definite en onafhankelijk van zijn kind, zodat de 96%-term van
+   #turntable-svg-wrap ergens stabiels tegenaan resolvet. */
 .turntable-anchor {
   position: relative;
   flex: 1;
   min-height: 0;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 /* --platenspeler-schaal (js/album-detail.js's stelPlatenspelerSchaalIn(), 0.5-1.5, gedeelde
-   localStorage-sleutel met de jukebox) vermenigvuldigt de bestaande vh-gebaseerde breedte-voorkeur. Op
-   gebruikersverzoek ("zoveel mogelijk ruimte, groter bij een maximaal scherm") gebruikt dit nu de standaard
-   CSS-techniek voor "vul zoveel mogelijk ruimte binnen een aspect-ratio": `width` geeft de gewenste
-   (maximale) breedte, `max-height:100%` is de échte veiligheidsgrens (nu .turntable-anchor hierboven een
-   definite hoogte heeft) - de browser kiest zelf de kleinste van de twee, met behoud van aspect-ratio. Een
-   eerdere versie probeerde de hoogtegrens zelf met de hand na te rekenen als een derde term in `min()`
-   (`calc((100vh - Npx) * 1.282)`) - werkte, maar bleek op grotere/gemaximaliseerde vensters merkbaar minder
-   ruimte te gebruiken dan feitelijk beschikbaar was (Chromium's shrink-to-fit voor een `min()` die vh/%
-   mengt met aspect-ratio bleek de eigen breedte al vóór die berekening verder te clampen dan verwacht,
-   CDP-gemeten) - `max-height:100%` laat de browser dit zelf exact oplossen, geen handmatig budget meer
-   nodig. De eerste term (130vh) is bewust ruim genoeg dat hij bij schaal 100% zelf zelden bindend is; 96%
-   voorkomt dat de breedte ooit breder wordt dan de beschikbare kolombreedte. */
+   localStorage-sleutel met de jukebox) vermenigvuldigt de bestaande vh-gebaseerde breedte-voorkeur. `width`
+   geeft de gewenste (maximale) breedte, `max-height:100%` is de échte veiligheidsgrens (.turntable-anchor
+   hierboven heeft nu zowel een definite hoogte als breedte). De eerste term (130vh) is bewust ruim genoeg
+   dat hij bij schaal 100% zelf zelden bindend is; 96% voorkomt dat de breedte ooit breder wordt dan de
+   beschikbare kolombreedte.
+   Grondoorzaak van de "platenspeler is nog niet maximaal bij een gemaximaliseerd venster"-bug (gemeld door
+   de gebruiker, CDP-gemeten): zonder een expliciete `width:100%` op .turntable-anchor krimpt die shrink-
+   to-fit naar zijn eigen kind (#turntable-svg-wrap), terwijl #turntable-svg-wrap's `96%`-term juist ná die
+   krimp-berekening weer NAAR die (nog te bepalen) anchor-breedte verwijst - een circulaire afhankelijkheid
+   die Chromium kennelijk inconsistent oploste (bij een groter venster werd de anchor daardoor kleiner dan
+   feitelijk beschikbaar, dus ook de 96%-term). `width:100%` op .turntable-anchor doorbreekt die cirkel.
+   De svg zelf gebruikt de standaard `preserveAspectRatio="xMidYMid meet"` (geen `preserveAspectRatio`-
+   attribuut op de root-`<svg>`, dus impliciet de spec-default) - een niet-1.282-breedte/hoogte-verhouding
+   van deze wrap-div zelf (bv. op een erg brede monitor, waar de 96%-breedtegrens niet bindt maar
+   `max-height:100%` wél) leidt daardoor nooit tot een vervormde tekening, alleen tot onzichtbare
+   (transparante) marge aan weerszijden - geen aparte fix nodig voor dat geval. */
 #turntable-svg-wrap {
   width: min(calc(130vh * var(--platenspeler-schaal, 1)), 96%);
   max-height: 100%;
