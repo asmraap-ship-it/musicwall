@@ -6,6 +6,18 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.15]
+### Changed
+- The album screen has been reworked: the turntable now always sits next to the track list (no longer optional), in a bigger window with a wider track list and a larger album cover. The turntable uses as much of the available space as possible, including when the window is maximized.
+- "Select all" now sits next to "Edit album" in the album screen.
+
+### Added
+- A track title or artist name that's too long to fit now scrolls by as a marquee while the track is playing.
+
+### Fixed
+- The progress bar in the album screen didn't jump back to 0% when switching albums or tracks while playing.
+- Pasting the YouTube API key stopped working after the Electron update to version 44.
+
 ## [1.2.14]
 ### Added
 - Three new themes: Chrome (light metallic, blue accent), Ocean (deep navy blue) and Radar (dark HUD theme with a cyan glow, inspired by sci-fi interfaces).

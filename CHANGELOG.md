@@ -4,6 +4,18 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.15]
+### Changed
+- Het albumscherm is herzien: de platenspeler staat nu altijd naast de tracklijst (niet meer optioneel), in een groter venster met een bredere tracklijst en grotere albumhoes. De platenspeler gebruikt zoveel mogelijk van de beschikbare ruimte, ook bij een gemaximaliseerd venster.
+- "Selecteer alles" staat in het albumscherm nu naast "Album bewerken".
+
+### Added
+- Een te lange tracktitel of artiestnaam in het albumscherm schuift nu voorbij als lopende tekst zolang het nummer speelt.
+
+### Fixed
+- De voortgangsbalk in het albumscherm sprong niet terug naar 0% bij het wisselen van album of nummer tijdens het afspelen.
+- Plakken van de YouTube-API-sleutel werkte niet meer na de Electron-update naar versie 44.
+
 ## [1.2.14]
 ### Added
 - Drie nieuwe thema's: Chroom (lichtmetalig, blauw accent), Oceaan (diep marineblauw) en Radar (donker HUD-thema met cyaan gloed, geïnspireerd op sciencefiction-interfaces).
