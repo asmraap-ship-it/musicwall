@@ -34,56 +34,60 @@
   <button class="verwijder-selectie-btn" onclick="verwijderSelectie()" data-i18n="selectie.verwijderen">Verwijderen</button>
 </div>
 
-<div class="album-header">
-  <button class="album-nav-pijl" id="album-vorig-album-btn" onclick="vorigAlbum()" data-i18n-title="albumDetail.vorigAlbumTooltip" title="Vorig album">&#10094;</button>
-  <div class="album-cover-groot" id="album-cover"></div>
-  <div class="album-header-info">
-    <div class="concert-header-artiest" id="detail-artiest"></div>
-    <h1 class="concert-header-naam" id="detail-naam"></h1>
-    <div class="album-track-aantal" id="detail-aantal"></div>
-    <button class="bestand-btn" onclick="bewerkHuidigAlbum()" data-i18n="albumDetail.bewerkenBtn">✎ Album bewerken</button>
-  </div>
-  <button class="album-nav-pijl" id="album-volgend-album-btn" onclick="volgendAlbum()" data-i18n-title="albumDetail.volgendAlbumTooltip" title="Volgend album">&#10095;</button>
-</div>
-
-<div class="album-draaitafel-wrap" id="album-draaitafel-wrap">
-  <div class="turntable-anchor">
-    <div id="turntable-svg-wrap"></div>
-  </div>
-  <div class="album-draaitafel-track-info" id="album-draaitafel-track-info"></div>
-</div>
-
-<div class="track-acties-balk">
-  <button class="bestand-btn" id="selecteer-alles-btn" onclick="toggleSelecteerAlleInAlbum()" data-i18n="concertDetail.selecteerAllesBtn" style="display:none">☑ Selecteer alles</button>
-</div>
-
-<div class="track-lijst" id="track-lijst"></div>
-
-<audio id="album-speler" style="display:none"></audio>
-
-<div class="album-navigatie">
-  <div class="album-progress-rij">
-    <span class="album-tijd" id="album-tijd-huidig">0:00</span>
-    <div class="album-progress-balk" id="album-progress-balk" onclick="zoekInAlbumSpeler(event)">
-      <div class="album-progress-vulling" id="album-progress-vulling"></div>
+<div class="album-layout">
+  <div class="track-kolom">
+    <div class="album-header">
+      <div class="album-header-top">
+        <button class="album-nav-pijl" id="album-vorig-album-btn" onclick="vorigAlbum()" data-i18n-title="albumDetail.vorigAlbumTooltip" title="Vorig album">&#10094;</button>
+        <div class="album-cover-groot" id="album-cover"></div>
+        <button class="album-nav-pijl" id="album-volgend-album-btn" onclick="volgendAlbum()" data-i18n-title="albumDetail.volgendAlbumTooltip" title="Volgend album">&#10095;</button>
+      </div>
+      <div class="album-header-info">
+        <div class="concert-header-artiest" id="detail-artiest"></div>
+        <h1 class="concert-header-naam" id="detail-naam"></h1>
+        <div class="album-track-aantal" id="detail-aantal"></div>
+        <div class="album-header-acties">
+          <button class="bestand-btn" onclick="bewerkHuidigAlbum()" data-i18n="albumDetail.bewerkenBtn">✎ Album bewerken</button>
+          <button class="bestand-btn" id="selecteer-alles-btn" onclick="toggleSelecteerAlleInAlbum()" data-i18n="concertDetail.selecteerAllesBtn" style="display:none">☑ Selecteer alles</button>
+        </div>
+      </div>
     </div>
-    <span class="album-tijd" id="album-tijd-duur">0:00</span>
+
+    <div class="track-lijst" id="track-lijst"></div>
   </div>
-  <div class="album-navigatie-knoppen">
-    <span class="album-navigatie-track" id="album-navigatie-track"></span>
-    <div class="album-navigatie-knoppen-groep">
-      <button onclick="albumEerste()" data-i18n-title="jukebox.eerste" title="Eerste">&#9198;</button>
-      <button onclick="albumVorige()" data-i18n-title="jukebox.vorige" title="Vorige">&#9664;</button>
-      <button onclick="albumSpeelPauze()" id="album-play-btn" data-i18n-title="jukebox.afspelen" title="Afspelen">&#9654;</button>
-      <button onclick="albumStop()" data-i18n-title="jukebox.stoppen" title="Stoppen">&#9209;</button>
-      <button onclick="albumVolgende()" data-i18n-title="jukebox.volgende" title="Volgende">&#9654;</button>
-      <button onclick="albumLaatste()" data-i18n-title="jukebox.laatste" title="Laatste">&#9197;</button>
-      <button onclick="toggleDraaitafelZichtbaar()" id="draaitafel-toggle-btn" title="Draaitafel tonen">&#128191;</button>
-      <button onclick="toggleStroboZichtbaar()" id="strobo-toggle-btn" title="Stroboscooplicht tonen">&#128161;</button>
+
+  <div class="album-draaitafel-kolom">
+    <div class="album-draaitafel-wrap" id="album-draaitafel-wrap">
+      <div class="turntable-anchor">
+        <div id="turntable-svg-wrap"></div>
+      </div>
     </div>
-    <div class="platenspeler-schaal-rij" id="platenspeler-schaal-rij" data-i18n-title="albumDetail.platenspelerSchaalTooltip" title="Platenspeler vergroten/verkleinen">
-      <span class="platenspeler-schaal-icoon">&#128269;</span>
-      <input type="range" id="platenspeler-schaal-slider" min="50" max="150" step="5" value="100" oninput="stelPlatenspelerSchaalIn(this.value)">
+
+    <audio id="album-speler" style="display:none"></audio>
+
+    <div class="album-navigatie">
+      <div class="album-progress-rij">
+        <span class="album-tijd" id="album-tijd-huidig">0:00</span>
+        <div class="album-progress-balk" id="album-progress-balk" onclick="zoekInAlbumSpeler(event)">
+          <div class="album-progress-vulling" id="album-progress-vulling"></div>
+        </div>
+        <span class="album-tijd" id="album-tijd-duur">0:00</span>
+      </div>
+      <div class="album-navigatie-knoppen">
+        <div class="album-navigatie-knoppen-groep">
+          <button onclick="albumEerste()" data-i18n-title="jukebox.eerste" title="Eerste">&#9198;</button>
+          <button onclick="albumVorige()" data-i18n-title="jukebox.vorige" title="Vorige">&#9664;</button>
+          <button onclick="albumSpeelPauze()" id="album-play-btn" data-i18n-title="jukebox.afspelen" title="Afspelen">&#9654;</button>
+          <button onclick="albumStop()" data-i18n-title="jukebox.stoppen" title="Stoppen">&#9209;</button>
+          <button onclick="albumVolgende()" data-i18n-title="jukebox.volgende" title="Volgende">&#9654;</button>
+          <button onclick="albumLaatste()" data-i18n-title="jukebox.laatste" title="Laatste">&#9197;</button>
+          <button onclick="toggleStroboZichtbaar()" id="strobo-toggle-btn" title="Stroboscooplicht tonen">&#128161;</button>
+        </div>
+        <div class="platenspeler-schaal-rij" id="platenspeler-schaal-rij" data-i18n-title="albumDetail.platenspelerSchaalTooltip" title="Platenspeler vergroten/verkleinen">
+          <span class="platenspeler-schaal-icoon">&#128269;</span>
+          <input type="range" id="platenspeler-schaal-slider" min="50" max="150" step="5" value="100" oninput="stelPlatenspelerSchaalIn(this.value)">
+        </div>
+      </div>
     </div>
   </div>
 </div>

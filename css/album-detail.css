@@ -1,10 +1,54 @@
+/* Layout op gebruikersverzoek (2026-08-29, en verder verfijnd daarna): de hele pagina volgt nu hetzelfde
+   vaste-viewport-stramien als de jukebox (css/jukebox.css: `.jukebox { display:flex; height:100vh }`)
+   i.p.v. een gewoon scrollend document. body's eigen padding/overflow (uit css/concert-detail.css, dat
+   vóór dit bestand laadt) wordt hier overschreven - geen 2rem-marge meer rondom, en overflow:hidden zodat
+   alleen de tracklijst zelf intern kan scrollen, niet de hele pagina (zie .track-lijst verderop). */
+body {
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* padding-top reserveert ruimte voor de vaste .titelbalk-drag-strook (32px, css/concert-detail.css) - zonder
+   deze marge zou de albumkop/platenspeler er middenin beginnen en zou de sleepstrook klikken op de
+   vorig/volgend-album-knoppen kunnen onderscheppen. */
+.album-layout {
+  display: flex;
+  height: 100vh;
+  padding-top: 32px;
+}
+
+/* .track-kolom is het album-detail-equivalent van de jukebox' .playlist-kolom (vaste breedte, eigen
+   randlijn) - .album-draaitafel-kolom van .speel-kolom (flex:1, neemt de rest van de breedte). Geen gap
+   ertussen (net als de jukebox) - dat geeft de platenspeler zoveel mogelijk ruimte, op gebruikersverzoek. */
+.track-kolom {
+  width: 380px;
+  flex-shrink: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--rand);
+}
+
+/* De albumkop staat nu bovenaan de tracklijst-kolom (niet meer over de volle breedte van het venster) - op
+   gebruikersverzoek. Een 320px-brede kolom is te smal voor de oude horizontale rij (pijl-hoes-info-pijl,
+   die alleen al ~290px aan pijlen/hoes/gaps opeiste) - vandaar nu verticaal gestapeld: .album-header-top
+   (de pijlen naast de hoes, zelfde compacte rij als voorheen) bovenaan, .album-header-info (artiest/naam/
+   trackaantal/bewerk-knop) daaronder, gecentreerd i.p.v. links uitgelijnd. */
 .album-header {
   display: flex;
-  gap: 1.5rem;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.25rem 1.25rem 1rem;
   border-bottom: 1px solid var(--rand);
-  padding-bottom: 1.25rem;
-  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.album-header-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 /* vorig/volgend album, naast de cover - zelfde ronde knopvorm als .album-navigatie button (track-transport
@@ -35,14 +79,18 @@
   visibility: hidden;
 }
 
+/* Op gebruikersverzoek vergroot (was 140px) en iets afgeronde hoeken + een zachte schaduw voor wat meer
+   diepte/gewicht - de tracklijst-kolom is intussen ook breder (380px, zie .track-kolom), dus er is ruimte
+   over voor een prominentere hoes naast de vorig/volgend-pijlen. */
 .album-cover-groot {
-  width: 140px;
-  height: 140px;
+  width: 200px;
+  height: 200px;
   flex-shrink: 0;
-  border-radius: 4px;
+  border-radius: 8px;
   overflow: hidden;
   background: var(--achtergrond-3);
   border: 1px solid var(--rand-2);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,12 +103,16 @@
 }
 
 .album-cover-groot .media-placeholder {
-  font-size: 48px;
+  font-size: 64px;
   opacity: 0.15;
 }
 
 .album-header-info {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
   min-width: 0;
 }
 
@@ -68,51 +120,69 @@
   font-size: 12px;
   color: var(--tekst-donker);
   letter-spacing: 0.1em;
-  margin-bottom: 0.75rem;
 }
 
-/* Platenspeler-weergave tijdens het afspelen (js/turntable.js, zelfde SVG/GSAP-component als de jukebox) -
-   optioneel/togglebaar (zie #draaitafel-toggle-btn). Op gebruikersverzoek toont dit scherm óf de draaitafel
-   óf de tracklijst, nooit allebei tegelijk (zie bijwerkenWeergave() in js/album-detail.js, die naast dit
-   paneel ook .track-acties-balk/.track-lijst verbergt) - anders scrollde de hele pagina (dus ook dit paneel
-   zelf) mee omhoog zodra bijwerkenSpeelUI() de spelende trackrij in beeld probeerde te scrollen. Nu er geen
-   tracklijst meer naast staat, mag dit paneel ook de resterende ruimte vullen i.p.v. compact te blijven -
-   min-height vult de ruimte tussen de vaste header en de vaste navigatiebalk onderin (zie die twee secties
-   verderop in dit bestand voor hun geschatte hoogtes), en de svg-breedte is nu op vh (i.p.v. een vast
-   px-maximum) gebaseerd zodat een groter venster ook een grotere platenspeler laat zien - zelfde soort
-   vh-gebaseerde aanpak als de jukebox' eigen #turntable-svg-wrap. */
+/* "Selecteer alles" staat op gebruikersverzoek naast "Album bewerken" i.p.v. in een eigen rij boven de
+   tracklijst (de vroegere .track-acties-balk, vervallen) - flex-wrap voor het geval beide knoptitels samen
+   met de vertaalde tekst een keer niet naast elkaar passen. */
+.album-header-acties {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.15rem;
+}
+
+/* .album-draaitafel-kolom is het album-detail-equivalent van de jukebox' .speel-kolom: flex:1, neemt de
+   volle resterende breedte én hoogte. Geen scroll hierop (i.t.t. .track-lijst hieronder) - "de platenspeler
+   mag niet meescrollen met de lijst", op gebruikersverzoek. */
+.album-draaitafel-kolom {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .album-draaitafel-wrap {
-  display: none;
+  flex: 1;
+  min-height: 0;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  min-height: calc(100vh - 340px);
-  position: relative;
 }
 
-.album-draaitafel-wrap.zichtbaar {
+/* .turntable-anchor is flex:1 (vult de volle hoogte van #album-draaitafel-wrap) i.p.v. enkel shrink-to-fit
+   - dat geeft #turntable-svg-wrap hieronder een écht DEFINITE hoogte om `max-height:100%` tegenaan te
+   resolven (percentage-hoogtes hebben een voorouder met een bepaalde hoogte nodig, een auto-hoge flex-
+   container voldoet daar niet aan). min-height:0 is de bekende flex-kind-in-kolom-noodrem. */
+.turntable-anchor {
+  position: relative;
+  flex: 1;
+  min-height: 0;
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* --platenspeler-schaal (js/album-detail.js's stelPlatenspelerSchaalIn(), 0.5-1.5, gedeelde
-   localStorage-sleutel met de jukebox) vermenigvuldigt de bestaande vh-gebaseerde breedte. Drie grenzen in
-   dezelfde min() als de schaal-vermenigvuldiging (niet erbuiten) - anders blijft de breedte/hoogte bij een
-   schaal > 100% alsnog buiten het scherm vallen:
-   - 90%: nooit breder dan het beschikbare horizontale vlak.
-   - calc((100vh - 400px) * 1.282): de breedte die, via aspect-ratio 1.282, een hoogte oplevert die niet
-     alleen de platenspeler zelf maar ook wat er in dezelfde .album-draaitafel-wrap-kolom ONDER hem staat
-     (#album-draaitafel-track-info, artiest+titel) nog laat passen vóór de vaste (position:fixed)
-     .album-navigatie-balk onderin. 400px = 340px (platenspeler-eigen budget, zie .album-draaitafel-wrap's
-     min-height hierboven) + ~53px extra (CDP-gemeten: 1rem gap tussen turntable-svg-wrap en de trackinfo
-     + de trackinfo's eigen hoogte) - zonder die extra 53px kon de platenspeler alleen al de volle
-     (100vh - 340px)-hoogte opeisen, met geen ruimte meer over voor de tekst eronder: die viel dan niet
-     letterlijk weg (geen display:none), maar werd na de vaste navigatiebalk gepositioneerd en dus
-     onzichtbaar - bevestigd via CDP na een per ongeluk op de échte userData achtergebleven
-     --platenspeler-schaal van 150% (zie CLAUDE.md/de bijbehorende memory). Alle drie de grenzen moeten
-     tegelijk gelden - vandaar alle drie in één min(). */
+   localStorage-sleutel met de jukebox) vermenigvuldigt de bestaande vh-gebaseerde breedte-voorkeur. Op
+   gebruikersverzoek ("zoveel mogelijk ruimte, groter bij een maximaal scherm") gebruikt dit nu de standaard
+   CSS-techniek voor "vul zoveel mogelijk ruimte binnen een aspect-ratio": `width` geeft de gewenste
+   (maximale) breedte, `max-height:100%` is de échte veiligheidsgrens (nu .turntable-anchor hierboven een
+   definite hoogte heeft) - de browser kiest zelf de kleinste van de twee, met behoud van aspect-ratio. Een
+   eerdere versie probeerde de hoogtegrens zelf met de hand na te rekenen als een derde term in `min()`
+   (`calc((100vh - Npx) * 1.282)`) - werkte, maar bleek op grotere/gemaximaliseerde vensters merkbaar minder
+   ruimte te gebruiken dan feitelijk beschikbaar was (Chromium's shrink-to-fit voor een `min()` die vh/%
+   mengt met aspect-ratio bleek de eigen breedte al vóór die berekening verder te clampen dan verwacht,
+   CDP-gemeten) - `max-height:100%` laat de browser dit zelf exact oplossen, geen handmatig budget meer
+   nodig. De eerste term (130vh) is bewust ruim genoeg dat hij bij schaal 100% zelf zelden bindend is; 96%
+   voorkomt dat de breedte ooit breder wordt dan de beschikbare kolombreedte. */
 #turntable-svg-wrap {
-  width: min(calc(58vh * var(--platenspeler-schaal, 1)), 90%, calc((100vh - 400px) * 1.282));
+  width: min(calc(130vh * var(--platenspeler-schaal, 1)), 96%);
+  max-height: 100%;
   aspect-ratio: 1.282;
 }
 
@@ -120,20 +190,6 @@
   width: 100%;
   height: 100%;
   display: block;
-}
-
-/* display:flex + justify-content:center i.p.v. te vertrouwen op #album-draaitafel-wrap's align-items:center
-   alleen: #turntable-svg-wrap's width is een min() die vh-eenheden met een %-term mengt, en Chromium's
-   shrink-to-fit-berekening voor een auto-breed blok-kind kan zo'n gemengde min() kennelijk niet betrouwbaar
-   herleiden tot een intrinsieke breedte - .turntable-anchor strekte daardoor (bevestigd via
-   getComputedStyle: display:block, width:836px, gelijk aan de volle kolombreedte) i.p.v. te krimpen naar
-   de svg-breedte, waardoor de platenspeler tegen de linkerrand aan plakte i.p.v. gecentreerd te staan. Door
-   zelf te centreren (justify-content) i.p.v. te leunen op de eigen breedte, is dit onafhankelijk van die
-   intrinsic-sizing-eigenaardigheid. */
-.turntable-anchor {
-  position: relative;
-  display: flex;
-  justify-content: center;
 }
 
 /* Het schuifje stond eerst absoluut gepositioneerd ín de platenspeler-tekening zelf (zie git-historie),
@@ -204,27 +260,9 @@
   transform: scale(1.05);
 }
 
-/* Trackinfo onder de draaitafel i.p.v. (of, on toggle uit, in plaats van) in de navigatiebalk - zelfde
-   opzet als de jukebox' .audio-track-artiest/.audio-track-titel onder zijn eigen platenspeler. */
-.album-draaitafel-track-info {
-  text-align: center;
-}
-
-.album-draaitafel-track-artiest {
-  font-size: 12px;
-  color: var(--tekst-dim);
-}
-
-.album-draaitafel-track-titel {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--tekst);
-}
-
 /* Blauwe LED-gloed i.p.v. een vlakke randkleur - zelfde blauwtint als de stroboscoop-LED op de
    platenspeler zelf (svg/pioneer-plx1000.svg's ledGlow-gradient, #7fe0ff/#2596c9) en identiek aan
    #spectrum-toggle-btn.actief/#strobo-toggle-btn.actief in css/jukebox.css. */
-#draaitafel-toggle-btn.actief,
 #strobo-toggle-btn.actief {
   color: #7fe0ff;
   border-width: 2px;
@@ -233,41 +271,15 @@
   box-shadow: 0 0 10px rgba(77, 216, 255, 0.65), 0 0 1px rgba(127, 224, 255, 0.5) inset;
 }
 
-/* Verbergt stroboscoopknop/platenspeler-schuifje zodra de tracklijst getoond wordt i.p.v. de draaitafel
-   (bijwerkenWeergave() in js/album-detail.js) - beide knoppen staan in de altijd-zichtbare
-   .album-navigatie-knoppen, niet in #album-draaitafel-wrap zelf, en hebben zonder deze regel dus geen
-   zichtbaar effect meer terwijl ze wel actief/klikbaar bleven staan (gemeld door de gebruiker). Beide
-   knoppen krijgen hier een samengestelde selector i.p.v. alleen de generieke .verborgen (uit
-   css/concert-detail.css, dat vóór dit bestand laadt): #strobo-toggle-btn is een <button> binnen
-   `.album-navigatie button { display:flex }` verderop (specificiteit 0,0,1,1, hoger dan een kale klasse -
-   pas via CDP teruggevonden, `grep` op ".album-navigatie-knoppen button" miste 'm doordat de werkelijke
-   selector ".album-navigatie button" heet, zonder "-knoppen"), en .platenspeler-schaal-rij heeft zijn eigen
-   `display:flex`-regel (gelijke specificiteit als .verborgen, wint dan op laadvolgorde) - in beide gevallen
-   wint de kale .verborgen-klasse dus niet vanzelf (zelfde valkuil als eerder al gedocumenteerd in CLAUDE.md
-   bij .track-acties-balk/.track-lijst, en identiek aan de fix die hiervoor al in css/jukebox.css nodig was). */
-#strobo-toggle-btn.verborgen,
-.platenspeler-schaal-rij.verborgen {
-  display: none;
-}
-
-.track-acties-balk {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 0.75rem;
-}
-
+/* flex:1 + overflow-y:auto - alleen de tracklijst zelf scrolt (zelfde patroon als de jukebox' eigen
+   .playlist-lijst binnen .playlist-kolom), niet de hele pagina en niet de platenspeler-kolom ernaast. */
 .track-lijst {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-}
-
-/* .verborgen (css/concert-detail.css, display:none) heeft dezelfde specificiteit als de losse-klasse-regels
-   hierboven, en dit bestand laadt ná concert-detail.css - zonder deze specifiekere override zou .verborgen
-   dus gewoon verliezen (latere bronvolgorde wint bij een gelijkspel) en bleven .track-acties-balk/.track-
-   lijst in werkelijkheid gewoon zichtbaar/display:flex ondanks de correct toegevoegde klasse. */
-.track-acties-balk.verborgen,
-.track-lijst.verborgen {
-  display: none;
+  overflow-y: auto;
+  padding: 0 1.25rem 1.5rem;
 }
 
 .track-rij {
@@ -366,24 +378,51 @@
   color: var(--accent);
 }
 
-/* Vaste balk onderin i.p.v. het losse open-lokaal-popupvenster - navigatie blijft zo "binnen het album",
-   je kunt zonder het scherm te verlaten door de tracklijst heen bladeren. .track-lijst krijgt evenveel
-   padding-bottom als deze balk (tijd/voortgangsrij + knoppenrij) hoog is, anders valt de laatste rij (deels)
-   achter de balk */
-.track-lijst {
-  padding-bottom: 120px;
+/* Ticker voor een tracktitel/artiest die te lang is om binnen de rij te passen (op gebruikersverzoek) -
+   js/album-detail.js's pasMarqueeToeIndienNodig() bouwt dit alleen op voor de daadwerkelijk spelende rij,
+   en alleen als de tekst écht overloopt (scrollWidth > clientWidth). Twee identieke .marquee-unit's
+   ([tekst][gap]) achter elkaar + een animatie van translateX(0) naar translateX(-50%) geeft een naadloze
+   loop: bij -50% staat de tweede (identieke) eenheid exact waar de eerste begon, dus de sprong terug naar
+   0% is onzichtbaar. --marquee-duur wordt per element in JS gezet (op basis van de gemeten breedte, voor
+   een ongeveer constante scrolsnelheid ongeacht tekstlengte) i.p.v. hier hardcoded. */
+.marquee-track {
+  display: inline-flex;
+  will-change: transform;
 }
 
+.marquee-unit {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.marquee-gap {
+  display: inline-block;
+  width: 3rem;
+  flex-shrink: 0;
+}
+
+.marquee-actief .marquee-track {
+  animation: track-marquee linear infinite;
+  animation-duration: var(--marquee-duur, 10s);
+}
+
+@keyframes track-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Vaste balk onderin i.p.v. het losse open-lokaal-popupvenster - navigatie blijft zo "binnen het album", je
+   kunt zonder het scherm te verlaten door de tracklijst heen bladeren. Normale flex-flow-positie (niet meer
+   position:fixed) - staat nu alleen onderin de platenspeler-kolom (.album-draaitafel-kolom, flex-direction:
+   column), niet meer over de volle venstersbreedte, zelfde patroon als de jukebox' eigen .navigatie
+   onderin .speel-kolom. */
 .album-navigatie {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   background: var(--achtergrond-3);
   border-top: 1px solid var(--rand);
-  z-index: 30;
 }
 
 .album-progress-rij {
@@ -418,32 +457,26 @@
   border-radius: 3px;
 }
 
-/* Drie eerdere grid-versies (1fr/auto/1fr, minmax(0,1fr), minmax(140px,1fr)) losten telkens één probleem
-   op maar gaven een nieuw probleem - zie de uitgebreide toelichting bij .navigatie in css/jukebox.css
-   (identiek verhaal, hier 1-op-1 van toepassing): kale 1fr verstoorde de centrering, minmax(0,1fr)
-   herstelde de centrering maar liet het schuifje over de laatste knop heen vallen, minmax(140px,1fr) loste
-   dát op maar dwong de knoppenrij naar een tweede regel bij de standaard vensterbreedte. Overgestapt op
-   dezelfde aanpak als daar: .platenspeler-schaal-rij helemaal uit de flex-flow (position:absolute, vast
-   tegen de rechterrand). Hier blijft .album-navigatie-track (de tracktekst) wél een normaal flex-kind aan
-   de linkerkant - .album-navigatie-knoppen-groep krijgt flex:1 en centreert zijn eigen inhoud binnen de
-   resterende ruimte (dus niet perfect t.o.v. het hele venster als de tracktekst breed is, maar in de
-   praktijk nauwelijks zichtbaar en veel robuuster dan de grid-aanpak). */
+/* Geschiedenis: eerdere versies hadden hier ook de tracktekst (#album-navigatie-track) in deze rij staan,
+   wat eerst voor een storend "de knoppen verspringen mee met de tekstlengte"-bug zorgde en daarna (ook na
+   een CSS Grid-fix) alsnog niet goed leesbaar bleek in de smalle middenkolom. Op gebruikersverzoek is de
+   tracktekst hier volledig verwijderd - de .speelt-markering op de tracklijst-rij zelf (links) is al de
+   "wat speelt er nu"-indicator, dus deze rij hoeft alleen nog de knoppen te centreren. Simpele
+   justify-content:center volstaat weer, net als de jukebox' eigen .navigatie - .platenspeler-schaal-rij
+   blijft via position:absolute buiten de flow (zie aldaar), padding-right reserveert daar ruimte voor. */
 .album-navigatie-knoppen {
   position: relative;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 0.75rem;
   padding: 0.75rem 1.5rem 1rem;
   padding-right: 170px;
 }
 
-/* flex-wrap:wrap + de min-width op .album-navigatie-track (verderop) zijn een bewuste noodrem: zonder deze
-   regels verdrong het toegevoegde schuifje + de toggle-knoppen de tracktekst tot 0px breed ("de tekst van
-   het nummer valt weg") in plaats van gewoon door te lopen naar een tweede regel. */
 .album-navigatie-knoppen-groep {
   display: flex;
-  flex: 1;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
@@ -478,30 +511,11 @@
 }
 
 /* Op gebruikersverzoek: duidelijk zichtbaar dat er daadwerkelijk iets speelt, niet alleen af te leiden uit
-   het kleine ▶/⏸-icoontje - zelfde groene "actief"-taal als #draaitafel-toggle-btn.actief. Wordt gezet/
-   gewist door de native 'play'/'pause'-events op albumSpeler (zie js/album-detail.js), niet handmatig per
-   functie - zo blijft dit ook synchroon als het geluid via een ander pad start/stopt dan verwacht. */
+   het kleine ▶/⏸-icoontje - zelfde groene "actief"-taal als #spectrum-toggle-btn/#strobo-toggle-btn.actief
+   in css/jukebox.css. Wordt gezet/gewist door de native 'play'/'pause'-events op albumSpeler (zie
+   js/album-detail.js), niet handmatig per functie - zo blijft dit ook synchroon als het geluid via een
+   ander pad start/stopt dan verwacht. */
 #album-play-btn.speelt-actief {
   color: #34d058;
   border-color: #34d058;
-}
-
-/* .selectie-info (bulk-verwijderen/toevoegen-aan-playlist-balk, uit css/concert-detail.css) staat daar
-   standaard op bottom:1.5rem - zou hier onder de nieuwe .album-navigatie-balk (~110px hoog, incl. de
-   tijd/voortgangsrij) wegvallen. Deze override (album-detail.css laadt na concert-detail.css, dus wint bij
-   gelijke specificiteit) tilt 'm erboven */
-.selectie-info {
-  bottom: 7.5rem;
-}
-
-.album-navigatie-track {
-  flex-shrink: 1;
-  min-width: 60px;
-  max-width: 280px;
-  margin-left: 0.5rem;
-  font-size: 12px;
-  color: var(--tekst-dim);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }

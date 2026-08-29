@@ -883,8 +883,8 @@ ipcMain.on('open-album-detail', (event, albumId) => {
   }
 
   albumDetailWin = new BrowserWindow({
-    width: 900,
-    height: 750,
+    width: 1100,
+    height: 700,
     title: 'Album',
     ...huidigeTitelbalkOpties(),
     webPreferences: {
