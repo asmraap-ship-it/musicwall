@@ -1,7 +1,6 @@
 var electron = require('electron')
 var ipcRenderer = electron.ipcRenderer
 var shell = electron.shell
-var clipboard = electron.clipboard
 
 var SLEUTEL_FORMAAT = /^AIza[0-9A-Za-z_-]{35}$/
 var TEST_VIDEO_ID = 'jNQXAC9IVRw'
@@ -17,8 +16,13 @@ function maakApiKey() {
   shell.openExternal('https://console.cloud.google.com/apis/credentials')
 }
 
-function plakSleutel() {
-  document.getElementById('sleutel').value = clipboard.readText().trim()
+// Electron 44: electron.clipboard is niet meer beschikbaar in de renderer (aligned met de W3C Clipboard
+// API) - vervangen door de standaard, renderer-veilige navigator.clipboard.readText() (async). Werkt
+// zonder extra permission-handling in main.js omdat de aanroep vanuit een echte klik op de Plak-knop komt
+// (transient user activation), zelfde patroon als de rest van dit venster.
+async function plakSleutel() {
+  const tekst = await navigator.clipboard.readText()
+  document.getElementById('sleutel').value = tekst.trim()
 }
 
 function toonStap(n) {
