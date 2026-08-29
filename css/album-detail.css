@@ -116,6 +116,16 @@ body {
   min-width: 0;
 }
 
+/* .concert-header-artiest is standaard erg klein (10px, css/concert-detail.css) t.o.v. .concert-header-naam
+   (28px) - in de bredere, horizontale concert-header valt dat minder op, maar hier (gecentreerd, vlak onder
+   de albumnaam) oogde het onevenwichtig klein op gebruikersverzoek. Scoped override, alleen voor de
+   albumkop - concert-detail.html's eigen header blijft ongewijzigd. */
+.album-header .concert-header-artiest {
+  font-size: 14px;
+  letter-spacing: 0.15em;
+  opacity: 0.85;
+}
+
 .album-track-aantal {
   font-size: 12px;
   color: var(--tekst-donker);
