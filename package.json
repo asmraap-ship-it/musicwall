@@ -14,7 +14,7 @@
   "license": "GPL-3.0-or-later",
   "type": "commonjs",
   "devDependencies": {
-    "electron": "^43.4.1",
+    "electron": "^44.0.0",
     "electron-builder": "^26.15.3"
   },
   "dependencies": {
