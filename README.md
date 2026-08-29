@@ -12,7 +12,7 @@ Een persoonlijke Electron desktop-applicatie waarmee je eigen muziek, YouTube-vi
 - **Jukebox** — speel je eigen playlist af, lokale muziek video's én YouTube door elkaar, met shuffle, vorige/volgende en schermvullende weergave; een YouTube-nummer dat niet afspeelbaar is wordt automatisch overgeslagen met een melding, je muziek wordt in een geanimeerde Pioneer PLX1000 platenspeler afgespeeld; playlists zijn op te slaan onder een eigen naam en later weer te laden
 - **Muziek-albums** — importeer een map met mp3/m4a/flac/wav-bestanden in één keer als album; hoes, artiest en tracks worden automatisch herkend, met een eigen albumscherm om doorheen te bladeren en tracks af te spelen
 - **YouTube zoeken & map importeren** — zoek video's of hele playlists (per artiest of genre) direct binnen Musicwall, of importeer een map met lokale bestanden; eerst een groepskeuze zodat je meteen de juiste wall uit de juiste groep kiest
-- **Zeven thema's** — Standaard, Metaal, Jukebox, Nacht, Raw, Natuur en Licht, elk met een eigen kleurpalet en achtergrondstijl
+- **Tien thema's** — Standaard, Metaal, Jukebox, Nacht, Raw, Natuur, Licht, Chroom, Oceaan en Radar elk met een eigen kleurpalet en achtergrondstijl
 - **Meertalig** — Nederlands/Engels, automatisch op basis van je systeemtaal, met handmatige wisselknop
 
 ## Screenshots
