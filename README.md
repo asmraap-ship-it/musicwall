@@ -65,7 +65,7 @@ Een ingebouwd helpscherm legt elke functie uit, in de taal van de gebruiker.
 
 ## Technische stack
 
-- [Electron](https://www.electronjs.org/) v42
+- [Electron](https://www.electronjs.org/) v44
 - SQLite via `better-sqlite3`
 - [GSAP](https://gsap.com/) voor animaties
 - `ffmpeg-static` voor thumbnail-generatie
