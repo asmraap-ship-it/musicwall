@@ -10,9 +10,13 @@ let huidigeIndex = -1
 let stopOpruimTimer = null
 let afgespeeldVertragingTimer = null
 
-// Iets langer dan ARM_DROP_DUUR in js/turntable.js (1.3s) - genoeg marge zodat de tonearm-lift-animatie
-// écht klaar is voordat de opruiming (stop()) resp. het volgende nummer (afgespeeldGaVerder()) start.
-const TONEARM_LIFT_MS = 1400
+// Ruim langer dan ARM_DROP_DUUR in js/turntable.js (1.6s) - marge zodat de tonearm-lift-animatie écht
+// klaar is vóórdat de opruiming (stop()) resp. het volgende nummer (afgespeeldGaVerder()) start, plus een
+// bewuste extra rustpauze bovenop (2026-08-30, "kan daar nog een pauze tussen" - zonder pauze voelde het
+// direct-doorschieten naar het volgende nummer te gehaast aan). Was 1400ms (voor ARM_DROP_DUUR nog 1.3s
+// was) - toen ARM_DROP_DUUR naar 1.6s ging zonder deze constante mee te verhogen, zou de lift-tween hier
+// al afgekapt worden vóórdat hij visueel klaar was.
+const TONEARM_LIFT_MS = 2100
 
 const AUDIO_EXTENSIES = ['.mp3', '.m4a', '.flac', '.wav']
 function isAudioBestand(pad) {
@@ -1107,9 +1111,19 @@ function afgespeeldGaVerder() {
 
   if (playlist.length === 0) {
     huidigeIndex = -1
-    stop()
-    laadPlaylist()
-    toonKlaarMelding()
+    // Ook hier eerst de uitloop-glijbeweging (zie de toelichting verderop bij het "volgend nummer"-pad) -
+    // dit is het laatste nummer van de hele playlist, dus zonder next-index nog steeds een écht 'ended'.
+    if (wasLokaleAudio && window.Turntable) {
+      window.Turntable.naarUitloop(() => {
+        stop()
+        laadPlaylist()
+        toonKlaarMelding()
+      })
+    } else {
+      stop()
+      laadPlaylist()
+      toonKlaarMelding()
+    }
     return
   }
 
@@ -1121,8 +1135,12 @@ function afgespeeldGaVerder() {
     // voor snelle handmatige navigatie via vorige/volgende), waardoor de rustige lift-terug-naar-rust bij
     // een natuurlijk einde van een nummer nooit zichtbaar was - de arm ging al terug, alleen te snel om
     // te zien. Hier laten we 'm eerst echt (zichtbaar) teruglopen voordat het volgende nummer laadt.
-    window.Turntable.stop()
-    afgespeeldVertragingTimer = setTimeout(() => speelIndex(volgendeIndex), TONEARM_LIFT_MS)
+    // Vóór die til-beweging glijdt de naald eerst nog van de laatste groef naar de uitloop (naarUitloop(),
+    // zie js/turntable.js) - net als bij een echte plaat die uitspeelt, niet alleen bij handmatig stoppen.
+    window.Turntable.naarUitloop(() => {
+      window.Turntable.stop()
+      afgespeeldVertragingTimer = setTimeout(() => speelIndex(volgendeIndex), TONEARM_LIFT_MS)
+    })
   } else {
     speelIndex(volgendeIndex)
   }

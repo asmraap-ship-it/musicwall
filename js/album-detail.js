@@ -438,15 +438,39 @@ function albumLaatste() {
   laadTrack(huidigeTrackLijst[huidigeTrackLijst.length - 1])
 }
 
+// Ruim langer dan ARM_DROP_DUUR in js/turntable.js (1.6s) - zelfde constante/redenering als
+// TONEARM_LIFT_MS in js/jukebox.js (zie aldaar): marge zodat de til-naar-rust-animatie écht klaar is,
+// plus een bewuste extra rustpauze bovenop (2026-08-30, "kan daar nog een pauze tussen" - zonder pauze
+// ging het na het bereiken van rust meteen door naar de needle-drop van het volgende nummer, wat te
+// gehaast aanvoelde).
+const ARM_LIFT_PAUZE_MS = 2100
+
+// Zelfde patroon als js/jukebox.js's afgespeeldGaVerder(): vóór het volgende nummer laadt (of, bij de
+// laatste track, vóór albumStop() de arm optilt) glijdt de naald eerst nog zichtbaar van de laatste groef
+// naar de uitloop (naarUitloop(), zie js/turntable.js) - net als een echte plaat die uitspeelt. Daarna
+// tilt de arm zichtbaar terug naar rust en wacht ARM_LIFT_PAUZE_MS vóórdat het volgende nummer laadt -
+// zonder die twee tussenstappen zou laadTrack()'s eigen stop()+reset()-combo (instant, geen tween) de arm
+// meteen terugzetten en direct doorschieten naar de volgende needle-drop, zonder dat er iets van de
+// uitloop/til-beweging te zien was.
 albumSpeler.addEventListener('ended', () => {
   const i = huidigSpeelIndex()
-  if (i !== -1 && i < huidigeTrackLijst.length - 1) {
-    albumVolgende()
+  const doorgaan = () => {
+    if (i !== -1 && i < huidigeTrackLijst.length - 1) {
+      albumVolgende()
+    } else {
+      // Laatste track van het album afgespeeld: albumStop() tilt de toonarm terug naar rust en haalt de
+      // plaat weg - zonder deze aanroep bleef de naald op de bij het einde horende hoek hangen, want er
+      // komt na 'ended' geen timeupdate meer die bijwerken() opnieuw zou aanroepen.
+      albumStop()
+    }
+  }
+  if (window.Turntable) {
+    window.Turntable.naarUitloop(() => {
+      window.Turntable.stop()
+      setTimeout(doorgaan, ARM_LIFT_PAUZE_MS)
+    })
   } else {
-    // Laatste track van het album afgespeeld: albumStop() tilt de toonarm terug naar rust en haalt de
-    // plaat weg - zonder deze aanroep bleef de naald op de bij het einde horende hoek hangen, want er komt
-    // na 'ended' geen timeupdate meer die bijwerken() opnieuw zou aanroepen.
-    albumStop()
+    doorgaan()
   }
 })
 

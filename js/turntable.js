@@ -95,10 +95,41 @@ const ARM_ORIGIN = '863 142'
 // back r ≈ 317,8) is de huidige, in de draaiende app stapsgewijs bijgeschaafde stand.
 const RUST_HOEK = -40
 const START_HOEK = -23.6
-const EIND_HOEK = 0.75
-// Op gebruikersverzoek verruimd van 0.6s - zowel de needle-drop bij starten als de lift-terug-naar-rust
-// bij stoppen/pauzeren voelden te snel/abrupt aan. Geldt voor beide (start()/stop() delen deze constante).
-const ARM_DROP_DUUR = 1.3
+// Zevende correctieronde (2026-08-30): de gebruiker merkte op dat de naald aan het einde van een nummer
+// in een zone landde die geen groef meer is - klopt. #vinyl's groefringen (svg/pioneer-plx1000.svg,
+// circle210 t/m circle234) lopen van r=292 terug tot de laatst getekende groef op r=124; daarna is
+// circle239 (r=90) een egale, groefloze schijf tot aan het label (r=84) - precies zoals een echte LP een
+// blanco "uitloopgroef" heeft tussen de laatste muziekgroef en het label. EIND_HOEK (+0.75°, front
+// r ≈ 89,9) bleek dus altijd al op die uitloopschijf te landen, nooit op een echte groef. Twee aparte
+// hoeken i.p.v. één: LAATSTE_GROEF_HOEK is nu het nieuwe eindpunt van hoekVoorProgressie() (normale
+// afspeel-voortgang stopt op de laatste groef), UITLOOP_HOEK (voorheen EIND_HOEK, hoek ongewijzigd) is
+// het doel van de nieuwe naarUitloop()-glijbeweging die pas ná een écht 'ended'-event speelt, vóór de
+// bestaande til-naar-rust.
+// Eerste poging -4° (front-naaldpunt exact op circle234's r=124, gemeten via getScreenCTM() op het
+// historische naaldpunt-padpunt (9.9012225,10.001832) van #headshell-plaat) bleek in de praktijk niet te
+// kloppen met wat de gebruiker als "de naald" ziet: zij beoordeelt de positie op het MIDDEN van de
+// headshell-plaat, niet op het puntige voorste hoekpunt van de plaatvorm - dat scheelt zichtbaar ~2
+// groeven (~14 eenheden). START_HOEK werd door de gebruiker wel bevestigd als correct (blijkbaar valt
+// front-hoekpunt en midden-perceptie daar toevallig dicht genoeg bij elkaar, een vast lokaal
+// hoekpunt-offset vertaalt zich niet lineair naar eenzelfde radius-verschil bij een andere rotatiehoek).
+// Herijkt naar **-2°** - bij die hoek was het front-naaldpunt (dezelfde meetmethode) r ≈ 109,9, een daling
+// van ~15 eenheden t.o.v. -4° (r ≈ 125) - vrijwel exact de ~2 groeven (~14 eenheden) die de gebruiker
+// miste, dus het midden van de plaat zou bij -2° nu op ongeveer de laatste groef moeten landen.
+const LAATSTE_GROEF_HOEK = -2
+// Zelfde front-hoekpunt-vs-midden-perceptie-discrepantie als bij LAATSTE_GROEF_HOEK hierboven, hier nooit
+// eerder herijkt (het was gewoon het oude EIND_HOEK) - de gebruiker meldde "stopt al voor het label".
+// Evenredig bijgesteld met dezelfde soort correctie (+2°, front r daalt in dit hoekbereik met ~14
+// eenheden per 2°, vergelijkbaar met de LAATSTE_GROEF_HOEK-correctie): **+0.75° -> +2.75°**.
+const UITLOOP_HOEK = 2.75
+// Op gebruikersverzoek verruimd van 0.6s -> 1.3s - zowel de needle-drop bij starten als de lift-terug-naar-
+// rust bij stoppen/pauzeren voelden te snel/abrupt aan. Geldt voor beide (start()/stop() delen deze
+// constante). Nogmaals verruimd naar 1.6s (2026-08-30, "het teruggaan van de toonarm mag ook trager") -
+// gebruiker koos expliciet voor beide trager i.p.v. alleen stop() een eigen langzamere constante te geven.
+const ARM_DROP_DUUR = 1.6
+// Was 1.0s, op gebruikersverzoek verruimd ("de uitloop gaat te snel") naar 1.4s - iets trager dan de
+// mechanische til-beweging (ARM_DROP_DUUR) aanvoelt niet logisch voor een glijbeweging, dus net iets
+// korter dan ARM_DROP_DUUR gehouden, maar wel duidelijk trager dan de oude 1.0s.
+const UITLOOP_DUUR = 1.4
 
 // Vinyl-plaatsing (op gebruikersverzoek): de plaat komt aanzweven met een boogvormig pad de draaitafel
 // op, en verdwijnt weer diezelfde kant op. Coördinaten zijn offsets t.o.v. vinyl's eigen, correct
@@ -191,7 +222,7 @@ let startStopBtnEl = null
 
 function hoekVoorProgressie(progressie) {
   const p = Math.min(1, Math.max(0, progressie))
-  return START_HOEK + (EIND_HOEK - START_HOEK) * p
+  return START_HOEK + (LAATSTE_GROEF_HOEK - START_HOEK) * p
 }
 
 // Blauw stroboscooplicht: twee losstaande mechanismen, bewust niet gekoppeld (zie ook de toelichting bij
@@ -686,6 +717,35 @@ function bijwerken(currentTime, duration) {
   })
 }
 
+// Alleen aangeroepen ná een écht 'ended'-event (nooit bij handmatig stoppen/pauzeren/navigeren) - de
+// naald glijdt van de laatste-groef-positie door naar UITLOOP_HOEK, alsof hij de blanco uitloopgroef
+// volgt, vóórdat de aanroeper (js/jukebox.js/js/album-detail.js) de bestaande til-naar-rust (stop())
+// aanroept. Zelfde armTransitieBezig-vergrendeling als start()/stop() (zie de toelichting daar) - een
+// stale timeupdate van vlak vóór het echte einde mag deze glijbeweging niet kunnen kapen.
+function naarUitloop(klaar) {
+  armTransitieBezig = true
+  if (toonarmInnerEl) {
+    gsap.killTweensOf(toonarmInnerEl)
+    // bijwerken()'s laatste 0.3s inhaal-tween (naar LAATSTE_GROEF_HOEK) is meestal nog niet klaar op het
+    // moment dat 'ended' afgaat - de killTweensOf hierboven stopt 'm dus ergens onderweg. Een instante
+    // gsap.set() hier (eerdere versie) loste het "stopt vóór de laatste groef"-probleem zelf op, maar gaf
+    // een nieuw, subtieler probleem: de sprong + meteen-erna-beginnende glijbeweging vloeiden voor het oog
+    // samen tot één ononderbroken beweging, waardoor het juist leek of de naald over de laatste groeven
+    // heen schoot zonder daar zichtbaar aan te komen (door de gebruiker gemeld, direct via CDP-onderzoek
+    // herleid). Een kort zichtbaar tussenstapje (0.25s, zelfde soort duur als bijwerken()'s eigen inhaal-
+    // tween) geeft het oog wél de kans om "aankomst op de laatste groef" te registreren vóórdat de langere
+    // glijbeweging naar de uitloop begint - twee losse tijdlijn-stappen i.p.v. sprong+glide ineen.
+    gsap.timeline({
+      onComplete: () => { armTransitieBezig = false; if (klaar) klaar() }
+    })
+      .to(toonarmInnerEl, { rotation: LAATSTE_GROEF_HOEK, duration: 0.25, ease: 'sine.out' })
+      .to(toonarmInnerEl, { rotation: UITLOOP_HOEK, duration: UITLOOP_DUUR, ease: 'sine.inOut' })
+  } else {
+    armTransitieBezig = false
+    if (klaar) klaar()
+  }
+}
+
 function setAlbumCover(coverPad) {
   if (!coverImageEl || !coverPad) return
   coverImageEl.setAttribute('href', 'file:///' + coverPad.replace(/\\/g, '/'))
@@ -827,7 +887,7 @@ function toonHuidigeStandInstant(coverPad, progressie, spelend) {
 }
 
 window.Turntable = {
-  start, stop, bijwerken, reset, setAlbumCover, toonVinyl, verbergVinyl, verbergVinylInstant,
+  start, stop, bijwerken, reset, naarUitloop, setAlbumCover, toonVinyl, verbergVinyl, verbergVinylInstant,
   toonHuidigeStandInstant, setStroboPitch, setStroboZichtbaar,
   onTempoChange: (cb) => { tempoChangeCallback = cb },
   getTempoPercent: huidigTempoPercent,

@@ -6,6 +6,13 @@ older entries are not translated (see `CLAUDE.md`'s Changelog-workflow section f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.16]
+### Added
+- When a track on the turntable finishes playing naturally, the needle now visibly glides into the run-out groove — just like a real record — before the arm lifts, with a brief pause before the next track starts.
+
+### Changed
+- Dropping and lifting the tonearm on the turntable is now a bit more gentle.
+
 ## [1.2.15]
 ### Changed
 - The album screen has been reworked: the turntable now always sits next to the track list (no longer optional), in a bigger window with a wider track list and a larger album cover. The turntable uses as much of the available space as possible, including when the window is maximized.

@@ -4,6 +4,13 @@ Alle noemenswaardige wijzigingen aan Musicwall worden hier bijgehouden.
 
 Het formaat is gebaseerd op [Keep a Changelog](https://keepachangelog.com/nl/1.0.0/).
 
+## [1.2.16]
+### Added
+- Bij het natuurlijk uitspelen van een nummer op de platenspeler glijdt de naald nu zichtbaar naar de uitloopgroef — net als bij een echte plaat — voordat de arm optilt, met een korte pauze voordat het volgende nummer start.
+
+### Changed
+- Het neerzetten en optillen van de toonarm op de platenspeler gaat nu iets rustiger.
+
 ## [1.2.15]
 ### Changed
 - Het albumscherm is herzien: de platenspeler staat nu altijd naast de tracklijst (niet meer optioneel), in een groter venster met een bredere tracklijst en grotere albumhoes. De platenspeler gebruikt zoveel mogelijk van de beschikbare ruimte, ook bij een gemaximaliseerd venster.
